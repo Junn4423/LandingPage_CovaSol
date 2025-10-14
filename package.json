@@ -1,0 +1,56 @@
+{
+  "name": "covasol-landing-page",
+  "version": "1.0.0",
+  "description": "Landing page for COVASOL Technology Solutions - Core Value. Smart Solutions.",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "live-server --port=3000 --open=/index.html",
+    "build": "npm run minify-css && npm run minify-js",
+    "minify-css": "cleancss -o assets/css/style.min.css assets/css/style.css",
+    "minify-js": "uglifyjs assets/js/script.js -o assets/js/script.min.js -c -m",
+    "validate": "html-validate index.html",
+    "lighthouse": "lighthouse http://localhost:8000 --output html --output-path ./lighthouse-report.html"
+  },
+  "keywords": [
+    "covasol",
+    "landing-page",
+    "technology",
+    "software-development",
+    "ui-ux-design",
+    "digital-transformation",
+    "vietnam",
+    "responsive",
+    "modern"
+  ],
+  "author": {
+    "name": "COVASOL Team",
+    "email": "covasol.studio@gmail.com",
+    "url": "https://covasol.top"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/covasol/landing-page"
+  },
+  "homepage": "https://covasol.top",
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "clean-css-cli": "^5.6.2",
+    "uglify-js": "^3.17.4",
+    "html-validate": "^8.7.4",
+    "lighthouse": "^10.4.0"
+  },
+  "dependencies": {},
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie <= 11"
+  ],
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  }
+}

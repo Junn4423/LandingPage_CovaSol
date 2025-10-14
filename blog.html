@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | COVASOL</title>
+    <meta name="description" content="Blog công nghệ của COVASOL - Chia sẻ kiến thức, xu hướng và insights về phát triển phần mềm, chuyển đổi số">
+    
+    <!-- Fonts - Vietnamese Optimized -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/img/logo.png">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading" class="loading-screen">
+        <div class="loading-content">
+            <img src="assets/img/logo.png" alt="COVASOL Logo" class="loading-logo">
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="assets/img/logo.png" alt="COVASOL Logo">
+                <a href="index.html"><span>COVASOL</span></a>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link" data-key="nav-home">Trang chủ</a>
+                <a href="index.html#services" class="nav-link" data-key="nav-services">Dịch vụ</a>
+                <a href="products.html" class="nav-link" data-key="nav-products">Sản phẩm</a>
+                <a href="blog.html" class="nav-link active" data-key="nav-blog">Blog</a>
+                <a href="index.html#about" class="nav-link" data-key="nav-about">Về chúng tôi</a>
+                <a href="index.html#reviews" class="nav-link" data-key="nav-reviews">Đánh giá</a>
+                <a href="index.html#contact" class="nav-link" data-key="nav-contact">Liên hệ</a>
+            </div>
+            
+            <!-- Navigation Actions -->
+            <div class="nav-actions">
+                <a href="index.html#contact" class="nav-cta" data-key="nav-cta">Tư vấn miễn phí</a>
+                
+                <!-- Language Switcher -->
+                <div class="language-switcher">
+                    <div class="language-dropdown">
+                        <button class="lang-btn" id="langBtn">
+                            <i class="fas fa-globe"></i>
+                            <span id="currentLang">VI</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="lang-menu" id="langMenu">
+                            <button class="lang-option active" data-lang="vi">
+                                <img src="https://flagcdn.com/w20/vn.png" alt="Vietnamese">
+                                <span>Tiếng Việt</span>
+                            </button>
+                            <button class="lang-option" data-lang="en">
+                                <img src="https://flagcdn.com/w20/us.png" alt="English">
+                                <span>English</span>
+                            </button>
+                            <button class="lang-option" data-lang="fr">
+                                <img src="https://flagcdn.com/w20/fr.png" alt="French">
+                                <span>Français</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="page-hero blog-hero">
+        <div class="hero-container">
+            <div class="hero-content" data-aos="fade-up" data-aos-duration="1000">
+                <h1 class="page-title" data-key="blog-title">Blog COVASOL</h1>
+                <p class="page-description" data-key="blog-description">
+                    Chia sẻ kiến thức, xu hướng công nghệ và insights từ đội ngũ chuyên gia COVASOL. 
+                    Cập nhật những thông tin mới nhất về phát triển phần mềm, AI, và chuyển đổi số.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Post -->
+    <section class="featured-post">
+        <div class="container">
+            <div class="featured-content" data-aos="fade-up">
+                <div class="featured-image">
+                    <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="AI trong phát triển phần mềm">
+                    <div class="featured-badge" data-key="featured">Nổi bật</div>
+                </div>
+                <div class="featured-text">
+                    <div class="post-meta">
+                        <span class="post-category" data-key="category-ai">AI & Technology</span>
+                        <span class="post-date">14/10/2025</span>
+                    </div>
+                    <h2 data-key="featured-title">Tương lai của AI trong phát triển phần mềm: Xu hướng 2025-2026</h2>
+                    <p data-key="featured-excerpt">
+                        Khám phá cách Artificial Intelligence đang thay đổi cách chúng ta phát triển phần mềm. 
+                        Từ code generation đến automated testing, AI đang mở ra những khả năng mới...
+                    </p>
+                    <div class="post-author">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Nguyễn Văn A" class="author-avatar">
+                        <div class="author-info">
+                            <span class="author-name">Nguyễn Văn A</span>
+                            <span class="author-title" data-key="tech-lead">Tech Lead</span>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary" data-key="read-full">Đọc toàn bộ</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Categories -->
+    <section class="blog-categories">
+        <div class="container">
+            <div class="categories-filter" data-aos="fade-up">
+                <button class="category-btn active" data-category="all" data-key="all-posts">Tất cả bài viết</button>
+                <button class="category-btn" data-category="development" data-key="development">Phát triển</button>
+                <button class="category-btn" data-category="ai" data-key="ai-tech">AI & Tech</button>
+                <button class="category-btn" data-category="design" data-key="design">Thiết kế</button>
+                <button class="category-btn" data-category="business" data-key="business">Kinh doanh</button>
+                <button class="category-btn" data-category="tutorials" data-key="tutorials">Hướng dẫn</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Posts Grid -->
+    <section class="blog-posts">
+        <div class="container">
+            <div class="posts-grid">
+                <!-- Post 1 -->
+                <article class="post-card" data-category="development" data-aos="fade-up" data-aos-delay="100">
+                    <div class="post-image">
+                        <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="React Performance">
+                    </div>
+                    <div class="post-content">
+                        <div class="post-meta">
+                            <span class="post-category" data-key="development">Phát triển</span>
+                            <span class="post-date">12/10/2025</span>
+                        </div>
+                        <h3 data-key="post1-title">10 Tips tối ưu hiệu suất React App trong 2025</h3>
+                        <p data-key="post1-excerpt">
+                            Khám phá các kỹ thuật mới nhất để tối ưu hiệu suất ứng dụng React. 
+                            Từ lazy loading đến code splitting...
+                        </p>
+                        <div class="post-tags">
+                            <span class="tag">React</span>
+                            <span class="tag">Performance</span>
+                            <span class="tag">JavaScript</span>
+                        </div>
+                        <a href="#" class="read-more" data-key="read-more">Đọc thêm <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+
+                <!-- Post 2 -->
+                <article class="post-card" data-category="design" data-aos="fade-up" data-aos-delay="200">
+                    <div class="post-image">
+                        <img src="https://images.unsplash.com/photo-1558655146-9f40138edfeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="UI/UX Trends">
+                    </div>
+                    <div class="post-content">
+                        <div class="post-meta">
+                            <span class="post-category" data-key="design">Thiết kế</span>
+                            <span class="post-date">10/10/2025</span>
+                        </div>
+                        <h3 data-key="post2-title">Xu hướng UI/UX Design 2025: Minimalism & AI Integration</h3>
+                        <p data-key="post2-excerpt">
+                            Tìm hiểu về những xu hướng thiết kế mới nhất trong năm 2025. 
+                            Minimalism kết hợp với AI tạo nên trải nghiệm độc đáo...
+                        </p>
+                        <div class="post-tags">
+                            <span class="tag">UI/UX</span>
+                            <span class="tag">Design</span>
+                            <span class="tag">Trends</span>
+                        </div>
+                        <a href="#" class="read-more" data-key="read-more">Đọc thêm <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+
+                <!-- Post 3 -->
+                <article class="post-card" data-category="business" data-aos="fade-up" data-aos-delay="300">
+                    <div class="post-image">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Digital Transformation">
+                    </div>
+                    <div class="post-content">
+                        <div class="post-meta">
+                            <span class="post-category" data-key="business">Kinh doanh</span>
+                            <span class="post-date">08/10/2025</span>
+                        </div>
+                        <h3 data-key="post3-title">Chuyển đổi số cho SME: Roadmap thực tế từ A-Z</h3>
+                        <p data-key="post3-excerpt">
+                            Hướng dẫn chi tiết về chuyển đổi số dành cho doanh nghiệp vừa và nhỏ. 
+                            Từ đánh giá hiện trạng đến triển khai thực tế...
+                        </p>
+                        <div class="post-tags">
+                            <span class="tag">Digital Transform</span>
+                            <span class="tag">SME</span>
+                            <span class="tag">Strategy</span>
+                        </div>
+                        <a href="#" class="read-more" data-key="read-more">Đọc thêm <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+
+                <!-- Post 4 -->
+                <article class="post-card" data-category="tutorials" data-aos="fade-up" data-aos-delay="400">
+                    <div class="post-image">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Docker Tutorial">
+                    </div>
+                    <div class="post-content">
+                        <div class="post-meta">
+                            <span class="post-category" data-key="tutorials">Hướng dẫn</span>
+                            <span class="post-date">05/10/2025</span>
+                        </div>
+                        <h3 data-key="post4-title">Docker cho người mới bắt đầu: Setup môi trường development</h3>
+                        <p data-key="post4-excerpt">
+                            Hướng dẫn từ cơ bản đến nâng cao về Docker. 
+                            Thiết lập môi trường development hiệu quả với containers...
+                        </p>
+                        <div class="post-tags">
+                            <span class="tag">Docker</span>
+                            <span class="tag">DevOps</span>
+                            <span class="tag">Tutorial</span>
+                        </div>
+                        <a href="#" class="read-more" data-key="read-more">Đọc thêm <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+
+                <!-- Post 5 -->
+                <article class="post-card" data-category="ai" data-aos="fade-up" data-aos-delay="500">
+                    <div class="post-image">
+                        <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Machine Learning">
+                    </div>
+                    <div class="post-content">
+                        <div class="post-meta">
+                            <span class="post-category" data-key="ai-tech">AI & Tech</span>
+                            <span class="post-date">03/10/2025</span>
+                        </div>
+                        <h3 data-key="post5-title">Machine Learning trong Web Development: Ứng dụng thực tế</h3>
+                        <p data-key="post5-excerpt">
+                            Tìm hiểu cách áp dụng Machine Learning vào các dự án web development. 
+                            Recommendation systems, chatbots và nhiều hơn nữa...
+                        </p>
+                        <div class="post-tags">
+                            <span class="tag">Machine Learning</span>
+                            <span class="tag">Web Dev</span>
+                            <span class="tag">AI</span>
+                        </div>
+                        <a href="#" class="read-more" data-key="read-more">Đọc thêm <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+
+                <!-- Post 6 -->
+                <article class="post-card" data-category="development" data-aos="fade-up" data-aos-delay="600">
+                    <div class="post-image">
+                        <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="API Security">
+                    </div>
+                    <div class="post-content">
+                        <div class="post-meta">
+                            <span class="post-category" data-key="development">Phát triển</span>
+                            <span class="post-date">01/10/2025</span>
+                        </div>
+                        <h3 data-key="post6-title">API Security Best Practices: Bảo mật REST API hiệu quả</h3>
+                        <p data-key="post6-excerpt">
+                            Hướng dẫn toàn diện về bảo mật API. Authentication, authorization, 
+                            rate limiting và các biện pháp bảo vệ khác...
+                        </p>
+                        <div class="post-tags">
+                            <span class="tag">API</span>
+                            <span class="tag">Security</span>
+                            <span class="tag">Backend</span>
+                        </div>
+                        <a href="#" class="read-more" data-key="read-more">Đọc thêm <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Load More -->
+            <div class="load-more-section" data-aos="fade-up">
+                <button class="btn btn-outline btn-large" data-key="load-more">Tải thêm bài viết</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Signup -->
+    <section class="newsletter-section">
+        <div class="container">
+            <div class="newsletter-content" data-aos="fade-up">
+                <h2 data-key="newsletter-title">Đăng ký nhận bản tin</h2>
+                <p data-key="newsletter-description">
+                    Nhận những bài viết mới nhất và insights về công nghệ từ COVASOL. 
+                    Chúng tôi sẽ gửi bạn nội dung chất lượng mỗi tuần.
+                </p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Email của bạn" data-key="newsletter-email" required>
+                    <button type="submit" class="btn btn-primary" data-key="subscribe">Đăng ký</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="assets/img/logo.png" alt="COVASOL Logo">
+                    <span>COVASOL</span>
+                </div>
+                <div class="footer-text">
+                    <p>&copy; 2025 COVASOL. All rights reserved.</p>
+                    <p>Core Value. Smart Solutions.</p>
+                </div>
+            </div>
+        </div>
+        <!-- Visitor Stats Widget -->
+        <div class="visitor-stats-footer">
+            <div class="container">
+                <div class="stats-section">
+                    <h3 class="stats-title">
+                        <i class="fas fa-chart-line"></i>
+                        <span data-key="visitor-stats-title">Thống kê truy cập</span>
+                    </h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-number" id="total-visitors">0</div>
+                                <div class="stat-label" data-key="visitor-stats-total">Tổng lượt truy cập</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-number" id="today-visitors">0</div>
+                                <div class="stat-label" data-key="visitor-stats-today">Hôm nay</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon online-indicator">
+                                <i class="fas fa-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-number" id="online-users">0</div>
+                                <div class="stat-label" data-key="visitor-stats-online">Đang online</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="back-to-top">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="assets/js/translations.js"></script>
+
+    <script src="assets/js/script.js"></script>
+</body>
+</html>

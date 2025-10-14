@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sản phẩm | COVASOL</title>
+    <meta name="description" content="Khám phá các sản phẩm công nghệ độc quyền của COVASOL - Giải pháp SaaS, AI Tools và các công cụ tự động hóa">
+    
+    <!-- Fonts - Vietnamese Optimized -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/img/logo.png">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading" class="loading-screen">
+        <div class="loading-content">
+            <img src="assets/img/logo.png" alt="COVASOL Logo" class="loading-logo">
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="assets/img/logo.png" alt="COVASOL Logo">
+                <a href="index.html"><span>COVASOL</span></a>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link" data-key="nav-home">Trang chủ</a>
+                <a href="index.html#services" class="nav-link" data-key="nav-services">Dịch vụ</a>
+                <a href="products.html" class="nav-link active" data-key="nav-products">Sản phẩm</a>
+                <a href="blog.html" class="nav-link" data-key="nav-blog">Blog</a>
+                <a href="index.html#about" class="nav-link" data-key="nav-about">Về chúng tôi</a>
+                <a href="index.html#reviews" class="nav-link" data-key="nav-reviews">Đánh giá</a>
+                <a href="index.html#contact" class="nav-link" data-key="nav-contact">Liên hệ</a>
+            </div>
+            
+            <!-- Navigation Actions -->
+            <div class="nav-actions">
+                <a href="index.html#contact" class="nav-cta" data-key="nav-cta">Tư vấn miễn phí</a>
+                
+                <!-- Language Switcher -->
+                <div class="language-switcher">
+                    <div class="language-dropdown">
+                        <button class="lang-btn" id="langBtn">
+                            <i class="fas fa-globe"></i>
+                            <span id="currentLang">VI</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="lang-menu" id="langMenu">
+                            <button class="lang-option active" data-lang="vi">
+                                <img src="https://flagcdn.com/w20/vn.png" alt="Vietnamese">
+                                <span>Tiếng Việt</span>
+                            </button>
+                            <button class="lang-option" data-lang="en">
+                                <img src="https://flagcdn.com/w20/us.png" alt="English">
+                                <span>English</span>
+                            </button>
+                            <button class="lang-option" data-lang="fr">
+                                <img src="https://flagcdn.com/w20/fr.png" alt="French">
+                                <span>Français</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="page-hero products-hero">
+        <div class="hero-container">
+            <div class="hero-content" data-aos="fade-up" data-aos-duration="1000">
+                <h1 class="page-title" data-key="products-title">Sản phẩm của COVASOL</h1>
+                <p class="page-description" data-key="products-description">
+                    Khám phá các sản phẩm công nghệ độc quyền được phát triển bởi COVASOL. 
+                    Từ công cụ SaaS đến AI Assistant, chúng tôi tạo ra những giải pháp thông minh 
+                    giúp tối ưu hóa quy trình làm việc của bạn.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Grid -->
+    <section class="products-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 data-key="products-grid-title">Bộ sưu tập sản phẩm</h2>
+                <p data-key="products-grid-subtitle">Các giải pháp công nghệ được thiết kế để thay đổi cách bạn làm việc</p>
+            </div>
+            
+            <div class="products-grid">
+                <!-- Product 1: CovaFlow -->
+                <div class="product-card featured" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="CovaFlow">
+                        <div class="product-badge" data-key="featured">Nổi bật</div>
+                    </div>
+                    <div class="product-content">
+                        <h3 data-key="product1-name">CovaFlow</h3>
+                        <p class="product-category" data-key="product1-category">Workflow Management</p>
+                        <p class="product-description" data-key="product1-desc">
+                            Nền tảng quản lý quy trình làm việc thông minh với AI tích hợp. 
+                            Tự động hóa task, theo dõi tiến độ và tối ưu hiệu suất team.
+                        </p>
+                        <div class="product-features">
+                            <span class="feature-tag" data-key="ai-powered">AI-Powered</span>
+                            <span class="feature-tag" data-key="real-time">Real-time</span>
+                            <span class="feature-tag" data-key="cloud-based">Cloud-based</span>
+                        </div>
+                        <div class="product-actions">
+                            <a href="#" class="btn btn-primary" data-key="try-free">Dùng thử miễn phí</a>
+                            <a href="#" class="btn btn-outline" data-key="learn-more">Tìm hiểu thêm</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 2: CovaCRM -->
+                <div class="product-card" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="CovaCRM">
+                    </div>
+                    <div class="product-content">
+                        <h3 data-key="product2-name">CovaCRM</h3>
+                        <p class="product-category" data-key="product2-category">Customer Management</p>
+                        <p class="product-description" data-key="product2-desc">
+                            Hệ thống CRM thông minh giúp quản lý khách hàng hiệu quả. 
+                            Tích hợp chatbot AI và analytics chi tiết.
+                        </p>
+                        <div class="product-features">
+                            <span class="feature-tag" data-key="chatbot">Chatbot AI</span>
+                            <span class="feature-tag" data-key="analytics">Analytics</span>
+                        </div>
+                        <div class="product-actions">
+                            <a href="#" class="btn btn-primary" data-key="demo">Xem Demo</a>
+                            <a href="#" class="btn btn-outline" data-key="learn-more">Tìm hiểu thêm</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 3: CovaAI -->
+                <div class="product-card" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="CovaAI">
+                        <div class="product-badge new" data-key="new">Mới</div>
+                    </div>
+                    <div class="product-content">
+                        <h3 data-key="product3-name">CovaAI Assistant</h3>
+                        <p class="product-category" data-key="product3-category">AI Assistant</p>
+                        <p class="product-description" data-key="product3-desc">
+                            Trợ lý AI thông minh hỗ trợ viết nội dung, phân tích dữ liệu 
+                            và tự động hóa các tác vụ hàng ngày.
+                        </p>
+                        <div class="product-features">
+                            <span class="feature-tag" data-key="content-generation">Content Gen</span>
+                            <span class="feature-tag" data-key="data-analysis">Data Analysis</span>
+                        </div>
+                        <div class="product-actions">
+                            <a href="#" class="btn btn-primary" data-key="try-beta">Dùng thử Beta</a>
+                            <a href="#" class="btn btn-outline" data-key="learn-more">Tìm hiểu thêm</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 4: CovaSync -->
+                <div class="product-card" data-aos="zoom-in" data-aos-delay="400">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1558655146-9f40138edfeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="CovaSync">
+                    </div>
+                    <div class="product-content">
+                        <h3 data-key="product4-name">CovaSync</h3>
+                        <p class="product-category" data-key="product4-category">Integration Platform</p>
+                        <p class="product-description" data-key="product4-desc">
+                            Nền tảng tích hợp và đồng bộ dữ liệu giữa các ứng dụng. 
+                            Kết nối mọi thứ trong hệ sinh thái công nghệ của bạn.
+                        </p>
+                        <div class="product-features">
+                            <span class="feature-tag" data-key="integration">Integration</span>
+                            <span class="feature-tag" data-key="sync">Auto-Sync</span>
+                        </div>
+                        <div class="product-actions">
+                            <a href="#" class="btn btn-primary" data-key="get-started">Bắt đầu</a>
+                            <a href="#" class="btn btn-outline" data-key="learn-more">Tìm hiểu thêm</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 5: CovaAnalytics -->
+                <div class="product-card" data-aos="zoom-in" data-aos-delay="500">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="CovaAnalytics">
+                    </div>
+                    <div class="product-content">
+                        <h3 data-key="product5-name">CovaAnalytics</h3>
+                        <p class="product-category" data-key="product5-category">Business Intelligence</p>
+                        <p class="product-description" data-key="product5-desc">
+                            Công cụ phân tích dữ liệu và business intelligence. 
+                            Dashboard trực quan với báo cáo thông minh và dự đoán AI.
+                        </p>
+                        <div class="product-features">
+                            <span class="feature-tag" data-key="bi">Business Intelligence</span>
+                            <span class="feature-tag" data-key="predictive">Predictive AI</span>
+                        </div>
+                        <div class="product-actions">
+                            <a href="#" class="btn btn-primary" data-key="explore">Khám phá</a>
+                            <a href="#" class="btn btn-outline" data-key="learn-more">Tìm hiểu thêm</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 6: CovaSecure -->
+                <div class="product-card" data-aos="zoom-in" data-aos-delay="600">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="CovaSecure">
+                    </div>
+                    <div class="product-content">
+                        <h3 data-key="product6-name">CovaSecure</h3>
+                        <p class="product-category" data-key="product6-category">Security Platform</p>
+                        <p class="product-description" data-key="product6-desc">
+                            Giải pháp bảo mật toàn diện cho doanh nghiệp. 
+                            Monitoring 24/7, threat detection và incident response tự động.
+                        </p>
+                        <div class="product-features">
+                            <span class="feature-tag" data-key="security">Security</span>
+                            <span class="feature-tag" data-key="monitoring">24/7 Monitoring</span>
+                        </div>
+                        <div class="product-actions">
+                            <a href="#" class="btn btn-primary" data-key="contact-sales">Liên hệ Sales</a>
+                            <a href="#" class="btn btn-outline" data-key="learn-more">Tìm hiểu thêm</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="products-cta">
+        <div class="container">
+            <div class="cta-content" data-aos="fade-up">
+                <h2 data-key="cta-title">Sẵn sàng trải nghiệm sản phẩm của chúng tôi?</h2>
+                <p data-key="cta-description">
+                    Liên hệ với đội ngũ COVASOL để được tư vấn chi tiết về sản phẩm phù hợp với nhu cầu của bạn.
+                </p>
+                <div class="cta-buttons">
+                    <a href="index.html#contact" class="btn btn-primary btn-large" data-key="contact-now">Liên hệ ngay</a>
+                    <a href="#" class="btn btn-outline btn-large" data-key="schedule-demo">Đặt lịch demo</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="assets/img/logo.png" alt="COVASOL Logo">
+                    <span>COVASOL</span>
+                </div>
+                <div class="footer-text">
+                    <p>&copy; 2025 COVASOL. All rights reserved.</p>
+                    <p>Core Value. Smart Solutions.</p>
+                </div>
+            </div>
+        </div>
+        <!-- Visitor Stats Widget -->
+        <div class="visitor-stats-footer">
+            <div class="container">
+                <div class="stats-section">
+                    <h3 class="stats-title">
+                        <i class="fas fa-chart-line"></i>
+                        <span data-key="visitor-stats-title">Thống kê truy cập</span>
+                    </h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-number" id="total-visitors">0</div>
+                                <div class="stat-label" data-key="visitor-stats-total">Tổng lượt truy cập</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-number" id="today-visitors">0</div>
+                                <div class="stat-label" data-key="visitor-stats-today">Hôm nay</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon online-indicator">
+                                <i class="fas fa-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-number" id="online-users">0</div>
+                                <div class="stat-label" data-key="visitor-stats-online">Đang online</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="back-to-top">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="assets/js/translations.js"></script>
+
+    <script src="assets/js/script.js"></script>
+</body>
+</html>
