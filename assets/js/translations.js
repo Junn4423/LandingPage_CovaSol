@@ -133,12 +133,6 @@ const translations = {
         'service-option-uiux': 'Thiết kế UI/UX',
         'service-option-digital': 'Chuyển đổi số',
         'service-option-other': 'Khác',
-        
-        // Visitor Stats Widget
-        'visitor-stats-title': 'Thống kê truy cập',
-        'visitor-stats-total': 'Tổng lượt truy cập',
-        'visitor-stats-today': 'Hôm nay',
-        'visitor-stats-online': 'Đang online',
 
         // Products Page
         'products-title': 'Sản phẩm của COVASOL',
@@ -359,14 +353,8 @@ const translations = {
         'service-option-mobile': 'Mobile Applications',
         'service-option-ecommerce': 'E-commerce',
         'service-option-uiux': 'UI/UX Design',
-        'service-option-digital': 'Digital transformation',
-        'service-option-other': 'Other',
-        
-        // Visitor Stats Widget
-        'visitor-stats-title': 'Visitor Statistics',
-        'visitor-stats-total': 'Total Visitors',
-        'visitor-stats-today': 'Today',
-        'visitor-stats-online': 'Online Now'
+        'service-option-digital': 'Digital Transformation',
+        'service-option-other': 'Other'
     },
     
     fr: {
@@ -488,13 +476,7 @@ const translations = {
         'service-option-ecommerce': 'Commerce électronique',
         'service-option-uiux': 'Design UI/UX',
         'service-option-digital': 'Transformation numérique',
-        'service-option-other': 'Autre',
-        
-        // Visitor Stats Widget
-        'visitor-stats-title': 'Statistiques visiteurs',
-        'visitor-stats-total': 'Total des visiteurs',
-        'visitor-stats-today': 'Aujourd\'hui',
-        'visitor-stats-online': 'En ligne maintenant'
+        'service-option-other': 'Autre'
     }
 };
 
