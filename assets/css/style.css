@@ -112,6 +112,13 @@ ul {
   list-style: none;
 }
 
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
 /* ============================================================================
    LOADING SCREEN
    ============================================================================ */
@@ -2006,6 +2013,11 @@ section {
   .nav-container {
     padding: 0 30px;
   }
+
+  .products-grid,
+  .posts-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
   
   .services-grid {
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -2054,6 +2066,22 @@ section {
   
   .reviews-grid {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  .products-grid,
+  .posts-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+
+  .page-hero {
+    padding: 100px 0 70px;
+    text-align: center;
+  }
+
+  .page-description {
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
@@ -2171,6 +2199,20 @@ section {
     width: 250px;
     height: 250px;
   }
+
+  .page-hero {
+    padding: 90px 0 50px;
+  }
+
+  .page-title {
+    font-size: 2.5rem;
+  }
+
+  .page-description {
+    font-size: 1.0625rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
   
   /* Typography Mobile */
   .section-header h2 {
@@ -2202,6 +2244,18 @@ section {
     grid-template-columns: 1fr;
     gap: 20px;
   }
+
+  .products-grid,
+  .posts-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .product-card,
+  .post-card {
+    max-width: 520px;
+    margin: 0 auto;
+  }
   
   /* Buttons Mobile */
   .hero-buttons {
@@ -2215,6 +2269,39 @@ section {
     max-width: 280px;
     padding: 14px 24px;
     font-size: 1rem;
+  }
+
+  .product-content {
+    padding: 24px 20px;
+  }
+
+  .product-actions {
+    flex-direction: column;
+    align-items: stretch;
+    flex-wrap: nowrap;
+  }
+
+  .product-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+  }
+
+  .cta-buttons .btn {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .newsletter-form {
+    flex-direction: column;
+    max-width: 100%;
+  }
+
+  .newsletter-form button {
+    width: 100%;
   }
   
   /* Sections Mobile */
@@ -2295,8 +2382,8 @@ section {
   }
   
   .nav-logo img {
-    width: 120px;
-    height: 120px;
+    width: 36px;
+    height: 36px;
   }
   
   .nav-menu {
@@ -2337,6 +2424,40 @@ section {
   
   .floating-card {
     display: none; /* Hide floating cards on very small screens */
+  }
+
+  .page-hero {
+    padding: 80px 0 45px;
+  }
+
+  .page-title {
+    font-size: 2.2rem;
+  }
+
+  .page-description {
+    font-size: 1rem;
+  }
+
+  .products-grid,
+  .posts-grid {
+    gap: 20px;
+  }
+
+  .product-image {
+    height: 200px;
+  }
+
+  .post-image {
+    height: 180px;
+  }
+
+  .product-actions .btn,
+  .cta-buttons .btn {
+    max-width: 100%;
+  }
+
+  .newsletter-form {
+    gap: 12px;
   }
   
   /* Typography Small Mobile */
