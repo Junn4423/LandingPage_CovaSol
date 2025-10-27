@@ -1,4 +1,4 @@
-/* ============================================================================
+﻿/* ============================================================================
    COVASOL Landing Page Styles
    Modern, Luxurious, Powerful, Technology-focused Design
    Color Palette: #124E66, #2E8B57, #1C6E8C, #0D1B2A, #E6EBEE, #A5B452
@@ -1919,7 +1919,7 @@ section {
 }
 
 .error-message::before {
-  content: '⚠';
+  content: 'âš ';
   font-size: 0.9rem;
 }
 
@@ -2097,11 +2097,11 @@ section {
   }
   
   .nav-menu {
-    margin: 0; /* Reset margin trên mobile */
+    margin: 0; /* Reset margin trÃªn mobile */
   }
   
   .nav-actions {
-    gap: 12px; /* Giảm gap trên mobile */
+    gap: 12px; /* Giáº£m gap trÃªn mobile */
   }
   
   /* Language switcher mobile styles */
@@ -3261,10 +3261,10 @@ section {
 }
 
 .admin-page {
-    background: #f4f6fb;
+    background: #f4f9fb;
     min-height: 100vh;
     font-family: 'Be Vietnam Pro', sans-serif;
-    color: #1e293b;
+    color: #102a43;
 }
 
 .admin-page main {
@@ -3281,10 +3281,10 @@ section {
 .login-card {
     width: 100%;
     max-width: 440px;
-    padding: 2.5rem;
-    border-radius: 1.5rem;
+    padding: 2.75rem;
+    border-radius: 1.6rem;
     background: #ffffff;
-    box-shadow: 0 30px 60px rgba(15, 23, 42, 0.12);
+    box-shadow: 0 34px 70px rgba(15, 23, 42, 0.12);
     display: flex;
     flex-direction: column;
     gap: 2rem;
@@ -3323,10 +3323,10 @@ section {
 .admin-page input,
 .admin-page textarea {
     padding: 0.85rem 1rem;
-    border-radius: 0.85rem;
+    border-radius: 0.9rem;
     border: 1px solid #d8e0f0;
     background: #f9fbff;
-    color: #1e293b;
+    color: #0f172a;
     transition: all 0.2s ease;
 }
 
@@ -3349,38 +3349,133 @@ section {
 }
 
 .admin-dashboard {
-    max-width: 1240px;
+    width: 100%;
+    max-width: 1380px;
     margin: 0 auto;
     display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    align-content: flex-start;
+    min-height: calc(100vh - 6rem);
+}
+
+.dashboard-tabs {
+    order: 0;
+    flex: 0 0 280px;
+    padding: 2.5rem 2rem 2rem;
+    border-radius: 1.55rem;
+    background: linear-gradient(180deg, #0ea5e9 0%, #0f9f99 100%);
+    color: #ffffff;
+    display: flex;
     flex-direction: column;
-    gap: 2.5rem;
+    gap: 1rem;
+    position: sticky;
+    top: 4rem;
+    min-height: 520px;
+    box-shadow: 0 26px 50px rgba(14, 165, 233, 0.28);
+}
+
+.dashboard-tabs::before {
+    content: "";
+    display: block;
+    width: 92px;
+    height: 92px;
+    border-radius: 1.1rem;
+    background: rgba(255, 255, 255, 0.25) url(../img/logo.png) center/60% no-repeat;
+    margin: 0 auto 1.1rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.dashboard-tabs::after {
+    content: 'COVASOL ADMIN';
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    font-size: 0.75rem;
+    text-align: center;
+    opacity: 0.85;
+    margin-bottom: 2rem;
+}
+
+.tab-btn {
+    padding: 0.85rem 1.2rem;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid transparent;
+    color: #f8fafc;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    justify-content: flex-start;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.28);
+}
+
+.tab-btn.active {
+    background: #ffffff;
+    color: #1d4ed8;
+    border-color: #ffffff;
+    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.14);
+}
+
+.sidebar-button {
+    margin-top: auto;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.26);
+    color: #f8fafc;
+    padding: 0.9rem 1rem;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sidebar-button:hover {
+    background: rgba(255, 255, 255, 0.22);
 }
 
 .dashboard-header {
+    order: 1;
+    flex: 1 1 calc(100% - 320px);
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: 1.5rem;
+    padding: 1.75rem 2rem;
+    background: #ffffff;
+    border-radius: 1.4rem;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
 }
 
 .dashboard-brand {
     display: flex;
-    align-items: center;
-    gap: 1.25rem;
+    flex-direction: column;
+    gap: 0.35rem;
 }
 
 .dashboard-brand img {
-    height: 64px;
+    display: none;
 }
 
 .dashboard-brand h1 {
-    margin: 0 0 0.25rem;
-    font-size: 1.9rem;
+    margin: 0;
+    font-size: 2.3rem;
     color: #0f172a;
+    font-weight: 700;
 }
 
-.dashboard-brand span {
-    color: #475569;
+.dashboard-brand span,
+#currentUserLabel {
+    color: #64748b;
 }
 
 .dashboard-actions {
@@ -3392,8 +3487,8 @@ section {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    border-radius: 0.75rem;
-    padding: 0.85rem 1.35rem;
+    border-radius: 0.85rem;
+    padding: 0.9rem 1.4rem;
 }
 
 .dashboard-actions .btn-outline {
@@ -3413,40 +3508,27 @@ section {
     color: #ffffff;
 }
 
-.dashboard-tabs {
+.dashboard-banner {
+    order: 2;
+    flex: 1 1 calc(100% - 320px);
     display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-}
-
-.tab-btn {
-    padding: 0.85rem 1.6rem;
-    border-radius: 999px;
-    background: #ffffff;
-    border: 1px solid #d8e0f0;
-    color: #1e293b;
-    font-weight: 600;
-    cursor: pointer;
-    display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    transition: all 0.2s ease;
+    gap: 0.75rem;
+    padding: 1.25rem 1.75rem;
+    border-radius: 1.3rem;
+    background: rgba(254, 226, 226, 0.85);
+    border: 1px solid rgba(248, 113, 113, 0.4);
+    color: #b91c1c;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
-.tab-btn:hover {
-    border-color: #2563eb;
-    color: #1d4ed8;
-}
-
-.tab-btn.active {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(37, 99, 235, 0.25));
-    border-color: #2563eb;
-    color: #1d4ed8;
-    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.15);
+.dashboard-banner i {
+    font-size: 1.1rem;
 }
 
 .tab-panel {
-    display: block;
+    order: 3;
+    flex: 1 1 calc(100% - 320px);
 }
 
 .tab-panel.is-hidden {
@@ -3648,24 +3730,49 @@ section {
 }
 
 @media (max-width: 1200px) {
-    .dashboard-actions {
-        flex-wrap: wrap;
+    .admin-dashboard {
+        flex-direction: column;
+        gap: 1.5rem;
     }
 
-    .dashboard-actions .btn {
-        flex: 1 1 160px;
+    .dashboard-tabs {
+        position: relative;
+        top: 0;
+        flex: 1 1 100%;
+        flex-direction: row;
+        align-items: center;
         justify-content: center;
+        padding: 1.5rem;
+        border-radius: 1.35rem;
+    }
+
+    .dashboard-tabs::before,
+    .dashboard-tabs::after {
+        display: none;
+    }
+
+    .tab-btn {
+        flex: 1 1 auto;
+        justify-content: center;
+        border-radius: 999px;
+    }
+
+    .sidebar-button {
+        margin-top: 1rem;
+        width: 100%;
+    }
+
+    .dashboard-header,
+    .dashboard-banner,
+    .tab-panel {
+        order: initial;
+        flex: 1 1 100%;
     }
 }
 
 @media (max-width: 992px) {
     .admin-page main {
         padding: 3rem 1.5rem 4rem;
-    }
-
-    .dashboard-header {
-        flex-direction: column;
-        align-items: stretch;
     }
 
     .tab-grid {
@@ -3686,8 +3793,21 @@ section {
         padding: 2rem 1.5rem;
     }
 
+    .dashboard-tabs {
+        flex-direction: column;
+    }
+
+    .tab-btn {
+        width: 100%;
+    }
+
+    .dashboard-actions {
+        flex-direction: column;
+    }
+
     .dashboard-actions .btn {
-        flex: 1 1 100%;
+        width: 100%;
+        justify-content: center;
     }
 
     .modal-card {
