@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2025-10-27
+
+### Added
+- Express + SQLite backend phục vụ blog và sản phẩm
+- Script migrate/seed cơ sở dữ liệu (npm run db:migrate, npm run db:seed)
+- Trang quản trị nội bộ /admin với xác thực session
+- Trang chi tiết blog và sản phẩm tự động tải nội dung từ API
+
+### Changed
+- Blog và Products hiển thị dữ liệu động từ cơ sở dữ liệu
+- Lệnh start chuyển sang chạy Node server (node src/server.js)
+
 ## [1.0.0] - 2025-01-14
 
 ### Added

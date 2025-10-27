@@ -2,10 +2,13 @@
   "name": "covasol-landing-page",
   "version": "1.0.0",
   "description": "Landing page for COVASOL Technology Solutions - Core Value. Smart Solutions.",
-  "main": "index.html",
+  "main": "src/server.js",
   "scripts": {
-    "start": "python -m http.server 8000",
-    "dev": "live-server --port=3000 --open=/index.html",
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "static": "python -m http.server 8000",
+    "db:migrate": "node src/db/migrate.js",
+    "db:seed": "node src/db/seed.js",
     "build": "npm run minify-css && npm run minify-js",
     "minify-css": "cleancss -o assets/css/style.min.css assets/css/style.css",
     "minify-js": "uglifyjs assets/js/script.js -o assets/js/script.min.js -c -m",
@@ -35,14 +38,17 @@
     "url": "https://github.com/covasol/landing-page"
   },
   "homepage": "https://covasol.top",
-  "devDependencies": {
-    "live-server": "^1.2.2",
-    "clean-css-cli": "^5.6.2",
-    "uglify-js": "^3.17.4",
-    "html-validate": "^8.7.4",
-    "lighthouse": "^10.4.0"
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^9.4.1",
+    "connect-sqlite3": "^0.9.0",
+    "dotenv": "^16.4.1",
+    "express": "^4.19.2",
+    "express-session": "^1.17.3",
+    "helmet": "^7.0.0",
+    "morgan": "^1.10.0",
+    "slugify": "^1.6.6"
   },
-  "dependencies": {},
   "browserslist": [
     "> 1%",
     "last 2 versions",
@@ -52,5 +58,13 @@
   "engines": {
     "node": ">=14.0.0",
     "npm": ">=6.0.0"
+  },
+  "devDependencies": {
+    "clean-css-cli": "^5.6.2",
+    "html-validate": "^8.7.4",
+    "lighthouse": "^10.4.0",
+    "live-server": "^1.2.2",
+    "nodemon": "^3.0.2",
+    "uglify-js": "^3.17.4"
   }
 }

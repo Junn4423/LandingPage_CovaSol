@@ -192,3 +192,45 @@ python -m SimpleHTTPServer 8000
 **Developed with â¤ï¸ by COVASOL Team**
 
 *Core Value. Smart Solutions.*
+## Backend & Database
+
+Trang landing page hi?n có backend Node.js ph?c v? n?i dung blog và s?n ph?m t? co s? d? li?u SQLite.
+
+### Thi?t l?p nhanh
+
+```bash
+npm install
+npm run db:migrate
+npm run db:seed
+npm start
+```
+
+- Máy ch? s? ch?y t?i `http://localhost:3000` m?c d?nh.
+- D? li?u du?c luu trong thu m?c `data/` (d?ng commit các t?p `.db`).
+
+### Tài kho?n qu?n tr? m?c d?nh
+
+- Ðu?ng d?n: `http://localhost:3000/admin`
+- Tên dang nh?p: `admin`
+- M?t kh?u: `ChangeMe123!`
+
+> Nên d?i m?t kh?u b?ng cách t?o user m?i ho?c c?p nh?t tr?c ti?p trong co s? d? li?u tru?c khi dua lên môi tru?ng th?t.
+
+### Các script h? tr?
+
+| L?nh | Mô t? |
+| --- | --- |
+| `npm run db:migrate` | T?o b?ng c?n thi?t trong SQLite |
+| `npm run db:seed` | Sinh d? li?u m?u (blog, s?n ph?m, admin) |
+| `npm start` | Kh?i d?ng server Express ph?c v? website |
+
+### Các du?ng d?n m?i
+
+- `GET /api/blog` – Danh sách bài vi?t, h? tr? query `limit`, `offset`, `search`, `category`
+- `GET /api/blog/:code` – Chi ti?t bài vi?t theo `code` ho?c `slug`
+- `GET /api/products` – Danh sách s?n ph?m
+- `GET /api/products/:code` – Chi ti?t s?n ph?m
+- `POST/PUT/DELETE /api/blog` & `/api/products` – Qu?n tr? (yêu c?u dang nh?p)
+
+Trang `/blog.html`, `/blog/post/:code`, `/products.html` và `/products/item/:code` t? d?ng t?i d? li?u t? API.
+

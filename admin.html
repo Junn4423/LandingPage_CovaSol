@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | COVASOL</title>
+    <meta name="robots" content="noindex,nofollow">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="admin-page">
+    <main>
+        <section class="admin-login" id="loginSection">
+            <div class="login-card">
+                <div class="login-header">
+                    <img src="assets/img/logo.png" alt="COVASOL Logo">
+                    <h1>Đăng nhập quản trị</h1>
+                    <p>Khu vực nội bộ dành cho đội ngũ COVASOL.</p>
+                </div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginUsername">Tên đăng nhập</label>
+                        <input type="text" id="loginUsername" required autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Mật khẩu</label>
+                        <input type="password" id="loginPassword" required autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Đăng nhập</button>
+                    <p class="form-help" id="loginError"></p>
+                </form>
+            </div>
+        </section>
+
+        <section class="admin-dashboard is-hidden" id="dashboardSection">
+            <header class="dashboard-header">
+                <div class="dashboard-brand">
+                    <img src="assets/img/logo.png" alt="COVASOL Logo">
+                    <div>
+                        <h1>Trung tâm quản trị</h1>
+                        <span id="currentUserLabel">Đang đăng nhập</span>
+                    </div>
+                </div>
+                <div class="dashboard-actions">
+                    <button class="btn btn-outline" id="refreshDataBtn">
+                        <i class="fas fa-sync-alt"></i><span>Làm mới</span>
+                    </button>
+                    <button class="btn btn-outline" id="changePasswordBtn">
+                        <i class="fas fa-key"></i><span>Đổi mật khẩu</span>
+                    </button>
+                    <button class="btn btn-primary" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i><span>Đăng xuất</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="dashboard-tabs">
+                <button class="tab-btn active" data-tab="blogTab"><i class="fas fa-newspaper"></i> Blog</button>
+                <button class="tab-btn" data-tab="productTab"><i class="fas fa-cubes"></i> Sản phẩm</button>
+            </div>
+
+            <div class="tab-panel" id="blogTab">
+                <div class="tab-grid">
+                    <div class="list-card">
+                        <div class="card-heading">
+                            <h2>Bài viết</h2>
+                            <span id="blogCount">0 bài viết</span>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="admin-table" id="blogTable">
+                                <thead>
+                                    <tr>
+                                        <th>Mã</th>
+                                        <th>Tiêu đề</th>
+                                        <th>Chuyên mục</th>
+                                        <th>Ngày đăng</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="form-card">
+                        <div class="card-heading">
+                            <h2 id="blogFormTitle">Thêm bài viết</h2>
+                            <button class="btn btn-link" id="resetBlogForm">
+                                <i class="fas fa-undo"></i> Tạo mới
+                            </button>
+                        </div>
+                        <form id="blogForm">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="blogCode">Mã bài viết</label>
+                                    <input type="text" id="blogCode" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="blogTitle">Tiêu đề</label>
+                                    <input type="text" id="blogTitle" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="blogSubtitle">Phụ đề</label>
+                                    <input type="text" id="blogSubtitle">
+                                </div>
+                                <div class="form-group">
+                                    <label for="blogCategory">Chuyên mục</label>
+                                    <input type="text" id="blogCategory" placeholder="Ví dụ: Digital Transformation">
+                                </div>
+                                <div class="form-group">
+                                    <label for="blogImage">Ảnh đại diện (URL)</label>
+                                    <input type="url" id="blogImage">
+                                </div>
+                                <div class="form-group">
+                                    <label for="blogPublishedAt">Ngày đăng</label>
+                                    <input type="datetime-local" id="blogPublishedAt">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="blogExcerpt">Tóm tắt</label>
+                                <textarea id="blogExcerpt" rows="2"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="blogContent">Nội dung</label>
+                                <textarea id="blogContent" rows="6" required></textarea>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="blogTags">Tags (ngăn cách dấu phẩy)</label>
+                                    <input type="text" id="blogTags">
+                                </div>
+                                <div class="form-group">
+                                    <label for="blogKeywords">Keywords (ngăn cách dấu phẩy)</label>
+                                    <input type="text" id="blogKeywords">
+                                </div>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="blogAuthor">Người đăng</label>
+                                    <input type="text" id="blogAuthor">
+                                </div>
+                                <div class="form-group">
+                                    <label for="blogAuthorRole">Chức vụ</label>
+                                    <input type="text" id="blogAuthorRole">
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary" id="blogSubmitBtn">Lưu bài viết</button>
+                            </div>
+                            <p class="form-help" id="blogFormMessage"></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-panel is-hidden" id="productTab">
+                <div class="tab-grid">
+                    <div class="list-card">
+                        <div class="card-heading">
+                            <h2>Sản phẩm</h2>
+                            <span id="productCount">0 sản phẩm</span>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="admin-table" id="productTable">
+                                <thead>
+                                    <tr>
+                                        <th>Mã</th>
+                                        <th>Tên</th>
+                                        <th>Danh mục</th>
+                                        <th>Trạng thái</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="form-card">
+                        <div class="card-heading">
+                            <h2 id="productFormTitle">Thêm sản phẩm</h2>
+                            <button class="btn btn-link" id="resetProductForm">
+                                <i class="fas fa-undo"></i> Tạo mới
+                            </button>
+                        </div>
+                        <form id="productForm">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="productCode">Mã sản phẩm</label>
+                                    <input type="text" id="productCode" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="productNameInput">Tên sản phẩm</label>
+                                    <input type="text" id="productNameInput" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="productCategoryInput">Danh mục</label>
+                                    <input type="text" id="productCategoryInput">
+                                </div>
+                                <div class="form-group">
+                                    <label for="productImage">Ảnh minh họa (URL)</label>
+                                    <input type="url" id="productImage">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="productSummary">Mô tả ngắn</label>
+                                <textarea id="productSummary" rows="2"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="productDescription">Mô tả chi tiết</label>
+                                <textarea id="productDescription" rows="6" required></textarea>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="productFeatures">Tính năng (ngăn cách dấu phẩy)</label>
+                                    <input type="text" id="productFeatures">
+                                </div>
+                                <div class="form-group">
+                                    <label for="productHighlights">Điểm nổi bật (mỗi dòng một mục)</label>
+                                    <textarea id="productHighlights" rows="3"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="productPrimaryLabel">CTA chính</label>
+                                    <input type="text" id="productPrimaryLabel" placeholder="Ví dụ: Đăng ký demo">
+                                </div>
+                                <div class="form-group">
+                                    <label for="productPrimaryUrl">Link CTA chính</label>
+                                    <input type="text" id="productPrimaryUrl" placeholder="https://... hoặc #anchor">
+                                </div>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="productSecondaryLabel">CTA phụ</label>
+                                    <input type="text" id="productSecondaryLabel" placeholder="Ví dụ: Tải brochure">
+                                </div>
+                                <div class="form-group">
+                                    <label for="productSecondaryUrl">Link CTA phụ</label>
+                                    <input type="text" id="productSecondaryUrl">
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary" id="productSubmitBtn">Lưu sản phẩm</button>
+                            </div>
+                            <p class="form-help" id="productFormMessage"></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal-backdrop is-hidden" id="changePasswordModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Đổi mật khẩu</h2>
+                <button class="modal-close" id="closeChangePasswordBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="changePasswordForm" class="modal-body">
+                <div class="form-group">
+                    <label for="currentPassword">Mật khẩu hiện tại</label>
+                    <input type="password" id="currentPassword" required autocomplete="current-password">
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">Mật khẩu mới</label>
+                    <input type="password" id="newPassword" required minlength="8" autocomplete="new-password">
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Xác nhận mật khẩu mới</label>
+                    <input type="password" id="confirmPassword" required minlength="8" autocomplete="new-password">
+                </div>
+                <p class="form-help" id="changePasswordMessage"></p>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" id="cancelChangePasswordBtn">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Cập nhật</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="assets/js/data-service.js"></script>
+    <script src="assets/js/admin.js"></script>
+</body>
+</html>
