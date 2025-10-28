@@ -1,43 +1,81 @@
 # COVASOL Landing Page
 
-> **Core Value. Smart Solutions.**
+Core Value. Smart Solutions.
 
 Landing page hiện đại, sang trọng và chuyên nghiệp cho công ty công nghệ COVASOL.
 
-## 🚀 Tính năng
+Documentation • Demo • Contact
 
-- **Thiết kế hiện đại**: Giao diện sang trọng, quyền lực với màu sắc thương hiệu đặc trưng
-- **Responsive Design**: Tối ưu hoàn hảo trên mọi thiết bị (Desktop, Tablet, Mobile)
-- **Animation Effects**: Sử dụng thư viện AOS để tạo hiệu ứng chuyển động mượt mà
-- **Performance Optimized**: Tối ưu tốc độ tải và trải nghiệm người dùng
-- **SEO Friendly**: Cấu trúc HTML semantic, meta tags đầy đủ
-- **Interactive Elements**: Form liên hệ với validation, các hiệu ứng tương tác
-- **Accessibility**: Hỗ trợ đầy đủ các tiêu chuẩn tiếp cận
+---
 
-## 🎨 Color Palette
+## Mục lục
 
-- **Primary Dark**: `#124E66`
-- **Primary Green**: `#2E8B57`
-- **Primary Blue**: `#1C6E8C`
-- **Primary Navy**: `#0D1B2A`
-- **Primary Light**: `#E6EBEE`
-- **Accent Green**: `#A5B452`
+- [Mục lục](#mục-lục)
+- [Giới thiệu](#giới-thiệu)
+- [Tính năng](#tính-năng)
+- [Bảng màu](#bảng-màu)
+- [Công nghệ sử dụng](#công-nghệ-sử-dụng)
+- [Yêu cầu hệ thống](#yêu-cầu-hệ-thống)
+- [Cài đặt](#cài-đặt)
+- [Sử dụng](#sử-dụng)
+- [Cấu trúc dự án](#cấu-trúc-dự-án)
+- [API Endpoints](#api-endpoints)
+- [Responsive Design](#responsive-design)
+- [Scripts](#scripts)
+- [Đóng góp](#đóng-góp)
+- [Giấy phép](#giấy-phép)
+- [Liên hệ](#liên-hệ)
 
-## 📁 Cấu trúc dự án
+---
 
-```
-Covasol/
-├── index.html              # Trang chủ
-├── assets/
-│   ├── css/
-│   │   └── style.css       # Stylesheet chính
-│   └── js/
-│       └── script.js       # JavaScript chính
-└── README.md              # Tài liệu hướng dẫn
-```
+## Giới thiệu
 
-## 🛠️ Công nghệ sử dụng
+COVASOL Landing Page là một trang web hiện đại, sang trọng được thiết kế chuyên nghiệp cho công ty công nghệ COVASOL. Dự án kết hợp giữa thiết kế UI/UX tinh tế với hiệu suất cao, mang đến trải nghiệm người dùng vượt trội.
 
+### Mục tiêu
+- Truyền tải giá trị cốt lõi: "Core Value. Smart Solutions."
+- Tăng tỷ lệ chuyển đổi: Thiết kế tập trung vào call-to-action
+- Xây dựng niềm tin: Hiển thị năng lực và thành tựu của công ty
+- Tối ưu SEO: Cấu trúc semantic và meta tags đầy đủ
+
+---
+
+## Tính năng
+
+### Thiết kế & UX
+- Giao diện hiện đại: Thiết kế sang trọng với màu sắc thương hiệu đặc trưng
+- Responsive Design: Tối ưu hoàn hảo trên mọi thiết bị (Desktop, Tablet, Mobile)
+- Animation Effects: Sử dụng thư viện AOS để tạo hiệu ứng chuyển động mượt mà
+- Performance Optimized: Tối ưu tốc độ tải và trải nghiệm người dùng
+
+### Chức năng
+- Quản trị nội dung: Hệ thống admin để quản lý blog và sản phẩm
+- Phân trang thông minh: Hiển thị nội dung theo trang với pagination
+- Tìm kiếm & lọc: Tìm kiếm nâng cao và lọc theo danh mục
+- Form liên hệ: Validation đầy đủ với xử lý lỗi
+
+### SEO & Analytics
+- SEO Friendly: Cấu trúc HTML semantic, meta tags đầy đủ
+- Performance Monitoring: Lighthouse integration
+- Accessibility: Hỗ trợ đầy đủ các tiêu chuẩn tiếp cận WCAG
+
+---
+
+## Bảng màu
+
+| Màu | Hex | RGB | Sử dụng |
+|-----|-----|-----|---------|
+| **Primary Dark** | `#124E66` | `18, 78, 102` | Background chính, headings |
+| **Primary Green** | `#2E8B57` | `46, 139, 87` | Accent, buttons chính |
+| **Primary Blue** | `#1C6E8C` | `28, 110, 140` | Links, navigation |
+| **Primary Navy** | `#0D1B2A` | `13, 27, 42` | Footer, dark sections |
+| **Primary Light** | `#E6EBEE` | `230, 235, 238` | Background phụ, cards |
+
+---
+
+## Công nghệ sử dụng
+
+### Frontend
 - **HTML5**: Cấu trúc semantic, accessibility
 - **CSS3**: Grid, Flexbox, Custom Properties, Animations
 - **Vanilla JavaScript**: ES6+, Modern APIs
@@ -45,192 +83,227 @@ Covasol/
 - **Font Awesome**: Icon library
 - **Google Fonts**: Inter & Poppins typefaces
 
-## 📱 Responsive Breakpoints
+### Backend
+- **Node.js**: Runtime environment
+- **Express.js**: Web framework
+- **SQLite**: Database với better-sqlite3
+- **bcryptjs**: Password hashing
+- **express-session**: Session management
+- **Helmet**: Security headers
 
-- **Desktop**: > 1024px
-- **Tablet**: 768px - 1024px
-- **Mobile**: < 768px
-- **Small Mobile**: < 480px
-
-## 🔧 Cài đặt và sử dụng
-
-1. **Clone hoặc tải xuống dự án**
-2. **Mở file `index.html` trong trình duyệt**
-3. **Hoặc sử dụng Live Server (khuyến nghị)**
-
-### Sử dụng với Live Server (VS Code):
-
-```bash
-# Cài đặt Live Server extension trong VS Code
-# Sau đó right-click vào index.html và chọn "Open with Live Server"
-```
-
-### Hoặc sử dụng Python Simple Server:
-
-```bash
-# Python 3
-python -m http.server 8000
-
-# Python 2
-python -m SimpleHTTPServer 8000
-
-# Truy cập: http://localhost:8000
-```
-
-## 🎯 Sections Overview
-
-### 1. Hero Section
-- Giới thiệu tổng quan về COVASOL
-- Call-to-action buttons
-- Animated floating cards
-- Particle effects
-
-### 2. Services Overview
-- 6 danh mục dịch vụ chính
-- Interactive service cards
-- Hover effects và animations
-
-### 3. Service Details
-- Chi tiết từng dịch vụ cụ thể
-- Target customer information
-- Professional descriptions
-
-### 4. About Section
-- Thông tin về công ty
-- Animated statistics counter
-- Team image với hover effects
-
-### 5. Why Choose Us
-- 6 lý do chọn COVASOL
-- Feature highlights
-- Icon-based design
-
-### 6. Contact Section
-- Form liên hệ với validation
-- Thông tin liên hệ đầy đủ
-- Social media links
-- Interactive form elements
-
-## 📋 Form Features
-
-- **Real-time validation**: Kiểm tra dữ liệu ngay khi nhập
-- **Error handling**: Hiển thị lỗi rõ ràng, thân thiện
-- **Success feedback**: Thông báo thành công sau khi gửi
-- **Responsive design**: Tối ưu trên mọi thiết bị
-- **Accessibility**: Hỗ trợ screen readers
-
-## 🎨 Customization
-
-### Thay đổi màu sắc:
-```css
-:root {
-  --primary-dark: #124E66;
-  --primary-green: #2E8B57;
-  /* Cập nhật các biến CSS khác */
-}
-```
-
-### Thay đổi fonts:
-```css
-:root {
-  --font-primary: 'YourFont', sans-serif;
-  --font-heading: 'YourHeadingFont', sans-serif;
-}
-```
-
-### Thêm animations:
-```html
-<!-- Sử dụng AOS attributes -->
-<div data-aos="fade-up" data-aos-delay="100">Content</div>
-```
-
-## 📊 Performance
-
-- **Lighthouse Score**: 95+ (Performance, Accessibility, Best Practices, SEO)
-- **First Contentful Paint**: < 2s
-- **Largest Contentful Paint**: < 2.5s
-- **Cumulative Layout Shift**: < 0.1
-
-## 🔍 SEO Features
-
-- Semantic HTML structure
-- Proper heading hierarchy (h1-h6)
-- Meta description và keywords
-- Open Graph tags
-- Schema.org structured data ready
-- Image alt attributes
-- Internal linking
-
-## 📱 Browser Support
-
-- **Chrome**: 88+ ✅
-- **Firefox**: 85+ ✅
-- **Safari**: 14+ ✅
-- **Edge**: 88+ ✅
-- **Mobile browsers**: iOS 12+, Android 8+ ✅
-
-## 🚀 Performance Tips
-
-1. **Optimize images**: Sử dụng WebP format khi có thể
-2. **Lazy loading**: Implemented for better performance
-3. **Minify assets**: Minify CSS/JS cho production
-4. **CDN**: Sử dụng CDN cho external libraries
-5. **Caching**: Thiết lập browser caching headers
-
-## 📞 Contact Information
-
-- **Website**: [covasol.top](https://covasol.top)
-- **Email**: [covasol.studio@gmail.com](mailto:covasol.studio@gmail.com)
-- **Company**: COVASOL Technology Solutions
-
-## 📄 License
-
-© 2025 COVASOL. All rights reserved.
+### Development Tools
+- **Nodemon**: Auto-restart development server
+- **CleanCSS**: CSS minification
+- **UglifyJS**: JavaScript minification
+- **HTML Validate**: HTML validation
 
 ---
 
-**Developed with ❤️ by COVASOL Team**
+## Yêu cầu hệ thống
 
-*Core Value. Smart Solutions.*
-## Backend & Database
+- **Node.js**: Phiên bản 14.0+ (khuyến nghị 18+)
+- **npm**: Đi kèm với Node.js
+- **SQLite**: Tự động tạo database file
+- **Trình duyệt**: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
 
-Trang landing page hi?n c� backend Node.js ph?c v? n?i dung blog v� s?n ph?m t? co s? d? li?u SQLite.
+---
 
-### Thi?t l?p nhanh
+## Cài đặt
 
+### 1. Clone repository
+```bash
+git clone https://github.com/Junn4423/LandingPage_CovaSol.git
+cd LandingPage_CovaSol
+```
+
+### 2. Cài đặt dependencies
 ```bash
 npm install
+```
+
+### 3. Khởi tạo database
+```bash
+# Tạo cấu trúc database
 npm run db:migrate
+
+# Thêm dữ liệu mẫu
 npm run db:seed
+```
+
+### 4. Khởi động server
+```bash
+# Development mode (auto-restart)
+npm run dev
+
+# Production mode
 npm start
 ```
 
-- M�y ch? s? ch?y t?i `http://localhost:3000` m?c d?nh.
-- D? li?u du?c luu trong thu m?c `data/` (d?ng commit c�c t?p `.db`).
+Server sẽ chạy tại: `http://localhost:3000`
 
-### T�i kho?n qu?n tr? m?c d?nh
+---
 
-- �u?ng d?n: `http://localhost:3000/admin`
-- T�n dang nh?p: `admin`
-- M?t kh?u: `ChangeMe123!`
+## Sử dụng
 
-> N�n d?i m?t kh?u b?ng c�ch t?o user m?i ho?c c?p nh?t tr?c ti?p trong co s? d? li?u tru?c khi dua l�n m�i tru?ng th?t.
+### Truy cập trang web
+- **Trang chủ**: `http://localhost:3000`
+- **Sản phẩm**: `http://localhost:3000/products.html`
+- **Blog**: `http://localhost:3000/blog.html`
+- **Admin**: `http://localhost:3000/admin.html`
 
-### C�c script h? tr?
+### Tài khoản admin mặc định
+- **Username**: `admin`
+- **Password**: `ChangeMe123!`
 
-| L?nh | M� t? |
-| --- | --- |
-| `npm run db:migrate` | T?o b?ng c?n thi?t trong SQLite |
-| `npm run db:seed` | Sinh d? li?u m?u (blog, s?n ph?m, admin) |
-| `npm start` | Kh?i d?ng server Express ph?c v? website |
+⚠️ **Quan trọng**: Hãy thay đổi mật khẩu admin ngay sau lần đầu đăng nhập!
 
-### C�c du?ng d?n m?i
+### Chế độ static (không cần server)
+```bash
+npm run static
+```
+Truy cập tại: `http://localhost:8000`
 
-- `GET /api/blog` � Danh s�ch b�i vi?t, h? tr? query `limit`, `offset`, `search`, `category`
-- `GET /api/blog/:code` � Chi ti?t b�i vi?t theo `code` ho?c `slug`
-- `GET /api/products` � Danh s�ch s?n ph?m
-- `GET /api/products/:code` � Chi ti?t s?n ph?m
-- `POST/PUT/DELETE /api/blog` & `/api/products` � Qu?n tr? (y�u c?u dang nh?p)
+---
 
-Trang `/blog.html`, `/blog/post/:code`, `/products.html` v� `/products/item/:code` t? d?ng t?i d? li?u t? API.
+## Cấu trúc dự án
 
+```
+Covasol/
+├── index.html              # Trang chủ
+├── products.html           # Trang danh sách sản phẩm
+├── product-detail.html     # Trang chi tiết sản phẩm
+├── blog.html               # Trang danh sách blog
+├── blog-detail.html        # Trang chi tiết blog
+├── admin.html              # Trang quản trị
+├── assets/
+│   ├── css/
+│   │   └── style.css       # Stylesheet chính
+│   └── js/
+│       ├── script.js       # JavaScript chính
+│       ├── admin.js        # Logic admin panel
+│       ├── data-service.js # API client
+│       └── translations.js # Đa ngôn ngữ
+├── src/
+│   ├── server.js           # Express server
+│   ├── config.js           # Cấu hình ứng dụng
+│   ├── db/
+│   │   ├── index.js        # Database utilities
+│   │   ├── migrate.js      # Database migrations
+│   │   └── seed.js         # Database seeding
+│   ├── routes/
+│   │   ├── auth.js         # Authentication routes
+│   │   ├── blog.js         # Blog API routes
+│   │   └── products.js     # Product API routes
+│   └── middleware/
+│       └── auth.js         # Authentication middleware
+├── data/                   # Database files (auto-generated)
+├── node_modules/           # Dependencies (auto-generated)
+├── package.json            # Project configuration
+└── README.md              # Documentation
+```
+
+---
+
+## API Endpoints
+
+### Authentication
+```
+POST /api/auth/login     # Đăng nhập
+POST /api/auth/logout    # Đăng xuất
+```
+
+### Blog Management
+```
+GET  /api/blog           # Lấy danh sách blog
+GET  /api/blog/:code     # Lấy chi tiết blog
+POST /api/blog           # Tạo blog mới
+PUT  /api/blog/:code     # Cập nhật blog
+DELETE /api/blog/:code   # Xóa blog
+```
+
+### Product Management
+```
+GET  /api/products       # Lấy danh sách sản phẩm
+GET  /api/products/:code # Lấy chi tiết sản phẩm
+POST /api/products       # Tạo sản phẩm mới
+PUT  /api/products/:code # Cập nhật sản phẩm
+DELETE /api/products/:code # Xóa sản phẩm
+```
+
+### Query Parameters
+- `limit`: Số lượng items per page
+- `offset`: Vị trí bắt đầu
+- `search`: Từ khóa tìm kiếm
+- `tag`: Lọc theo tag
+
+---
+
+## Responsive Design
+
+| Breakpoint | Device | Grid Columns | Container Width |
+|------------|--------|--------------|-----------------|
+| `> 1024px` | Desktop | 12 | 1200px |
+| `768px - 1024px` | Tablet | 8 | 768px |
+| `480px - 768px` | Mobile | 4 | 100% |
+| `< 480px` | Small Mobile | 2 | 100% |
+
+---
+
+## Scripts
+
+| Script | Mô tả |
+|--------|-------|
+| `npm start` | Khởi động production server |
+| `npm run dev` | Khởi động development server với auto-restart |
+| `npm run static` | Chạy static server trên port 8000 |
+| `npm run db:migrate` | Tạo cấu trúc database |
+| `npm run db:seed` | Thêm dữ liệu mẫu |
+| `npm run build` | Minify CSS và JS cho production |
+| `npm run validate` | Validate HTML |
+| `npm run lighthouse` | Chạy Lighthouse audit |
+
+---
+
+## Đóng góp
+
+Chúng tôi hoan nghênh mọi đóng góp! Vui lòng:
+
+1. Fork repository
+2. Tạo feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Mở Pull Request
+
+### Quy tắc đóng góp
+- Tuân thủ coding standards
+- Viết commit messages rõ ràng
+- Test kỹ trước khi submit
+- Cập nhật documentation nếu cần
+
+---
+
+## Giấy phép
+
+Dự án này sử dụng giấy phép **UNLICENSED** - chỉ dành cho mục đích nội bộ của COVASOL.
+
+---
+
+## Liên hệ
+
+**COVASOL Technology Solutions**
+
+- **Website**: [https://covasol.top](https://covasol.top)
+- **Email**: [covasol.studio@gmail.com](mailto:covasol.studio@gmail.com)
+- **GitHub**: [https://github.com/Junn4423](https://github.com/Junn4423)
+
+### Đội ngũ phát triển
+- **Project Lead**: COVASOL Team
+- **Design**: UI/UX Team
+- **Development**: Full-stack Team
+
+---
+
+Made with love by COVASOL Team
+
+If you like this project, please give us a star!</content>
+<parameter name="filePath">c:\NgocChungIT\Chung\Covasol\README.md
