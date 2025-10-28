@@ -4,8 +4,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    const identifier = decodeURIComponent(window.location.pathname.split('/').pop());
-
     const nameEl = document.getElementById('productName');
     const summaryEl = document.getElementById('productSummary');
     const categoryEl = document.getElementById('productCategory');
@@ -16,12 +14,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     const linksEl = document.getElementById('productLinks');
     const primaryCtaEl = document.getElementById('productPrimaryCta');
 
+    function resolveIdentifier() {
+        const params = new URLSearchParams(window.location.search);
+        const fromQuery =
+            params.get('code') || params.get('id') || params.get('product');
+        if (fromQuery && fromQuery.trim()) {
+            return decodeURIComponent(fromQuery.trim());
+        }
+
+        const parts = window.location.pathname.replace(/\/+$/, '').split('/');
+        while (parts.length && !parts[parts.length - 1]) {
+            parts.pop();
+        }
+
+        const last = parts.pop();
+        if (!last || last.toLowerCase().endsWith('.html')) {
+            return null;
+        }
+
+        return decodeURIComponent(last);
+    }
+
     function renderTags(container, values) {
         container.innerHTML = '';
         if (!values || !values.length) {
             container.style.display = 'none';
             return;
         }
+
         container.style.display = '';
         values.forEach((value) => {
             const tag = document.createElement('span');
@@ -34,7 +54,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderDescription(container, description) {
         container.innerHTML = '';
         if (!description) {
-            container.innerHTML = '<p>Nội dung sản phẩm sẽ sớm được cập nhật.</p>';
+            container.innerHTML = '<p>Noi dung san pham dang duoc cap nhat.</p>';
             return;
         }
 
@@ -66,10 +86,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             container.style.display = 'none';
             return;
         }
+
         container.style.display = '';
 
         const title = document.createElement('h3');
-        title.textContent = 'Điểm nổi bật';
+        title.textContent = 'Diem noi bat';
 
         const list = document.createElement('ul');
         highlights.forEach((item) => {
@@ -100,7 +121,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (!links.length) {
-            container.innerHTML = '<li>Chưa có tài liệu nào được đính kèm.</li>';
+            container.innerHTML = '<li>Chua co tai lieu dinh kem.</li>';
             return;
         }
 
@@ -116,10 +137,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    function setPrimaryCta(product) {
+        if (!product.ctaPrimary?.label) {
+            primaryCtaEl.style.display = 'none';
+            return;
+        }
+
+        primaryCtaEl.style.display = '';
+        primaryCtaEl.textContent = product.ctaPrimary.label;
+        if (product.ctaPrimary.url) {
+            primaryCtaEl.href = product.ctaPrimary.url;
+        } else {
+            primaryCtaEl.href = `/products/item/${encodeURIComponent(product.code)}`;
+        }
+    }
+
     function applyProduct(product) {
         nameEl.textContent = product.name;
-        summaryEl.textContent = product.shortDescription || 'Giải pháp công nghệ linh hoạt cho doanh nghiệp.';
-        categoryEl.textContent = product.category || 'Giải pháp số';
+        summaryEl.textContent =
+            product.shortDescription || 'Giai phap cong nghe linh hoat cho doanh nghiep.';
+        categoryEl.textContent = product.category || 'Giai phap so';
         heroImageEl.src =
             product.imageUrl ||
             'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80';
@@ -129,36 +166,35 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderDescription(descriptionEl, product.description);
         renderHighlights(highlightsEl, product.highlights);
         renderLinks(linksEl, product);
-
-        if (product.ctaPrimary?.label) {
-            primaryCtaEl.textContent = product.ctaPrimary.label;
-            if (product.ctaPrimary.url) {
-                primaryCtaEl.href = product.ctaPrimary.url;
-            } else {
-                primaryCtaEl.href = `/products/item/${encodeURIComponent(product.code)}`;
-            }
-        } else {
-            primaryCtaEl.style.display = 'none';
-        }
+        setPrimaryCta(product);
 
         document.title = `${product.name} | COVASOL`;
     }
 
-    try {
-        const data = await window.covasolApi.fetchProduct(identifier);
-        applyProduct(data);
-    } catch (error) {
-        console.error('Không thể tải sản phẩm:', error);
+    function showError(message) {
+        console.error('Khong the tai san pham:', message);
         descriptionEl.innerHTML = `
             <div class="article-error">
-                <h2>Không tìm thấy sản phẩm</h2>
-                <p>${error.message || 'Vui lòng quay lại để chọn sản phẩm khác.'}</p>
-                <a class="btn btn-primary" href="/products.html">Quay lại danh sách</a>
+                <h2>Khong tim thay san pham</h2>
+                <p>${message || 'Vui long quay lai chon san pham khac.'}</p>
+                <a class="btn btn-primary" href="/products.html">Quay lai danh sach</a>
             </div>
         `;
         highlightsEl.style.display = 'none';
         featureTagsEl.style.display = 'none';
         primaryCtaEl.style.display = 'none';
-        document.title = 'Không tìm thấy sản phẩm | COVASOL';
+        document.title = 'Khong tim thay san pham | COVASOL';
+    }
+
+    try {
+        const identifier = resolveIdentifier();
+        if (!identifier) {
+            throw new Error('Khong xac dinh duoc ma san pham.');
+        }
+
+        const data = await window.covasolApi.fetchProduct(identifier);
+        applyProduct(data);
+    } catch (error) {
+        showError(error?.message);
     }
 });

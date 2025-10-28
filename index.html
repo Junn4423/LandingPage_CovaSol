@@ -131,6 +131,60 @@
         </div>
     </section>
 
+    <!-- Featured Products -->
+    <section id="featuredProducts" class="home-featured-products">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 data-key="home-products-title">Giải pháp nổi bật</h2>
+                <p data-key="home-products-subtitle">Các sản phẩm được cập nhật trực tiếp từ hệ thống quản trị.</p>
+            </div>
+            <div class="posts-status">
+                <div class="posts-loading" id="homeProductsLoading">
+                    <div class="spinner"></div>
+                    <span data-key="home-products-loading">Đang tải sản phẩm...</span>
+                </div>
+                <div class="posts-empty is-hidden" id="homeProductsEmpty">
+                    <i class="fas fa-box-open"></i>
+                    <p data-key="home-products-empty">Chưa có sản phẩm nào được xuất bản.</p>
+                </div>
+            </div>
+            <div class="products-grid" id="homeProductsGrid"></div>
+            <div class="section-actions" data-aos="fade-up" data-aos-delay="100">
+                <a class="btn btn-outline" href="/products.html">
+                    <span data-key="home-products-button">Xem tất cả sản phẩm</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest Blog Posts -->
+    <section id="latestBlog" class="home-latest-blog">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 data-key="home-blog-title">Bài viết mới nhất</h2>
+                <p data-key="home-blog-subtitle">Tin tức và chia sẻ từ đội ngũ chuyên gia COVASOL.</p>
+            </div>
+            <div class="posts-status">
+                <div class="posts-loading" id="homeBlogLoading">
+                    <div class="spinner"></div>
+                    <span data-key="home-blog-loading">Đang tải bài viết...</span>
+                </div>
+                <div class="posts-empty is-hidden" id="homeBlogEmpty">
+                    <i class="fas fa-newspaper"></i>
+                    <p data-key="home-blog-empty">Chưa có bài viết nào được xuất bản.</p>
+                </div>
+            </div>
+            <div class="posts-grid" id="homeBlogGrid"></div>
+            <div class="section-actions" data-aos="fade-up" data-aos-delay="100">
+                <a class="btn btn-outline" href="/blog.html">
+                    <span data-key="home-blog-button">Đọc thêm trên Blog</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
     <!-- Services Overview -->
     <section id="services" class="services-overview">
         <div class="container">
@@ -1077,6 +1131,7 @@
     <!-- Scripts -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="assets/js/translations.js"></script>
+    <script src="assets/js/data-service.js"></script>
     <script src="assets/js/script.js"></script>
 </body>
 </html>

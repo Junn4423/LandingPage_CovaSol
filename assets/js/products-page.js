@@ -54,15 +54,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const imageWrapper = document.createElement('div');
         imageWrapper.className = 'product-image';
+        const detailUrl = `/products/item/${encodeURIComponent(product.code)}`;
         imageWrapper.innerHTML = `
-            <img src="${product.imageUrl || 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80'}" alt="${product.name}">
+            <a href="${detailUrl}">
+                <img src="${product.imageUrl || 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80'}" alt="${product.name}">
+            </a>
         `;
 
         const contentWrapper = document.createElement('div');
         contentWrapper.className = 'product-content';
 
         const title = document.createElement('h3');
-        title.textContent = product.name;
+        const titleLink = document.createElement('a');
+        titleLink.href = detailUrl;
+        titleLink.textContent = product.name;
+        title.appendChild(titleLink);
 
         const category = document.createElement('p');
         category.className = 'product-category';
@@ -82,13 +88,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             const primary = document.createElement('a');
             primary.className = 'btn btn-primary';
             primary.textContent = product.ctaPrimary.label;
-            primary.href = product.ctaPrimary.url || `/products/item/${encodeURIComponent(product.code)}`;
+            primary.href = product.ctaPrimary.url || detailUrl;
             actions.appendChild(primary);
         }
 
         const learnMore = document.createElement('a');
         learnMore.className = 'btn btn-outline';
-        learnMore.href = `/products/item/${encodeURIComponent(product.code)}`;
+        learnMore.href = detailUrl;
         learnMore.textContent = product.ctaSecondary?.label || 'Tìm hiểu chi tiết';
         actions.appendChild(learnMore);
 
@@ -102,6 +108,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         card.appendChild(imageWrapper);
         card.appendChild(contentWrapper);
+
+        card.tabIndex = 0;
+        card.dataset.href = detailUrl;
+        card.addEventListener('click', (event) => {
+            if (event.target.closest('a')) return;
+            window.location.href = detailUrl;
+        });
+        card.addEventListener('keydown', (event) => {
+            if (event.key !== 'Enter' || event.target.closest('a')) return;
+            window.location.href = detailUrl;
+        });
+
         grid.appendChild(card);
     }
 

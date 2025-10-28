@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    const identifier = decodeURIComponent(window.location.pathname.split('/').pop());
     const titleEl = document.getElementById('articleTitle');
     const subtitleEl = document.getElementById('articleSubtitle');
     const categoryEl = document.getElementById('articleCategory');
@@ -16,6 +15,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     const tagsEl = document.getElementById('articleTags');
     const keywordsEl = document.getElementById('articleKeywords');
     const relatedListEl = document.getElementById('relatedPosts');
+
+    function resolveIdentifier() {
+        const params = new URLSearchParams(window.location.search);
+        const fromQuery =
+            params.get('code') || params.get('id') || params.get('blog');
+        if (fromQuery && fromQuery.trim()) {
+            return decodeURIComponent(fromQuery.trim());
+        }
+
+        const parts = window.location.pathname.replace(/\/+$/, '').split('/');
+        while (parts.length && !parts[parts.length - 1]) {
+            parts.pop();
+        }
+
+        const last = parts.pop();
+        if (!last || last.toLowerCase().endsWith('.html')) {
+            return null;
+        }
+
+        return decodeURIComponent(last);
+    }
 
     function formatDate(value) {
         try {
@@ -29,10 +49,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    function renderParagraphs(content) {
+    function splitParagraphs(content) {
         if (!content) {
-            return ['Nội dung đang được cập nhật.'];
+            return ['Noi dung bai viet dang duoc cap nhat.'];
         }
+
         return content
             .split(/\n{2,}/)
             .map((paragraph) => paragraph.trim())
@@ -45,6 +66,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             container.style.display = 'none';
             return;
         }
+
         container.style.display = '';
         values.forEach((value) => {
             const tag = document.createElement('span');
@@ -55,12 +77,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     async function loadRelatedPosts(currentCode, category) {
+        if (!relatedListEl) {
+            return;
+        }
+
+        relatedListEl.innerHTML = '<li>Dang tai bai viet lien quan...</li>';
         try {
             const posts = await window.covasolApi.fetchBlogPosts({
                 limit: 4,
                 offset: 0,
-                category: category || undefined
+                tag: category || undefined
             });
+
             relatedListEl.innerHTML = '';
             posts
                 .filter((post) => post.code !== currentCode)
@@ -78,14 +106,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                     item.appendChild(meta);
                     relatedListEl.appendChild(item);
                 });
+
+            if (!relatedListEl.children.length) {
+                relatedListEl.innerHTML = '<li>Chua co bai viet lien quan.</li>';
+            }
         } catch (error) {
-            console.error('Không thể tải bài viết liên quan:', error);
-            relatedListEl.innerHTML = '<li>Không thể tải bài viết liên quan.</li>';
+            console.error('Khong the tai bai viet lien quan:', error);
+            relatedListEl.innerHTML = '<li>Khong tai duoc danh sach lien quan.</li>';
         }
     }
 
     function renderArticle(article) {
         titleEl.textContent = article.title;
+
         if (article.subtitle) {
             subtitleEl.textContent = article.subtitle;
             subtitleEl.style.display = '';
@@ -93,9 +126,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             subtitleEl.style.display = 'none';
         }
 
-        categoryEl.textContent = article.category || 'Tin tức';
+        categoryEl.textContent = article.category || 'Tin tuc';
         authorEl.textContent = article.authorName || 'COVASOL Team';
-        authorRoleEl.textContent = article.authorRole || 'Chuyên gia nội dung';
+        authorRoleEl.textContent = article.authorRole || 'Chuyen gia noi dung';
         dateEl.textContent = formatDate(article.publishedAt);
         coverEl.src =
             article.imageUrl ||
@@ -103,7 +136,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         coverEl.alt = article.title;
 
         bodyEl.innerHTML = '';
-        renderParagraphs(article.content).forEach((paragraph) => {
+        splitParagraphs(article.content).forEach((paragraph) => {
             if (paragraph.startsWith('##')) {
                 const heading = document.createElement('h3');
                 heading.textContent = paragraph.replace(/^#+\s*/, '');
@@ -127,23 +160,32 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadRelatedPosts(article.code, article.category);
     }
 
-    try {
-        const payload = await window.covasolApi.fetchBlogPost(identifier);
-        renderArticle(payload);
-    } catch (error) {
-        console.error('Không thể tải bài viết:', error);
+    function showError(message) {
+        console.error('Khong the tai bai viet:', message);
         bodyEl.innerHTML = `
             <div class="article-error">
-                <h2>Không tìm thấy bài viết</h2>
-                <p>${error.message || 'Vui lòng quay lại trang blog để chọn bài viết khác.'}</p>
-                <a class="btn btn-primary" href="/blog.html">Quay lại Blog</a>
+                <h2>Khong tim thay bai viet</h2>
+                <p>${message || 'Vui long quay lai trang blog de chon bai viet khac.'}</p>
+                <a class="btn btn-primary" href="/blog.html">Quay lai Blog</a>
             </div>
         `;
-        document.title = 'Không tìm thấy bài viết | COVASOL';
         tagsEl.style.display = 'none';
         keywordsEl.style.display = 'none';
         if (relatedListEl) {
-            relatedListEl.innerHTML = '<li>Không có dữ liệu hiển thị.</li>';
+            relatedListEl.innerHTML = '<li>Khong co du lieu.</li>';
         }
+        document.title = 'Khong tim thay bai viet | COVASOL';
+    }
+
+    try {
+        const identifier = resolveIdentifier();
+        if (!identifier) {
+            throw new Error('Khong xac dinh duoc ma bai viet.');
+        }
+
+        const payload = await window.covasolApi.fetchBlogPost(identifier);
+        renderArticle(payload);
+    } catch (error) {
+        showError(error?.message);
     }
 });

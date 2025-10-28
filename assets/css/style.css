@@ -1123,6 +1123,19 @@ section {
   margin: 0 auto;
 }
 
+.home-featured-products .section-actions,
+.home-latest-blog .section-actions {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.home-featured-products .section-actions .btn,
+.home-latest-blog .section-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
 /* ============================================================================
    SERVICES SECTION
    ============================================================================ */
@@ -3322,8 +3335,8 @@ section {
 
 .admin-page input,
 .admin-page textarea {
-    padding: 0.85rem 1rem;
-    border-radius: 0.9rem;
+  padding: 0.85rem 1rem;
+  border-radius: 0.9rem;
     border: 1px solid #d8e0f0;
     background: #f9fbff;
     color: #0f172a;
@@ -3332,10 +3345,27 @@ section {
 
 .admin-page input:focus,
 .admin-page textarea:focus {
-    outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-    background: #ffffff;
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  background: #ffffff;
+}
+
+.admin-page .form-section-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 1.5rem 0 0.75rem;
+  color: #0f172a;
+}
+
+.admin-page .form-card .form-section-title:first-of-type {
+  margin-top: 0;
+}
+
+.admin-page .form-section-note {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin-bottom: 1rem;
 }
 
 .btn-full {

@@ -228,6 +228,18 @@ const translations = {
         'read-more': 'Đọc thêm',
         'load-more': 'Tải thêm bài viết',
         
+        // Home Dynamic Sections
+        'home-products-title': 'Giải pháp nổi bật',
+        'home-products-subtitle': 'Các sản phẩm được cập nhật trực tiếp từ hệ thống quản trị.',
+        'home-products-loading': 'Đang tải sản phẩm...',
+        'home-products-empty': 'Chưa có sản phẩm nào được xuất bản.',
+        'home-products-button': 'Xem tất cả sản phẩm',
+        'home-blog-title': 'Bài viết mới nhất',
+        'home-blog-subtitle': 'Tin tức và chia sẻ từ đội ngũ chuyên gia COVASOL.',
+        'home-blog-loading': 'Đang tải bài viết...',
+        'home-blog-empty': 'Chưa có bài viết nào được xuất bản.',
+        'home-blog-button': 'Đọc thêm trên Blog',
+        
         // Newsletter
         'newsletter-title': 'Đăng ký nhận bản tin',
         'newsletter-description': 'Nhận những bài viết mới nhất và insights về công nghệ từ COVASOL. Chúng tôi sẽ gửi bạn nội dung chất lượng mỗi tuần.',
@@ -256,6 +268,18 @@ const translations = {
         'services-title': 'Our Services',
         'services-subtitle': 'Comprehensive Technology Solutions',
         'services-description': 'From concept to deployment, we provide professional technology services to help your business grow.',
+
+        // Home Dynamic Sections
+        'home-products-title': 'Featured Solutions',
+        'home-products-subtitle': 'New solutions curated directly from the admin system.',
+        'home-products-loading': 'Loading products...',
+        'home-products-empty': 'No products have been published yet.',
+        'home-products-button': 'View all products',
+        'home-blog-title': 'Latest Insights',
+        'home-blog-subtitle': 'News and articles from the COVASOL expert team.',
+        'home-blog-loading': 'Loading articles...',
+        'home-blog-empty': 'No articles have been published yet.',
+        'home-blog-button': 'Read more on the Blog',
         
         // Service Cards
         'service1-title': 'Software Development',
@@ -378,6 +402,18 @@ const translations = {
         'services-title': 'Nos Services',
         'services-subtitle': 'Solutions technologiques complètes',
         'services-description': 'De la conception au déploiement, nous fournissons des services technologiques professionnels pour aider votre entreprise à croître.',
+
+        // Home Dynamic Sections
+        'home-products-title': 'Solutions à la une',
+        'home-products-subtitle': 'Les solutions mises à jour directement depuis le panneau d’administration.',
+        'home-products-loading': 'Chargement des solutions...',
+        'home-products-empty': 'Aucun produit n’a encore été publié.',
+        'home-products-button': 'Voir tous les produits',
+        'home-blog-title': 'Actualités récentes',
+        'home-blog-subtitle': 'Articles et analyses publiés par l’équipe d’experts COVASOL.',
+        'home-blog-loading': 'Chargement des articles...',
+        'home-blog-empty': 'Aucun article n’a encore été publié.',
+        'home-blog-button': 'Lire plus sur le blog',
         
         // Service Cards
         'service1-title': 'Développement logiciel',

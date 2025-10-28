@@ -113,11 +113,14 @@ document.addEventListener('DOMContentLoaded', () => {
         article.dataset.category = slugifyCategory(post.category);
         article.setAttribute('data-aos', 'fade-up');
         article.setAttribute('data-aos-delay', `${(index % 6) * 100}`);
+        const detailUrl = `/blog/post/${encodeURIComponent(post.code)}`;
 
         const imageWrapper = document.createElement('div');
         imageWrapper.className = 'post-image';
         imageWrapper.innerHTML = `
-            <img src="${post.imageUrl || 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80'}" alt="${post.title}">
+            <a href="${detailUrl}">
+                <img src="${post.imageUrl || 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80'}" alt="${post.title}">
+            </a>
         `;
 
         const contentWrapper = document.createElement('div');
@@ -131,7 +134,10 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         const titleEl = document.createElement('h3');
-        titleEl.textContent = post.title;
+        const titleLink = document.createElement('a');
+        titleLink.href = detailUrl;
+        titleLink.textContent = post.title;
+        titleEl.appendChild(titleLink);
 
         const excerptEl = document.createElement('p');
         excerptEl.textContent = post.excerpt || (post.content ? `${post.content.slice(0, 140)}...` : '');
@@ -147,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const readMoreLink = document.createElement('a');
         readMoreLink.className = 'read-more';
-        readMoreLink.href = `/blog/post/${encodeURIComponent(post.code)}`;
+        readMoreLink.href = detailUrl;
         readMoreLink.innerHTML = 'Đọc thêm <i class="fas fa-arrow-right"></i>';
 
         contentWrapper.appendChild(metaWrapper);
@@ -160,6 +166,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         article.appendChild(imageWrapper);
         article.appendChild(contentWrapper);
+
+        article.tabIndex = 0;
+        article.dataset.href = detailUrl;
+        article.addEventListener('click', (event) => {
+            if (event.target.closest('a')) return;
+            window.location.href = detailUrl;
+        });
+        article.addEventListener('keydown', (event) => {
+            if (event.key !== 'Enter' || event.target.closest('a')) return;
+            window.location.href = detailUrl;
+        });
 
         postsGrid.appendChild(article);
     }

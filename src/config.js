@@ -10,7 +10,7 @@ const dataDir = path.join(__dirname, '..', '..', 'data');
 module.exports = {
   env,
   isProduction,
-  port: parseInt(process.env.PORT, 10) || 3000,
+  port: parseInt(process.env.PORT, 10) || 3001,
   sessionSecret: process.env.SESSION_SECRET || 'covasol-dev-secret',
   dbFile: process.env.DB_FILE || path.join(dataDir, 'covasol.db'),
   sessionStoreFile: process.env.SESSION_DB_FILE || path.join(dataDir, 'sessions.sqlite'),

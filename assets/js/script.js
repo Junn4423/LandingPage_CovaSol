@@ -10,6 +10,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================================================
     
     let currentLanguage = localStorage.getItem('covasol-language') || 'vi';
+
+    function translate(key, fallback = '') {
+        const langPack = translations[currentLanguage] || {};
+        if (langPack && Object.prototype.hasOwnProperty.call(langPack, key)) {
+            return langPack[key];
+        }
+        return fallback || key;
+    }
     
     // Language switcher elements
     const langBtn = document.getElementById('langBtn');
@@ -877,6 +885,294 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+    // ============================================================================
+    // HOMEPAGE DYNAMIC CONTENT (API-DRIVEN SECTIONS)
+    // ============================================================================
+
+    const apiClient = window.covasolApi;
+    const homeProductsGrid = document.getElementById('homeProductsGrid');
+    const homeProductsLoading = document.getElementById('homeProductsLoading');
+    const homeProductsEmpty = document.getElementById('homeProductsEmpty');
+    const homeBlogGrid = document.getElementById('homeBlogGrid');
+    const homeBlogLoading = document.getElementById('homeBlogLoading');
+    const homeBlogEmpty = document.getElementById('homeBlogEmpty');
+
+    function setVisibility(element, visible) {
+        if (!element) return;
+        element.classList.toggle('is-hidden', !visible);
+    }
+
+    function truncateText(value, limit = 140) {
+        if (!value) return '';
+        if (value.length <= limit) return value;
+        return `${value.slice(0, limit).trim()}…`;
+    }
+
+    function formatLocalizedDate(value) {
+        if (!value) return '';
+        try {
+            return new Date(value).toLocaleDateString('vi-VN', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        } catch (error) {
+            return value;
+        }
+    }
+
+    function buildHomeProductCard(product, index) {
+        const detailUrl = `/products/item/${encodeURIComponent(product.code)}`;
+        const card = document.createElement('article');
+        card.className = 'product-card';
+        card.setAttribute('data-aos', 'zoom-in');
+        card.setAttribute('data-aos-delay', `${(index % 6) * 100}`);
+
+        const imageWrapper = document.createElement('div');
+        imageWrapper.className = 'product-image';
+        const imageLink = document.createElement('a');
+        imageLink.href = detailUrl;
+        const img = document.createElement('img');
+        img.src =
+            product.imageUrl ||
+            'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80';
+        img.alt = product.name || 'COVASOL Product';
+        imageLink.appendChild(img);
+        imageWrapper.appendChild(imageLink);
+
+        const contentWrapper = document.createElement('div');
+        contentWrapper.className = 'product-content';
+
+        const titleEl = document.createElement('h3');
+        const titleLink = document.createElement('a');
+        titleLink.href = detailUrl;
+        titleLink.textContent = product.name || 'COVASOL Solution';
+        titleEl.appendChild(titleLink);
+
+        const categoryEl = document.createElement('p');
+        categoryEl.className = 'product-category';
+        categoryEl.textContent = product.category || 'Giải pháp số';
+
+        const descriptionEl = document.createElement('p');
+        descriptionEl.className = 'product-description';
+        descriptionEl.textContent =
+            product.shortDescription ||
+            truncateText(product.description, 160) ||
+            'Giải pháp công nghệ linh hoạt cho doanh nghiệp.';
+
+        contentWrapper.appendChild(titleEl);
+        contentWrapper.appendChild(categoryEl);
+        contentWrapper.appendChild(descriptionEl);
+
+        if (product.featureTags && product.featureTags.length) {
+            const featureWrapper = document.createElement('div');
+            featureWrapper.className = 'product-features';
+            product.featureTags.slice(0, 3).forEach((feature) => {
+                const tag = document.createElement('span');
+                tag.className = 'feature-tag';
+                tag.textContent = feature;
+                featureWrapper.appendChild(tag);
+            });
+            contentWrapper.appendChild(featureWrapper);
+        }
+
+        const actionsWrapper = document.createElement('div');
+        actionsWrapper.className = 'product-actions';
+
+        if (product.ctaPrimary?.label) {
+            const primaryLink = document.createElement('a');
+            primaryLink.className = 'btn btn-primary';
+            primaryLink.href = product.ctaPrimary.url || detailUrl;
+            primaryLink.textContent = product.ctaPrimary.label;
+            actionsWrapper.appendChild(primaryLink);
+        }
+
+        const detailLink = document.createElement('a');
+        detailLink.className = 'btn btn-outline';
+        detailLink.href = detailUrl;
+        const detailLabel = document.createElement('span');
+        detailLabel.dataset.key = 'read-more';
+        detailLabel.textContent = translate('read-more', 'Đọc thêm');
+        const detailIcon = document.createElement('i');
+        detailIcon.className = 'fas fa-arrow-right';
+        detailLink.appendChild(detailLabel);
+        detailLink.appendChild(detailIcon);
+        actionsWrapper.appendChild(detailLink);
+
+        contentWrapper.appendChild(actionsWrapper);
+
+        card.appendChild(imageWrapper);
+        card.appendChild(contentWrapper);
+
+        card.tabIndex = 0;
+        card.addEventListener('click', (event) => {
+            if (event.target.closest('a')) return;
+            window.location.href = detailUrl;
+        });
+        card.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && !event.target.closest('a')) {
+                window.location.href = detailUrl;
+            }
+        });
+
+        return card;
+    }
+
+    function buildHomePostCard(post, index) {
+        const detailUrl = `/blog/post/${encodeURIComponent(post.code)}`;
+        const article = document.createElement('article');
+        article.className = 'post-card';
+        article.setAttribute('data-aos', 'fade-up');
+        article.setAttribute('data-aos-delay', `${(index % 6) * 100}`);
+
+        const imageWrapper = document.createElement('div');
+        imageWrapper.className = 'post-image';
+        const imageLink = document.createElement('a');
+        imageLink.href = detailUrl;
+        const img = document.createElement('img');
+        img.src =
+            post.imageUrl ||
+            'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80';
+        img.alt = post.title || 'COVASOL Blog';
+        imageLink.appendChild(img);
+        imageWrapper.appendChild(imageLink);
+
+        const contentWrapper = document.createElement('div');
+        contentWrapper.className = 'post-content';
+
+        const metaWrapper = document.createElement('div');
+        metaWrapper.className = 'post-meta';
+        const categoryEl = document.createElement('span');
+        categoryEl.className = 'post-category';
+        categoryEl.textContent = post.category || 'Tin tức';
+        const dateEl = document.createElement('span');
+        dateEl.className = 'post-date';
+        dateEl.textContent = formatLocalizedDate(post.publishedAt);
+        metaWrapper.appendChild(categoryEl);
+        metaWrapper.appendChild(dateEl);
+
+        const titleEl = document.createElement('h3');
+        const titleLink = document.createElement('a');
+        titleLink.href = detailUrl;
+        titleLink.textContent = post.title || 'COVASOL Insight';
+        titleEl.appendChild(titleLink);
+
+        const excerptEl = document.createElement('p');
+        excerptEl.textContent = post.excerpt || truncateText(post.content, 160);
+
+        contentWrapper.appendChild(metaWrapper);
+        contentWrapper.appendChild(titleEl);
+        contentWrapper.appendChild(excerptEl);
+
+        if (post.tags && post.tags.length) {
+            const tagsWrapper = document.createElement('div');
+            tagsWrapper.className = 'post-tags';
+            post.tags.slice(0, 3).forEach((tag) => {
+                const tagEl = document.createElement('span');
+                tagEl.className = 'tag';
+                tagEl.textContent = tag;
+                tagsWrapper.appendChild(tagEl);
+            });
+            contentWrapper.appendChild(tagsWrapper);
+        }
+
+        const readMoreLink = document.createElement('a');
+        readMoreLink.className = 'read-more';
+        readMoreLink.href = detailUrl;
+        const readMoreLabel = document.createElement('span');
+        readMoreLabel.dataset.key = 'read-more';
+        readMoreLabel.textContent = translate('read-more', 'Đọc thêm');
+        const readMoreIcon = document.createElement('i');
+        readMoreIcon.className = 'fas fa-arrow-right';
+        readMoreLink.appendChild(readMoreLabel);
+        readMoreLink.appendChild(readMoreIcon);
+        contentWrapper.appendChild(readMoreLink);
+
+        article.appendChild(imageWrapper);
+        article.appendChild(contentWrapper);
+
+        article.tabIndex = 0;
+        article.addEventListener('click', (event) => {
+            if (event.target.closest('a')) return;
+            window.location.href = detailUrl;
+        });
+        article.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && !event.target.closest('a')) {
+                window.location.href = detailUrl;
+            }
+        });
+
+        return article;
+    }
+
+    async function loadHomeProducts() {
+        if (!homeProductsGrid || !apiClient) return;
+        setVisibility(homeProductsLoading, true);
+        setVisibility(homeProductsEmpty, false);
+        homeProductsGrid.innerHTML = '';
+
+        try {
+            const products = await apiClient.fetchProducts({ limit: 3, offset: 0 });
+            if (!products || !products.length) {
+                setVisibility(homeProductsEmpty, true);
+                return;
+            }
+            products.slice(0, 3).forEach((product, index) => {
+                homeProductsGrid.appendChild(buildHomeProductCard(product, index));
+            });
+            if (typeof AOS !== 'undefined') {
+                AOS.refresh();
+            }
+        } catch (error) {
+            setVisibility(homeProductsEmpty, true);
+            const emptyText = homeProductsEmpty?.querySelector('p');
+            if (emptyText) {
+                emptyText.textContent = error.message || translate('home-products-empty', 'Không thể tải sản phẩm.');
+            }
+        } finally {
+            setVisibility(homeProductsLoading, false);
+        }
+    }
+
+    async function loadHomeBlogPosts() {
+        if (!homeBlogGrid || !apiClient) return;
+        setVisibility(homeBlogLoading, true);
+        setVisibility(homeBlogEmpty, false);
+        homeBlogGrid.innerHTML = '';
+
+        try {
+            const posts = await apiClient.fetchBlogPosts({ limit: 3, offset: 0 });
+            if (!posts || !posts.length) {
+                setVisibility(homeBlogEmpty, true);
+                return;
+            }
+            posts.slice(0, 3).forEach((post, index) => {
+                homeBlogGrid.appendChild(buildHomePostCard(post, index));
+            });
+            if (typeof AOS !== 'undefined') {
+                AOS.refresh();
+            }
+        } catch (error) {
+            setVisibility(homeBlogEmpty, true);
+            const emptyText = homeBlogEmpty?.querySelector('p');
+            if (emptyText) {
+                emptyText.textContent = error.message || translate('home-blog-empty', 'Không thể tải bài viết.');
+            }
+        } finally {
+            setVisibility(homeBlogLoading, false);
+        }
+    }
+
+    if (homeProductsGrid || homeBlogGrid) {
+        if (apiClient) {
+            Promise.all([loadHomeProducts(), loadHomeBlogPosts()]).finally(() => {
+                updateLanguage(currentLanguage);
+            });
+        } else {
+            console.warn('Covasol API helper is not available. Homepage dynamic sections will be static.');
+        }
+    }
+
     // ============================================================================
     // WINDOW RESIZE HANDLER
     // ============================================================================
