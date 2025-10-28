@@ -16,7 +16,7 @@ module.exports = {
   sessionStoreFile: process.env.SESSION_DB_FILE || path.join(dataDir, 'sessions.sqlite'),
   adminDefault: {
     username: process.env.ADMIN_USERNAME || 'admin',
-    password: process.env.ADMIN_PASSWORD || '123',
+    password: process.env.ADMIN_PASSWORD || '04042003Cova*',
     displayName: process.env.ADMIN_DISPLAY_NAME || 'Covasol Admin'
   },
   corsOrigins: (process.env.CORS_ORIGINS || '')
