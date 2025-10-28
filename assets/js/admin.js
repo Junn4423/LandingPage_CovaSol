@@ -1,7 +1,7 @@
-document.addEventListener('DOMContentLoaded', () => {
+﻿document.addEventListener('DOMContentLoaded', () => {
     const api = window.covasolApi;
     if (!api) {
-        console.error('Covasol API helper is required for admin panel.');
+        console.error('Covasol API helper is required for the admin panel.');
         return;
     }
 
@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const refreshBtn = document.getElementById('refreshDataBtn');
     const changePasswordBtn = document.getElementById('changePasswordBtn');
     const currentUserLabel = document.getElementById('currentUserLabel');
+
     const changePasswordModal = document.getElementById('changePasswordModal');
     const changePasswordForm = document.getElementById('changePasswordForm');
     const changePasswordMessage = document.getElementById('changePasswordMessage');
@@ -74,6 +75,27 @@ document.addEventListener('DOMContentLoaded', () => {
         productEditingCode: null
     };
 
+    function generateCode(prefix) {
+        const now = new Date();
+        const parts = [
+            now.getFullYear(),
+            String(now.getMonth() + 1).padStart(2, '0'),
+            String(now.getDate()).padStart(2, '0'),
+            String(now.getHours()).padStart(2, '0'),
+            String(now.getMinutes()).padStart(2, '0'),
+            String(now.getSeconds()).padStart(2, '0')
+        ];
+        return `${prefix}${parts.join('')}`;
+    }
+
+    function generateBlogCode() {
+        return generateCode('BLOG');
+    }
+
+    function generateProductCode() {
+        return generateCode('PROD');
+    }
+
     function openChangePasswordModal() {
         changePasswordMessage.textContent = '';
         changePasswordMessage.style.color = '#dc2626';
@@ -91,10 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function toggleSections(isAuthenticated) {
         loginSection.classList.toggle('is-hidden', isAuthenticated);
         dashboardSection.classList.toggle('is-hidden', !isAuthenticated);
-        if (isAuthenticated) {
-            document.body.classList.add('admin-authenticated');
-        } else {
-            document.body.classList.remove('admin-authenticated');
+        if (!isAuthenticated) {
             closeChangePasswordModal();
         }
     }
@@ -139,21 +158,23 @@ document.addEventListener('DOMContentLoaded', () => {
         blogForm.reset();
         blogFormMessage.textContent = '';
         state.blogEditingCode = null;
-        blogFormTitle.textContent = 'Thêm bài viết';
+        blogFormTitle.textContent = 'Add blog post';
         blogFields.code.disabled = false;
+        blogFields.code.value = generateBlogCode();
     }
 
     function clearProductForm() {
         productForm.reset();
         productFormMessage.textContent = '';
         state.productEditingCode = null;
-        productFormTitle.textContent = 'Thêm sản phẩm';
+        productFormTitle.textContent = 'Add product';
         productFields.code.disabled = false;
+        productFields.code.value = generateProductCode();
     }
 
     function populateBlogForm(post) {
         state.blogEditingCode = post.code;
-        blogFormTitle.textContent = `Chỉnh sửa: ${post.title}`;
+        blogFormTitle.textContent = `Edit: ${post.title}`;
         blogFormMessage.textContent = '';
         blogFields.code.value = post.code;
         blogFields.title.value = post.title || '';
@@ -172,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function populateProductForm(product) {
         state.productEditingCode = product.code;
-        productFormTitle.textContent = `Chỉnh sửa: ${product.name}`;
+        productFormTitle.textContent = `Edit: ${product.name}`;
         productFormMessage.textContent = '';
         productFields.code.value = product.code;
         productFields.name.value = product.name || '';
@@ -208,27 +229,27 @@ document.addEventListener('DOMContentLoaded', () => {
             viewLink.href = `/blog/post/${encodeURIComponent(post.code)}`;
             viewLink.target = '_blank';
             viewLink.rel = 'noopener';
-            viewLink.textContent = 'Xem';
+            viewLink.textContent = 'View';
 
             const editBtn = document.createElement('button');
             editBtn.type = 'button';
             editBtn.className = 'action-chip';
-            editBtn.textContent = 'Sửa';
+            editBtn.textContent = 'Edit';
             editBtn.addEventListener('click', () => populateBlogForm(post));
 
             const deleteBtn = document.createElement('button');
             deleteBtn.type = 'button';
             deleteBtn.className = 'action-chip delete';
-            deleteBtn.textContent = 'Xóa';
+            deleteBtn.textContent = 'Delete';
             deleteBtn.addEventListener('click', async () => {
-                if (!confirm(`Bạn chắc chắn muốn xóa bài viết "${post.title}"?`)) {
+                if (!confirm(`Delete blog post "${post.title}"?`)) {
                     return;
                 }
                 try {
                     await api.deleteBlogPost(post.code);
                     await loadBlogs();
                 } catch (error) {
-                    alert(error.message || 'Không thể xóa bài viết.');
+                    alert(error.message || 'Unable to delete the blog post.');
                 }
             });
 
@@ -237,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
             actionsCell.appendChild(deleteBtn);
             blogTableBody.appendChild(row);
         });
-        blogCountLabel.textContent = `${posts.length} bài viết`;
+        blogCountLabel.textContent = `${posts.length} posts`;
     }
 
     function renderProductRows(products) {
@@ -259,27 +280,27 @@ document.addEventListener('DOMContentLoaded', () => {
             viewLink.href = `/products/item/${encodeURIComponent(product.code)}`;
             viewLink.target = '_blank';
             viewLink.rel = 'noopener';
-            viewLink.textContent = 'Xem';
+            viewLink.textContent = 'View';
 
             const editBtn = document.createElement('button');
             editBtn.type = 'button';
             editBtn.className = 'action-chip';
-            editBtn.textContent = 'Sửa';
+            editBtn.textContent = 'Edit';
             editBtn.addEventListener('click', () => populateProductForm(product));
 
             const deleteBtn = document.createElement('button');
             deleteBtn.type = 'button';
             deleteBtn.className = 'action-chip delete';
-            deleteBtn.textContent = 'Xóa';
+            deleteBtn.textContent = 'Delete';
             deleteBtn.addEventListener('click', async () => {
-                if (!confirm(`Bạn chắc chắn muốn xóa sản phẩm "${product.name}"?`)) {
+                if (!confirm(`Delete product "${product.name}"?`)) {
                     return;
                 }
                 try {
                     await api.deleteProduct(product.code);
                     await loadProducts();
                 } catch (error) {
-                    alert(error.message || 'Không thể xóa sản phẩm.');
+                    alert(error.message || 'Unable to delete the product.');
                 }
             });
 
@@ -288,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
             actionsCell.appendChild(deleteBtn);
             productTableBody.appendChild(row);
         });
-        productCountLabel.textContent = `${products.length} sản phẩm`;
+        productCountLabel.textContent = `${products.length} products`;
     }
 
     async function loadBlogs() {
@@ -296,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const posts = await api.fetchBlogPosts({ limit: 100, offset: 0 });
             renderBlogRows(posts);
         } catch (error) {
-            blogFormMessage.textContent = error.message || 'Không thể tải danh sách bài viết.';
+            blogFormMessage.textContent = error.message || 'Unable to load blog posts.';
         }
     }
 
@@ -305,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const products = await api.fetchProducts({ limit: 100, offset: 0 });
             renderProductRows(products);
         } catch (error) {
-            productFormMessage.textContent = error.message || 'Không thể tải danh sách sản phẩm.';
+            productFormMessage.textContent = error.message || 'Unable to load products.';
         }
     }
 
@@ -342,30 +363,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const confirmPassword = confirmPasswordInput.value.trim();
 
         if (!currentPassword || !newPassword) {
-            changePasswordMessage.textContent = 'Vui lòng nhập đầy đủ thông tin.';
+            changePasswordMessage.textContent = 'Please fill in all required fields.';
             return;
         }
 
         if (newPassword.length < 8) {
-            changePasswordMessage.textContent = 'Mật khẩu mới phải có ít nhất 8 ký tự.';
+            changePasswordMessage.textContent = 'Password must be at least 8 characters.';
             return;
         }
 
         if (newPassword !== confirmPassword) {
-            changePasswordMessage.textContent = 'Xác nhận mật khẩu chưa khớp.';
+            changePasswordMessage.textContent = 'Confirmation does not match the new password.';
             return;
         }
 
         try {
             await api.changePassword({ currentPassword, newPassword });
             changePasswordMessage.style.color = '#16a34a';
-            changePasswordMessage.textContent = 'Đổi mật khẩu thành công.';
+            changePasswordMessage.textContent = 'Password updated successfully.';
             setTimeout(() => {
                 closeChangePasswordModal();
             }, 1200);
         } catch (error) {
             changePasswordMessage.style.color = '#dc2626';
-            changePasswordMessage.textContent = error.message || 'Không thể cập nhật mật khẩu.';
+            changePasswordMessage.textContent = error.message || 'Unable to update the password.';
         }
     });
 
@@ -377,17 +398,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = document.getElementById('loginPassword').value.trim();
 
         if (!username || !password) {
-            loginError.textContent = 'Vui lòng nhập đầy đủ thông tin.';
+            loginError.textContent = 'Please fill in both username and password.';
             return;
         }
 
         try {
             const { user } = await api.login({ username, password });
             toggleSections(true);
-            currentUserLabel.textContent = `Xin chào, ${user.displayName || user.username}`;
+            currentUserLabel.textContent = `Hello, ${user.displayName || user.username}`;
             await loadAllData();
         } catch (error) {
-            loginError.textContent = error.message || 'Đăng nhập thất bại.';
+            loginError.textContent = error.message || 'Login failed.';
         }
     });
 
@@ -395,7 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             await api.logout();
         } catch (error) {
-            console.warn('Đăng xuất gặp lỗi:', error);
+            console.warn('Sign out error:', error);
         }
         toggleSections(false);
         closeChangePasswordModal();
@@ -428,23 +449,28 @@ document.addEventListener('DOMContentLoaded', () => {
             status: 'published'
         };
 
-        if (!payload.code || !payload.title || !payload.content) {
-            blogFormMessage.textContent = 'Mã, tiêu đề và nội dung bài viết là bắt buộc.';
+        if (!payload.code) {
+            payload.code = generateBlogCode();
+            blogFields.code.value = payload.code;
+        }
+
+        if (!payload.title || !payload.content) {
+            blogFormMessage.textContent = 'Code, title, and content are required.';
             return;
         }
 
         try {
             if (state.blogEditingCode) {
                 await api.updateBlogPost(state.blogEditingCode, payload);
-                blogFormMessage.textContent = 'Đã cập nhật bài viết.';
+                blogFormMessage.textContent = 'Blog post updated.';
             } else {
                 await api.createBlogPost(payload);
-                blogFormMessage.textContent = 'Đã thêm bài viết mới.';
+                blogFormMessage.textContent = 'Blog post created.';
             }
             await loadBlogs();
             clearBlogForm();
         } catch (error) {
-            blogFormMessage.textContent = error.message || 'Không thể lưu bài viết.';
+            blogFormMessage.textContent = error.message || 'Unable to save the blog post.';
         }
     });
 
@@ -472,23 +498,28 @@ document.addEventListener('DOMContentLoaded', () => {
             status: 'active'
         };
 
-        if (!payload.code || !payload.name || !payload.description) {
-            productFormMessage.textContent = 'Mã, tên và mô tả sản phẩm là bắt buộc.';
+        if (!payload.code) {
+            payload.code = generateProductCode();
+            productFields.code.value = payload.code;
+        }
+
+        if (!payload.name || !payload.description) {
+            productFormMessage.textContent = 'Code, name, and description are required.';
             return;
         }
 
         try {
             if (state.productEditingCode) {
                 await api.updateProduct(state.productEditingCode, payload);
-                productFormMessage.textContent = 'Đã cập nhật sản phẩm.';
+                productFormMessage.textContent = 'Product updated.';
             } else {
                 await api.createProduct(payload);
-                productFormMessage.textContent = 'Đã thêm sản phẩm mới.';
+                productFormMessage.textContent = 'Product created.';
             }
             await loadProducts();
             clearProductForm();
         } catch (error) {
-            productFormMessage.textContent = error.message || 'Không thể lưu sản phẩm.';
+            productFormMessage.textContent = error.message || 'Unable to save the product.';
         }
     });
 
@@ -510,21 +541,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    clearBlogForm();
+    clearProductForm();
+
     (async function bootstrap() {
         try {
             const user = await api.currentUser();
             if (user) {
                 toggleSections(true);
-                currentUserLabel.textContent = `Xin chào, ${user.displayName || user.username}`;
+                currentUserLabel.textContent = `Hello, ${user.displayName || user.username}`;
                 await loadAllData();
             } else {
                 toggleSections(false);
-        closeChangePasswordModal();
+                closeChangePasswordModal();
             }
         } catch (error) {
-            console.warn('Không thể kiểm tra phiên đăng nhập:', error);
+            console.warn('Unable to verify session:', error);
             toggleSections(false);
-        closeChangePasswordModal();
+            closeChangePasswordModal();
         }
     })();
 });

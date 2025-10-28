@@ -2915,6 +2915,8 @@ section {
 .article-hero {
     padding: 8rem 0 4rem;
     text-align: center;
+    background: linear-gradient(180deg, #f3f7fb 0%, #ffffff 100%);
+    color: #0f172a;
 }
 
 .article-hero .article-category {
@@ -2934,13 +2936,14 @@ section {
 .article-hero .article-title {
     margin: 1rem auto 0.75rem;
     max-width: 960px;
+    color: #0f172a;
 }
 
 .article-hero .article-subtitle {
     max-width: 820px;
     margin: 0 auto 1.5rem;
     font-size: 1.1rem;
-    color: #5f717a;
+    color: #4b5c6a;
 }
 
 .article-meta {
@@ -3118,6 +3121,8 @@ section {
 
 .product-hero {
     padding: 7rem 0 4rem;
+    background: linear-gradient(180deg, #f3f9ff 0%, #ffffff 100%);
+    color: #0f172a;
 }
 
 .hero-layout {
@@ -3143,11 +3148,12 @@ section {
 .product-hero h1 {
     font-size: 2.8rem;
     margin: 1rem 0;
+    color: #0f172a;
 }
 
 .product-hero p {
     font-size: 1.05rem;
-    color: #52626b;
+    color: #4b5c6a;
 }
 
 .hero-actions {
@@ -3366,6 +3372,12 @@ section {
   font-size: 0.95rem;
   color: #64748b;
   margin-bottom: 1rem;
+}
+
+.admin-page .input-hint {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
 }
 
 .btn-full {

@@ -992,7 +992,7 @@ document.addEventListener('DOMContentLoaded', function() {
         detailLink.href = detailUrl;
         const detailLabel = document.createElement('span');
         detailLabel.dataset.key = 'read-more';
-        detailLabel.textContent = translate('read-more', 'Đọc thêm');
+        detailLabel.textContent = translate('read-more', 'Read more');
         const detailIcon = document.createElement('i');
         detailIcon.className = 'fas fa-arrow-right';
         detailLink.appendChild(detailLabel);
@@ -1081,7 +1081,7 @@ document.addEventListener('DOMContentLoaded', function() {
         readMoreLink.href = detailUrl;
         const readMoreLabel = document.createElement('span');
         readMoreLabel.dataset.key = 'read-more';
-        readMoreLabel.textContent = translate('read-more', 'Đọc thêm');
+        readMoreLabel.textContent = translate('read-more', 'Read more');
         const readMoreIcon = document.createElement('i');
         readMoreIcon.className = 'fas fa-arrow-right';
         readMoreLink.appendChild(readMoreLabel);
