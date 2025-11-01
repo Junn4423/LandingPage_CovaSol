@@ -637,6 +637,165 @@
         clearProductForm();
     });
 
+    resetUserFormBtn.addEventListener('click', () => {
+        clearUserForm();
+    });
+
+    // User form submission
+    userForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        userFormMessage.textContent = '';
+
+        const payload = {
+            username: userFields.username.value.trim(),
+            displayName: userFields.displayName.value.trim(),
+            role: userFields.role.value
+        };
+
+        if (userFields.password.value.trim()) {
+            payload.password = userFields.password.value.trim();
+        }
+
+        if (!payload.username || !payload.displayName) {
+            userFormMessage.textContent = 'Tên đăng nhập và tên hiển thị là bắt buộc.';
+            return;
+        }
+
+        try {
+            if (state.userEditingId) {
+                // Update user
+                const response = await fetch(`/api/users/${state.userEditingId}`, {
+                    method: 'PUT',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.message || 'Không thể cập nhật người dùng');
+                }
+                userFormMessage.textContent = 'Người dùng đã được cập nhật.';
+            } else {
+                // Create user
+                if (!payload.password) {
+                    userFormMessage.textContent = 'Mật khẩu là bắt buộc khi tạo người dùng mới.';
+                    return;
+                }
+                const response = await fetch('/api/users', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.message || 'Không thể tạo người dùng');
+                }
+                userFormMessage.textContent = 'Người dùng đã được tạo.';
+            }
+            await loadUsers();
+            clearUserForm();
+        } catch (error) {
+            userFormMessage.textContent = error.message || 'Không thể lưu người dùng.';
+        }
+    });
+
+    // Database export button
+    exportDatabaseBtn.addEventListener('click', async () => {
+        try {
+            const response = await fetch('/api/database/export', {
+                credentials: 'include'
+            });
+            
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.message || 'Không thể export database');
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `covasol_database_${new Date().toISOString().slice(0, 10)}.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            alert('Export database thành công!');
+        } catch (error) {
+            alert(error.message || 'Không thể export database.');
+        }
+    });
+
+    // Download template button
+    downloadTemplateBtn.addEventListener('click', async () => {
+        try {
+            const response = await fetch('/api/database/template', {
+                credentials: 'include'
+            });
+            
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.message || 'Không thể tải template');
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'covasol_database_template.xlsx';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (error) {
+            alert(error.message || 'Không thể tải template.');
+        }
+    });
+
+    // Import database button
+    importDatabaseBtn.addEventListener('click', async () => {
+        const file = importFileInput.files[0];
+        if (!file) {
+            importMessage.textContent = 'Vui lòng chọn file Excel để import.';
+            return;
+        }
+
+        if (!confirm('CẢNH BÁO: Import sẽ thay thế toàn bộ dữ liệu hiện tại. Bạn có chắc chắn muốn tiếp tục?')) {
+            return;
+        }
+
+        importMessage.textContent = 'Đang import...';
+        
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch('/api/database/import', {
+                method: 'POST',
+                credentials: 'include',
+                body: formData
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.message || 'Không thể import database');
+            }
+
+            const result = await response.json();
+            importMessage.style.color = '#16a34a';
+            importMessage.textContent = `${result.message} (Users: ${result.stats.users}, Blogs: ${result.stats.blogs}, Products: ${result.stats.products})`;
+            importFileInput.value = '';
+            
+            // Reload data
+            await loadAllData();
+        } catch (error) {
+            importMessage.style.color = '#dc2626';
+            importMessage.textContent = error.message || 'Không thể import database.';
+        }
+    });
+
     tabButtons.forEach((button) => {
         button.addEventListener('click', () => {
             const target = button.dataset.tab;
@@ -649,6 +808,7 @@
 
     clearBlogForm();
     clearProductForm();
+    clearUserForm();
 
     (async function bootstrap() {
         try {

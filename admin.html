@@ -33,36 +33,43 @@
         </section>
 
         <section class="admin-dashboard is-hidden" id="dashboardSection">
-            <header class="dashboard-header">
-                <div class="dashboard-brand">
-                    <h1>Bảng điều khiển</h1>
-                    <span id="currentUserLabel">Đang đăng nhập</span>
-                </div>
-                <div class="dashboard-actions">
-                    <button class="btn btn-outline" id="changePasswordBtn">
-                        <i class="fas fa-key"></i><span>Đổi mật khẩu</span>
+            <div class="dashboard-sidebar">
+                <div class="dashboard-tabs">
+                    <button class="tab-btn active" data-tab="blogTab"><i class="fas fa-newspaper"></i> Blog</button>
+                    <button class="tab-btn" data-tab="productTab"><i class="fas fa-cubes"></i> Sản phẩm</button>
+                    <button class="tab-btn" data-tab="usersTab"><i class="fas fa-users"></i> Người dùng</button>
+                    <button class="tab-btn" data-tab="databaseTab"><i class="fas fa-database"></i> Database</button>
+                    <button class="sidebar-button" id="refreshDataBtn">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Làm mới dữ liệu</span>
                     </button>
-                    <button class="btn btn-primary" id="logoutBtn">
-                        <i class="fas fa-sign-out-alt"></i><span>Đăng xuất</span>
-                    </button>
+                    <a href="database-viewer.html" class="sidebar-button" style="text-decoration: none; margin-top: 0.5rem;">
+                        <i class="fas fa-table"></i>
+                        <span>Xem Database</span>
+                    </a>
                 </div>
-            </header>
-
-            <div class="dashboard-banner">
-                <i class="fas fa-circle-info"></i>
-                <span>Bảng điều khiển đang trong quá trình bảo trì theo lịch.</span>
             </div>
 
-            <div class="dashboard-tabs">
-                <button class="tab-btn active" data-tab="blogTab"><i class="fas fa-newspaper"></i> Blog</button>
-                <button class="tab-btn" data-tab="productTab"><i class="fas fa-cubes"></i> Sản phẩm</button>
-                <button class="tab-btn" data-tab="usersTab"><i class="fas fa-users"></i> Người dùng</button>
-                <button class="tab-btn" data-tab="databaseTab"><i class="fas fa-database"></i> Database</button>
-                <button class="sidebar-button" id="refreshDataBtn">
-                    <i class="fas fa-sync-alt"></i>
-                    <span>Làm mới dữ liệu</span>
-                </button>
-            </div>
+            <div class="dashboard-main">
+                <header class="dashboard-header">
+                    <div class="dashboard-brand">
+                        <h1>Bảng điều khiển</h1>
+                        <span id="currentUserLabel">Đang đăng nhập</span>
+                    </div>
+                    <div class="dashboard-actions">
+                        <button class="btn btn-outline" id="changePasswordBtn">
+                            <i class="fas fa-key"></i><span>Đổi mật khẩu</span>
+                        </button>
+                        <button class="btn btn-primary" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i><span>Đăng xuất</span>
+                        </button>
+                    </div>
+                </header>
+
+                <div class="dashboard-banner">
+                    <i class="fas fa-circle-info"></i>
+                    <span>Bảng điều khiển đang trong quá trình bảo trì theo lịch.</span>
+                </div>
 
             <div class="tab-panel" id="blogTab">
                 <div class="tab-grid">
@@ -384,6 +391,7 @@
                         </div>
                     </div>
                 </div>
+            </div>
             </div>
         </section>
     </main>
