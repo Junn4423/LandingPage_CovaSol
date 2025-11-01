@@ -47,7 +47,9 @@
     "express-session": "^1.17.3",
     "helmet": "^7.0.0",
     "morgan": "^1.10.0",
-    "slugify": "^1.6.6"
+    "multer": "^2.0.2",
+    "slugify": "^1.6.6",
+    "xlsx": "^0.18.5"
   },
   "browserslist": [
     "> 1%",

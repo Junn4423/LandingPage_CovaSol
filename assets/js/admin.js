@@ -70,9 +70,33 @@
         secondaryUrl: document.getElementById('productSecondaryUrl')
     };
 
+    // User management elements
+    const usersTableBody = document.querySelector('#usersTable tbody');
+    const userCountLabel = document.getElementById('userCount');
+    const userForm = document.getElementById('userForm');
+    const userFormMessage = document.getElementById('userFormMessage');
+    const userFormTitle = document.getElementById('userFormTitle');
+    const resetUserFormBtn = document.getElementById('resetUserForm');
+
+    const userFields = {
+        username: document.getElementById('userUsername'),
+        displayName: document.getElementById('userDisplayName'),
+        role: document.getElementById('userRole'),
+        password: document.getElementById('userPassword')
+    };
+
+    // Database management elements
+    const exportDatabaseBtn = document.getElementById('exportDatabaseBtn');
+    const downloadTemplateBtn = document.getElementById('downloadTemplateBtn');
+    const importDatabaseBtn = document.getElementById('importDatabaseBtn');
+    const importFileInput = document.getElementById('importFileInput');
+    const importMessage = document.getElementById('importMessage');
+    const passwordHint = document.getElementById('passwordHint');
+
     const state = {
         blogEditingCode: null,
-        productEditingCode: null
+        productEditingCode: null,
+        userEditingId: null
     };
 
     function generateCode(prefix) {
@@ -172,6 +196,16 @@
         productFields.code.value = generateProductCode();
     }
 
+    function clearUserForm() {
+        userForm.reset();
+        userFormMessage.textContent = '';
+        state.userEditingId = null;
+        userFormTitle.textContent = 'Thêm người dùng';
+        userFields.username.disabled = false;
+        userFields.password.required = true;
+        passwordHint.textContent = 'Tối thiểu 8 ký tự.';
+    }
+
     function populateBlogForm(post) {
         state.blogEditingCode = post.code;
         blogFormTitle.textContent = `Edit: ${post.title}`;
@@ -208,6 +242,19 @@
         productFields.secondaryLabel.value = product.ctaSecondary?.label || '';
         productFields.secondaryUrl.value = product.ctaSecondary?.url || '';
         productFields.code.disabled = true;
+    }
+
+    function populateUserForm(user) {
+        state.userEditingId = user.id;
+        userFormTitle.textContent = `Chỉnh sửa: ${user.username}`;
+        userFormMessage.textContent = '';
+        userFields.username.value = user.username;
+        userFields.displayName.value = user.display_name || '';
+        userFields.role.value = user.role || 'admin';
+        userFields.password.value = '';
+        userFields.username.disabled = true;
+        userFields.password.required = false;
+        passwordHint.textContent = 'Để trống khi chỉnh sửa để giữ nguyên mật khẩu.';
     }
 
     function renderBlogRows(posts) {
@@ -312,6 +359,49 @@
         productCountLabel.textContent = `${products.length} products`;
     }
 
+    function renderUsersRows(users) {
+        usersTableBody.innerHTML = '';
+        users.forEach((user) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${user.id}</td>
+                <td>${user.username}</td>
+                <td>${user.display_name || '-'}</td>
+                <td><span class="badge">${user.role || 'admin'}</span></td>
+                <td class="table-actions"></td>
+            `;
+
+            const actionsCell = row.querySelector('.table-actions');
+
+            const editBtn = document.createElement('button');
+            editBtn.type = 'button';
+            editBtn.className = 'action-chip';
+            editBtn.textContent = 'Sửa';
+            editBtn.addEventListener('click', () => populateUserForm(user));
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.type = 'button';
+            deleteBtn.className = 'action-chip delete';
+            deleteBtn.textContent = 'Xóa';
+            deleteBtn.addEventListener('click', async () => {
+                if (!confirm(`Xóa người dùng "${user.username}"?`)) {
+                    return;
+                }
+                try {
+                    await api.deleteUser(user.id);
+                    await loadUsers();
+                } catch (error) {
+                    alert(error.message || 'Không thể xóa người dùng.');
+                }
+            });
+
+            actionsCell.appendChild(editBtn);
+            actionsCell.appendChild(deleteBtn);
+            usersTableBody.appendChild(row);
+        });
+        userCountLabel.textContent = `${users.length} người dùng`;
+    }
+
     async function loadBlogs() {
         try {
             const posts = await api.fetchBlogPosts({ limit: 100, offset: 0 });
@@ -330,8 +420,24 @@
         }
     }
 
+    async function loadUsers() {
+        try {
+            const response = await fetch('/api/users', {
+                credentials: 'include'
+            });
+            if (!response.ok) {
+                throw new Error('Không thể tải danh sách người dùng');
+            }
+            const data = await response.json();
+            renderUsersRows(data.users || []);
+        } catch (error) {
+            console.error('Error loading users:', error);
+            userCountLabel.textContent = '0 người dùng';
+        }
+    }
+
     async function loadAllData() {
-        await Promise.all([loadBlogs(), loadProducts()]);
+        await Promise.all([loadBlogs(), loadProducts(), loadUsers()]);
     }
 
     changePasswordBtn.addEventListener('click', openChangePasswordModal);

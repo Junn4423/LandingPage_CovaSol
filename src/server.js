@@ -9,6 +9,8 @@ const { initializeDatabase } = require('./db');
 const authRoutes = require('./routes/auth');
 const blogRoutes = require('./routes/blog');
 const productRoutes = require('./routes/products');
+const usersRoutes = require('./routes/users');
+const databaseRoutes = require('./routes/database');
 
 initializeDatabase();
 
@@ -71,6 +73,8 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/blog', blogRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/users', usersRoutes);
+app.use('/api/database', databaseRoutes);
 
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(publicDir, 'admin.html'));

@@ -56,6 +56,8 @@
             <div class="dashboard-tabs">
                 <button class="tab-btn active" data-tab="blogTab"><i class="fas fa-newspaper"></i> Blog</button>
                 <button class="tab-btn" data-tab="productTab"><i class="fas fa-cubes"></i> Sản phẩm</button>
+                <button class="tab-btn" data-tab="usersTab"><i class="fas fa-users"></i> Người dùng</button>
+                <button class="tab-btn" data-tab="databaseTab"><i class="fas fa-database"></i> Database</button>
                 <button class="sidebar-button" id="refreshDataBtn">
                     <i class="fas fa-sync-alt"></i>
                     <span>Làm mới dữ liệu</span>
@@ -276,6 +278,110 @@
                             </div>
                             <p class="form-help" id="productFormMessage"></p>
                         </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-panel is-hidden" id="usersTab">
+                <div class="tab-grid">
+                    <div class="list-card">
+                        <div class="card-heading">
+                            <h2>Người dùng quản trị</h2>
+                            <span id="userCount">0 người dùng</span>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="admin-table" id="usersTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Username</th>
+                                        <th>Tên hiển thị</th>
+                                        <th>Vai trò</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="form-card">
+                        <div class="card-heading">
+                            <h2 id="userFormTitle">Thêm người dùng</h2>
+                            <button class="btn btn-link" id="resetUserForm">
+                                <i class="fas fa-undo"></i> Mục mới
+                            </button>
+                        </div>
+                        <form id="userForm">
+                            <h3 class="form-section-title">Thông tin tài khoản</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="userUsername">Tên đăng nhập</label>
+                                    <input type="text" id="userUsername" required>
+                                    <p class="input-hint">Tên đăng nhập để truy cập hệ thống.</p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="userDisplayName">Tên hiển thị</label>
+                                    <input type="text" id="userDisplayName" required>
+                                    <p class="input-hint">Tên được hiển thị trong hệ thống.</p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="userRole">Vai trò</label>
+                                    <select id="userRole">
+                                        <option value="admin">Admin</option>
+                                        <option value="editor">Editor</option>
+                                        <option value="viewer">Viewer</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="userPassword">Mật khẩu</label>
+                                    <input type="password" id="userPassword" minlength="8">
+                                    <p class="input-hint" id="passwordHint">Tối thiểu 8 ký tự. Để trống khi chỉnh sửa để giữ nguyên mật khẩu.</p>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary" id="userSubmitBtn">Lưu người dùng</button>
+                            </div>
+                            <p class="form-help" id="userFormMessage"></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-panel is-hidden" id="databaseTab">
+                <div class="database-management">
+                    <div class="database-card">
+                        <div class="card-icon">
+                            <i class="fas fa-file-export"></i>
+                        </div>
+                        <h2>Export Database</h2>
+                        <p>Xuất toàn bộ database ra file Excel bao gồm tất cả bảng dữ liệu (Users, Blogs, Products).</p>
+                        <button class="btn btn-primary" id="exportDatabaseBtn">
+                            <i class="fas fa-download"></i> Export Database
+                        </button>
+                        <button class="btn btn-outline" id="downloadTemplateBtn" style="margin-top: 10px;">
+                            <i class="fas fa-file-excel"></i> Tải Template Excel
+                        </button>
+                    </div>
+
+                    <div class="database-card">
+                        <div class="card-icon">
+                            <i class="fas fa-file-import"></i>
+                        </div>
+                        <h2>Import Database</h2>
+                        <p>Import dữ liệu từ file Excel. File phải đúng cấu trúc với 3 sheet: Users, Blogs, Products.</p>
+                        <div class="form-group">
+                            <label for="importFileInput">Chọn file Excel</label>
+                            <input type="file" id="importFileInput" accept=".xlsx,.xls">
+                        </div>
+                        <button class="btn btn-primary" id="importDatabaseBtn">
+                            <i class="fas fa-upload"></i> Import Database
+                        </button>
+                        <p class="form-help" id="importMessage"></p>
+                        <div class="import-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Cảnh báo:</strong> Import sẽ thay thế toàn bộ dữ liệu hiện tại. Hãy export backup trước khi import.
+                        </div>
                     </div>
                 </div>
             </div>
