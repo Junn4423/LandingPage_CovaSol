@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -7,420 +7,262 @@
     <meta name="robots" content="noindex,nofollow">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/admin.css">
 </head>
-<body class="admin-page">
-    <main>
-        <section class="admin-login" id="loginSection">
-            <div class="login-card">
-                <div class="login-header">
+<body class="admin-app">
+    <main class="admin-app__viewport">
+        <section class="auth-screen" id="loginSection">
+            <div class="auth-card">
+                <div class="auth-brand">
                     <img src="assets/img/logo.png" alt="COVASOL Logo">
-                    <h1>Đăng nhập quản trị</h1>
-                    <p>Khu vực nội bộ dành cho đội ngũ COVASOL.</p>
+                    <h1>Dang nhap quan tri</h1>
+                    <p>Khu vuc danh cho doi ngu COVASOL.</p>
                 </div>
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label for="loginUsername">Tên đăng nhập</label>
-                        <input type="text" id="loginUsername" required autocomplete="username">
+                <form id="loginForm" class="auth-form">
+                    <div class="form-control">
+                        <label for="loginUsername">Ten dang nhap</label>
+                        <input type="text" id="loginUsername" required autocomplete="username" placeholder="Nhap ten dang nhap">
                     </div>
-                    <div class="form-group">
-                        <label for="loginPassword">Mật khẩu</label>
-                        <input type="password" id="loginPassword" required autocomplete="current-password">
+                    <div class="form-control">
+                        <label for="loginPassword">Mat khau</label>
+                        <input type="password" id="loginPassword" required autocomplete="current-password" placeholder="Nhap mat khau">
                     </div>
-                    <button type="submit" class="btn btn-primary btn-full">Đăng nhập</button>
-                    <p class="form-help" id="loginError"></p>
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Dang nhap</span>
+                    </button>
+                    <p class="form-feedback" id="loginError"></p>
                 </form>
             </div>
         </section>
 
-        <section class="admin-dashboard is-hidden" id="dashboardSection">
-            <div class="dashboard-sidebar">
-                <div class="dashboard-tabs">
-                    <button class="tab-btn active" data-tab="blogTab"><i class="fas fa-newspaper"></i> Blog</button>
-                    <button class="tab-btn" data-tab="productTab"><i class="fas fa-cubes"></i> Sản phẩm</button>
-                    <button class="tab-btn" data-tab="usersTab"><i class="fas fa-users"></i> Người dùng</button>
-                    <button class="tab-btn" data-tab="databaseTab"><i class="fas fa-database"></i> Database</button>
-                    <button class="sidebar-button" id="refreshDataBtn">
-                        <i class="fas fa-sync-alt"></i>
-                        <span>Làm mới dữ liệu</span>
+        <section class="admin-shell is-hidden" id="dashboardSection">
+            <aside class="admin-sidebar">
+                <div class="sidebar-brand">
+                    <img src="assets/img/logo.png" alt="COVASOL logo">
+                    <div>
+                        <span class="brand-caption">COVASOL</span>
+                        <strong>Quan tri</strong>
+                    </div>
+                </div>
+                <nav class="sidebar-nav">
+                    <button class="tab-btn active" data-tab="blogTab">
+                        <i class="fas fa-newspaper"></i>
+                        <span>Blog</span>
                     </button>
-                    <a href="database-viewer.html" class="sidebar-button" style="text-decoration: none; margin-top: 0.5rem;">
+                    <button class="tab-btn" data-tab="productTab">
+                        <i class="fas fa-cubes"></i>
+                        <span>San pham</span>
+                    </button>
+                    <button class="tab-btn" data-tab="usersTab">
+                        <i class="fas fa-users"></i>
+                        <span>Nguoi dung</span>
+                    </button>
+                    <button class="tab-btn" data-tab="databaseTab">
+                        <i class="fas fa-database"></i>
+                        <span>Database</span>
+                    </button>
+                </nav>
+                <div class="sidebar-meta">
+                    <button class="sidebar-action" id="refreshDataBtn">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Lam moi du lieu</span>
+                    </button>
+                    <a href="/database-viewer" class="sidebar-action">
                         <i class="fas fa-table"></i>
-                        <span>Xem Database</span>
+                        <span>Xem database</span>
                     </a>
                 </div>
-            </div>
+            </aside>
 
-            <div class="dashboard-main">
-                <header class="dashboard-header">
-                    <div class="dashboard-brand">
-                        <h1>Bảng điều khiển</h1>
-                        <span id="currentUserLabel">Đang đăng nhập</span>
+            <div class="admin-main">
+                <header class="admin-header">
+                    <div>
+                        <p class="admin-kicker">Bang dieu khien</p>
+                        <h1>Quan tri noi bo</h1>
                     </div>
-                    <div class="dashboard-actions">
+                    <div class="admin-header__actions">
+                        <span class="admin-user" id="currentUserLabel">Dang dang nhap</span>
                         <button class="btn btn-outline" id="changePasswordBtn">
-                            <i class="fas fa-key"></i><span>Đổi mật khẩu</span>
+                            <i class="fas fa-key"></i>
+                            <span>Doi mat khau</span>
                         </button>
                         <button class="btn btn-primary" id="logoutBtn">
-                            <i class="fas fa-sign-out-alt"></i><span>Đăng xuất</span>
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Dang xuat</span>
                         </button>
                     </div>
                 </header>
 
-                <div class="dashboard-banner">
+                <div class="admin-banner">
                     <i class="fas fa-circle-info"></i>
-                    <span>Bảng điều khiển đang trong quá trình bảo trì theo lịch.</span>
+                    <p>Bang dieu khien dang trong qua trinh toi uu va bao tri dinh ky.</p>
                 </div>
 
-            <div class="tab-panel" id="blogTab">
-                <div class="tab-grid">
-                    <div class="list-card">
-                        <div class="card-heading">
-                            <h2>Bài viết blog</h2>
-                            <span id="blogCount">0 bài viết</span>
+                <section class="tab-panel" id="blogTab">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Quan ly blog</h2>
+                            <p>Theo doi, chinh sua va to chuc bai viet.</p>
                         </div>
-                        <div class="table-wrapper">
-                            <table class="admin-table" id="blogTable">
-                                <thead>
-                                    <tr>
-                                        <th>Mã</th>
-                                        <th>Tiêu đề</th>
-                                        <th>Danh mục</th>
-                                        <th>Xuất bản</th>
-                                        <th>Hành động</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="form-card">
-                        <div class="card-heading">
-                            <h2 id="blogFormTitle">Thêm bài viết blog</h2>
-                            <button class="btn btn-link" id="resetBlogForm">
-                                <i class="fas fa-undo"></i> Mục mới
+                        <div class="panel-header__actions">
+                            <span class="panel-counter" id="blogCount">0 bai viet</span>
+                            <button class="btn btn-primary" id="createBlogBtn">
+                                <i class="fas fa-plus"></i>
+                                <span>Soan bai viet</span>
                             </button>
                         </div>
-                        <form id="blogForm">
-                            <h3 class="form-section-title">Thông tin danh sách</h3>
-                            <p class="form-section-note">Các trường này xuất hiện trên trang danh sách blog và điểm nổi bật trang chủ.</p>
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label for="blogCode">Mã bài viết</label>
-                                    <input type="text" id="blogCode" required>
-                                    <p class="input-hint">Tự động tạo khi tạo bài viết mới, nhưng bạn có thể điều chỉnh nếu cần.</p>
-                                </div>
-                                <div class="form-group">
-                                    <label for="blogTitle">Tiêu đề</label>
-                                    <input type="text" id="blogTitle" required>
-                                    <p class="input-hint">Viết tiêu đề chính hiển thị ở mọi nơi.</p>
-                                </div>
-                                <div class="form-group">
-                                    <label for="blogSubtitle">Phụ đề</label>
-                                    <input type="text" id="blogSubtitle">
-                                    <p class="input-hint">Dòng hỗ trợ tùy chọn dưới tiêu đề.</p>
-                                </div>
-                                <div class="form-group">
-                                    <label for="blogCategory">Danh mục</label>
-                                    <input type="text" id="blogCategory" placeholder="Ví dụ: Chuyển đổi số">
-                                    <p class="input-hint">Được sử dụng để lọc và huy hiệu.</p>
-                                </div>
-                                <div class="form-group">
-                                    <label for="blogImage">Ảnh bìa (URL)</label>
-                                    <input type="url" id="blogImage">
-                                    <p class="input-hint">Dán URL ảnh tuyệt đối. Để trống để sử dụng mặc định.</p>
-                                </div>
-                                <div class="form-group">
-                                    <label for="blogPublishedAt">Ngày xuất bản</label>
-                                    <input type="datetime-local" id="blogPublishedAt">
-                                    <p class="input-hint">Tùy chọn. Để trống để xuất bản với thời gian hiện tại.</p>
-                                </div>
-                            </div>
-
-                            <h3 class="form-section-title">Nội dung chi tiết</h3>
-                            <p class="form-section-note">Mọi thứ bên dưới được hiển thị trên trang chi tiết blog và trong bản xem trước.</p>
-                            <div class="form-group">
-                                <label for="blogExcerpt">Tóm tắt</label>
-                                <textarea id="blogExcerpt" rows="2"></textarea>
-                                <p class="input-hint">Tóm tắt ngắn (1-2 câu) cho thẻ và SEO.</p>
-                            </div>
-                            <div class="form-group">
-                                <label for="blogContent">Nội dung</label>
-                                <textarea id="blogContent" rows="6" required></textarea>
-                                <p class="input-hint">Sử dụng dòng trống để tạo đoạn văn mới. Hỗ trợ tiêu đề kiểu Markdown (#, ##).</p>
-                            </div>
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label for="blogTags">Thẻ (phân cách bằng dấu phẩy)</label>
-                                    <input type="text" id="blogTags">
-                                    <p class="input-hint">Ví dụ: AI, Tự động hóa, SaaS.</p>
-                                </div>
-                                <div class="form-group">
-                                    <label for="blogKeywords">Từ khóa (phân cách bằng dấu phẩy)</label>
-                                    <input type="text" id="blogKeywords">
-                                    <p class="input-hint">Từ khóa SEO tùy chọn.</p>
-                                </div>
-                            </div>
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label for="blogAuthor">Tác giả</label>
-                                    <input type="text" id="blogAuthor">
-                                </div>
-                                <div class="form-group">
-                                    <label for="blogAuthorRole">Vai trò tác giả</label>
-                                    <input type="text" id="blogAuthorRole">
-                                </div>
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit" class="btn btn-primary" id="blogSubmitBtn">Lưu bài viết blog</button>
-                            </div>
-                            <p class="form-help" id="blogFormMessage"></p>
-                        </form>
                     </div>
-                </div>
-            </div>
-
-            <div class="tab-panel is-hidden" id="productTab">
-                <div class="tab-grid">
-                    <div class="list-card">
-                        <div class="card-heading">
-                            <h2>Sản phẩm</h2>
-                            <span id="productCount">0 sản phẩm</span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table class="admin-table" id="productTable">
-                                <thead>
-                                    <tr>
-                                        <th>Mã</th>
-                                        <th>Tên</th>
-                                        <th>Danh mục</th>
-                                        <th>Trạng thái</th>
-                                        <th>Hành động</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
+                    <p class="panel-feedback" id="blogFeedback"></p>
+                    <div class="table-wrapper">
+                        <table class="admin-table" id="blogTable">
+                            <thead>
+                                <tr>
+                                    <th>Ma</th>
+                                    <th>Tieu de</th>
+                                    <th>Danh muc</th>
+                                    <th>Ngay xuat ban</th>
+                                    <th>Thao tac</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
+                </section>
 
-                    <div class="form-card">
-                        <div class="card-heading">
-                            <h2 id="productFormTitle">Thêm sản phẩm</h2>
-                            <button class="btn btn-link" id="resetProductForm">
-                                <i class="fas fa-undo"></i> Mục mới
+                <section class="tab-panel is-hidden" id="productTab">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Quan ly san pham</h2>
+                            <p>Xay dung thong tin san pham mot cach nhat quan.</p>
+                        </div>
+                        <div class="panel-header__actions">
+                            <span class="panel-counter" id="productCount">0 san pham</span>
+                            <button class="btn btn-primary" id="createProductBtn">
+                                <i class="fas fa-plus"></i>
+                                <span>Them san pham</span>
                             </button>
                         </div>
-                        <form id="productForm">
-                            <h3 class="form-section-title">Thông tin danh sách</h3>
-                            <p class="form-section-note">Hiển thị trên trang danh sách sản phẩm và điểm nổi bật trang chủ.</p>
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label for="productCode">Mã sản phẩm</label>
-                                    <input type="text" id="productCode" required>
-                                    <p class="input-hint">Tự động tạo cho sản phẩm mới. Cập nhật nếu bạn cần mã tùy chỉnh.</p>
-                                </div>
-                                <div class="form-group">
-                                    <label for="productNameInput">Tên sản phẩm</label>
-                                    <input type="text" id="productNameInput" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="productCategoryInput">Danh mục</label>
-                                    <input type="text" id="productCategoryInput">
-                                </div>
-                                <div class="form-group">
-                                    <label for="productImage">Ảnh chính (URL)</label>
-                                    <input type="url" id="productImage">
-                                    <p class="input-hint">Dán URL ảnh tuyệt đối hoặc để trống để sử dụng mặc định.</p>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="productSummary">Mô tả ngắn</label>
-                                <textarea id="productSummary" rows="2"></textarea>
-                                <p class="input-hint">Xuất hiện trên thẻ sản phẩm và phần hero.</p>
-                            </div>
-
-                            <h3 class="form-section-title">Nội dung chi tiết</h3>
-                            <p class="form-section-note">Hiển thị trên trang chi tiết sản phẩm.</p>
-                            <div class="form-group">
-                                <label for="productDescription">Mô tả chi tiết</label>
-                                <textarea id="productDescription" rows="6" required></textarea>
-                                <p class="input-hint">Sử dụng dòng trống để tạo đoạn văn. Hỗ trợ tiêu đề kiểu Markdown.</p>
-                            </div>
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label for="productFeatures">Thẻ tính năng (phân cách bằng dấu phẩy)</label>
-                                    <input type="text" id="productFeatures">
-                                    <p class="input-hint">Ví dụ: Đám mây, Tự động hóa, AI.</p>
-                                </div>
-                                <div class="form-group">
-                                    <label for="productHighlights">Điểm nổi bật (một mỗi dòng)</label>
-                                    <textarea id="productHighlights" rows="3"></textarea>
-                                </div>
-                            </div>
-
-                            <h3 class="form-section-title">Liên kết kêu gọi hành động</h3>
-                            <p class="form-section-note">Nút hiển thị trên danh sách và trang chi tiết.</p>
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label for="productPrimaryLabel">Nhãn CTA chính</label>
-                                    <input type="text" id="productPrimaryLabel" placeholder="Ví dụ: Yêu cầu demo">
-                                </div>
-                                <div class="form-group">
-                                    <label for="productPrimaryUrl">Liên kết CTA chính</label>
-                                    <input type="text" id="productPrimaryUrl" placeholder="https://... hoặc #anchor">
-                                </div>
-                            </div>
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label for="productSecondaryLabel">Nhãn CTA phụ</label>
-                                    <input type="text" id="productSecondaryLabel" placeholder="Ví dụ: Tải brochure">
-                                </div>
-                                <div class="form-group">
-                                    <label for="productSecondaryUrl">Liên kết CTA phụ</label>
-                                    <input type="text" id="productSecondaryUrl">
-                                </div>
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit" class="btn btn-primary" id="productSubmitBtn">Lưu sản phẩm</button>
-                            </div>
-                            <p class="form-help" id="productFormMessage"></p>
-                        </form>
                     </div>
-                </div>
-            </div>
-
-            <div class="tab-panel is-hidden" id="usersTab">
-                <div class="tab-grid">
-                    <div class="list-card">
-                        <div class="card-heading">
-                            <h2>Người dùng quản trị</h2>
-                            <span id="userCount">0 người dùng</span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table class="admin-table" id="usersTable">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Username</th>
-                                        <th>Tên hiển thị</th>
-                                        <th>Vai trò</th>
-                                        <th>Hành động</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
+                    <p class="panel-feedback" id="productFeedback"></p>
+                    <div class="table-wrapper">
+                        <table class="admin-table" id="productTable">
+                            <thead>
+                                <tr>
+                                    <th>Ma</th>
+                                    <th>Ten</th>
+                                    <th>Danh muc</th>
+                                    <th>Trang thai</th>
+                                    <th>Thao tac</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
+                </section>
 
-                    <div class="form-card">
-                        <div class="card-heading">
-                            <h2 id="userFormTitle">Thêm người dùng</h2>
-                            <button class="btn btn-link" id="resetUserForm">
-                                <i class="fas fa-undo"></i> Mục mới
+                <section class="tab-panel is-hidden" id="usersTab">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Quan ly nguoi dung</h2>
+                            <p>Phan quyen va quan ly tai khoan quan tri.</p>
+                        </div>
+                        <div class="panel-header__actions">
+                            <span class="panel-counter" id="userCount">0 nguoi dung</span>
+                            <button class="btn btn-primary" id="createUserBtn">
+                                <i class="fas fa-user-plus"></i>
+                                <span>Them nguoi dung</span>
                             </button>
                         </div>
-                        <form id="userForm">
-                            <h3 class="form-section-title">Thông tin tài khoản</h3>
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label for="userUsername">Tên đăng nhập</label>
-                                    <input type="text" id="userUsername" required>
-                                    <p class="input-hint">Tên đăng nhập để truy cập hệ thống.</p>
-                                </div>
-                                <div class="form-group">
-                                    <label for="userDisplayName">Tên hiển thị</label>
-                                    <input type="text" id="userDisplayName" required>
-                                    <p class="input-hint">Tên được hiển thị trong hệ thống.</p>
-                                </div>
-                                <div class="form-group">
-                                    <label for="userRole">Vai trò</label>
-                                    <select id="userRole">
-                                        <option value="admin">Admin</option>
-                                        <option value="editor">Editor</option>
-                                        <option value="viewer">Viewer</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="userPassword">Mật khẩu</label>
-                                    <input type="password" id="userPassword" minlength="8">
-                                    <p class="input-hint" id="passwordHint">Tối thiểu 8 ký tự. Để trống khi chỉnh sửa để giữ nguyên mật khẩu.</p>
-                                </div>
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit" class="btn btn-primary" id="userSubmitBtn">Lưu người dùng</button>
-                            </div>
-                            <p class="form-help" id="userFormMessage"></p>
-                        </form>
                     </div>
-                </div>
-            </div>
+                    <p class="panel-feedback" id="userFeedback"></p>
+                    <div class="table-wrapper">
+                        <table class="admin-table" id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Ten dang nhap</th>
+                                    <th>Ten hien thi</th>
+                                    <th>Vai tro</th>
+                                    <th>Thao tac</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
 
-            <div class="tab-panel is-hidden" id="databaseTab">
-                <div class="database-management">
-                    <div class="database-card">
-                        <div class="card-icon">
-                            <i class="fas fa-file-export"></i>
-                        </div>
-                        <h2>Export Database</h2>
-                        <p>Xuất toàn bộ database ra file Excel bao gồm tất cả bảng dữ liệu (Users, Blogs, Products).</p>
-                        <button class="btn btn-primary" id="exportDatabaseBtn">
-                            <i class="fas fa-download"></i> Export Database
-                        </button>
-                        <button class="btn btn-outline" id="downloadTemplateBtn" style="margin-top: 10px;">
-                            <i class="fas fa-file-excel"></i> Tải Template Excel
-                        </button>
-                    </div>
-
-                    <div class="database-card">
-                        <div class="card-icon">
-                            <i class="fas fa-file-import"></i>
-                        </div>
-                        <h2>Import Database</h2>
-                        <p>Import dữ liệu từ file Excel. File phải đúng cấu trúc với 3 sheet: Users, Blogs, Products.</p>
-                        <div class="form-group">
-                            <label for="importFileInput">Chọn file Excel</label>
-                            <input type="file" id="importFileInput" accept=".xlsx,.xls">
-                        </div>
-                        <button class="btn btn-primary" id="importDatabaseBtn">
-                            <i class="fas fa-upload"></i> Import Database
-                        </button>
-                        <p class="form-help" id="importMessage"></p>
-                        <div class="import-warning">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <strong>Cảnh báo:</strong> Import sẽ thay thế toàn bộ dữ liệu hiện tại. Hãy export backup trước khi import.
+                <section class="tab-panel is-hidden" id="databaseTab">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Sao luu va dong bo</h2>
+                            <p>Nhap xuat du lieu he thong bang file Excel.</p>
                         </div>
                     </div>
-                </div>
-            </div>
+                    <div class="database-grid">
+                        <div class="database-card">
+                            <h3>Xuat database</h3>
+                            <p>Tao file Excel tong hop toan bo du lieu quan tri.</p>
+                            <button class="btn btn-primary" id="exportDatabaseBtn">
+                                <i class="fas fa-file-export"></i>
+                                <span>Xuat file Excel</span>
+                            </button>
+                        </div>
+                        <div class="database-card">
+                            <h3>Tai template</h3>
+                            <p>Su dung mau du lieu chuan hoa de import nhanh.</p>
+                            <button class="btn btn-outline" id="downloadTemplateBtn">
+                                <i class="fas fa-file-download"></i>
+                                <span>Tai template</span>
+                            </button>
+                        </div>
+                        <div class="database-card">
+                            <h3>Import database</h3>
+                            <p>Tai file Excel de dong bo va thay the du lieu hien co.</p>
+                            <div class="file-input">
+                                <input type="file" id="importFileInput" accept=".xlsx,.xls">
+                                <label for="importFileInput">
+                                    <i class="fas fa-upload"></i>
+                                    <span>Chon file Excel</span>
+                                </label>
+                            </div>
+                            <button class="btn btn-danger" id="importDatabaseBtn">
+                                <i class="fas fa-database"></i>
+                                <span>Import database</span>
+                            </button>
+                            <p class="panel-feedback" id="importMessage"></p>
+                        </div>
+                    </div>
+                </section>
             </div>
         </section>
     </main>
 
-    <div class="modal-backdrop is-hidden" id="changePasswordModal">
+    <div class="modal-overlay is-hidden" id="changePasswordModal" role="dialog" aria-modal="true">
         <div class="modal-card">
-            <div class="modal-header">
-                <h2>Đổi mật khẩu</h2>
-                <button class="modal-close" id="closeChangePasswordBtn">
+            <header class="modal-header">
+                <h2>Doi mat khau</h2>
+                <button class="modal-close" id="closeChangePasswordBtn" aria-label="Dong">
                     <i class="fas fa-times"></i>
                 </button>
-            </div>
+            </header>
             <form id="changePasswordForm" class="modal-body">
-                <div class="form-group">
-                    <label for="currentPassword">Mật khẩu hiện tại</label>
-                    <input type="password" id="currentPassword" required autocomplete="current-password">
+                <div class="form-control">
+                    <label for="currentPassword">Mat khau hien tai</label>
+                    <input type="password" id="currentPassword" required placeholder="Nhap mat khau hien tai">
                 </div>
-                <div class="form-group">
-                    <label for="newPassword">Mật khẩu mới</label>
-                    <input type="password" id="newPassword" required minlength="8" autocomplete="new-password">
+                <div class="form-control">
+                    <label for="newPassword">Mat khau moi</label>
+                    <input type="password" id="newPassword" required placeholder="Toi thieu 8 ky tu">
                 </div>
-                <div class="form-group">
-                    <label for="confirmPassword">Xác nhận mật khẩu mới</label>
-                    <input type="password" id="confirmPassword" required minlength="8" autocomplete="new-password">
+                <div class="form-control">
+                    <label for="confirmPassword">Nhap lai mat khau moi</label>
+                    <input type="password" id="confirmPassword" required placeholder="Nhap lai mat khau moi">
                 </div>
-                <p class="form-help" id="changePasswordMessage"></p>
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-outline" id="cancelChangePasswordBtn">Hủy</button>
-                    <button type="submit" class="btn btn-primary">Cập nhật</button>
+                <p class="form-feedback" id="changePasswordMessage"></p>
+                <div class="modal-footer">
+                    <button class="btn btn-ghost" id="cancelChangePasswordBtn">Huy</button>
+                    <button class="btn btn-primary" type="submit">Cap nhat</button>
                 </div>
             </form>
         </div>

@@ -1,7 +1,7 @@
-﻿document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
     const api = window.covasolApi;
     if (!api) {
-        console.error('Covasol API helper is required for the admin panel.');
+        console.error('Covasol API helper is required for the admin dashboard.');
         return;
     }
 
@@ -25,113 +25,33 @@
 
     const blogTableBody = document.querySelector('#blogTable tbody');
     const blogCountLabel = document.getElementById('blogCount');
-    const blogForm = document.getElementById('blogForm');
-    const blogFormMessage = document.getElementById('blogFormMessage');
-    const blogFormTitle = document.getElementById('blogFormTitle');
-    const resetBlogFormBtn = document.getElementById('resetBlogForm');
+    const blogFeedback = document.getElementById('blogFeedback');
+    const createBlogBtn = document.getElementById('createBlogBtn');
 
     const productTableBody = document.querySelector('#productTable tbody');
     const productCountLabel = document.getElementById('productCount');
-    const productForm = document.getElementById('productForm');
-    const productFormMessage = document.getElementById('productFormMessage');
-    const productFormTitle = document.getElementById('productFormTitle');
-    const resetProductFormBtn = document.getElementById('resetProductForm');
+    const productFeedback = document.getElementById('productFeedback');
+    const createProductBtn = document.getElementById('createProductBtn');
 
-    const tabButtons = Array.from(document.querySelectorAll('.tab-btn'));
-    const tabPanels = Array.from(document.querySelectorAll('.tab-panel'));
-
-    const blogFields = {
-        code: document.getElementById('blogCode'),
-        title: document.getElementById('blogTitle'),
-        subtitle: document.getElementById('blogSubtitle'),
-        category: document.getElementById('blogCategory'),
-        image: document.getElementById('blogImage'),
-        publishedAt: document.getElementById('blogPublishedAt'),
-        excerpt: document.getElementById('blogExcerpt'),
-        content: document.getElementById('blogContent'),
-        tags: document.getElementById('blogTags'),
-        keywords: document.getElementById('blogKeywords'),
-        author: document.getElementById('blogAuthor'),
-        authorRole: document.getElementById('blogAuthorRole')
-    };
-
-    const productFields = {
-        code: document.getElementById('productCode'),
-        name: document.getElementById('productNameInput'),
-        category: document.getElementById('productCategoryInput'),
-        image: document.getElementById('productImage'),
-        summary: document.getElementById('productSummary'),
-        description: document.getElementById('productDescription'),
-        features: document.getElementById('productFeatures'),
-        highlights: document.getElementById('productHighlights'),
-        primaryLabel: document.getElementById('productPrimaryLabel'),
-        primaryUrl: document.getElementById('productPrimaryUrl'),
-        secondaryLabel: document.getElementById('productSecondaryLabel'),
-        secondaryUrl: document.getElementById('productSecondaryUrl')
-    };
-
-    // User management elements
     const usersTableBody = document.querySelector('#usersTable tbody');
     const userCountLabel = document.getElementById('userCount');
-    const userForm = document.getElementById('userForm');
-    const userFormMessage = document.getElementById('userFormMessage');
-    const userFormTitle = document.getElementById('userFormTitle');
-    const resetUserFormBtn = document.getElementById('resetUserForm');
+    const userFeedback = document.getElementById('userFeedback');
+    const createUserBtn = document.getElementById('createUserBtn');
 
-    const userFields = {
-        username: document.getElementById('userUsername'),
-        displayName: document.getElementById('userDisplayName'),
-        role: document.getElementById('userRole'),
-        password: document.getElementById('userPassword')
-    };
-
-    // Database management elements
     const exportDatabaseBtn = document.getElementById('exportDatabaseBtn');
     const downloadTemplateBtn = document.getElementById('downloadTemplateBtn');
     const importDatabaseBtn = document.getElementById('importDatabaseBtn');
     const importFileInput = document.getElementById('importFileInput');
     const importMessage = document.getElementById('importMessage');
-    const passwordHint = document.getElementById('passwordHint');
 
-    const state = {
-        blogEditingCode: null,
-        productEditingCode: null,
-        userEditingId: null
-    };
+    const tabButtons = Array.from(document.querySelectorAll('.tab-btn'));
+    const tabPanels = Array.from(document.querySelectorAll('.tab-panel'));
 
-    function generateCode(prefix) {
-        const now = new Date();
-        const parts = [
-            now.getFullYear(),
-            String(now.getMonth() + 1).padStart(2, '0'),
-            String(now.getDate()).padStart(2, '0'),
-            String(now.getHours()).padStart(2, '0'),
-            String(now.getMinutes()).padStart(2, '0'),
-            String(now.getSeconds()).padStart(2, '0')
-        ];
-        return `${prefix}${parts.join('')}`;
-    }
-
-    function generateBlogCode() {
-        return generateCode('BLOG');
-    }
-
-    function generateProductCode() {
-        return generateCode('PROD');
-    }
-
-    function openChangePasswordModal() {
-        changePasswordMessage.textContent = '';
-        changePasswordMessage.style.color = '#dc2626';
-        changePasswordForm.reset();
-        changePasswordModal.classList.remove('is-hidden');
-    }
-
-    function closeChangePasswordModal() {
-        changePasswordModal.classList.add('is-hidden');
-        changePasswordMessage.textContent = '';
-        changePasswordMessage.style.color = '#dc2626';
-        changePasswordForm.reset();
+    function setFeedback(element, message, type = 'info') {
+        if (!element) return;
+        element.textContent = message;
+        element.classList.remove('is-error', 'is-success', 'is-info');
+        element.classList.add(`is-${type}`);
     }
 
     function toggleSections(isAuthenticated) {
@@ -142,119 +62,43 @@
         }
     }
 
-    function parseCommaList(value) {
-        if (!value) return [];
-        return value
-            .split(',')
-            .map((entry) => entry.trim())
-            .filter(Boolean);
+    function openChangePasswordModal() {
+        changePasswordMessage.textContent = '';
+        changePasswordMessage.classList.remove('is-success', 'is-error');
+        changePasswordForm.reset();
+        changePasswordModal.classList.remove('is-hidden');
+        currentPasswordInput.focus();
     }
 
-    function parseLines(value) {
-        if (!value) return [];
-        return value
-            .split('\n')
-            .map((entry) => entry.trim())
-            .filter(Boolean);
+    function closeChangePasswordModal() {
+        changePasswordModal.classList.add('is-hidden');
+        changePasswordMessage.textContent = '';
+        changePasswordMessage.classList.remove('is-success', 'is-error');
+        changePasswordForm.reset();
     }
 
-    function formatDateTimeLocal(value) {
-        if (!value) return '';
-        const date = new Date(value);
-        if (Number.isNaN(date.getTime())) {
-            return '';
+    function ensureTableContent(tbody, colSpan, emptyLabel) {
+        if (!tbody || tbody.children.length > 0) {
+            return;
         }
-        const tzOffset = date.getTimezoneOffset();
-        const localDate = new Date(date.getTime() - tzOffset * 60000);
-        return localDate.toISOString().slice(0, 16);
+        const emptyRow = document.createElement('tr');
+        emptyRow.className = 'table-empty';
+        const cell = document.createElement('td');
+        cell.colSpan = colSpan;
+        cell.textContent = emptyLabel;
+        emptyRow.appendChild(cell);
+        tbody.appendChild(emptyRow);
     }
 
-    function toISODate(value) {
-        if (!value) return null;
-        const date = new Date(value);
-        if (Number.isNaN(date.getTime())) {
-            return null;
-        }
-        return date.toISOString();
-    }
-
-    function clearBlogForm() {
-        blogForm.reset();
-        blogFormMessage.textContent = '';
-        state.blogEditingCode = null;
-        blogFormTitle.textContent = 'Add blog post';
-        blogFields.code.disabled = false;
-        blogFields.code.value = generateBlogCode();
-    }
-
-    function clearProductForm() {
-        productForm.reset();
-        productFormMessage.textContent = '';
-        state.productEditingCode = null;
-        productFormTitle.textContent = 'Add product';
-        productFields.code.disabled = false;
-        productFields.code.value = generateProductCode();
-    }
-
-    function clearUserForm() {
-        userForm.reset();
-        userFormMessage.textContent = '';
-        state.userEditingId = null;
-        userFormTitle.textContent = 'Thêm người dùng';
-        userFields.username.disabled = false;
-        userFields.password.required = true;
-        passwordHint.textContent = 'Tối thiểu 8 ký tự.';
-    }
-
-    function populateBlogForm(post) {
-        state.blogEditingCode = post.code;
-        blogFormTitle.textContent = `Edit: ${post.title}`;
-        blogFormMessage.textContent = '';
-        blogFields.code.value = post.code;
-        blogFields.title.value = post.title || '';
-        blogFields.subtitle.value = post.subtitle || '';
-        blogFields.category.value = post.category || '';
-        blogFields.image.value = post.imageUrl || '';
-        blogFields.publishedAt.value = formatDateTimeLocal(post.publishedAt);
-        blogFields.excerpt.value = post.excerpt || '';
-        blogFields.content.value = post.content || '';
-        blogFields.tags.value = (post.tags || []).join(', ');
-        blogFields.keywords.value = (post.keywords || []).join(', ');
-        blogFields.author.value = post.authorName || '';
-        blogFields.authorRole.value = post.authorRole || '';
-        blogFields.code.disabled = true;
-    }
-
-    function populateProductForm(product) {
-        state.productEditingCode = product.code;
-        productFormTitle.textContent = `Edit: ${product.name}`;
-        productFormMessage.textContent = '';
-        productFields.code.value = product.code;
-        productFields.name.value = product.name || '';
-        productFields.category.value = product.category || '';
-        productFields.image.value = product.imageUrl || '';
-        productFields.summary.value = product.shortDescription || '';
-        productFields.description.value = product.description || '';
-        productFields.features.value = (product.featureTags || []).join(', ');
-        productFields.highlights.value = (product.highlights || []).join('\n');
-        productFields.primaryLabel.value = product.ctaPrimary?.label || '';
-        productFields.primaryUrl.value = product.ctaPrimary?.url || '';
-        productFields.secondaryLabel.value = product.ctaSecondary?.label || '';
-        productFields.secondaryUrl.value = product.ctaSecondary?.url || '';
-        productFields.code.disabled = true;
-    }
-
-    function populateUserForm(user) {
-        state.userEditingId = user.id;
-        userFormTitle.textContent = `Chỉnh sửa: ${user.username}`;
-        userFormMessage.textContent = '';
-        userFields.username.value = user.username;
-        userFields.displayName.value = user.display_name || '';
-        userFields.role.value = user.role || 'admin';
-        userFields.password.value = '';
-        userFields.username.disabled = true;
-        userFields.password.required = false;
-        passwordHint.textContent = 'Để trống khi chỉnh sửa để giữ nguyên mật khẩu.';
+    function navigateTo(path, params = {}) {
+        const searchParams = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+            if (value !== undefined && value !== null && value !== '') {
+                searchParams.set(key, value);
+            }
+        });
+        const query = searchParams.toString();
+        window.location.href = query ? `${path}?${query}` : path;
     }
 
     function renderBlogRows(posts) {
@@ -276,27 +120,29 @@
             viewLink.href = `/blog/post/${encodeURIComponent(post.code)}`;
             viewLink.target = '_blank';
             viewLink.rel = 'noopener';
-            viewLink.textContent = 'View';
+            viewLink.textContent = 'Xem';
 
             const editBtn = document.createElement('button');
             editBtn.type = 'button';
             editBtn.className = 'action-chip';
-            editBtn.textContent = 'Edit';
-            editBtn.addEventListener('click', () => populateBlogForm(post));
+            editBtn.textContent = 'Sua';
+            editBtn.addEventListener('click', () => {
+                navigateTo('/admin/blog-editor', { code: post.code });
+            });
 
             const deleteBtn = document.createElement('button');
             deleteBtn.type = 'button';
             deleteBtn.className = 'action-chip delete';
-            deleteBtn.textContent = 'Delete';
+            deleteBtn.textContent = 'Xoa';
             deleteBtn.addEventListener('click', async () => {
-                if (!confirm(`Delete blog post "${post.title}"?`)) {
+                if (!confirm(`Xoa bai viet "${post.title}"?`)) {
                     return;
                 }
                 try {
                     await api.deleteBlogPost(post.code);
                     await loadBlogs();
                 } catch (error) {
-                    alert(error.message || 'Unable to delete the blog post.');
+                    alert(error.message || 'Khong the xoa bai viet.');
                 }
             });
 
@@ -305,7 +151,9 @@
             actionsCell.appendChild(deleteBtn);
             blogTableBody.appendChild(row);
         });
-        blogCountLabel.textContent = `${posts.length} posts`;
+
+        ensureTableContent(blogTableBody, 5, 'Chua co bai viet nao.');
+        blogCountLabel.textContent = `${posts.length} bai viet`;
     }
 
     function renderProductRows(products) {
@@ -327,27 +175,29 @@
             viewLink.href = `/products/item/${encodeURIComponent(product.code)}`;
             viewLink.target = '_blank';
             viewLink.rel = 'noopener';
-            viewLink.textContent = 'View';
+            viewLink.textContent = 'Xem';
 
             const editBtn = document.createElement('button');
             editBtn.type = 'button';
             editBtn.className = 'action-chip';
-            editBtn.textContent = 'Edit';
-            editBtn.addEventListener('click', () => populateProductForm(product));
+            editBtn.textContent = 'Sua';
+            editBtn.addEventListener('click', () => {
+                navigateTo('/admin/product-editor', { code: product.code });
+            });
 
             const deleteBtn = document.createElement('button');
             deleteBtn.type = 'button';
             deleteBtn.className = 'action-chip delete';
-            deleteBtn.textContent = 'Delete';
+            deleteBtn.textContent = 'Xoa';
             deleteBtn.addEventListener('click', async () => {
-                if (!confirm(`Delete product "${product.name}"?`)) {
+                if (!confirm(`Xoa san pham "${product.name}"?`)) {
                     return;
                 }
                 try {
                     await api.deleteProduct(product.code);
                     await loadProducts();
                 } catch (error) {
-                    alert(error.message || 'Unable to delete the product.');
+                    alert(error.message || 'Khong the xoa san pham.');
                 }
             });
 
@@ -356,10 +206,12 @@
             actionsCell.appendChild(deleteBtn);
             productTableBody.appendChild(row);
         });
-        productCountLabel.textContent = `${products.length} products`;
+
+        ensureTableContent(productTableBody, 5, 'Chua co san pham nao.');
+        productCountLabel.textContent = `${products.length} san pham`;
     }
 
-    function renderUsersRows(users) {
+    function renderUserRows(users) {
         usersTableBody.innerHTML = '';
         users.forEach((user) => {
             const row = document.createElement('tr');
@@ -376,22 +228,24 @@
             const editBtn = document.createElement('button');
             editBtn.type = 'button';
             editBtn.className = 'action-chip';
-            editBtn.textContent = 'Sửa';
-            editBtn.addEventListener('click', () => populateUserForm(user));
+            editBtn.textContent = 'Sua';
+            editBtn.addEventListener('click', () => {
+                navigateTo('/admin/user-editor', { id: user.id });
+            });
 
             const deleteBtn = document.createElement('button');
             deleteBtn.type = 'button';
             deleteBtn.className = 'action-chip delete';
-            deleteBtn.textContent = 'Xóa';
+            deleteBtn.textContent = 'Xoa';
             deleteBtn.addEventListener('click', async () => {
-                if (!confirm(`Xóa người dùng "${user.username}"?`)) {
+                if (!confirm(`Xoa nguoi dung "${user.username}"?`)) {
                     return;
                 }
                 try {
                     await api.deleteUser(user.id);
                     await loadUsers();
                 } catch (error) {
-                    alert(error.message || 'Không thể xóa người dùng.');
+                    alert(error.message || 'Khong the xoa nguoi dung.');
                 }
             });
 
@@ -399,40 +253,53 @@
             actionsCell.appendChild(deleteBtn);
             usersTableBody.appendChild(row);
         });
-        userCountLabel.textContent = `${users.length} người dùng`;
+
+        ensureTableContent(usersTableBody, 5, 'Chua co nguoi dung nao.');
+        userCountLabel.textContent = `${users.length} nguoi dung`;
     }
 
     async function loadBlogs() {
+        setFeedback(blogFeedback, 'Dang tai danh sach...', 'info');
         try {
             const posts = await api.fetchBlogPosts({ limit: 100, offset: 0 });
             renderBlogRows(posts);
+            setFeedback(blogFeedback, '', 'info');
         } catch (error) {
-            blogFormMessage.textContent = error.message || 'Unable to load blog posts.';
+            console.error('Error loading blogs:', error);
+            setFeedback(blogFeedback, error.message || 'Khong the tai danh sach blog.', 'error');
+            blogTableBody.innerHTML = '';
+            ensureTableContent(blogTableBody, 5, 'Khong the tai du lieu.');
+            blogCountLabel.textContent = '0 bai viet';
         }
     }
 
     async function loadProducts() {
+        setFeedback(productFeedback, 'Dang tai danh sach...', 'info');
         try {
             const products = await api.fetchProducts({ limit: 100, offset: 0 });
             renderProductRows(products);
+            setFeedback(productFeedback, '', 'info');
         } catch (error) {
-            productFormMessage.textContent = error.message || 'Unable to load products.';
+            console.error('Error loading products:', error);
+            setFeedback(productFeedback, error.message || 'Khong the tai danh sach san pham.', 'error');
+            productTableBody.innerHTML = '';
+            ensureTableContent(productTableBody, 5, 'Khong the tai du lieu.');
+            productCountLabel.textContent = '0 san pham';
         }
     }
 
     async function loadUsers() {
+        setFeedback(userFeedback, 'Dang tai danh sach...', 'info');
         try {
-            const response = await fetch('/api/users', {
-                credentials: 'include'
-            });
-            if (!response.ok) {
-                throw new Error('Không thể tải danh sách người dùng');
-            }
-            const data = await response.json();
-            renderUsersRows(data.users || []);
+            const users = await api.fetchUsers();
+            renderUserRows(users);
+            setFeedback(userFeedback, '', 'info');
         } catch (error) {
             console.error('Error loading users:', error);
-            userCountLabel.textContent = '0 người dùng';
+            setFeedback(userFeedback, error.message || 'Khong the tai danh sach nguoi dung.', 'error');
+            usersTableBody.innerHTML = '';
+            ensureTableContent(usersTableBody, 5, 'Khong the tai du lieu.');
+            userCountLabel.textContent = '0 nguoi dung';
         }
     }
 
@@ -462,37 +329,38 @@
     changePasswordForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         changePasswordMessage.textContent = '';
-        changePasswordMessage.style.color = '#dc2626';
+        changePasswordMessage.classList.remove('is-success', 'is-error');
 
         const currentPassword = currentPasswordInput.value.trim();
         const newPassword = newPasswordInput.value.trim();
         const confirmPassword = confirmPasswordInput.value.trim();
 
         if (!currentPassword || !newPassword) {
-            changePasswordMessage.textContent = 'Please fill in all required fields.';
+            changePasswordMessage.textContent = 'Vui long nhap day du thong tin.';
+            changePasswordMessage.classList.add('is-error');
             return;
         }
 
         if (newPassword.length < 8) {
-            changePasswordMessage.textContent = 'Password must be at least 8 characters.';
+            changePasswordMessage.textContent = 'Mat khau moi phai co it nhat 8 ky tu.';
+            changePasswordMessage.classList.add('is-error');
             return;
         }
 
         if (newPassword !== confirmPassword) {
-            changePasswordMessage.textContent = 'Confirmation does not match the new password.';
+            changePasswordMessage.textContent = 'Mat khau nhap lai khong khop.';
+            changePasswordMessage.classList.add('is-error');
             return;
         }
 
         try {
             await api.changePassword({ currentPassword, newPassword });
-            changePasswordMessage.style.color = '#16a34a';
-            changePasswordMessage.textContent = 'Password updated successfully.';
-            setTimeout(() => {
-                closeChangePasswordModal();
-            }, 1200);
+            changePasswordMessage.textContent = 'Da cap nhat mat khau.';
+            changePasswordMessage.classList.add('is-success');
+            setTimeout(() => closeChangePasswordModal(), 1200);
         } catch (error) {
-            changePasswordMessage.style.color = '#dc2626';
-            changePasswordMessage.textContent = error.message || 'Unable to update the password.';
+            changePasswordMessage.textContent = error.message || 'Khong the cap nhat mat khau.';
+            changePasswordMessage.classList.add('is-error');
         }
     });
 
@@ -504,17 +372,17 @@
         const password = document.getElementById('loginPassword').value.trim();
 
         if (!username || !password) {
-            loginError.textContent = 'Please fill in both username and password.';
+            loginError.textContent = 'Vui long nhap ten dang nhap va mat khau.';
             return;
         }
 
         try {
             const { user } = await api.login({ username, password });
             toggleSections(true);
-            currentUserLabel.textContent = `Hello, ${user.displayName || user.username}`;
+            currentUserLabel.textContent = `Xin chao, ${user.displayName || user.username}`;
             await loadAllData();
         } catch (error) {
-            loginError.textContent = error.message || 'Login failed.';
+            loginError.textContent = error.message || 'Dang nhap that bai.';
         }
     });
 
@@ -525,9 +393,6 @@
             console.warn('Sign out error:', error);
         }
         toggleSections(false);
-        closeChangePasswordModal();
-        clearBlogForm();
-        clearProductForm();
         loginForm.reset();
     });
 
@@ -535,181 +400,27 @@
         loadAllData();
     });
 
-    blogForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        blogFormMessage.textContent = '';
-
-        const payload = {
-            code: blogFields.code.value.trim(),
-            title: blogFields.title.value.trim(),
-            subtitle: blogFields.subtitle.value.trim() || null,
-            category: blogFields.category.value.trim() || null,
-            imageUrl: blogFields.image.value.trim() || null,
-            excerpt: blogFields.excerpt.value.trim() || null,
-            content: blogFields.content.value,
-            tags: parseCommaList(blogFields.tags.value),
-            keywords: parseCommaList(blogFields.keywords.value),
-            authorName: blogFields.author.value.trim() || null,
-            authorRole: blogFields.authorRole.value.trim() || null,
-            publishedAt: toISODate(blogFields.publishedAt.value),
-            status: 'published'
-        };
-
-        if (!payload.code) {
-            payload.code = generateBlogCode();
-            blogFields.code.value = payload.code;
-        }
-
-        if (!payload.title || !payload.content) {
-            blogFormMessage.textContent = 'Code, title, and content are required.';
-            return;
-        }
-
-        try {
-            if (state.blogEditingCode) {
-                await api.updateBlogPost(state.blogEditingCode, payload);
-                blogFormMessage.textContent = 'Blog post updated.';
-            } else {
-                await api.createBlogPost(payload);
-                blogFormMessage.textContent = 'Blog post created.';
-            }
-            await loadBlogs();
-            clearBlogForm();
-        } catch (error) {
-            blogFormMessage.textContent = error.message || 'Unable to save the blog post.';
-        }
+    createBlogBtn.addEventListener('click', () => {
+        navigateTo('/admin/blog-editor');
     });
 
-    productForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        productFormMessage.textContent = '';
-
-        const payload = {
-            code: productFields.code.value.trim(),
-            name: productFields.name.value.trim(),
-            category: productFields.category.value.trim() || null,
-            imageUrl: productFields.image.value.trim() || null,
-            shortDescription: productFields.summary.value.trim() || null,
-            description: productFields.description.value,
-            featureTags: parseCommaList(productFields.features.value),
-            highlights: parseLines(productFields.highlights.value),
-            ctaPrimary: {
-                label: productFields.primaryLabel.value.trim() || null,
-                url: productFields.primaryUrl.value.trim() || null
-            },
-            ctaSecondary: {
-                label: productFields.secondaryLabel.value.trim() || null,
-                url: productFields.secondaryUrl.value.trim() || null
-            },
-            status: 'active'
-        };
-
-        if (!payload.code) {
-            payload.code = generateProductCode();
-            productFields.code.value = payload.code;
-        }
-
-        if (!payload.name || !payload.description) {
-            productFormMessage.textContent = 'Code, name, and description are required.';
-            return;
-        }
-
-        try {
-            if (state.productEditingCode) {
-                await api.updateProduct(state.productEditingCode, payload);
-                productFormMessage.textContent = 'Product updated.';
-            } else {
-                await api.createProduct(payload);
-                productFormMessage.textContent = 'Product created.';
-            }
-            await loadProducts();
-            clearProductForm();
-        } catch (error) {
-            productFormMessage.textContent = error.message || 'Unable to save the product.';
-        }
+    createProductBtn.addEventListener('click', () => {
+        navigateTo('/admin/product-editor');
     });
 
-    resetBlogFormBtn.addEventListener('click', () => {
-        clearBlogForm();
+    createUserBtn.addEventListener('click', () => {
+        navigateTo('/admin/user-editor');
     });
 
-    resetProductFormBtn.addEventListener('click', () => {
-        clearProductForm();
-    });
-
-    resetUserFormBtn.addEventListener('click', () => {
-        clearUserForm();
-    });
-
-    // User form submission
-    userForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        userFormMessage.textContent = '';
-
-        const payload = {
-            username: userFields.username.value.trim(),
-            displayName: userFields.displayName.value.trim(),
-            role: userFields.role.value
-        };
-
-        if (userFields.password.value.trim()) {
-            payload.password = userFields.password.value.trim();
-        }
-
-        if (!payload.username || !payload.displayName) {
-            userFormMessage.textContent = 'Tên đăng nhập và tên hiển thị là bắt buộc.';
-            return;
-        }
-
-        try {
-            if (state.userEditingId) {
-                // Update user
-                const response = await fetch(`/api/users/${state.userEditingId}`, {
-                    method: 'PUT',
-                    credentials: 'include',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (!response.ok) {
-                    const data = await response.json();
-                    throw new Error(data.message || 'Không thể cập nhật người dùng');
-                }
-                userFormMessage.textContent = 'Người dùng đã được cập nhật.';
-            } else {
-                // Create user
-                if (!payload.password) {
-                    userFormMessage.textContent = 'Mật khẩu là bắt buộc khi tạo người dùng mới.';
-                    return;
-                }
-                const response = await fetch('/api/users', {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (!response.ok) {
-                    const data = await response.json();
-                    throw new Error(data.message || 'Không thể tạo người dùng');
-                }
-                userFormMessage.textContent = 'Người dùng đã được tạo.';
-            }
-            await loadUsers();
-            clearUserForm();
-        } catch (error) {
-            userFormMessage.textContent = error.message || 'Không thể lưu người dùng.';
-        }
-    });
-
-    // Database export button
     exportDatabaseBtn.addEventListener('click', async () => {
         try {
             const response = await fetch('/api/database/export', {
                 credentials: 'include'
             });
-            
+
             if (!response.ok) {
                 const data = await response.json();
-                throw new Error(data.message || 'Không thể export database');
+                throw new Error(data.message || 'Khong the xuat database.');
             }
 
             const blob = await response.blob();
@@ -721,23 +432,22 @@
             a.click();
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
-            
-            alert('Export database thành công!');
+
+            alert('Da xuat database thanh cong!');
         } catch (error) {
-            alert(error.message || 'Không thể export database.');
+            alert(error.message || 'Khong the xuat database.');
         }
     });
 
-    // Download template button
     downloadTemplateBtn.addEventListener('click', async () => {
         try {
             const response = await fetch('/api/database/template', {
                 credentials: 'include'
             });
-            
+
             if (!response.ok) {
                 const data = await response.json();
-                throw new Error(data.message || 'Không thể tải template');
+                throw new Error(data.message || 'Khong the tai template.');
             }
 
             const blob = await response.blob();
@@ -750,24 +460,28 @@
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
         } catch (error) {
-            alert(error.message || 'Không thể tải template.');
+            alert(error.message || 'Khong the tai template.');
         }
     });
 
-    // Import database button
     importDatabaseBtn.addEventListener('click', async () => {
         const file = importFileInput.files[0];
+        importMessage.textContent = '';
+        importMessage.classList.remove('is-success', 'is-error');
+
         if (!file) {
-            importMessage.textContent = 'Vui lòng chọn file Excel để import.';
+            importMessage.textContent = 'Vui long chon file Excel de import.';
+            importMessage.classList.add('is-error');
             return;
         }
 
-        if (!confirm('CẢNH BÁO: Import sẽ thay thế toàn bộ dữ liệu hiện tại. Bạn có chắc chắn muốn tiếp tục?')) {
+        if (!confirm('Import se thay the toan bo du lieu hien tai. Ban co chac chan?')) {
             return;
         }
 
-        importMessage.textContent = 'Đang import...';
-        
+        importMessage.textContent = 'Dang import...';
+        importMessage.classList.add('is-info');
+
         try {
             const formData = new FormData();
             formData.append('file', file);
@@ -780,19 +494,19 @@
 
             if (!response.ok) {
                 const data = await response.json();
-                throw new Error(data.message || 'Không thể import database');
+                throw new Error(data.message || 'Khong the import database.');
             }
 
             const result = await response.json();
-            importMessage.style.color = '#16a34a';
             importMessage.textContent = `${result.message} (Users: ${result.stats.users}, Blogs: ${result.stats.blogs}, Products: ${result.stats.products})`;
+            importMessage.classList.remove('is-info');
+            importMessage.classList.add('is-success');
             importFileInput.value = '';
-            
-            // Reload data
             await loadAllData();
         } catch (error) {
-            importMessage.style.color = '#dc2626';
-            importMessage.textContent = error.message || 'Không thể import database.';
+            importMessage.textContent = error.message || 'Khong the import database.';
+            importMessage.classList.remove('is-info');
+            importMessage.classList.add('is-error');
         }
     });
 
@@ -806,25 +520,19 @@
         });
     });
 
-    clearBlogForm();
-    clearProductForm();
-    clearUserForm();
-
     (async function bootstrap() {
         try {
             const user = await api.currentUser();
             if (user) {
                 toggleSections(true);
-                currentUserLabel.textContent = `Hello, ${user.displayName || user.username}`;
+                currentUserLabel.textContent = `Xin chao, ${user.displayName || user.username}`;
                 await loadAllData();
             } else {
                 toggleSections(false);
-                closeChangePasswordModal();
             }
         } catch (error) {
             console.warn('Unable to verify session:', error);
             toggleSections(false);
-            closeChangePasswordModal();
         }
     })();
 });

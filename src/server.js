@@ -80,6 +80,22 @@ app.get('/admin', (req, res) => {
   res.sendFile(path.join(publicDir, 'admin.html'));
 });
 
+app.get('/admin/blog-editor', (req, res) => {
+  res.sendFile(path.join(publicDir, 'admin-blog-editor.html'));
+});
+
+app.get('/admin/product-editor', (req, res) => {
+  res.sendFile(path.join(publicDir, 'admin-product-editor.html'));
+});
+
+app.get('/admin/user-editor', (req, res) => {
+  res.sendFile(path.join(publicDir, 'admin-user-editor.html'));
+});
+
+app.get('/database-viewer', (req, res) => {
+  res.sendFile(path.join(publicDir, 'database-viewer.html'));
+});
+
 app.get('/blog/post/:identifier', (req, res) => {
   res.sendFile(path.join(publicDir, 'blog-detail.html'));
 });

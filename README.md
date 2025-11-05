@@ -147,9 +147,9 @@ Server sẽ chạy tại: `http://localhost:3000`
 
 ### Truy cập trang web
 - **Trang chủ**: `http://localhost:3000`
-- **Sản phẩm**: `http://localhost:3000/products.html`
-- **Blog**: `http://localhost:3000/blog.html`
-- **Admin**: `http://localhost:3000/admin.html`
+- **Sản phẩm**: `http://localhost:3000/products`
+- **Blog**: `http://localhost:3000/blog`
+- **Admin**: `http://localhost:3000/admin`
 
 ### Tài khoản admin mặc định
 - **Username**: `admin`
@@ -169,12 +169,12 @@ Truy cập tại: `http://localhost:8000`
 
 ```
 Covasol/
-├── index.html              # Trang chủ
-├── products.html           # Trang danh sách sản phẩm
-├── product-detail.html     # Trang chi tiết sản phẩm
-├── blog.html               # Trang danh sách blog
-├── blog-detail.html        # Trang chi tiết blog
-├── admin.html              # Trang quản trị
+├── index              # Trang chủ
+├── products           # Trang danh sách sản phẩm
+├── product-detail     # Trang chi tiết sản phẩm
+├── blog               # Trang danh sách blog
+├── blog-detail        # Trang chi tiết blog
+├── admin              # Trang quản trị
 ├── assets/
 │   ├── css/
 │   │   └── style.css       # Stylesheet chính
@@ -307,3 +307,4 @@ Made with love by COVASOL Team
 
 If you like this project, please give us a star!</content>
 <parameter name="filePath">c:\NgocChungIT\Chung\Covasol\README.md
+

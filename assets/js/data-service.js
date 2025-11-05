@@ -132,6 +132,36 @@
         });
     }
 
+    async function fetchUsers() {
+        const data = await apiRequest('/users');
+        return data.users || [];
+    }
+
+    async function fetchUser(id) {
+        const data = await apiRequest(`/users/${encodeURIComponent(id)}`);
+        return data.user;
+    }
+
+    async function createUser(payload) {
+        return apiRequest('/users', {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+    }
+
+    async function updateUser(id, payload) {
+        return apiRequest(`/users/${encodeURIComponent(id)}`, {
+            method: 'PUT',
+            body: JSON.stringify(payload)
+        });
+    }
+
+    async function deleteUser(id) {
+        return apiRequest(`/users/${encodeURIComponent(id)}`, {
+            method: 'DELETE'
+        });
+    }
+
     window.covasolApi = {
         fetchBlogPosts,
         fetchBlogPost,
@@ -146,6 +176,11 @@
         createProduct,
         updateProduct,
         deleteProduct,
-        changePassword
+        changePassword,
+        fetchUsers,
+        fetchUser,
+        createUser,
+        updateUser,
+        deleteUser
     };
 })();

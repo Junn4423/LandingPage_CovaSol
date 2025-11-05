@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Editor | COVASOL</title>
+    <meta name="robots" content="noindex,nofollow">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body class="admin-editor" data-editor="user">
+    <aside class="admin-sidebar">
+        <div class="sidebar-brand">
+            <img src="assets/img/logo.png" alt="COVASOL logo">
+            <div>
+                <span class="brand-caption">COVASOL</span>
+                <strong>Quan tri</strong>
+            </div>
+        </div>
+        <nav class="editor-nav">
+            <a href="/admin" class="editor-nav-btn">
+                <i class="fas fa-gauge"></i>
+                <span>Bang dieu khien</span>
+            </a>
+            <a href="/admin-blog-editor" class="editor-nav-btn">
+                <i class="fas fa-newspaper"></i>
+                <span>Bai viet Blog</span>
+            </a>
+            <a href="/admin-product-editor" class="editor-nav-btn">
+                <i class="fas fa-cubes"></i>
+                <span>San pham</span>
+            </a>
+            <a href="/admin-user-editor" class="editor-nav-btn active">
+                <i class="fas fa-users"></i>
+                <span>Nguoi dung</span>
+            </a>
+        </nav>
+        <div class="sidebar-meta">
+            <a href="/database-viewer" class="sidebar-action">
+                <i class="fas fa-table"></i>
+                <span>Xem database</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="editor-content-wrapper">
+        <header class="editor-header">
+            <a href="/admin" class="editor-back" id="editorBackBtn">
+                <i class="fas fa-arrow-left"></i>
+                <span>Tro ve bang dieu khien</span>
+            </a>
+            <div class="editor-heading">
+                <p class="editor-kicker">Quan ly nguoi dung</p>
+                <h1 id="editorTitle">Tao tai khoan quan tri</h1>
+                <p id="editorSubtitle">Cap quyen truy cap he thong cho thanh vien moi.</p>
+            </div>
+            <div class="editor-meta">
+                <span class="editor-user" id="editorUserLabel">Dang dang nhap</span>
+                <button class="btn btn-outline" id="editorLogoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Dang xuat</span>
+                </button>
+            </div>
+        </header>
+
+    <main class="editor-main">
+        <form id="userForm" class="editor-form">
+            <div class="form-section">
+                <div class="section-header">
+                    <h2>Thong tin tai khoan</h2>
+                    <button type="button" class="btn btn-ghost" id="resetUserForm">
+                        <i class="fas fa-rotate-right"></i>
+                        <span>Lam moi form</span>
+                    </button>
+                </div>
+                <div class="form-grid two-columns">
+                    <div class="form-control">
+                        <label for="userUsername">Ten dang nhap</label>
+                        <input type="text" id="userUsername" required placeholder="Nhap ten dang nhap">
+                    </div>
+                    <div class="form-control">
+                        <label for="userDisplayName">Ten hien thi</label>
+                        <input type="text" id="userDisplayName" required placeholder="Ten hien thi noi bo">
+                    </div>
+                    <div class="form-control">
+                        <label for="userRole">Vai tro</label>
+                        <select id="userRole">
+                            <option value="admin">Admin</option>
+                            <option value="editor">Editor</option>
+                            <option value="viewer">Viewer</option>
+                        </select>
+                    </div>
+                    <div class="form-control">
+                        <label for="userPassword">Mat khau</label>
+                        <input type="password" id="userPassword" placeholder="Toi thieu 8 ky tu">
+                        <small id="passwordHint" class="input-hint">Toi thieu 8 ky tu.</small>
+                    </div>
+                </div>
+            </div>
+
+            <p class="form-feedback" id="userFormMessage"></p>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-ghost" id="cancelEditorBtn">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Tro ve</span>
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    <span>Luu nguoi dung</span>
+                </button>
+            </div>
+        </form>
+    </main>
+    </div>
+
+    <script src="assets/js/data-service.js"></script>
+    <script src="assets/js/admin-editor.js"></script>
+</body>
+</html>

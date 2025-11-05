@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     backToAdminBtn.addEventListener('click', () => {
-        window.location.href = 'admin.html';
+        window.location.href = 'admin';
     });
 
     exportTableBtn.addEventListener('click', async () => {
@@ -325,3 +325,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize
     checkAuth();
 });
+
