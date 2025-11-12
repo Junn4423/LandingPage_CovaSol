@@ -56,6 +56,7 @@ router.get('/', (req, res) => {
   const offset = parseInt(req.query.offset, 10) || 0;
   const search = (req.query.search || '').trim();
   const tag = (req.query.tag || '').trim();
+  const category = (req.query.category || '').trim();
 
   const whereClauses = [];
   const params = {
@@ -73,6 +74,11 @@ router.get('/', (req, res) => {
   if (tag) {
     whereClauses.push('(tags LIKE @tag)');
     params.tag = `%${tag}%`;
+  }
+
+  if (category) {
+    whereClauses.push('(category = @category)');
+    params.category = category;
   }
 
   const whereSql = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';

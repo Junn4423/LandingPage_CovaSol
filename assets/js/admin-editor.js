@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function navigateToDashboard() {
-        window.location.href = '/admin';
+        window.location.href = 'admin.html';
     }
 
     backBtn?.addEventListener('click', (event) => {

@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (product.ctaPrimary.url) {
             primaryCtaEl.href = product.ctaPrimary.url;
         } else {
-            primaryCtaEl.href = `/products/item/${encodeURIComponent(product.code)}`;
+            primaryCtaEl.href = `product-detail.html?code=${encodeURIComponent(product.code)}`;
         }
     }
 
@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="article-error">
                 <h2>Khong tim thay san pham</h2>
                 <p>${message || 'Vui long quay lai chon san pham khac.'}</p>
-                <a class="btn btn-primary" href="/products">Quay lai danh sach</a>
+                <a class="btn btn-primary" href="products.html">Quay lai danh sach</a>
             </div>
         `;
         highlightsEl.style.display = 'none';

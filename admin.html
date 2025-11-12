@@ -42,7 +42,7 @@
                     <img src="assets/img/logo.png" alt="COVASOL logo">
                     <div>
                         <span class="brand-caption">COVASOL</span>
-                        <strong>Quan tri</strong>
+                        <strong>Quản trị</strong>
                     </div>
                 </div>
                 <nav class="sidebar-nav">
@@ -52,11 +52,11 @@
                     </button>
                     <button class="tab-btn" data-tab="productTab">
                         <i class="fas fa-cubes"></i>
-                        <span>San pham</span>
+                        <span>Sản phẩm</span>
                     </button>
                     <button class="tab-btn" data-tab="usersTab">
                         <i class="fas fa-users"></i>
-                        <span>Nguoi dung</span>
+                        <span>Người dùng</span>
                     </button>
                     <button class="tab-btn" data-tab="databaseTab">
                         <i class="fas fa-database"></i>
@@ -66,9 +66,9 @@
                 <div class="sidebar-meta">
                     <button class="sidebar-action" id="refreshDataBtn">
                         <i class="fas fa-sync-alt"></i>
-                        <span>Lam moi du lieu</span>
+                        <span>Làm mới dữ liệu</span>
                     </button>
-                    <a href="/database-viewer" class="sidebar-action">
+                    <a href="database-viewer.html" class="sidebar-action">
                         <i class="fas fa-table"></i>
                         <span>Xem database</span>
                     </a>
@@ -78,38 +78,38 @@
             <div class="admin-main">
                 <header class="admin-header">
                     <div>
-                        <p class="admin-kicker">Bang dieu khien</p>
-                        <h1>Quan tri noi bo</h1>
+                        <p class="admin-kicker">Bảng điều khiển</p>
+                        <h1>Quản trị nội bộ</h1>
                     </div>
                     <div class="admin-header__actions">
                         <span class="admin-user" id="currentUserLabel">Dang dang nhap</span>
                         <button class="btn btn-outline" id="changePasswordBtn">
                             <i class="fas fa-key"></i>
-                            <span>Doi mat khau</span>
+                            <span>Đổi mật khẩu</span>
                         </button>
                         <button class="btn btn-primary" id="logoutBtn">
                             <i class="fas fa-sign-out-alt"></i>
-                            <span>Dang xuat</span>
+                            <span>Đăng xuất</span>
                         </button>
                     </div>
                 </header>
 
                 <div class="admin-banner">
                     <i class="fas fa-circle-info"></i>
-                    <p>Bang dieu khien dang trong qua trinh toi uu va bao tri dinh ky.</p>
+                    <p>Bảng điều khiển đang trong quá trình tối ưu và bảo trì định kỳ.</p>
                 </div>
 
                 <section class="tab-panel" id="blogTab">
                     <div class="panel-header">
                         <div>
-                            <h2>Quan ly blog</h2>
-                            <p>Theo doi, chinh sua va to chuc bai viet.</p>
+                            <h2>Quản lý blog</h2>
+                            <p>Theo dõi, chỉnh sửa và tổ chức bài viết.</p>
                         </div>
                         <div class="panel-header__actions">
-                            <span class="panel-counter" id="blogCount">0 bai viet</span>
+                            <span class="panel-counter" id="blogCount">0 bài viết</span>
                             <button class="btn btn-primary" id="createBlogBtn">
                                 <i class="fas fa-plus"></i>
-                                <span>Soan bai viet</span>
+                                <span>Soạn bài viết</span>
                             </button>
                         </div>
                     </div>
@@ -118,11 +118,11 @@
                         <table class="admin-table" id="blogTable">
                             <thead>
                                 <tr>
-                                    <th>Ma</th>
-                                    <th>Tieu de</th>
-                                    <th>Danh muc</th>
-                                    <th>Ngay xuat ban</th>
-                                    <th>Thao tac</th>
+                                    <th>Mã</th>
+                                    <th>Tiêu đề</th>
+                                    <th>Danh mục</th>
+                                    <th>Ngày xuất bản</th>
+                                    <th>Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -133,14 +133,14 @@
                 <section class="tab-panel is-hidden" id="productTab">
                     <div class="panel-header">
                         <div>
-                            <h2>Quan ly san pham</h2>
-                            <p>Xay dung thong tin san pham mot cach nhat quan.</p>
+                            <h2>Quản lý sản phẩm</h2>
+                            <p>Xây dựng thông tin sản phẩm một cách nhất quán.</p>
                         </div>
                         <div class="panel-header__actions">
-                            <span class="panel-counter" id="productCount">0 san pham</span>
+                            <span class="panel-counter" id="productCount">0 sản phẩm</span>
                             <button class="btn btn-primary" id="createProductBtn">
                                 <i class="fas fa-plus"></i>
-                                <span>Them san pham</span>
+                                <span>Thêm sản phẩm</span>
                             </button>
                         </div>
                     </div>
@@ -149,11 +149,11 @@
                         <table class="admin-table" id="productTable">
                             <thead>
                                 <tr>
-                                    <th>Ma</th>
-                                    <th>Ten</th>
-                                    <th>Danh muc</th>
-                                    <th>Trang thai</th>
-                                    <th>Thao tac</th>
+                                    <th>Mã</th>
+                                    <th>ên</th>
+                                    <th>Danh mục</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -164,14 +164,14 @@
                 <section class="tab-panel is-hidden" id="usersTab">
                     <div class="panel-header">
                         <div>
-                            <h2>Quan ly nguoi dung</h2>
-                            <p>Phan quyen va quan ly tai khoan quan tri.</p>
+                            <h2>Quản lý người dùng</h2>
+                            <p>Phân quyền và quản lý tài khoản quản trị.</p>
                         </div>
                         <div class="panel-header__actions">
-                            <span class="panel-counter" id="userCount">0 nguoi dung</span>
+                            <span class="panel-counter" id="userCount">0 người dùng</span>
                             <button class="btn btn-primary" id="createUserBtn">
                                 <i class="fas fa-user-plus"></i>
-                                <span>Them nguoi dung</span>
+                                <span>Thêm người dùng</span>
                             </button>
                         </div>
                     </div>
@@ -181,10 +181,10 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Ten dang nhap</th>
-                                    <th>Ten hien thi</th>
-                                    <th>Vai tro</th>
-                                    <th>Thao tac</th>
+                                    <th>Tên đăng nhập</th>
+                                    <th>Tên hiển thị</th>
+                                    <th>Vai trò</th>
+                                    <th>Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -195,35 +195,35 @@
                 <section class="tab-panel is-hidden" id="databaseTab">
                     <div class="panel-header">
                         <div>
-                            <h2>Sao luu va dong bo</h2>
-                            <p>Nhap xuat du lieu he thong bang file Excel.</p>
+                            <h2>Sao lưu và đồng bộ</h2>
+                            <p>Nhập xuất dữ liệu hệ thống bằng file Excel.</p>
                         </div>
                     </div>
                     <div class="database-grid">
                         <div class="database-card">
-                            <h3>Xuat database</h3>
-                            <p>Tao file Excel tong hop toan bo du lieu quan tri.</p>
+                            <h3>Xuất database</h3>
+                            <p>Tạo file Excel tổng hợp toàn bộ dữ liệu quản trị.</p>
                             <button class="btn btn-primary" id="exportDatabaseBtn">
                                 <i class="fas fa-file-export"></i>
-                                <span>Xuat file Excel</span>
+                                <span>Xuất file Excel</span>
                             </button>
                         </div>
                         <div class="database-card">
-                            <h3>Tai template</h3>
-                            <p>Su dung mau du lieu chuan hoa de import nhanh.</p>
+                            <h3>ải template</h3>
+                            <p>Sử dụng mẫu dữ liệu chuẩn hóa để import nhanh.</p>
                             <button class="btn btn-outline" id="downloadTemplateBtn">
                                 <i class="fas fa-file-download"></i>
-                                <span>Tai template</span>
+                                <span>Tải template</span>
                             </button>
                         </div>
                         <div class="database-card">
                             <h3>Import database</h3>
-                            <p>Tai file Excel de dong bo va thay the du lieu hien co.</p>
+                            <p>Tải file Excel để đồng bộ và thay thế dữ liệu hiện có.</p>
                             <div class="file-input">
                                 <input type="file" id="importFileInput" accept=".xlsx,.xls">
                                 <label for="importFileInput">
                                     <i class="fas fa-upload"></i>
-                                    <span>Chon file Excel</span>
+                                    <span>Chọn file Excel</span>
                                 </label>
                             </div>
                             <button class="btn btn-danger" id="importDatabaseBtn">
@@ -241,33 +241,34 @@
     <div class="modal-overlay is-hidden" id="changePasswordModal" role="dialog" aria-modal="true">
         <div class="modal-card">
             <header class="modal-header">
-                <h2>Doi mat khau</h2>
-                <button class="modal-close" id="closeChangePasswordBtn" aria-label="Dong">
+                <h2>Đổi mật khẩu</h2>
+                <button class="modal-close" id="closeChangePasswordBtn" aria-label="Đóng">
                     <i class="fas fa-times"></i>
                 </button>
             </header>
             <form id="changePasswordForm" class="modal-body">
                 <div class="form-control">
-                    <label for="currentPassword">Mat khau hien tai</label>
-                    <input type="password" id="currentPassword" required placeholder="Nhap mat khau hien tai">
+                    <label for="currentPassword">Mật khẩu hiện tại</label>
+                    <input type="password" id="currentPassword" required placeholder="Nhập mật khẩu hiện tại">
                 </div>
                 <div class="form-control">
-                    <label for="newPassword">Mat khau moi</label>
-                    <input type="password" id="newPassword" required placeholder="Toi thieu 8 ky tu">
+                    <label for="newPassword">Mật khẩu mới</label>
+                    <input type="password" id="newPassword" required placeholder="Tối thiểu 8 ký tự">
                 </div>
                 <div class="form-control">
-                    <label for="confirmPassword">Nhap lai mat khau moi</label>
-                    <input type="password" id="confirmPassword" required placeholder="Nhap lai mat khau moi">
+                    <label for="confirmPassword">Nhập lại mật khẩu mới</label>
+                    <input type="password" id="confirmPassword" required placeholder="Nhập lại mật khẩu mới">
                 </div>
                 <p class="form-feedback" id="changePasswordMessage"></p>
                 <div class="modal-footer">
-                    <button class="btn btn-ghost" id="cancelChangePasswordBtn">Huy</button>
-                    <button class="btn btn-primary" type="submit">Cap nhat</button>
+                    <button class="btn btn-ghost" id="cancelChangePasswordBtn">Hủy</button>
+                    <button class="btn btn-primary" type="submit">Cập nhật</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <script src="assets/js/config.js"></script>
     <script src="assets/js/data-service.js"></script>
     <script src="assets/js/admin.js"></script>
 </body>

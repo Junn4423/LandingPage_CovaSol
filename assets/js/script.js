@@ -922,7 +922,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function buildHomeProductCard(product, index) {
-        const detailUrl = `/products/item/${encodeURIComponent(product.code)}`;
+    const detailUrl = `product-detail.html?code=${encodeURIComponent(product.code)}`;
         const card = document.createElement('article');
         card.className = 'product-card';
         card.setAttribute('data-aos', 'zoom-in');
@@ -1019,7 +1019,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function buildHomePostCard(post, index) {
-        const detailUrl = `/blog/post/${encodeURIComponent(post.code)}`;
+    const detailUrl = `blog-detail.html?code=${encodeURIComponent(post.code)}`;
         const article = document.createElement('article');
         article.className = 'post-card';
         article.setAttribute('data-aos', 'fade-up');

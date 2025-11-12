@@ -108,12 +108,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderPost(post, index) {
-        const article = document.createElement('article');
-        article.className = 'post-card';
-        article.dataset.category = slugifyCategory(post.category);
-        article.setAttribute('data-aos', 'fade-up');
-        article.setAttribute('data-aos-delay', `${(index % 6) * 100}`);
-        const detailUrl = `/blog/post/${encodeURIComponent(post.code)}`;
+    const article = document.createElement('article');
+    article.className = 'post-card';
+    article.dataset.category = slugifyCategory(post.category);
+    article.setAttribute('data-aos', 'fade-up');
+    article.setAttribute('data-aos-delay', `${(index % 6) * 100}`);
+    const detailUrl = `blog-detail.html?code=${encodeURIComponent(post.code)}`;
 
         const imageWrapper = document.createElement('div');
         imageWrapper.className = 'post-image';

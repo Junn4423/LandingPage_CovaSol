@@ -15,29 +15,29 @@
             <img src="assets/img/logo.png" alt="COVASOL logo">
             <div>
                 <span class="brand-caption">COVASOL</span>
-                <strong>Quan tri</strong>
+                <strong>Quản trị</strong>
             </div>
         </div>
         <nav class="editor-nav">
-            <a href="/admin" class="editor-nav-btn">
+            <a href="admin.html" class="editor-nav-btn">
                 <i class="fas fa-gauge"></i>
-                <span>Bang dieu khien</span>
+                <span>Bảng điều khiển</span>
             </a>
-            <a href="/admin-blog-editor" class="editor-nav-btn">
+            <a href="admin-blog-editor.html" class="editor-nav-btn">
                 <i class="fas fa-newspaper"></i>
-                <span>Bai viet Blog</span>
+                <span>Bài viết Blog</span>
             </a>
-            <a href="/admin-product-editor" class="editor-nav-btn active">
+            <a href="admin-product-editor.html" class="editor-nav-btn active">
                 <i class="fas fa-cubes"></i>
-                <span>San pham</span>
+                <span>Sản phẩm</span>
             </a>
-            <a href="/admin-user-editor" class="editor-nav-btn">
+            <a href="admin-user-editor.html" class="editor-nav-btn">
                 <i class="fas fa-users"></i>
-                <span>Nguoi dung</span>
+                <span>Người dùng</span>
             </a>
         </nav>
         <div class="sidebar-meta">
-            <a href="/database-viewer" class="sidebar-action">
+            <a href="database-viewer.html" class="sidebar-action">
                 <i class="fas fa-table"></i>
                 <span>Xem database</span>
             </a>
@@ -46,14 +46,14 @@
 
     <div class="editor-content-wrapper">
         <header class="editor-header">
-            <a href="/admin" class="editor-back" id="editorBackBtn">
+            <a href="admin.html" class="editor-back" id="editorBackBtn">
                 <i class="fas fa-arrow-left"></i>
-                <span>Tro ve bang dieu khien</span>
+                <span>Trở về bảng điều khiển</span>
             </a>
             <div class="editor-heading">
-                <p class="editor-kicker">Quan ly san pham</p>
-                <h1 id="editorTitle">Them san pham moi</h1>
-                <p id="editorSubtitle">Nhap thong tin chi tiet cho san pham.</p>
+                <p class="editor-kicker">Quản lý sản phẩm</p>
+                <h1 id="editorTitle">Thêm sản phẩm mới</h1>
+                <p id="editorSubtitle">Nhập thông tin chi tiết cho sản phẩm.</p>
             </div>
             <div class="editor-meta">
                 <span class="editor-user" id="editorUserLabel">Dang dang nhap</span>
@@ -68,28 +68,28 @@
         <form id="productForm" class="editor-form">
             <div class="form-section">
                 <div class="section-header">
-                    <h2>Thong tin chung</h2>
+                    <h2>Thông tin chung</h2>
                     <button type="button" class="btn btn-ghost" id="resetProductForm">
                         <i class="fas fa-rotate-right"></i>
-                        <span>Lam moi form</span>
+                        <span>Làm mới form</span>
                     </button>
                 </div>
                 <div class="form-grid two-columns">
                     <div class="form-control">
-                        <label for="productCode">Ma san pham</label>
+                        <label for="productCode">Mã sản phẩm</label>
                         <input type="text" id="productCode" required>
-                        <small class="input-hint">Tu dong tao ma khi tao san pham moi, co the chinh sua neu can.</small>
+                        <small class="input-hint">Tự động tạo mã khi tạo sản phẩm mới, có thể chỉnh sửa nếu cần.</small>
                     </div>
                     <div class="form-control">
-                        <label for="productCategoryInput">Danh muc</label>
-                        <input type="text" id="productCategoryInput" placeholder="Vi du: Automation">
+                        <label for="productCategoryInput">Danh mục</label>
+                        <input type="text" id="productCategoryInput" placeholder="Ví dụ: Automation">
                     </div>
                     <div class="form-control">
-                        <label for="productNameInput">Ten san pham</label>
-                        <input type="text" id="productNameInput" required placeholder="Ten dung tren trang chu">
+                        <label for="productNameInput">ên sản phẩm</label>
+                        <input type="text" id="productNameInput" required placeholder="ên dùng trên trang chủ">
                     </div>
                     <div class="form-control">
-                        <label for="productImage">Anh dai dien (URL)</label>
+                        <label for="productImage">Ảnh đại diện (URL)</label>
                         <input type="url" id="productImage" placeholder="https://...">
                     </div>
                 </div>
@@ -97,34 +97,34 @@
 
             <div class="form-section">
                 <div class="section-header">
-                    <h2>Noi dung san pham</h2>
+                    <h2>Nội dung sản phẩm</h2>
                 </div>
                 <div class="form-grid">
                     <div class="form-control">
-                        <label for="productSummary">Mo ta ngan</label>
-                        <textarea id="productSummary" rows="3" placeholder="Noi dung hien thi tren danh sach san pham"></textarea>
+                        <label for="productSummary">Mô tả ngắn</label>
+                        <textarea id="productSummary" rows="3" placeholder="Nội dung hiển thị trên danh sách sản phẩm"></textarea>
                     </div>
                     <div class="form-control">
-                        <label for="productDescription">Noi dung chi tiet</label>
-                        <textarea id="productDescription" rows="12" required placeholder="Thong tin day du ve san pham"></textarea>
+                        <label for="productDescription">ội dung chi tiết</label>
+                        <textarea id="productDescription" rows="12" required placeholder="Thông tin đầy đủ về sản phẩm"></textarea>
                     </div>
                 </div>
             </div>
 
             <div class="form-section">
                 <div class="section-header">
-                    <h2>Dinh vi gia tri</h2>
+                    <h2>Định vị giá trị</h2>
                 </div>
                 <div class="form-grid two-columns">
                     <div class="form-control">
-                        <label for="productFeatures">Tinh nang noi bat</label>
-                        <textarea id="productFeatures" rows="4" placeholder="Ngan cach boi dau phay"></textarea>
-                        <small class="input-hint">Vi du: IoT, AI, Cloud-native</small>
+                        <label for="productFeatures">ính năng nổi bật</label>
+                        <textarea id="productFeatures" rows="4" placeholder="Ngăn cách bởi dấu phẩy"></textarea>
+                        <small class="input-hint">Ví dụ: IoT, AI, Cloud-native</small>
                     </div>
                     <div class="form-control">
-                        <label for="productHighlights">Diem nhan</label>
-                        <textarea id="productHighlights" rows="4" placeholder="Moi dong la mot diem nhan"></textarea>
-                        <small class="input-hint">Nhan Enter de xuong dong moi.</small>
+                        <label for="productHighlights">Điểm nhấn</label>
+                        <textarea id="productHighlights" rows="4" placeholder="ỗi dòng là một điểm nhấn"></textarea>
+                        <small class="input-hint">Nhấn Enter để xuống dòng mới.</small>
                     </div>
                 </div>
             </div>
@@ -135,19 +135,19 @@
                 </div>
                 <div class="form-grid two-columns">
                     <div class="form-control">
-                        <label for="productPrimaryLabel">Nhan CTA chinh</label>
-                        <input type="text" id="productPrimaryLabel" placeholder="Vi du: Dat lich demo">
+                        <label for="productPrimaryLabel">Nhận CTA chính</label>
+                        <input type="text" id="productPrimaryLabel" placeholder="Ví dụ: Đặt lịch demo">
                     </div>
                     <div class="form-control">
-                        <label for="productPrimaryUrl">Lien ket CTA chinh</label>
+                        <label for="productPrimaryUrl">Liên kết CTA chính</label>
                         <input type="url" id="productPrimaryUrl" placeholder="https://...">
                     </div>
                     <div class="form-control">
-                        <label for="productSecondaryLabel">Nhan CTA phu</label>
-                        <input type="text" id="productSecondaryLabel" placeholder="Vi du: Xem tai lieu">
+                        <label for="productSecondaryLabel">Nhận CTA phụ</label>
+                        <input type="text" id="productSecondaryLabel" placeholder="Ví dụ: Xem tài liệu">
                     </div>
                     <div class="form-control">
-                        <label for="productSecondaryUrl">Lien ket CTA phu</label>
+                        <label for="productSecondaryUrl">Liên kết CTA phụ</label>
                         <input type="url" id="productSecondaryUrl" placeholder="https://...">
                     </div>
                 </div>
@@ -158,16 +158,16 @@
             <div class="form-actions">
                 <button type="button" class="btn btn-ghost" id="cancelEditorBtn">
                     <i class="fas fa-arrow-left"></i>
-                    <span>Tro ve</span>
+                    <span>Trở về</span>
                 </button>
                 <div class="action-group">
                     <button type="button" class="btn btn-outline" id="previewProductBtn">
                         <i class="fas fa-eye"></i>
-                        <span>Xem truoc</span>
+                        <span>Xem trước</span>
                     </button>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i>
-                        <span>Luu san pham</span>
+                        <span>Lưu sản phẩm</span>
                     </button>
                 </div>
             </div>
@@ -175,6 +175,7 @@
     </main>
     </div>
 
+    <script src="assets/js/config.js"></script>
     <script src="assets/js/data-service.js"></script>
     <script src="assets/js/admin-editor.js"></script>
 </body>

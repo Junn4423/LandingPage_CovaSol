@@ -15,29 +15,29 @@
             <img src="assets/img/logo.png" alt="COVASOL logo">
             <div>
                 <span class="brand-caption">COVASOL</span>
-                <strong>Quan tri</strong>
+                <strong>Quản trị</strong>
             </div>
         </div>
         <nav class="editor-nav">
-            <a href="/admin" class="editor-nav-btn">
+            <a href="admin.html" class="editor-nav-btn">
                 <i class="fas fa-gauge"></i>
-                <span>Bang dieu khien</span>
+                <span>Bảng điều khiển</span>
             </a>
-            <a href="/admin-blog-editor" class="editor-nav-btn">
+            <a href="admin-blog-editor.html" class="editor-nav-btn">
                 <i class="fas fa-newspaper"></i>
-                <span>Bai viet Blog</span>
+                <span>Bài viết Blog</span>
             </a>
-            <a href="/admin-product-editor" class="editor-nav-btn">
+            <a href="admin-product-editor.html" class="editor-nav-btn">
                 <i class="fas fa-cubes"></i>
-                <span>San pham</span>
+                <span>Sản phẩm</span>
             </a>
-            <a href="/admin-user-editor" class="editor-nav-btn active">
+            <a href="admin-user-editor.html" class="editor-nav-btn active">
                 <i class="fas fa-users"></i>
-                <span>Nguoi dung</span>
+                <span>Người dùng</span>
             </a>
         </nav>
         <div class="sidebar-meta">
-            <a href="/database-viewer" class="sidebar-action">
+            <a href="database-viewer.html" class="sidebar-action">
                 <i class="fas fa-table"></i>
                 <span>Xem database</span>
             </a>
@@ -46,20 +46,20 @@
 
     <div class="editor-content-wrapper">
         <header class="editor-header">
-            <a href="/admin" class="editor-back" id="editorBackBtn">
+            <a href="admin.html" class="editor-back" id="editorBackBtn">
                 <i class="fas fa-arrow-left"></i>
-                <span>Tro ve bang dieu khien</span>
+                <span>Trở về bảng điều khiển</span>
             </a>
             <div class="editor-heading">
-                <p class="editor-kicker">Quan ly nguoi dung</p>
-                <h1 id="editorTitle">Tao tai khoan quan tri</h1>
-                <p id="editorSubtitle">Cap quyen truy cap he thong cho thanh vien moi.</p>
+                <p class="editor-kicker">Quản lý người dùng</p>
+                <h1 id="editorTitle">Tạo tài khoản quản trị</h1>
+                <p id="editorSubtitle">Cấp quyền truy cập hệ thống cho thành viên mới.</p>
             </div>
             <div class="editor-meta">
                 <span class="editor-user" id="editorUserLabel">Dang dang nhap</span>
                 <button class="btn btn-outline" id="editorLogoutBtn">
                     <i class="fas fa-sign-out-alt"></i>
-                    <span>Dang xuat</span>
+                    <span>Đăng xuất</span>
                 </button>
             </div>
         </header>
@@ -68,23 +68,23 @@
         <form id="userForm" class="editor-form">
             <div class="form-section">
                 <div class="section-header">
-                    <h2>Thong tin tai khoan</h2>
+                    <h2>Thông tin tài khoản</h2>
                     <button type="button" class="btn btn-ghost" id="resetUserForm">
                         <i class="fas fa-rotate-right"></i>
-                        <span>Lam moi form</span>
+                        <span>Làm mới form</span>
                     </button>
                 </div>
                 <div class="form-grid two-columns">
                     <div class="form-control">
-                        <label for="userUsername">Ten dang nhap</label>
-                        <input type="text" id="userUsername" required placeholder="Nhap ten dang nhap">
+                        <label for="userUsername">Tên đăng nhập</label>
+                        <input type="text" id="userUsername" required placeholder="Nhập tên đăng nhập">
                     </div>
                     <div class="form-control">
-                        <label for="userDisplayName">Ten hien thi</label>
-                        <input type="text" id="userDisplayName" required placeholder="Ten hien thi noi bo">
+                        <label for="userDisplayName">Tên hiển thị</label>
+                        <input type="text" id="userDisplayName" required placeholder="Tên hiển thị nội bộ">
                     </div>
                     <div class="form-control">
-                        <label for="userRole">Vai tro</label>
+                        <label for="userRole">Vai trò</label>
                         <select id="userRole">
                             <option value="admin">Admin</option>
                             <option value="editor">Editor</option>
@@ -92,9 +92,9 @@
                         </select>
                     </div>
                     <div class="form-control">
-                        <label for="userPassword">Mat khau</label>
-                        <input type="password" id="userPassword" placeholder="Toi thieu 8 ky tu">
-                        <small id="passwordHint" class="input-hint">Toi thieu 8 ky tu.</small>
+                        <label for="userPassword">Mật khẩu</label>
+                        <input type="password" id="userPassword" placeholder="Tối thiểu 8 ký tự">
+                        <small id="passwordHint" class="input-hint">Tối thiểu 8 ký tự.</small>
                     </div>
                 </div>
             </div>
@@ -104,17 +104,17 @@
             <div class="form-actions">
                 <button type="button" class="btn btn-ghost" id="cancelEditorBtn">
                     <i class="fas fa-arrow-left"></i>
-                    <span>Tro ve</span>
+                    <span>Trở về</span>
                 </button>
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-save"></i>
-                    <span>Luu nguoi dung</span>
+                    <span>Lưu người dùng</span>
                 </button>
             </div>
         </form>
     </main>
     </div>
-
+    <script src="assets/js/config.js"></script>
     <script src="assets/js/data-service.js"></script>
     <script src="assets/js/admin-editor.js"></script>
 </body>

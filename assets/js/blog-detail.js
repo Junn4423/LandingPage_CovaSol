@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .forEach((post) => {
                     const item = document.createElement('li');
                     const link = document.createElement('a');
-                    link.href = `/blog/post/${encodeURIComponent(post.code)}`;
+                    link.href = `blog-detail.html?code=${encodeURIComponent(post.code)}`;
                     link.textContent = post.title;
 
                     const meta = document.createElement('span');
@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="article-error">
                 <h2>Khong tim thay bai viet</h2>
                 <p>${message || 'Vui long quay lai trang blog de chon bai viet khac.'}</p>
-                <a class="btn btn-primary" href="/blog">Quay lai Blog</a>
+                <a class="btn btn-primary" href="blog.html">Quay lai Blog</a>
             </div>
         `;
         tagsEl.style.display = 'none';

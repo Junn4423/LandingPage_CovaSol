@@ -47,14 +47,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function renderProduct(product, index) {
-        const card = document.createElement('div');
-        card.className = 'product-card';
-        card.setAttribute('data-aos', 'zoom-in');
-        card.setAttribute('data-aos-delay', `${(index % 6) * 100}`);
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.setAttribute('data-aos', 'zoom-in');
+    card.setAttribute('data-aos-delay', `${(index % 6) * 100}`);
 
-        const imageWrapper = document.createElement('div');
-        imageWrapper.className = 'product-image';
-        const detailUrl = `/products/item/${encodeURIComponent(product.code)}`;
+    const imageWrapper = document.createElement('div');
+    imageWrapper.className = 'product-image';
+    const detailUrl = `product-detail.html?code=${encodeURIComponent(product.code)}`;
         imageWrapper.innerHTML = `
             <a href="${detailUrl}">
                 <img src="${product.imageUrl || 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80'}" alt="${product.name}">
@@ -92,10 +92,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             actions.appendChild(primary);
         }
 
-        const learnMore = document.createElement('a');
-        learnMore.className = 'btn btn-outline';
-        learnMore.href = detailUrl;
-        learnMore.textContent = product.ctaSecondary?.label || 'Tìm hiểu chi tiết';
+    const learnMore = document.createElement('a');
+    learnMore.className = 'btn btn-outline';
+    learnMore.href = detailUrl;
+    learnMore.textContent = product.ctaSecondary?.label || 'Tìm hiểu chi tiết';
         actions.appendChild(learnMore);
 
         contentWrapper.appendChild(title);

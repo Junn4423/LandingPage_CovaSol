@@ -11,6 +11,10 @@
     font-family: var(--font-primary, 'Be Vietnam Pro', sans-serif);
 }
 
+.admin-app section {
+    padding: 0;
+}
+
 .admin-app__viewport {
     min-height: 100vh;
     display: flex;
@@ -247,10 +251,12 @@
    Dashboard layout
 ------------------------------------------------ */
 .admin-shell {
-    flex: 1;
+    flex: 1 1 auto;
     display: grid;
     grid-template-columns: 280px 1fr;
-    min-height: 100vh;
+    height: 100vh;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .admin-sidebar {
@@ -262,6 +268,8 @@
     gap: 2rem;
     position: relative;
     z-index: 1;
+    min-height: 0;
+    overflow-y: auto;
 }
 
 .sidebar-brand {
@@ -352,6 +360,8 @@
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    overflow-y: auto;
+    min-height: 0;
 }
 
 .admin-header {
@@ -666,7 +676,9 @@
 .editor-content-wrapper {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    height: 100vh;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .editor-header {
@@ -676,6 +688,7 @@
     gap: 1.5rem;
     padding: 2rem 3rem 1.5rem;
     background: linear-gradient(140deg, rgba(18, 78, 102, 0.18), rgba(0, 108, 122, 0.08));
+    flex-shrink: 0;
 }
 
 .editor-back {
@@ -735,6 +748,10 @@
     flex: 1;
     padding: 2rem 3rem 3rem;
     background: linear-gradient(180deg, rgba(232, 240, 247, 0.35), rgba(255, 255, 255, 0.95));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    min-height: 0;
 }
 
 .editor-form {

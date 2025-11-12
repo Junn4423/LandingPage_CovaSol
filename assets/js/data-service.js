@@ -1,28 +1,50 @@
 (() => {
-    const API_BASE = '/api';
+    const API_BASE = (window.covasolConfig && window.covasolConfig.apiBase) || '/api';
 
     async function apiRequest(path, options = {}) {
-        const response = await fetch(`${API_BASE}${path}`, {
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                ...(options.headers || {})
-            },
-            ...options
-        });
+        let response;
+        try {
+            response = await fetch(`${API_BASE}${path}`, {
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(options.headers || {})
+                },
+                ...options
+            });
+        } catch (networkError) {
+            const error = new Error('Không thể kết nối tới máy chủ API.');
+            error.isNetworkError = true;
+            error.cause = networkError;
+            throw error;
+        }
+
+        const contentType = response.headers.get('content-type') || '';
 
         if (!response.ok) {
             let errorMessage = 'Đã xảy ra lỗi.';
-            try {
-                const payload = await response.json();
-                errorMessage = payload.message || errorMessage;
-            } catch (error) {
-                // ignore parse error
+            if (contentType.includes('application/json')) {
+                try {
+                    const payload = await response.json();
+                    errorMessage = payload.message || errorMessage;
+                } catch (error) {
+                    // ignore parse error
+                }
+            } else if (contentType.includes('text/html')) {
+                errorMessage = 'API endpoint không khả dụng ở chế độ tĩnh.';
             }
-            throw new Error(errorMessage);
+
+            const error = new Error(errorMessage);
+            error.status = response.status;
+            error.contentType = contentType;
+            throw error;
         }
 
         if (response.status === 204) {
+            return null;
+        }
+
+        if (!contentType.includes('application/json')) {
             return null;
         }
 
@@ -35,14 +57,21 @@
         if (query.offset) params.set('offset', query.offset);
         if (query.search) params.set('search', query.search);
         if (query.tag) params.set('tag', query.tag);
+        if (query.category) params.set('category', query.category);
 
         const qs = params.toString();
         const data = await apiRequest(`/blog${qs ? `?${qs}` : ''}`);
-        return data.data || [];
+        return Array.isArray(data?.data) ? data.data : [];
     }
 
     async function fetchBlogPost(identifier) {
+        if (!identifier) {
+            throw new Error('Vui lòng cung cấp mã bài viết.');
+        }
         const data = await apiRequest(`/blog/${encodeURIComponent(identifier)}`);
+        if (!data?.data) {
+            throw new Error('Không tìm thấy bài viết.');
+        }
         return data.data;
     }
 
@@ -55,11 +84,17 @@
 
         const qs = params.toString();
         const data = await apiRequest(`/products${qs ? `?${qs}` : ''}`);
-        return data.data || [];
+        return Array.isArray(data?.data) ? data.data : [];
     }
 
     async function fetchProduct(identifier) {
+        if (!identifier) {
+            throw new Error('Vui lòng cung cấp mã sản phẩm.');
+        }
         const data = await apiRequest(`/products/${encodeURIComponent(identifier)}`);
+        if (!data?.data) {
+            throw new Error('Không tìm thấy sản phẩm.');
+        }
         return data.data;
     }
 

@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const viewLink = document.createElement('a');
             viewLink.className = 'btn-link';
-            viewLink.href = `/blog/post/${encodeURIComponent(post.code)}`;
+            viewLink.href = `blog-detail.html?code=${encodeURIComponent(post.code)}`;
             viewLink.target = '_blank';
             viewLink.rel = 'noopener';
             viewLink.textContent = 'Xem';
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
             editBtn.className = 'action-chip';
             editBtn.textContent = 'Sua';
             editBtn.addEventListener('click', () => {
-                navigateTo('/admin/blog-editor', { code: post.code });
+                navigateTo('admin-blog-editor.html', { code: post.code });
             });
 
             const deleteBtn = document.createElement('button');
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const viewLink = document.createElement('a');
             viewLink.className = 'btn-link';
-            viewLink.href = `/products/item/${encodeURIComponent(product.code)}`;
+            viewLink.href = `product-detail.html?code=${encodeURIComponent(product.code)}`;
             viewLink.target = '_blank';
             viewLink.rel = 'noopener';
             viewLink.textContent = 'Xem';
@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
             editBtn.className = 'action-chip';
             editBtn.textContent = 'Sua';
             editBtn.addEventListener('click', () => {
-                navigateTo('/admin/product-editor', { code: product.code });
+                navigateTo('admin-product-editor.html', { code: product.code });
             });
 
             const deleteBtn = document.createElement('button');
@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
             editBtn.className = 'action-chip';
             editBtn.textContent = 'Sua';
             editBtn.addEventListener('click', () => {
-                navigateTo('/admin/user-editor', { id: user.id });
+                navigateTo('admin-user-editor.html', { id: user.id });
             });
 
             const deleteBtn = document.createElement('button');
@@ -401,15 +401,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     createBlogBtn.addEventListener('click', () => {
-        navigateTo('/admin/blog-editor');
+    navigateTo('admin-blog-editor.html');
     });
 
     createProductBtn.addEventListener('click', () => {
-        navigateTo('/admin/product-editor');
+    navigateTo('admin-product-editor.html');
     });
 
     createUserBtn.addEventListener('click', () => {
-        navigateTo('/admin/user-editor');
+    navigateTo('admin-user-editor.html');
     });
 
     exportDatabaseBtn.addEventListener('click', async () => {
