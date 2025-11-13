@@ -53,46 +53,33 @@
     </nav>
 
     <main>
-        <section class="product-hero" data-aos="fade-up">
-            <div class="container hero-layout">
-                <div class="hero-content">
-                    <span class="product-category-pill" id="productCategory">Danh mục</span>
-                    <h1 id="productName">Tên sản phẩm</h1>
-                    <p id="productSummary">Mô tả ngắn về giải pháp công nghệ.</p>
-                    <div class="hero-actions">
-                        <a href="#" class="btn btn-primary" id="productPrimaryCta">Yêu cầu demo</a>
-                        <a href="products.html" class="btn btn-outline">
-                            <i class="fas fa-arrow-left"></i>
-                            Quay lại danh sách
-                        </a>
+        <section class="product-preview-section">
+            <div class="container">
+                <div class="product-preview-layout">
+                    <div class="product-main" data-aos="fade-up">
+                        <div class="preview-content preview-surface" id="productPreview">
+                            <p class="preview-placeholder">Dang tai noi dung san pham...</p>
+                        </div>
+                        <div class="product-cta-group">
+                            <a href="#" class="btn btn-primary" id="productPrimaryCta">Yeu cau demo</a>
+                            <a href="products.html" class="btn btn-outline">
+                                <i class="fas fa-arrow-left"></i>
+                                Quay lai danh sach
+                            </a>
+                        </div>
                     </div>
-                    <div class="hero-tags" id="productFeatureTags"></div>
+                    <aside class="product-aside" data-aos="fade-up" data-aos-delay="150">
+                        <div class="aside-card">
+                            <h3>Tai lieu & Lien ket</h3>
+                            <ul class="aside-links" id="productLinks"></ul>
+                        </div>
+                        <div class="aside-card highlight">
+                            <h3>Nhan tu van</h3>
+                            <p>De lai thong tin lien he, doi ngu COVASOL se ho tro trong 24 gio.</p>
+                            <a class="btn btn-primary" href="/#contact">Dat lich tu van</a>
+                        </div>
+                    </aside>
                 </div>
-                <div class="hero-visual">
-                    <img id="productHeroImage" src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80" alt="Sản phẩm COVASOL">
-                </div>
-            </div>
-        </section>
-
-        <section class="product-body">
-            <div class="container product-layout">
-                <div class="product-main">
-                    <article id="productDescription" class="product-description-block" data-aos="fade-up">
-                        <p>Đang tải nội dung sản phẩm...</p>
-                    </article>
-                    <div class="product-highlights" id="productHighlights" data-aos="fade-up"></div>
-                </div>
-                <aside class="product-aside" data-aos="fade-up" data-aos-delay="150">
-                    <div class="aside-card">
-                        <h3>Tài liệu & Liên kết</h3>
-                        <ul class="aside-links" id="productLinks"></ul>
-                    </div>
-                    <div class="aside-card highlight">
-                        <h3>Nhận tư vấn</h3>
-                        <p>Để lại thông tin liên hệ, đội ngũ COVASOL sẽ hỗ trợ trong 24 giờ.</p>
-                        <a class="btn btn-primary" href="/#contact">Đặt lịch tư vấn</a>
-                    </div>
-                </aside>
             </div>
         </section>
     </main>
@@ -120,8 +107,10 @@
     <script src="assets/js/config.js"></script>
     <script src="assets/js/translations.js"></script>
     <script src="assets/js/data-service.js"></script>
+    <script src="/assets/js/preview-renderers.js"></script>
     <script src="/assets/js/product-detail.js"></script>
     <script src="/assets/js/script.js"></script>
 </body>
 </html>
+
 

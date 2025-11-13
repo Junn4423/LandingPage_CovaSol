@@ -21,6 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const subtitleEl = document.getElementById('editorSubtitle');
 
     // Preview Modal Functions
+    const previewRenderers = window.covasolPreview;
+
     function showPreviewModal(type, data) {
         // Create modal if doesn't exist
         let modal = document.querySelector('.preview-modal');
@@ -65,73 +67,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const previewContent = modal.querySelector('.preview-content');
         
-        if (type === 'blog') {
-            previewContent.innerHTML = renderBlogPreview(data);
-        } else if (type === 'product') {
-            previewContent.innerHTML = renderProductPreview(data);
+        if (!previewRenderers) {
+            previewContent.innerHTML = '<p class="preview-error">Khong the tai module preview. Vui long tai lai trang.</p>';
+            modal.classList.add('is-active');
+            return;
+        }
+
+        if (type === 'blog' && typeof previewRenderers.renderBlogPreview === 'function') {
+            previewContent.innerHTML = previewRenderers.renderBlogPreview(data);
+        } else if (type === 'product' && typeof previewRenderers.renderProductPreview === 'function') {
+            previewContent.innerHTML = previewRenderers.renderProductPreview(data);
+        } else {
+            previewContent.innerHTML = '<p class="preview-error">Khong tim thay ham render phu hop.</p>';
         }
 
         modal.classList.add('is-active');
-    }
-
-    function renderBlogPreview(data) {
-        const dateStr = data.publishedAt 
-            ? new Date(data.publishedAt).toLocaleDateString('vi-VN', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            })
-            : 'Chua xac dinh';
-
-        const tagsHtml = data.tags && data.tags.length > 0
-            ? `<div class="preview-tags">
-                ${data.tags.map(tag => `<span class="preview-tag">${tag}</span>`).join('')}
-               </div>`
-            : '';
-
-        return `
-            <h1>${data.title || 'Khong co tieu de'}</h1>
-            ${data.subtitle ? `<p style="font-size: 1.2rem; color: var(--gray-600); margin-bottom: 1rem;">${data.subtitle}</p>` : ''}
-            <div class="preview-meta">
-                ${data.category ? `<span><strong>Danh muc:</strong> ${data.category}</span>` : ''}
-                <span><strong>Ngay:</strong> ${dateStr}</span>
-                ${data.authorName ? `<span><strong>Tac gia:</strong> ${data.authorName}${data.authorRole ? ' - ' + data.authorRole : ''}</span>` : ''}
-            </div>
-            ${data.imageUrl ? `<img src="${data.imageUrl}" alt="${data.title}" />` : ''}
-            ${data.excerpt ? `<p style="font-size: 1.1rem; font-style: italic; padding: 1rem; background: #f8fafc; border-left: 4px solid var(--primary-blue); margin: 1.5rem 0;">${data.excerpt}</p>` : ''}
-            <div style="white-space: pre-wrap;">${data.content || 'Khong co noi dung'}</div>
-            ${tagsHtml}
-        `;
-    }
-
-    function renderProductPreview(data) {
-        const featuresHtml = data.featureTags && data.featureTags.length > 0
-            ? `<div class="preview-tags" style="margin-top: 1.5rem;">
-                ${data.featureTags.map(tag => `<span class="preview-tag">${tag}</span>`).join('')}
-               </div>`
-            : '';
-
-        const highlightsHtml = data.highlights && data.highlights.length > 0
-            ? `<div style="margin-top: 2rem; padding: 1.5rem; background: #f8fafc; border-radius: 0.75rem;">
-                <h3 style="margin-bottom: 1rem; color: var(--primary-dark);">Diem noi bat</h3>
-                <ul style="list-style: none; padding: 0;">
-                    ${data.highlights.map(h => `<li style="padding: 0.5rem 0; display: flex; align-items: start; gap: 0.75rem;">
-                        <i class="fas fa-check-circle" style="color: var(--primary-blue); margin-top: 0.25rem;"></i>
-                        <span>${h}</span>
-                    </li>`).join('')}
-                </ul>
-               </div>`
-            : '';
-
-        return `
-            <h1>${data.name || 'Khong co ten san pham'}</h1>
-            ${data.category ? `<p style="font-size: 1rem; color: var(--primary-blue); font-weight: 600; margin-bottom: 1rem;">${data.category}</p>` : ''}
-            ${data.imageUrl ? `<img src="${data.imageUrl}" alt="${data.name}" />` : ''}
-            ${data.shortDescription ? `<p style="font-size: 1.1rem; font-weight: 500; color: var(--gray-700); margin: 1.5rem 0;">${data.shortDescription}</p>` : ''}
-            <div style="white-space: pre-wrap; line-height: 1.8;">${data.description || 'Khong co mo ta'}</div>
-            ${featuresHtml}
-            ${highlightsHtml}
-        `;
     }
 
     function navigateToDashboard() {

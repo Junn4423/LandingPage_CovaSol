@@ -1,18 +1,14 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    if (!window.covasolApi) {
+    const api = window.covasolApi;
+    if (!api) {
         console.warn('Covasol API helper is not available.');
         return;
     }
 
-    const nameEl = document.getElementById('productName');
-    const summaryEl = document.getElementById('productSummary');
-    const categoryEl = document.getElementById('productCategory');
-    const heroImageEl = document.getElementById('productHeroImage');
-    const featureTagsEl = document.getElementById('productFeatureTags');
-    const descriptionEl = document.getElementById('productDescription');
-    const highlightsEl = document.getElementById('productHighlights');
+    const previewEl = document.getElementById('productPreview');
     const linksEl = document.getElementById('productLinks');
     const primaryCtaEl = document.getElementById('productPrimaryCta');
+    const previewRenderer = window.covasolPreview?.renderProductPreview;
 
     function resolveIdentifier() {
         const params = new URLSearchParams(window.location.search);
@@ -35,75 +31,58 @@ document.addEventListener('DOMContentLoaded', async () => {
         return decodeURIComponent(last);
     }
 
-    function renderTags(container, values) {
-        container.innerHTML = '';
-        if (!values || !values.length) {
-            container.style.display = 'none';
-            return;
-        }
+    function renderFallback(product) {
+        const description = product.description
+            ? product.description
+                  .split(/\n{2,}/)
+                  .map((paragraph) => `<p>${paragraph}</p>`)
+                  .join('')
+            : '<p>Khong co mo ta</p>';
 
-        container.style.display = '';
-        values.forEach((value) => {
-            const tag = document.createElement('span');
-            tag.className = 'feature-tag';
-            tag.textContent = value;
-            container.appendChild(tag);
-        });
-    }
+        const features =
+            product.featureTags && product.featureTags.length
+                ? `<div class="preview-tags">
+                ${product.featureTags.map((tag) => `<span class="preview-tag">${tag}</span>`).join('')}
+            </div>`
+                : '';
 
-    function renderDescription(container, description) {
-        container.innerHTML = '';
-        if (!description) {
-            container.innerHTML = '<p>Noi dung san pham dang duoc cap nhat.</p>';
-            return;
-        }
+        const highlights =
+            product.highlights && product.highlights.length
+                ? `<div class="preview-highlights">
+                <h3>Diem noi bat</h3>
+                <ul>
+                    ${product.highlights
+                        .map(
+                            (item) => `<li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>${item}</span>
+                        </li>`
+                        )
+                        .join('')}
+                </ul>
+            </div>`
+                : '';
 
-        const paragraphs = description
-            .split(/\n{2,}/)
-            .map((part) => part.trim())
-            .filter(Boolean);
-
-        paragraphs.forEach((paragraph) => {
-            if (paragraph.startsWith('##')) {
-                const heading = document.createElement('h3');
-                heading.textContent = paragraph.replace(/^#+\s*/, '');
-                container.appendChild(heading);
-            } else if (paragraph.startsWith('#')) {
-                const heading = document.createElement('h2');
-                heading.textContent = paragraph.replace(/^#+\s*/, '');
-                container.appendChild(heading);
-            } else {
-                const p = document.createElement('p');
-                p.textContent = paragraph;
-                container.appendChild(p);
+        return `
+            <h1>${product.name || 'Khong co ten san pham'}</h1>
+            ${product.category ? `<p class="preview-category">${product.category}</p>` : ''}
+            ${
+                product.imageUrl
+                    ? `<img src="${product.imageUrl}" alt="${product.name || 'Anh san pham'}" />`
+                    : ''
             }
-        });
-    }
-
-    function renderHighlights(container, highlights) {
-        container.innerHTML = '';
-        if (!highlights || !highlights.length) {
-            container.style.display = 'none';
-            return;
-        }
-
-        container.style.display = '';
-
-        const title = document.createElement('h3');
-        title.textContent = 'Diem noi bat';
-
-        const list = document.createElement('ul');
-        highlights.forEach((item) => {
-            const li = document.createElement('li');
-            li.innerHTML = `<i class="fas fa-check-circle"></i><span>${item}</span>`;
-            list.appendChild(li);
-        });
-
-        container.appendChild(title);
-        container.appendChild(list);
+            ${product.shortDescription ? `<p class="preview-excerpt">${product.shortDescription}</p>` : ''}
+            ${description}
+            ${features}
+            ${highlights}
+        `;
     }
 
     function renderLinks(container, product) {
+        if (!container) {
+            return;
+        }
+
         container.innerHTML = '';
 
         const links = [];
@@ -138,6 +117,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function setPrimaryCta(product) {
+        if (!primaryCtaEl) {
+            return;
+        }
+
         if (!product.ctaPrimary?.label) {
             primaryCtaEl.style.display = 'none';
             return;
@@ -152,37 +135,37 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    function applyProduct(product) {
-        nameEl.textContent = product.name;
-        summaryEl.textContent =
-            product.shortDescription || 'Giai phap cong nghe linh hoat cho doanh nghiep.';
-        categoryEl.textContent = product.category || 'Giai phap so';
-        heroImageEl.src =
-            product.imageUrl ||
-            'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80';
-        heroImageEl.alt = product.name;
+    function renderProduct(product) {
+        if (previewEl) {
+            if (typeof previewRenderer === 'function') {
+                previewEl.innerHTML = previewRenderer(product);
+            } else {
+                previewEl.innerHTML = renderFallback(product);
+            }
+        }
 
-        renderTags(featureTagsEl, product.featureTags);
-        renderDescription(descriptionEl, product.description);
-        renderHighlights(highlightsEl, product.highlights);
         renderLinks(linksEl, product);
         setPrimaryCta(product);
 
-        document.title = `${product.name} | COVASOL`;
+        document.title = `${product.name || 'San pham'} | COVASOL`;
     }
 
     function showError(message) {
-        console.error('Khong the tai san pham:', message);
-        descriptionEl.innerHTML = `
-            <div class="article-error">
-                <h2>Khong tim thay san pham</h2>
-                <p>${message || 'Vui long quay lai chon san pham khac.'}</p>
-                <a class="btn btn-primary" href="products.html">Quay lai danh sach</a>
-            </div>
-        `;
-        highlightsEl.style.display = 'none';
-        featureTagsEl.style.display = 'none';
-        primaryCtaEl.style.display = 'none';
+        if (previewEl) {
+            previewEl.innerHTML = `
+                <div class="article-error preview-error">
+                    <h2>Khong tim thay san pham</h2>
+                    <p>${message || 'Vui long quay lai chon san pham khac.'}</p>
+                    <a class="btn btn-primary" href="products.html">Quay lai danh sach</a>
+                </div>
+            `;
+        }
+        if (linksEl) {
+            linksEl.innerHTML = '<li>Khong co du lieu.</li>';
+        }
+        if (primaryCtaEl) {
+            primaryCtaEl.style.display = 'none';
+        }
         document.title = 'Khong tim thay san pham | COVASOL';
     }
 
@@ -192,10 +175,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             throw new Error('Khong xac dinh duoc ma san pham.');
         }
 
-        const data = await window.covasolApi.fetchProduct(identifier);
-        applyProduct(data);
+        const payload = await api.fetchProduct(identifier);
+        renderProduct(payload);
     } catch (error) {
         showError(error?.message);
     }
 });
-
