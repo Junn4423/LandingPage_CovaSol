@@ -34,6 +34,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     statusWrapper.appendChild(emptyState);
     container.insertBefore(statusWrapper, grid);
 
+    const isActiveProduct = (product) =>
+        (product?.status || 'inactive').toLowerCase() === 'active';
+
     function renderFeatureTags(features) {
         const wrapper = document.createElement('div');
         wrapper.className = 'product-features';
@@ -126,15 +129,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const products = await window.covasolApi.fetchProducts({
             limit: 24,
-            offset: 0
+            offset: 0,
+            status: 'active'
         });
 
-        if (!products || !products.length) {
+        const visibleProducts = (products || []).filter(isActiveProduct);
+        if (!visibleProducts.length) {
             emptyState.classList.remove('is-hidden');
             return;
         }
 
-        products.forEach((product, index) => renderProduct(product, index));
+        visibleProducts.forEach((product, index) => renderProduct(product, index));
         if (window.AOS) {
             window.AOS.refresh();
         }
@@ -146,3 +151,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadingIndicator.classList.add('is-hidden');
     }
 });
+
+
+

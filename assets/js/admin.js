@@ -90,6 +90,129 @@ document.addEventListener('DOMContentLoaded', () => {
         tbody.appendChild(emptyRow);
     }
 
+    const blogStatusLabels = {
+        active: 'Dang hien',
+        inactive: 'Da an'
+    };
+
+    const productStatusLabels = {
+        active: 'Dang hien',
+        inactive: 'Tam dung'
+    };
+
+    function isBlogActive(status) {
+        return (status || 'draft').toLowerCase() === 'published';
+    }
+
+    function isProductActive(status) {
+        return (status || 'inactive').toLowerCase() === 'active';
+    }
+
+    function updateStatusPill(pill, isActive, labels) {
+        if (!pill) return;
+        pill.textContent = isActive ? labels.active : labels.inactive;
+        pill.classList.toggle('is-live', isActive);
+        pill.classList.toggle('is-muted', !isActive);
+    }
+
+    function createStatusControl({ isActive, labels, onToggle }) {
+        const cell = document.createElement('td');
+        cell.className = 'status-cell';
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'status-toggle';
+
+        const pill = document.createElement('span');
+        pill.className = 'status-pill';
+        updateStatusPill(pill, isActive, labels);
+
+        const switchLabel = document.createElement('label');
+        switchLabel.className = 'status-switch';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = isActive;
+
+        const slider = document.createElement('span');
+        slider.className = 'status-slider';
+
+        switchLabel.appendChild(checkbox);
+        switchLabel.appendChild(slider);
+
+        wrapper.appendChild(pill);
+        wrapper.appendChild(switchLabel);
+        cell.appendChild(wrapper);
+
+        checkbox.addEventListener('change', async () => {
+            const nextChecked = checkbox.checked;
+            updateStatusPill(pill, nextChecked, labels);
+            checkbox.disabled = true;
+            try {
+                await onToggle(nextChecked);
+            } catch (error) {
+                checkbox.checked = !nextChecked;
+                updateStatusPill(pill, checkbox.checked, labels);
+                alert(error.message || 'Khong the cap nhat trang thai.');
+            } finally {
+                checkbox.disabled = false;
+            }
+        });
+
+        return cell;
+    }
+
+    function buildBlogPayload(source, overrides = {}) {
+        return {
+            code: source.code,
+            title: source.title || '',
+            subtitle: source.subtitle || null,
+            category: source.category || null,
+            imageUrl: source.imageUrl || source.image || null,
+            excerpt: source.excerpt || null,
+            content: source.content || '',
+            tags: Array.isArray(source.tags) ? source.tags : [],
+            keywords: Array.isArray(source.keywords) ? source.keywords : [],
+            authorName: source.authorName || null,
+            authorRole: source.authorRole || null,
+            publishedAt: source.publishedAt || null,
+            status: overrides.status ?? source.status ?? 'draft'
+        };
+    }
+
+    function buildProductPayload(source, overrides = {}) {
+        return {
+            code: source.code,
+            name: source.name || '',
+            category: source.category || null,
+            imageUrl: source.imageUrl || null,
+            shortDescription: source.shortDescription || null,
+            description: source.description || '',
+            featureTags: Array.isArray(source.featureTags) ? source.featureTags : [],
+            highlights: Array.isArray(source.highlights) ? source.highlights : [],
+            ctaPrimary: {
+                label: source.ctaPrimary?.label || null,
+                url: source.ctaPrimary?.url || null
+            },
+            ctaSecondary: {
+                label: source.ctaSecondary?.label || null,
+                url: source.ctaSecondary?.url || null
+            },
+            status: overrides.status ?? source.status ?? 'inactive'
+        };
+    }
+
+    async function persistBlogStatus(code, nextStatus) {
+        const detail = await api.fetchBlogPost(code);
+        const payload = buildBlogPayload(detail, { status: nextStatus });
+        await api.updateBlogPost(code, payload);
+    }
+
+    async function persistProductStatus(code, nextStatus) {
+        const detail = await api.fetchProduct(code);
+        const payload = buildProductPayload(detail, { status: nextStatus });
+        await api.updateProduct(code, payload);
+    }
+
     function navigateTo(path, params = {}) {
         const searchParams = new URLSearchParams();
         Object.entries(params).forEach(([key, value]) => {
@@ -114,6 +237,20 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
 
             const actionsCell = row.querySelector('.table-actions');
+            const statusCell = createStatusControl({
+                isActive: isBlogActive(post.status),
+                labels: blogStatusLabels,
+                onToggle: async (nextChecked) => {
+                    const nextStatus = nextChecked ? 'published' : 'draft';
+                    try {
+                        await persistBlogStatus(post.code, nextStatus);
+                        post.status = nextStatus;
+                    } catch (error) {
+                        throw new Error(error.message || 'Khong the cap nhat trang thai bai viet.');
+                    }
+                }
+            });
+            row.insertBefore(statusCell, actionsCell);
 
             const viewLink = document.createElement('a');
             viewLink.className = 'btn-link';
@@ -152,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
             blogTableBody.appendChild(row);
         });
 
-        ensureTableContent(blogTableBody, 5, 'Chua co bai viet nao.');
+        ensureTableContent(blogTableBody, 6, 'Chua co bai viet nao.');
         blogCountLabel.textContent = `${posts.length} bai viet`;
     }
 
@@ -164,11 +301,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${product.code}</td>
                 <td>${product.name}</td>
                 <td>${product.category || '-'}</td>
-                <td>${product.status || 'active'}</td>
                 <td class="table-actions"></td>
             `;
 
             const actionsCell = row.querySelector('.table-actions');
+            const statusCell = createStatusControl({
+                isActive: isProductActive(product.status),
+                labels: productStatusLabels,
+                onToggle: async (nextChecked) => {
+                    const nextStatus = nextChecked ? 'active' : 'inactive';
+                    try {
+                        await persistProductStatus(product.code, nextStatus);
+                        product.status = nextStatus;
+                    } catch (error) {
+                        throw new Error(error.message || 'Khong the cap nhat trang thai san pham.');
+                    }
+                }
+            });
+            row.insertBefore(statusCell, actionsCell);
 
             const viewLink = document.createElement('a');
             viewLink.className = 'btn-link';
@@ -268,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error loading blogs:', error);
             setFeedback(blogFeedback, error.message || 'Khong the tai danh sach blog.', 'error');
             blogTableBody.innerHTML = '';
-            ensureTableContent(blogTableBody, 5, 'Khong the tai du lieu.');
+            ensureTableContent(blogTableBody, 6, 'Khong the tai du lieu.');
             blogCountLabel.textContent = '0 bai viet';
         }
     }

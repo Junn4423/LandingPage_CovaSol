@@ -42,6 +42,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    const isPublishedArticle = (article) =>
+        (article?.status || 'draft').toLowerCase() === 'published';
+
     function renderFallback(article) {
         const content = article.content
             ? article.content
@@ -78,11 +81,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             const posts = await api.fetchBlogPosts({
                 limit: 4,
                 offset: 0,
-                tag: category || undefined
+                tag: category || undefined,
+                status: 'published'
             });
 
             relatedListEl.innerHTML = '';
-            posts
+            const visiblePosts = (posts || []).filter(isPublishedArticle);
+            visiblePosts
                 .filter((post) => post.code !== currentCode)
                 .slice(0, 3)
                 .forEach((post) => {
@@ -110,6 +115,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function renderArticle(article) {
         if (!previewEl) {
+            return;
+        }
+
+        if (!isPublishedArticle(article)) {
+            showError('Bai viet nay dang duoc an hoac chua xuat ban.');
             return;
         }
 
@@ -151,3 +161,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         showError(error?.message);
     }
 });
+
+
+
+
+

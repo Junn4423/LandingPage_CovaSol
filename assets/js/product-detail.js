@@ -78,6 +78,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         `;
     }
 
+    const isActiveProduct = (product) =>
+        (product?.status || 'inactive').toLowerCase() === 'active';
+
     function renderLinks(container, product) {
         if (!container) {
             return;
@@ -176,8 +179,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const payload = await api.fetchProduct(identifier);
+        if (!isActiveProduct(payload)) {
+            showError('San pham nay hien dang bi an hoac tam dung hien thi.');
+            return;
+        }
         renderProduct(payload);
     } catch (error) {
         showError(error?.message);
     }
 });
+
+

@@ -69,6 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
         tutorials: null
     };
 
+    const isPublishedPost = (post) =>
+        (post?.status || 'draft').toLowerCase() === 'published';
+
     categoryButtons.forEach((button) => {
         const key = button.dataset.category;
         const mapping = categoryMappings[key];
@@ -221,7 +224,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const query = {
             limit: state.limit,
-            offset: state.offset
+            offset: state.offset,
+            status: 'published'
         };
 
         if (state.category) {
@@ -233,17 +237,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const posts = await window.covasolApi.fetchBlogPosts(query);
-            if (reset && (!posts || posts.length === 0)) {
+            const visiblePosts = (posts || []).filter(isPublishedPost);
+            if (reset && visiblePosts.length === 0) {
                 showEmptyState('Chưa có bài viết nào cho lựa chọn này.');
             } else {
-                posts.forEach((post, index) => renderPost(post, state.offset + index));
+                visiblePosts.forEach((post, index) => renderPost(post, state.offset + index));
                 if (window.AOS) {
                     window.AOS.refresh();
                 }
             }
 
-            state.offset += posts.length;
-            state.hasMore = posts.length === state.limit;
+            const batchSize = posts ? posts.length : 0;
+            state.offset += batchSize;
+            state.hasMore = batchSize === state.limit;
             updateLoadMoreVisibility();
         } catch (error) {
             console.error(error);
@@ -263,3 +269,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadPosts(true);
 });
+
+
+
+
+
+

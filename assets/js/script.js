@@ -1105,6 +1105,11 @@ document.addEventListener('DOMContentLoaded', function() {
         return article;
     }
 
+    const isActiveHomeProduct = (product) =>
+        (product?.status || 'inactive').toLowerCase() === 'active';
+    const isPublishedHomePost = (post) =>
+        (post?.status || 'draft').toLowerCase() === 'published';
+
     async function loadHomeProducts() {
         if (!homeProductsGrid || !apiClient) return;
         setVisibility(homeProductsLoading, true);
@@ -1112,12 +1117,13 @@ document.addEventListener('DOMContentLoaded', function() {
         homeProductsGrid.innerHTML = '';
 
         try {
-            const products = await apiClient.fetchProducts({ limit: 3, offset: 0 });
-            if (!products || !products.length) {
+            const products = await apiClient.fetchProducts({ limit: 3, offset: 0, status: 'active' });
+            const visibleProducts = (products || []).filter(isActiveHomeProduct);
+            if (!visibleProducts.length) {
                 setVisibility(homeProductsEmpty, true);
                 return;
             }
-            products.slice(0, 3).forEach((product, index) => {
+            visibleProducts.slice(0, 3).forEach((product, index) => {
                 homeProductsGrid.appendChild(buildHomeProductCard(product, index));
             });
             if (typeof AOS !== 'undefined') {
@@ -1141,12 +1147,13 @@ document.addEventListener('DOMContentLoaded', function() {
         homeBlogGrid.innerHTML = '';
 
         try {
-            const posts = await apiClient.fetchBlogPosts({ limit: 3, offset: 0 });
-            if (!posts || !posts.length) {
+            const posts = await apiClient.fetchBlogPosts({ limit: 3, offset: 0, status: 'published' });
+            const visiblePosts = (posts || []).filter(isPublishedHomePost);
+            if (!visiblePosts.length) {
                 setVisibility(homeBlogEmpty, true);
                 return;
             }
-            posts.slice(0, 3).forEach((post, index) => {
+            visiblePosts.slice(0, 3).forEach((post, index) => {
                 homeBlogGrid.appendChild(buildHomePostCard(post, index));
             });
             if (typeof AOS !== 'undefined') {
@@ -1314,3 +1321,8 @@ function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 }
+
+
+
+
+

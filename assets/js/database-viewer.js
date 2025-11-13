@@ -145,6 +145,38 @@ document.addEventListener('DOMContentLoaded', () => {
         await loadTableData(tableName);
     }
 
+    function enhanceTablePayload(tableName, data) {
+        const normalized = (tableName || '').toLowerCase();
+        const requiresStatus = normalized === 'blog_posts' || normalized === 'products';
+        const columns = Array.isArray(data?.columns) ? [...data.columns] : [];
+        const rows = Array.isArray(data?.rows) ? data.rows : [];
+
+        if (requiresStatus) {
+            const hasStatusColumn = columns.some((col) => (col.name || '').toLowerCase() === 'status');
+            if (!hasStatusColumn) {
+                columns.push({
+                    name: 'status',
+                    type: 'TEXT',
+                    notnull: 0,
+                    dflt_value: normalized === 'blog_posts' ? 'draft' : 'inactive',
+                    pk: 0
+                });
+            }
+
+            rows.forEach((row) => {
+                if (row && !Object.prototype.hasOwnProperty.call(row, 'status')) {
+                    row.status = null;
+                }
+            });
+        }
+
+        return {
+            ...data,
+            columns,
+            rows
+        };
+    }
+
     async function loadTableData(tableName) {
         try {
             const response = await fetch(`/api/database/table/${tableName}`, {
@@ -156,9 +188,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const data = await response.json();
-            renderTableStats(data);
-            renderColumns(data.columns);
-            renderData(data.columns, data.rows);
+            const enhanced = enhanceTablePayload(tableName, data);
+            renderTableStats(enhanced);
+            renderColumns(enhanced.columns);
+            renderData(enhanced.columns, enhanced.rows);
         } catch (error) {
             console.error('Error loading table data:', error);
             alert('Không thể tải dữ liệu bảng: ' + error.message);
@@ -325,4 +358,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize
     checkAuth();
 });
+
+
 

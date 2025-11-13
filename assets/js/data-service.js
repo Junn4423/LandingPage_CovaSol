@@ -58,6 +58,7 @@
         if (query.search) params.set('search', query.search);
         if (query.tag) params.set('tag', query.tag);
         if (query.category) params.set('category', query.category);
+        if (query.status) params.set('status', query.status);
 
         const qs = params.toString();
         const data = await apiRequest(`/blog${qs ? `?${qs}` : ''}`);
@@ -81,6 +82,7 @@
         if (query.offset) params.set('offset', query.offset);
         if (query.search) params.set('search', query.search);
         if (query.category) params.set('category', query.category);
+        if (query.status) params.set('status', query.status);
 
         const qs = params.toString();
         const data = await apiRequest(`/products${qs ? `?${qs}` : ''}`);
