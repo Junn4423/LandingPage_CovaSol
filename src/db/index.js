@@ -7,6 +7,17 @@ fs.mkdirSync(path.dirname(config.dbFile), { recursive: true });
 
 const db = new Database(config.dbFile);
 
+function columnExists(table, column) {
+  const rows = db.prepare(`PRAGMA table_info(${table})`).all();
+  return rows.some((row) => row.name === column);
+}
+
+function ensureColumn(table, column, definitionSql) {
+  if (!columnExists(table, column)) {
+    db.prepare(`ALTER TABLE ${table} ADD COLUMN ${column} ${definitionSql}`).run();
+  }
+}
+
 function initializeDatabase() {
   db.exec(`
     PRAGMA foreign_keys = ON;
@@ -46,6 +57,9 @@ function initializeDatabase() {
       author_role TEXT,
       published_at TEXT NOT NULL,
       status TEXT NOT NULL DEFAULT 'published',
+      gallery_media TEXT DEFAULT '[]',
+      video_items TEXT DEFAULT '[]',
+      source_links TEXT DEFAULT '[]',
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
@@ -77,6 +91,8 @@ function initializeDatabase() {
       cta_primary_url TEXT,
       cta_secondary_label TEXT,
       cta_secondary_url TEXT,
+      gallery_media TEXT DEFAULT '[]',
+      video_items TEXT DEFAULT '[]',
       status TEXT NOT NULL DEFAULT 'active',
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -91,6 +107,13 @@ function initializeDatabase() {
       WHERE id = NEW.id;
     END;
   `);
+
+  ensureColumn('blog_posts', 'gallery_media', "TEXT DEFAULT '[]'");
+  ensureColumn('blog_posts', 'video_items', "TEXT DEFAULT '[]'");
+  ensureColumn('blog_posts', 'source_links', "TEXT DEFAULT '[]'");
+
+  ensureColumn('products', 'gallery_media', "TEXT DEFAULT '[]'");
+  ensureColumn('products', 'video_items', "TEXT DEFAULT '[]'");
 }
 
 module.exports = {

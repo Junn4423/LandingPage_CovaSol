@@ -175,6 +175,9 @@ document.addEventListener('DOMContentLoaded', () => {
             authorName: source.authorName || null,
             authorRole: source.authorRole || null,
             publishedAt: source.publishedAt || null,
+            galleryMedia: Array.isArray(source.galleryMedia) ? source.galleryMedia : [],
+            videoItems: Array.isArray(source.videoItems) ? source.videoItems : [],
+            sourceLinks: Array.isArray(source.sourceLinks) ? source.sourceLinks : [],
             status: overrides.status ?? source.status ?? 'draft'
         };
     }
@@ -189,6 +192,8 @@ document.addEventListener('DOMContentLoaded', () => {
             description: source.description || '',
             featureTags: Array.isArray(source.featureTags) ? source.featureTags : [],
             highlights: Array.isArray(source.highlights) ? source.highlights : [],
+            galleryMedia: Array.isArray(source.galleryMedia) ? source.galleryMedia : [],
+            videoItems: Array.isArray(source.videoItems) ? source.videoItems : [],
             ctaPrimary: {
                 label: source.ctaPrimary?.label || null,
                 url: source.ctaPrimary?.url || null

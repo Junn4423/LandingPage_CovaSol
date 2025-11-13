@@ -156,6 +156,179 @@ document.addEventListener('DOMContentLoaded', () => {
             .filter(Boolean);
     }
 
+    const BLOG_MEDIA_TYPES = [
+        { value: 'cover', label: 'Anh bia' },
+        { value: 'body', label: 'Anh noi dung' },
+        { value: 'inline', label: 'Anh chen' },
+        { value: 'quote', label: 'Anh trich dan' },
+        { value: 'gallery', label: 'Anh gallery' }
+    ];
+
+    const BLOG_VIDEO_TYPES = [
+        { value: 'hero', label: 'Video mo dau' },
+        { value: 'body', label: 'Video noi dung' },
+        { value: 'demo', label: 'Video demo' },
+        { value: 'interview', label: 'Video phong van' }
+    ];
+
+    const PRODUCT_MEDIA_TYPES = [
+        { value: 'hero', label: 'Anh hero' },
+        { value: 'gallery', label: 'Anh gallery' },
+        { value: 'body', label: 'Anh chi tiet' },
+        { value: 'detail', label: 'Anh tinh nang' }
+    ];
+
+    const PRODUCT_VIDEO_TYPES = [
+        { value: 'hero', label: 'Video hero' },
+        { value: 'demo', label: 'Video demo' },
+        { value: 'body', label: 'Video noi dung' },
+        { value: 'testimonial', label: 'Video khach hang' }
+    ];
+
+    function createRepeaterManager({ listSelector, addBtnSelector, buildRow }) {
+        const listEl = document.querySelector(listSelector);
+        const addBtn = document.querySelector(addBtnSelector);
+        if (!listEl || !addBtn || typeof buildRow !== 'function') {
+            return null;
+        }
+
+        function addItem(data = {}) {
+            const row = buildRow(data);
+            if (!row) return;
+            row.dataset.repeaterItem = 'true';
+            const removeBtn = row.querySelector('[data-remove-row]');
+            if (removeBtn) {
+                removeBtn.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    row.remove();
+                });
+            }
+            listEl.appendChild(row);
+        }
+
+        addBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            addItem();
+        });
+
+        return {
+            addItem,
+            clear() {
+                listEl.innerHTML = '';
+            },
+            setItems(items = []) {
+                listEl.innerHTML = '';
+                items.forEach((item) => addItem(item));
+            },
+            getItems() {
+                return Array.from(listEl.querySelectorAll('[data-repeater-item]'))
+                    .map((row) => (typeof row.__getValue === 'function' ? row.__getValue() : null))
+                    .filter(Boolean);
+            }
+        };
+    }
+
+    function buildMediaRow({ title, typeOptions, defaultType, urlPlaceholder, captionPlaceholder, data = {} }) {
+        const row = document.createElement('div');
+        row.className = 'media-row';
+        row.innerHTML = `
+            <div class="media-row__header">
+                <strong>${title}</strong>
+                <button type="button" class="media-row__remove" data-remove-row>
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="media-row__fields">
+                <div class="form-control">
+                    <label>Loai</label>
+                    <select class="media-type"></select>
+                </div>
+                <div class="form-control">
+                    <label>URL</label>
+                    <input type="url" class="media-url" placeholder="${urlPlaceholder || 'https://...'}">
+                </div>
+                <div class="form-control">
+                    <label>Chu thich</label>
+                    <input type="text" class="media-caption" placeholder="${captionPlaceholder || 'Mo ta ngan duoi anh'}">
+                </div>
+            </div>
+        `;
+
+        const typeSelect = row.querySelector('.media-type');
+        typeOptions.forEach((option) => {
+            const opt = document.createElement('option');
+            opt.value = option.value;
+            opt.textContent = option.label;
+            typeSelect.appendChild(opt);
+        });
+        typeSelect.value = typeOptions.some((opt) => opt.value === data.type)
+            ? data.type
+            : defaultType;
+
+        row.querySelector('.media-url').value = data.url || '';
+        row.querySelector('.media-caption').value = data.caption || '';
+
+        row.__getValue = () => {
+            const url = row.querySelector('.media-url').value.trim();
+            if (!url) return null;
+            return {
+                url,
+                type: row.querySelector('.media-type').value,
+                caption: row.querySelector('.media-caption').value.trim()
+            };
+        };
+
+        return row;
+    }
+
+    function buildVideoRow({ title, typeOptions, defaultType, urlPlaceholder, captionPlaceholder, data = {} }) {
+        return buildMediaRow({
+            title,
+            typeOptions,
+            defaultType,
+            urlPlaceholder: urlPlaceholder || 'https://www.youtube.com/embed/...',
+            captionPlaceholder: captionPlaceholder || 'Mo ta video',
+            data
+        });
+    }
+
+    function buildSourceRow({ title, data = {} }) {
+        const row = document.createElement('div');
+        row.className = 'media-row media-row--compact';
+        row.innerHTML = `
+            <div class="media-row__header">
+                <strong>${title}</strong>
+                <button type="button" class="media-row__remove" data-remove-row>
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="media-row__fields media-row__fields--two">
+                <div class="form-control">
+                    <label>Mo ta nguon</label>
+                    <input type="text" class="source-label" placeholder="VD: Bao Cong thuong">
+                </div>
+                <div class="form-control">
+                    <label>URL nguon</label>
+                    <input type="url" class="source-url" placeholder="https://...">
+                </div>
+            </div>
+        `;
+
+        row.querySelector('.source-label').value = data.label || '';
+        row.querySelector('.source-url').value = data.url || '';
+
+        row.__getValue = () => {
+            const url = row.querySelector('.source-url').value.trim();
+            if (!url) return null;
+            return {
+                label: row.querySelector('.source-label').value.trim() || 'Nguon tham khao',
+                url
+            };
+        };
+
+        return row;
+    }
+
     async function ensureSession() {
         try {
             const user = await api.currentUser();
@@ -204,6 +377,40 @@ document.addEventListener('DOMContentLoaded', () => {
             authorRole: document.getElementById('blogAuthorRole')
         };
 
+        const blogMediaRepeater = createRepeaterManager({
+            listSelector: '#blogMediaList',
+            addBtnSelector: '#addBlogMediaBtn',
+            buildRow: (data) =>
+                buildMediaRow({
+                    title: 'Anh bo sung',
+                    typeOptions: BLOG_MEDIA_TYPES,
+                    defaultType: 'body',
+                    urlPlaceholder: 'https://example.com/image.jpg',
+                    captionPlaceholder: 'Mo ta ngan duoi anh',
+                    data
+                })
+        });
+
+        const blogVideoRepeater = createRepeaterManager({
+            listSelector: '#blogVideoList',
+            addBtnSelector: '#addBlogVideoBtn',
+            buildRow: (data) =>
+                buildVideoRow({
+                    title: 'Video',
+                    typeOptions: BLOG_VIDEO_TYPES,
+                    defaultType: 'body',
+                    urlPlaceholder: 'https://www.youtube.com/embed/...',
+                    captionPlaceholder: 'Mo ta video',
+                    data
+                })
+        });
+
+        const blogSourceRepeater = createRepeaterManager({
+            listSelector: '#blogSourceList',
+            addBtnSelector: '#addBlogSourceBtn',
+            buildRow: (data) => buildSourceRow({ title: 'Nguon', data })
+        });
+
         let editingCode = params.get('code');
         let originalPayload = null;
 
@@ -235,6 +442,9 @@ document.addEventListener('DOMContentLoaded', () => {
             fields.keywords.value = (data.keywords || []).join(', ');
             fields.author.value = data.authorName || '';
             fields.authorRole.value = data.authorRole || '';
+            blogMediaRepeater?.setItems(data.galleryMedia || []);
+            blogVideoRepeater?.setItems(data.videoItems || []);
+            blogSourceRepeater?.setItems(data.sourceLinks || []);
         }
 
         function resetForm() {
@@ -250,6 +460,9 @@ document.addEventListener('DOMContentLoaded', () => {
             fields.tags.value = '';
             fields.keywords.value = '';
             fields.code.disabled = false;
+            blogMediaRepeater?.clear();
+            blogVideoRepeater?.clear();
+            blogSourceRepeater?.clear();
         }
 
         resetBtn?.addEventListener('click', (event) => {
@@ -277,7 +490,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 content: fields.content.value,
                 tags: parseCommaList(fields.tags.value),
                 authorName: fields.author.value.trim(),
-                authorRole: fields.authorRole.value.trim()
+                authorRole: fields.authorRole.value.trim(),
+                galleryMedia: blogMediaRepeater?.getItems() || [],
+                videoItems: blogVideoRepeater?.getItems() || [],
+                sourceLinks: blogSourceRepeater?.getItems() || []
             };
             
             // Open preview modal
@@ -301,7 +517,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 authorName: fields.author.value.trim() || null,
                 authorRole: fields.authorRole.value.trim() || null,
                 publishedAt: toISODate(fields.publishedAt.value),
-                status: 'published'
+                status: 'published',
+                galleryMedia: blogMediaRepeater?.getItems() || [],
+                videoItems: blogVideoRepeater?.getItems() || [],
+                sourceLinks: blogSourceRepeater?.getItems() || []
             };
 
             if (!payload.code) {
@@ -348,6 +567,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 originalPayload = blog;
                 fillForm(blog);
                 fields.code.disabled = true;
+                blogMediaRepeater?.setItems(blog.galleryMedia || []);
+                blogVideoRepeater?.setItems(blog.videoItems || []);
+                blogSourceRepeater?.setItems(blog.sourceLinks || []);
             } catch (error) {
                 showMessage(error.message || 'Khong the tai bai viet.', 'error');
             }
@@ -376,6 +598,34 @@ document.addEventListener('DOMContentLoaded', () => {
             secondaryLabel: document.getElementById('productSecondaryLabel'),
             secondaryUrl: document.getElementById('productSecondaryUrl')
         };
+
+        const productMediaRepeater = createRepeaterManager({
+            listSelector: '#productMediaList',
+            addBtnSelector: '#addProductMediaBtn',
+            buildRow: (data) =>
+                buildMediaRow({
+                    title: 'Anh san pham',
+                    typeOptions: PRODUCT_MEDIA_TYPES,
+                    defaultType: 'gallery',
+                    urlPlaceholder: 'https://example.com/image.jpg',
+                    captionPlaceholder: 'Mo ta ngan ve anh',
+                    data
+                })
+        });
+
+        const productVideoRepeater = createRepeaterManager({
+            listSelector: '#productVideoList',
+            addBtnSelector: '#addProductVideoBtn',
+            buildRow: (data) =>
+                buildVideoRow({
+                    title: 'Video demo',
+                    typeOptions: PRODUCT_VIDEO_TYPES,
+                    defaultType: 'demo',
+                    urlPlaceholder: 'https://www.youtube.com/embed/...',
+                    captionPlaceholder: 'Mo ta video',
+                    data
+                })
+        });
 
         let editingCode = params.get('code');
         let originalPayload = null;
@@ -408,6 +658,8 @@ document.addEventListener('DOMContentLoaded', () => {
             fields.primaryUrl.value = data.ctaPrimary?.url || '';
             fields.secondaryLabel.value = data.ctaSecondary?.label || '';
             fields.secondaryUrl.value = data.ctaSecondary?.url || '';
+            productMediaRepeater?.setItems(data.galleryMedia || []);
+            productVideoRepeater?.setItems(data.videoItems || []);
         }
 
         function resetForm() {
@@ -422,6 +674,8 @@ document.addEventListener('DOMContentLoaded', () => {
             fields.features.value = '';
             fields.highlights.value = '';
             fields.code.disabled = false;
+            productMediaRepeater?.clear();
+            productVideoRepeater?.clear();
         }
 
         resetBtn?.addEventListener('click', (event) => {
@@ -446,7 +700,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 shortDescription: fields.summary.value.trim(),
                 description: fields.description.value,
                 featureTags: parseCommaList(fields.features.value),
-                highlights: parseLines(fields.highlights.value)
+                highlights: parseLines(fields.highlights.value),
+                galleryMedia: productMediaRepeater?.getItems() || [],
+                videoItems: productVideoRepeater?.getItems() || []
             };
             
             // Open preview modal
@@ -474,6 +730,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     label: fields.secondaryLabel.value.trim() || null,
                     url: fields.secondaryUrl.value.trim() || null
                 },
+                galleryMedia: productMediaRepeater?.getItems() || [],
+                videoItems: productVideoRepeater?.getItems() || [],
                 status: 'active'
             };
 

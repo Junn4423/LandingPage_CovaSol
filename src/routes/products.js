@@ -5,7 +5,20 @@ const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
+const PRODUCT_IMAGE_TYPES = ['hero', 'gallery', 'body', 'detail'];
+const PRODUCT_VIDEO_TYPES = ['hero', 'demo', 'body', 'testimonial'];
+
 function parseJsonColumn(value) {
+  if (!value) return [];
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function parseObjectArray(value) {
   if (!value) return [];
   try {
     const parsed = JSON.parse(value);
@@ -27,6 +40,8 @@ function serializeProduct(row) {
     imageUrl: row.image_url,
     featureTags: parseJsonColumn(row.feature_tags),
     highlights: parseJsonColumn(row.highlights),
+    galleryMedia: parseObjectArray(row.gallery_media),
+    videoItems: parseObjectArray(row.video_items),
     ctaPrimary: {
       label: row.cta_primary_label,
       url: row.cta_primary_url
@@ -55,11 +70,38 @@ function normalizeArray(value) {
   return [];
 }
 
+function ensureValue(value) {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function normalizeMediaItems(items = []) {
+  if (!Array.isArray(items)) return [];
+  return items
+    .map((item) => ({
+      url: ensureValue(item?.url),
+      type: PRODUCT_IMAGE_TYPES.includes(item?.type) ? item.type : 'gallery',
+      caption: ensureValue(item?.caption)
+    }))
+    .filter((item) => item.url);
+}
+
+function normalizeVideoItems(items = []) {
+  if (!Array.isArray(items)) return [];
+  return items
+    .map((item) => ({
+      url: ensureValue(item?.url),
+      type: PRODUCT_VIDEO_TYPES.includes(item?.type) ? item.type : 'demo',
+      caption: ensureValue(item?.caption)
+    }))
+    .filter((item) => item.url);
+}
+
 router.get('/', (req, res) => {
   const limit = Math.min(parseInt(req.query.limit, 10) || 20, 50);
   const offset = parseInt(req.query.offset, 10) || 0;
   const search = (req.query.search || '').trim();
   const category = (req.query.category || '').trim();
+  const statusFilter = (req.query.status || '').trim();
 
   const whereClauses = [];
   const params = { limit, offset };
@@ -74,6 +116,11 @@ router.get('/', (req, res) => {
   if (category) {
     whereClauses.push('(category = @category)');
     params.category = category;
+  }
+
+  if (statusFilter) {
+    whereClauses.push('(status = @status)');
+    params.status = statusFilter;
   }
 
   const whereSql = whereClauses.length ? `WHERE ${whereClauses.join(' AND ')}` : '';
@@ -91,6 +138,8 @@ router.get('/', (req, res) => {
         image_url,
         feature_tags,
         highlights,
+        gallery_media,
+        video_items,
         cta_primary_label,
         cta_primary_url,
         cta_secondary_label,
@@ -136,6 +185,8 @@ router.get('/:identifier', (req, res) => {
         image_url,
         feature_tags,
         highlights,
+        gallery_media,
+        video_items,
         cta_primary_label,
         cta_primary_url,
         cta_secondary_label,
@@ -168,7 +219,9 @@ router.post('/', requireAuth, (req, res) => {
     highlights,
     ctaPrimary,
     ctaSecondary,
-    status
+    status,
+    galleryMedia,
+    videoItems
   } = req.body || {};
 
   if (!code || !name || !description) {
@@ -177,6 +230,8 @@ router.post('/', requireAuth, (req, res) => {
 
   const normalizedFeatureTags = normalizeArray(featureTags);
   const normalizedHighlights = normalizeArray(highlights);
+  const normalizedMedia = normalizeMediaItems(galleryMedia);
+  const normalizedVideos = normalizeVideoItems(videoItems);
   const slugBase = slugify(name, { lower: true, strict: true });
   const slug = `${slugBase}-${code.toLowerCase()}`;
 
@@ -193,6 +248,8 @@ router.post('/', requireAuth, (req, res) => {
         image_url,
         feature_tags,
         highlights,
+        gallery_media,
+        video_items,
         cta_primary_label,
         cta_primary_url,
         cta_secondary_label,
@@ -208,6 +265,8 @@ router.post('/', requireAuth, (req, res) => {
         @image_url,
         @feature_tags,
         @highlights,
+        @gallery_media,
+        @video_items,
         @cta_primary_label,
         @cta_primary_url,
         @cta_secondary_label,
@@ -225,6 +284,8 @@ router.post('/', requireAuth, (req, res) => {
       image_url: imageUrl || null,
       feature_tags: JSON.stringify(normalizedFeatureTags),
       highlights: JSON.stringify(normalizedHighlights),
+      gallery_media: JSON.stringify(normalizedMedia),
+      video_items: JSON.stringify(normalizedVideos),
       cta_primary_label: ctaPrimary?.label || null,
       cta_primary_url: ctaPrimary?.url || null,
       cta_secondary_label: ctaSecondary?.label || null,
@@ -258,6 +319,8 @@ router.put('/:code', requireAuth, (req, res) => {
     imageUrl = existing.image_url,
     featureTags = parseJsonColumn(existing.feature_tags),
     highlights = parseJsonColumn(existing.highlights),
+    galleryMedia = parseObjectArray(existing.gallery_media),
+    videoItems = parseObjectArray(existing.video_items),
     ctaPrimary = {
       label: existing.cta_primary_label,
       url: existing.cta_primary_url
@@ -271,6 +334,8 @@ router.put('/:code', requireAuth, (req, res) => {
 
   const normalizedFeatureTags = normalizeArray(featureTags);
   const normalizedHighlights = normalizeArray(highlights);
+  const normalizedMedia = normalizeMediaItems(galleryMedia);
+  const normalizedVideos = normalizeVideoItems(videoItems);
   const slugBase = slugify(name, { lower: true, strict: true });
   const slug = `${slugBase}-${existing.code.toLowerCase()}`;
 
@@ -285,6 +350,8 @@ router.put('/:code', requireAuth, (req, res) => {
         image_url = @image_url,
         feature_tags = @feature_tags,
         highlights = @highlights,
+        gallery_media = @gallery_media,
+        video_items = @video_items,
         cta_primary_label = @cta_primary_label,
         cta_primary_url = @cta_primary_url,
         cta_secondary_label = @cta_secondary_label,
@@ -301,6 +368,8 @@ router.put('/:code', requireAuth, (req, res) => {
       image_url: imageUrl || null,
       feature_tags: JSON.stringify(normalizedFeatureTags),
       highlights: JSON.stringify(normalizedHighlights),
+      gallery_media: JSON.stringify(normalizedMedia),
+      video_items: JSON.stringify(normalizedVideos),
       cta_primary_label: ctaPrimary?.label || null,
       cta_primary_url: ctaPrimary?.url || null,
       cta_secondary_label: ctaSecondary?.label || null,
@@ -330,3 +399,4 @@ router.delete('/:code', requireAuth, (req, res) => {
 });
 
 module.exports = router;
+

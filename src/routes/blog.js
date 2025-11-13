@@ -5,7 +5,20 @@ const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
+const BLOG_IMAGE_TYPES = ['cover', 'body', 'inline', 'quote', 'gallery'];
+const BLOG_VIDEO_TYPES = ['hero', 'body', 'demo', 'interview'];
+
 function parseJsonColumn(value) {
+  if (!value) return [];
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function parseObjectArray(value) {
   if (!value) return [];
   try {
     const parsed = JSON.parse(value);
@@ -32,6 +45,9 @@ function serializeBlog(row) {
     authorRole: row.author_role,
     publishedAt: row.published_at,
     status: row.status,
+    galleryMedia: parseObjectArray(row.gallery_media),
+    videoItems: parseObjectArray(row.video_items),
+    sourceLinks: parseObjectArray(row.source_links),
     createdAt: row.created_at,
     updatedAt: row.updated_at
   };
@@ -51,12 +67,49 @@ function normalizeArray(value) {
   return [];
 }
 
+function ensureValue(value) {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function normalizeMediaItems(items = []) {
+  if (!Array.isArray(items)) return [];
+  return items
+    .map((item) => ({
+      url: ensureValue(item?.url),
+      type: BLOG_IMAGE_TYPES.includes(item?.type) ? item.type : 'body',
+      caption: ensureValue(item?.caption)
+    }))
+    .filter((item) => item.url);
+}
+
+function normalizeVideoItems(items = []) {
+  if (!Array.isArray(items)) return [];
+  return items
+    .map((item) => ({
+      url: ensureValue(item?.url),
+      type: BLOG_VIDEO_TYPES.includes(item?.type) ? item.type : 'body',
+      caption: ensureValue(item?.caption)
+    }))
+    .filter((item) => item.url);
+}
+
+function normalizeSourceLinks(items = []) {
+  if (!Array.isArray(items)) return [];
+  return items
+    .map((item) => ({
+      label: ensureValue(item?.label) || 'Nguon tham khao',
+      url: ensureValue(item?.url)
+    }))
+    .filter((item) => item.url);
+}
+
 router.get('/', (req, res) => {
   const limit = Math.min(parseInt(req.query.limit, 10) || 20, 50);
   const offset = parseInt(req.query.offset, 10) || 0;
   const search = (req.query.search || '').trim();
   const tag = (req.query.tag || '').trim();
   const category = (req.query.category || '').trim();
+  const statusFilter = (req.query.status || '').trim();
 
   const whereClauses = [];
   const params = {
@@ -81,6 +134,11 @@ router.get('/', (req, res) => {
     params.category = category;
   }
 
+  if (statusFilter) {
+    whereClauses.push('(status = @status)');
+    params.status = statusFilter;
+  }
+
   const whereSql = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
 
   const rows = db
@@ -101,8 +159,14 @@ router.get('/', (req, res) => {
         author_role,
         published_at,
         status,
+        gallery_media,
+        video_items,
+        source_links,
         created_at,
-        updated_at
+        updated_at,
+        gallery_media,
+        video_items,
+        source_links
       FROM blog_posts
       ${whereSql}
       ORDER BY datetime(published_at) DESC
@@ -146,6 +210,9 @@ router.get('/:identifier', (req, res) => {
         author_role,
         published_at,
         status,
+        gallery_media,
+        video_items,
+        source_links,
         created_at,
         updated_at
       FROM blog_posts
@@ -175,7 +242,10 @@ router.post('/', requireAuth, (req, res) => {
     authorName,
     authorRole,
     publishedAt,
-    status
+    status,
+    galleryMedia,
+    videoItems,
+    sourceLinks
   } = req.body || {};
 
   if (!code || !title || !content) {
@@ -184,6 +254,9 @@ router.post('/', requireAuth, (req, res) => {
 
   const normalizedTags = normalizeArray(tags);
   const normalizedKeywords = normalizeArray(keywords);
+  const normalizedMedia = normalizeMediaItems(galleryMedia);
+  const normalizedVideos = normalizeVideoItems(videoItems);
+  const normalizedSources = normalizeSourceLinks(sourceLinks);
   const publishDate = publishedAt ? new Date(publishedAt).toISOString() : new Date().toISOString();
   const slugBase = slugify(title, { lower: true, strict: true });
   const slug = `${slugBase}-${code.toLowerCase()}`;
@@ -205,7 +278,10 @@ router.post('/', requireAuth, (req, res) => {
         author_name,
         author_role,
         published_at,
-        status
+        status,
+        gallery_media,
+        video_items,
+        source_links
       ) VALUES (
         @code,
         @slug,
@@ -220,7 +296,10 @@ router.post('/', requireAuth, (req, res) => {
         @author_name,
         @author_role,
         @published_at,
-        @status
+        @status,
+        @gallery_media,
+        @video_items,
+        @source_links
       )
     `
     ).run({
@@ -237,7 +316,10 @@ router.post('/', requireAuth, (req, res) => {
       author_name: authorName || null,
       author_role: authorRole || null,
       published_at: publishDate,
-      status: status || 'published'
+      status: status || 'published',
+      gallery_media: JSON.stringify(normalizedMedia),
+      video_items: JSON.stringify(normalizedVideos),
+      source_links: JSON.stringify(normalizedSources)
     });
 
     const created = db
@@ -272,11 +354,17 @@ router.put('/:code', requireAuth, (req, res) => {
     authorName = existing.author_name,
     authorRole = existing.author_role,
     publishedAt = existing.published_at,
-    status = existing.status
+    status = existing.status,
+    galleryMedia = parseObjectArray(existing.gallery_media),
+    videoItems = parseObjectArray(existing.video_items),
+    sourceLinks = parseObjectArray(existing.source_links)
   } = req.body || {};
 
   const normalizedTags = normalizeArray(tags);
   const normalizedKeywords = normalizeArray(keywords);
+  const normalizedMedia = normalizeMediaItems(galleryMedia);
+  const normalizedVideos = normalizeVideoItems(videoItems);
+  const normalizedSources = normalizeSourceLinks(sourceLinks);
   const slugBase = slugify(title, { lower: true, strict: true });
   const slug = `${slugBase}-${existing.code.toLowerCase()}`;
 
@@ -295,6 +383,9 @@ router.put('/:code', requireAuth, (req, res) => {
         author_name = @author_name,
         author_role = @author_role,
         published_at = @published_at,
+        gallery_media = @gallery_media,
+        video_items = @video_items,
+        source_links = @source_links,
         status = @status,
         slug = @slug
       WHERE code = @code
@@ -311,6 +402,9 @@ router.put('/:code', requireAuth, (req, res) => {
       author_name: authorName || null,
       author_role: authorRole || null,
       published_at: new Date(publishedAt).toISOString(),
+      gallery_media: JSON.stringify(normalizedMedia),
+      video_items: JSON.stringify(normalizedVideos),
+      source_links: JSON.stringify(normalizedSources),
       status,
       slug,
       code: existing.code
@@ -336,3 +430,4 @@ router.delete('/:code', requireAuth, (req, res) => {
 });
 
 module.exports = router;
+

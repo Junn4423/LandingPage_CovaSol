@@ -85,8 +85,8 @@
                         <input type="text" id="productCategoryInput" placeholder="Ví dụ: Automation">
                     </div>
                     <div class="form-control">
-                        <label for="productNameInput">ên sản phẩm</label>
-                        <input type="text" id="productNameInput" required placeholder="ên dùng trên trang chủ">
+                        <label for="productNameInput">Tên sản phẩm</label>
+                        <input type="text" id="productNameInput" required placeholder="Tên dùng trên trang chủ">
                     </div>
                     <div class="form-control">
                         <label for="productImage">Ảnh đại diện (URL)</label>
@@ -151,6 +151,30 @@
                         <input type="url" id="productSecondaryUrl" placeholder="https://...">
                     </div>
                 </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-header">
+                    <h2>Bo suu tap hinh anh</h2>
+                    <button type="button" class="btn btn-ghost" id="addProductMediaBtn">
+                        <i class="fas fa-plus"></i>
+                        <span>Them anh</span>
+                    </button>
+                </div>
+                <div class="media-list" id="productMediaList"></div>
+                <small class="input-hint">Them anh phan loai hero/gallery/chi tiet de hien thi theo thu tu trong trang san pham.</small>
+            </div>
+
+            <div class="form-section">
+                <div class="section-header">
+                    <h2>Video demo / gioi thieu</h2>
+                    <button type="button" class="btn btn-ghost" id="addProductVideoBtn">
+                        <i class="fas fa-plus"></i>
+                        <span>Them video</span>
+                    </button>
+                </div>
+                <div class="media-list" id="productVideoList"></div>
+                <small class="input-hint">Ho tro URL YouTube/Vimeo dang embed hoac file mp4 truc tiep.</small>
             </div>
 
             <p class="form-feedback" id="productFormMessage"></p>

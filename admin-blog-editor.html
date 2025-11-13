@@ -56,10 +56,10 @@
                 <p id="editorSubtitle">Nhập nội dung chi tiết cho bài viết blog.</p>
             </div>
             <div class="editor-meta">
-                <span class="editor-user" id="editorUserLabel">Dang dang nhap</span>
+                <span class="editor-user" id="editorUserLabel">Đang đăng nhập</span>
                 <button class="btn btn-outline" id="editorLogoutBtn">
                     <i class="fas fa-sign-out-alt"></i>
-                    <span>Dang xuat</span>
+                    <span>Đăng xuất</span>
                 </button>
             </div>
         </header>
@@ -68,98 +68,136 @@
         <form id="blogForm" class="editor-form">
             <div class="form-section">
                 <div class="section-header">
-                    <h2>Thong tin chung</h2>
+                    <h2>Thông tin chung</h2>
                     <button type="button" class="btn btn-ghost" id="resetBlogForm">
                         <i class="fas fa-rotate-right"></i>
-                        <span>Lam moi form</span>
+                        <span>Làm mới form</span>
                     </button>
                 </div>
                 <div class="form-grid two-columns">
                     <div class="form-control">
-                        <label for="blogCode">Ma bai viet</label>
+                        <label for="blogCode">Mã bài viết</label>
                         <input type="text" id="blogCode" required>
-                        <small class="input-hint">Tu dong tao ma khi lap bai viet moi, co the chinh sua neu can.</small>
+                        <small class="input-hint">Tự động tạo mã khi lập bài viết mới, có thể chỉnh sửa nếu cần.</small>
                     </div>
                     <div class="form-control">
-                        <label for="blogPublishedAt">Ngay xuat ban</label>
+                        <label for="blogPublishedAt">Ngày xuất bản</label>
                         <input type="datetime-local" id="blogPublishedAt">
-                        <small class="input-hint">Co the de trong neu chua xac dinh thoi gian xuat ban.</small>
+                        <small class="input-hint">Có thể để trống nếu chưa xác định thời gian xuất bản.</small>
                     </div>
                     <div class="form-control">
-                        <label for="blogTitle">Tieu de</label>
-                        <input type="text" id="blogTitle" required placeholder="Tieu de xuat hien o moi noi">
+                        <label for="blogTitle">Tiêu đề</label>
+                        <input type="text" id="blogTitle" required placeholder="Tiêu đề xuất hiện ở mọi nơi">
                     </div>
                     <div class="form-control">
-                        <label for="blogSubtitle">Mo ta ngan</label>
-                        <input type="text" id="blogSubtitle" placeholder="Phu de ho tro">
+                        <label for="blogSubtitle">Mô tả ngắn</label>
+                        <input type="text" id="blogSubtitle" placeholder="Phụ đề hỗ trợ">
                     </div>
                     <div class="form-control">
-                        <label for="blogCategory">Danh muc</label>
-                        <input type="text" id="blogCategory" placeholder="Vi du: Chuyen doi so">
+                        <label for="blogCategory">Danh mục</label>
+                        <input type="text" id="blogCategory" placeholder="Ví dụ: Chuyển đổi số">
                     </div>
                     <div class="form-control">
-                        <label for="blogImage">Anh bia (URL)</label>
+                        <label for="blogImage">Ảnh bìa (URL)</label>
                         <input type="url" id="blogImage" placeholder="https://...">
-                    </div>
-                </div>
             </div>
+        </div>
+    </div>
+
+
 
             <div class="form-section">
                 <div class="section-header">
-                    <h2>Noi dung bai viet</h2>
+                    <h2>Nội dung bài viết</h2>
                 </div>
                 <div class="form-grid">
                     <div class="form-control">
-                        <label for="blogExcerpt">Tom tat</label>
-                        <textarea id="blogExcerpt" rows="3" placeholder="Mo ta ngan xuat hien tren danh sach"></textarea>
+                        <label for="blogExcerpt">Tóm tắt</label>
+                        <textarea id="blogExcerpt" rows="3" placeholder="Mô tả ngắn xuất hiện trên danh sách"></textarea>
                     </div>
                     <div class="form-control">
-                        <label for="blogContent">Noi dung chinh</label>
-                        <textarea id="blogContent" rows="14" required placeholder="Nhap noi dung bai viet..."></textarea>
+                        <label for="blogContent">Nội dung chính</label>
+                        <textarea id="blogContent" rows="14" required placeholder="Nhập nội dung bài viết..."></textarea>
                     </div>
                 </div>
             </div>
 
             <div class="form-section">
                 <div class="section-header">
-                    <h2>Thong tin bo sung</h2>
+                    <h2>Thông tin bổ sung</h2>
                 </div>
                 <div class="form-grid two-columns">
                     <div class="form-control">
                         <label for="blogTags">Tags</label>
-                        <input type="text" id="blogTags" placeholder="Ngan cach boi dau phay">
-                        <small class="input-hint">Vi du: AI, Smart factory, Industry 4.0</small>
+                        <input type="text" id="blogTags" placeholder="Ngăn cách bởi dấu phẩy">
+                        <small class="input-hint">Ví dụ: AI, Smart factory, Industry 4.0</small>
                     </div>
                     <div class="form-control">
                         <label for="blogKeywords">Keywords SEO</label>
-                        <input type="text" id="blogKeywords" placeholder="Ngan cach boi dau phay">
+                        <input type="text" id="blogKeywords" placeholder="Ngăn cách bởi dấu phẩy">
                     </div>
                     <div class="form-control">
-                        <label for="blogAuthor">Tac gia</label>
-                        <input type="text" id="blogAuthor" placeholder="Ten tac gia">
+                        <label for="blogAuthor">Tác giả</label>
+                        <input type="text" id="blogAuthor" placeholder="Tên tác giả">
                     </div>
                     <div class="form-control">
-                        <label for="blogAuthorRole">Vai tro tac gia</label>
-                        <input type="text" id="blogAuthorRole" placeholder="Vai tro hien thi cung ten">
-                    </div>
-                </div>
+                        <label for="blogAuthorRole">Vai trò tác giả</label>
+                        <input type="text" id="blogAuthorRole" placeholder="Vai trò hiển thị cùng tên">
             </div>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <div class="section-header">
+            <h2>Hinh anh bo sung</h2>
+            <button type="button" class="btn btn-ghost" id="addBlogMediaBtn">
+                <i class="fas fa-plus"></i>
+                <span>Them anh</span>
+            </button>
+        </div>
+        <div class="media-list" id="blogMediaList"></div>
+        <small class="input-hint">Them nhieu anh voi loai rieng (bia, noi dung, trich dan...). Anh bia chinh van lay tu truong "Anh bia" ben tren.</small>
+    </div>
+
+    <div class="form-section">
+        <div class="section-header">
+            <h2>Video minh hoa</h2>
+            <button type="button" class="btn btn-ghost" id="addBlogVideoBtn">
+                <i class="fas fa-plus"></i>
+                <span>Them video</span>
+            </button>
+        </div>
+        <div class="media-list" id="blogVideoList"></div>
+        <small class="input-hint">Ho tro URL YouTube/Vimeo dang embed hoac file video mp4 truc tiep.</small>
+    </div>
+
+    <div class="form-section">
+        <div class="section-header">
+            <h2>Nguon tham khao</h2>
+            <button type="button" class="btn btn-ghost" id="addBlogSourceBtn">
+                <i class="fas fa-plus"></i>
+                <span>Them nguon</span>
+            </button>
+        </div>
+        <div class="media-list" id="blogSourceList"></div>
+        <small class="input-hint">Nguon se duoc hien thi cuoi bai. Bam + de them truong trich dan moi.</small>
+    </div>
 
             <p class="form-feedback" id="blogFormMessage"></p>
 
             <div class="form-actions">
                 <button type="button" class="btn btn-ghost" id="cancelEditorBtn">
                     <i class="fas fa-arrow-left"></i>
-                    <span>Tro ve</span>
+                    <span>Trở về</span>
                 </button>
                 <div class="action-group">
                     <button type="button" class="btn btn-outline" id="previewBlogBtn">
                         <i class="fas fa-eye"></i>
-                        <span>Xem truoc</span>
+                        <span>Xem trước</span>
                     </button>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i>
-                        <span>Luu bai viet</span>
+                        <span>Lưu bài viết</span>
                     </button>
                 </div>
             </div>
@@ -173,3 +211,4 @@
     <script src="assets/js/admin-editor.js"></script>
 </body>
 </html>
+

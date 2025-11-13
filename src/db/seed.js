@@ -55,6 +55,29 @@ function seedBlogPosts() {
       keywords: ['chuyển đổi số', 'digital transformation', 'covasol'],
       authorName: 'Nguyễn Minh Khoa',
       authorRole: 'Digital Transformation Lead',
+      galleryMedia: [
+        {
+          url: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1400&q=80',
+          type: 'cover',
+          caption: 'Doi ngu trien khai tai nha may thong minh'
+        },
+        {
+          url: 'https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80',
+          type: 'body',
+          caption: 'Buoc danh gia hien trang chuyen doi so'
+        }
+      ],
+      videoItems: [
+        {
+          url: 'https://www.youtube.com/embed/26TbMXXOe0I',
+          type: 'demo',
+          caption: 'Mo phong 5 buoc chuyen doi so'
+        }
+      ],
+      sourceLinks: [
+        { label: 'Bao Cong Thuong', url: 'https://congthuong.vn/chuyen-doi-so-2025.html' },
+        { label: 'Boston Consulting Group', url: 'https://www.bcg.com' }
+      ],
       publishedAt: '2024-10-01T09:00:00.000Z'
     },
     {
@@ -134,7 +157,10 @@ function seedBlogPosts() {
       author_name,
       author_role,
       published_at,
-      status
+      status,
+      gallery_media,
+      video_items,
+      source_links
     )
     VALUES (
       @code,
@@ -150,7 +176,10 @@ function seedBlogPosts() {
       @author_name,
       @author_role,
       @published_at,
-      'published'
+      'published',
+      @gallery_media,
+      @video_items,
+      @source_links
     )
   `);
 
@@ -170,7 +199,10 @@ function seedBlogPosts() {
         keywords: JSON.stringify(row.keywords || []),
         author_name: row.authorName || null,
         author_role: row.authorRole || null,
-        published_at: row.publishedAt
+        published_at: row.publishedAt,
+        gallery_media: JSON.stringify(row.galleryMedia || []),
+        video_items: JSON.stringify(row.videoItems || []),
+        source_links: JSON.stringify(row.sourceLinks || [])
       });
     });
   });
@@ -272,6 +304,8 @@ function seedProducts() {
       image_url,
       feature_tags,
       highlights,
+      gallery_media,
+      video_items,
       cta_primary_label,
       cta_primary_url,
       cta_secondary_label,
@@ -288,6 +322,8 @@ function seedProducts() {
       @image_url,
       @feature_tags,
       @highlights,
+      @gallery_media,
+      @video_items,
       @cta_primary_label,
       @cta_primary_url,
       @cta_secondary_label,
@@ -326,3 +362,8 @@ seedBlogPosts();
 seedProducts();
 
 console.log('Seeding completed.');
+
+
+
+
+
