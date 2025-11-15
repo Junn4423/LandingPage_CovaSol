@@ -52,6 +52,149 @@
         testimonial: 'Video khach hang'
     };
 
+    const getPositionNumber = (value) => {
+        if (value === null || value === undefined || value === '') {
+            return null;
+        }
+        const parsed = Number.parseInt(value, 10);
+        return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
+    };
+
+    const sortByPosition = (a = {}, b = {}) => {
+        const posA = getPositionNumber(a.position);
+        const posB = getPositionNumber(b.position);
+        if (posA === null && posB === null) return 0;
+        if (posA === null) return 1;
+        if (posB === null) return -1;
+        return posA - posB;
+    };
+
+    const splitInlineItems = (items = []) => {
+        const inline = [];
+        const remainder = [];
+        (items || []).forEach((item) => {
+            const position = getPositionNumber(item?.position);
+            if (position === null) {
+                remainder.push(item);
+            } else {
+                inline.push({ ...item, position });
+            }
+        });
+        return { inline, remainder };
+    };
+
+    const hasHtmlMarkup = (value = '') => /<\/?[a-z][^>]*>/i.test(value);
+
+    const splitContentIntoBlocks = (content) => {
+        if (!content) return [];
+        const normalized = content.replace(/\r\n/g, '\n');
+        const blocks = normalized
+            .split(/\n{2,}/)
+            .map((block) => block.trim())
+            .filter(Boolean);
+        if (!blocks.length) {
+            return [content];
+        }
+        return blocks.map((block) => {
+            if (hasHtmlMarkup(block)) {
+                return block;
+            }
+            return `<p>${block.replace(/\n/g, '<br>')}</p>`;
+        });
+    };
+
+    const buildInlineImageBlock = (item = {}, labels = {}) => {
+        const badge = labels[item.type] || labels.default || 'Anh';
+        const caption = item.caption
+            ? `<figcaption class="preview-caption"><em>${escapeHtml(item.caption)}</em></figcaption>`
+            : '';
+        const altText = escapeHtml(item.caption || badge);
+        const safeUrl = escapeHtml(item.url);
+        const inlineId = escapeHtml(item.__clientId || item.id || '');
+        const inlineSource = escapeHtml(item.__inlineSource || 'media');
+        return {
+            position: item.position,
+            html: `
+                <figure class="preview-inline-block preview-inline-block--media" data-type="${
+                    item.type || 'media'
+                }" data-inline-id="${inlineId}" data-inline-kind="media" data-inline-source="${inlineSource}" data-inline-position="${
+                    item.position ?? ''
+                }">
+                    <span class="preview-inline-badge">${badge}</span>
+                    <img src="${safeUrl}" alt="${altText}" loading="lazy" />
+                    ${caption}
+                </figure>
+            `
+        };
+    };
+
+    const buildInlineVideoBlock = (item = {}, labels = {}) => {
+        const badge = labels[item.type] || labels.default || 'Video';
+        const caption = item.caption
+            ? `<p class="preview-caption"><em>${escapeHtml(item.caption)}</em></p>`
+            : '';
+        const inlineId = escapeHtml(item.__clientId || item.id || '');
+        const inlineSource = escapeHtml(item.__inlineSource || 'video');
+        return {
+            position: item.position,
+            html: `
+                <article class="preview-inline-block preview-inline-block--video" data-type="${
+                    item.type || 'video'
+                }" data-inline-id="${inlineId}" data-inline-kind="video" data-inline-source="${inlineSource}" data-inline-position="${
+                    item.position ?? ''
+                }">
+                    <span class="preview-inline-badge">${badge}</span>
+                    <div class="preview-inline-frame">
+                        ${buildVideoFrame(item.url)}
+                    </div>
+                    ${caption}
+                </article>
+            `
+        };
+    };
+
+    const renderBodyWithInlineEmbeds = (content, inlineEmbeds = []) => {
+        const blocks = splitContentIntoBlocks(content);
+        const sortedEmbeds = inlineEmbeds
+            .filter((embed) => typeof embed?.html === 'string')
+            .sort(sortByPosition);
+
+        if (!blocks.length) {
+            const inlineHtml = sortedEmbeds.map((embed) => embed.html).join('');
+            return {
+                html: `${content || 'Khong co noi dung'}${inlineHtml}`,
+                paragraphCount: 0
+            };
+        }
+
+        let embedIndex = 0;
+        let paragraphIndex = 0;
+        const output = [];
+
+        const appendEmbedsUpTo = (positionLimit) => {
+            while (
+                embedIndex < sortedEmbeds.length &&
+                (sortedEmbeds[embedIndex].position ?? Number.MAX_SAFE_INTEGER) <= positionLimit
+            ) {
+                output.push(sortedEmbeds[embedIndex].html);
+                embedIndex += 1;
+            }
+        };
+
+        appendEmbedsUpTo(0);
+        blocks.forEach((block) => {
+            output.push(`<div class="preview-paragraph" data-paragraph-index="${paragraphIndex + 1}">${block}</div>`);
+            paragraphIndex += 1;
+            appendEmbedsUpTo(paragraphIndex);
+        });
+        appendEmbedsUpTo(Number.MAX_SAFE_INTEGER);
+
+        return {
+            html: output.join(''),
+            paragraphCount: blocks.length
+        };
+    };
+
     const toEmbedUrl = (url) => {
         if (!url) return '';
         const ytMatch = url.match(/(?:watch\?v=|youtu\.be\/)([\w-]+)/i);
@@ -83,7 +226,9 @@
         if (!items || !items.length) {
             return '';
         }
-        const cards = items
+        const cards = (items || [])
+            .slice()
+            .sort(sortByPosition)
             .filter((item) => item?.url)
             .map((item) => {
                 const badge = labels[item.type] || labels.default || 'Anh';
@@ -117,7 +262,9 @@
             return '';
         }
 
-        const videos = items
+        const videos = (items || [])
+            .slice()
+            .sort(sortByPosition)
             .filter((item) => item?.url)
             .map((item) => {
                 const badge = labels[item.type] || labels.default || 'Video';
@@ -192,12 +339,24 @@
 
         const bodyContent = data.content || 'Khong co noi dung';
 
-        const galleryHtml = renderMediaSection(data.galleryMedia, {
+        const { inline: inlineMedia, remainder: galleryMedia } = splitInlineItems(
+            data.galleryMedia
+        );
+        const { inline: inlineVideos, remainder: videoItems } = splitInlineItems(data.videoItems);
+
+        const inlineBlocks = [
+            ...inlineMedia.map((item) => buildInlineImageBlock(item, BLOG_MEDIA_LABELS)),
+            ...inlineVideos.map((item) => buildInlineVideoBlock(item, BLOG_VIDEO_LABELS))
+        ];
+
+        const inlineBody = renderBodyWithInlineEmbeds(bodyContent, inlineBlocks);
+
+        const galleryHtml = renderMediaSection(galleryMedia, {
             title: 'Thu vien anh',
             labels: { ...BLOG_MEDIA_LABELS, default: 'Anh' }
         });
 
-        const videoHtml = renderVideoSection(data.videoItems, {
+        const videoHtml = renderVideoSection(videoItems, {
             title: 'Video minh hoa',
             labels: { ...BLOG_VIDEO_LABELS, default: 'Video' }
         });
@@ -228,7 +387,7 @@
                     : ''
             }
             ${data.excerpt ? `<p class="preview-excerpt">${data.excerpt}</p>` : ''}
-            <div class="preview-body">${bodyContent}</div>
+            <div class="preview-body" data-paragraph-count="${inlineBody.paragraphCount}">${inlineBody.html}</div>
             ${galleryHtml}
             ${videoHtml}
             ${tagsHtml}
@@ -271,12 +430,24 @@
 
         const descriptionContent = data.description || 'Khong co mo ta';
 
-        const galleryHtml = renderMediaSection(data.galleryMedia, {
+        const { inline: inlineMedia, remainder: galleryMedia } = splitInlineItems(
+            data.galleryMedia
+        );
+        const { inline: inlineVideos, remainder: videoItems } = splitInlineItems(data.videoItems);
+
+        const inlineBlocks = [
+            ...inlineMedia.map((item) => buildInlineImageBlock(item, PRODUCT_MEDIA_LABELS)),
+            ...inlineVideos.map((item) => buildInlineVideoBlock(item, PRODUCT_VIDEO_LABELS))
+        ];
+
+        const inlineBody = renderBodyWithInlineEmbeds(descriptionContent, inlineBlocks);
+
+        const galleryHtml = renderMediaSection(galleryMedia, {
             title: 'Thu vien anh san pham',
             labels: { ...PRODUCT_MEDIA_LABELS, default: 'Anh' }
         });
 
-        const videoHtml = renderVideoSection(data.videoItems, {
+        const videoHtml = renderVideoSection(videoItems, {
             title: 'Video demo',
             labels: { ...PRODUCT_VIDEO_LABELS, default: 'Video' }
         });
@@ -290,7 +461,7 @@
                     : ''
             }
             ${data.shortDescription ? `<p class="preview-excerpt">${data.shortDescription}</p>` : ''}
-            <div class="preview-body">${descriptionContent}</div>
+            <div class="preview-body" data-paragraph-count="${inlineBody.paragraphCount}">${inlineBody.html}</div>
             ${galleryHtml}
             ${videoHtml}
             ${featuresHtml}

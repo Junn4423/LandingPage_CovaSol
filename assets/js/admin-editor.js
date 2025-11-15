@@ -23,64 +23,409 @@ document.addEventListener('DOMContentLoaded', () => {
     // Preview Modal Functions
     const previewRenderers = window.covasolPreview;
 
-    function showPreviewModal(type, data) {
-        // Create modal if doesn't exist
+    const generateClientId = () => {
+        if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+            return crypto.randomUUID();
+        }
+        return `rep_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+    };
+
+    const escapeHtmlLite = (value = '') =>
+        String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+
+    const escapeSelector = (value = '') => {
+        if (window.CSS && typeof window.CSS.escape === 'function') {
+            return window.CSS.escape(value);
+        }
+        return value.replace(/[^\w-]/g, '_');
+    };
+
+    const sortInlineMeta = (items = []) =>
+        (items || [])
+            .filter((item) => item && item.clientId)
+            .sort((a, b) => (parsePositionValue(a.position) ?? 0) - (parsePositionValue(b.position) ?? 0));
+
+    const renderPreviewHTML = (type, data) => {
+        if (!previewRenderers) {
+            return '<p class="preview-error">Không thể tải module preview. Vui lòng tải lại trang.</p>';
+        }
+        if (type === 'blog' && typeof previewRenderers.renderBlogPreview === 'function') {
+            return previewRenderers.renderBlogPreview(data);
+        }
+        if (type === 'product' && typeof previewRenderers.renderProductPreview === 'function') {
+            return previewRenderers.renderProductPreview(data);
+        }
+        return '<p class="preview-error">Không tìm thấy hàm render phù hợp.</p>';
+    };
+
+    function ensurePreviewModal() {
         let modal = document.querySelector('.preview-modal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.className = 'preview-modal';
-            modal.innerHTML = `
-                <div class="preview-container">
-                    <div class="preview-header">
-                        <h3>Xem truoc</h3>
-                        <button class="preview-close" type="button">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="preview-body">
-                        <div class="preview-content"></div>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-
-            // Close button handler
-            const closeBtn = modal.querySelector('.preview-close');
-            closeBtn.addEventListener('click', () => {
-                modal.classList.remove('is-active');
-            });
-
-            // Click outside to close
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.remove('is-active');
-                }
-            });
-
-            // ESC key to close
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && modal.classList.contains('is-active')) {
-                    modal.classList.remove('is-active');
-                }
-            });
+        if (modal) {
+            return modal;
         }
 
-        const previewContent = modal.querySelector('.preview-content');
-        
-        if (!previewRenderers) {
-            previewContent.innerHTML = '<p class="preview-error">Khong the tai module preview. Vui long tai lai trang.</p>';
-            modal.classList.add('is-active');
+        modal = document.createElement('div');
+        modal.className = 'preview-modal';
+        modal.innerHTML = `
+            <div class="preview-container">
+                <div class="preview-header">
+                    <h3>Xem trước nội dung</h3>
+                    <button class="preview-close" type="button">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="preview-toolbar">
+                    <label class="preview-toggle">
+                        <input type="checkbox" data-preview-custom-toggle />
+                        <span>Custom mode · Sắp xếp ảnh/video chèn</span>
+                    </label>
+                    <div class="preview-toolbar__hint">
+                        <i class="fas fa-arrows-up-down"></i>
+                        <span>Kéo thả hoặc dùng mũi tên để thay đổi vị trí xuất hiện.</span>
+                    </div>
+                </div>
+                <div class="preview-body">
+                    <div class="preview-layout">
+                        <div class="preview-scroll">
+                            <div class="preview-content"></div>
+                        </div>
+                        <aside class="preview-custom-panel" data-preview-custom-panel>
+                            <div class="preview-custom-panel__header">
+                                <div>
+                                    <h4>Danh sách đang chèn</h4>
+                                    <p>Chọn phần tử để highlight trong preview.</p>
+                                </div>
+                                <button type="button" class="preview-custom-close" data-preview-custom-close>
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                            <p class="preview-custom-empty" data-preview-custom-empty>
+                                Không có ảnh/video nào đang chèn vào nội dung.
+                            </p>
+                            <ul class="preview-custom-list" data-preview-custom-list></ul>
+                        </aside>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        const closeBtn = modal.querySelector('.preview-close');
+        closeBtn.addEventListener('click', () => modal.classList.remove('is-active'));
+
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.classList.remove('is-active');
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && modal.classList.contains('is-active')) {
+                modal.classList.remove('is-active');
+            }
+        });
+
+        setupPreviewInteractions(modal);
+        return modal;
+    }
+
+    function setupPreviewInteractions(modal) {
+        if (modal.__previewUiReady) return;
+        const customToggle = modal.querySelector('[data-preview-custom-toggle]');
+        const customClose = modal.querySelector('[data-preview-custom-close]');
+        const customList = modal.querySelector('[data-preview-custom-list]');
+        const previewScroll = modal.querySelector('.preview-scroll');
+
+        customToggle?.addEventListener('change', () => {
+            const state = modal.__previewState;
+            if (!state) return;
+            const enabled = Boolean(customToggle.checked) && !!state.inlineItems.length && !!state.applyInlineOrder;
+            setCustomMode(modal, enabled);
+        });
+
+        customClose?.addEventListener('click', () => {
+            setCustomMode(modal, false);
+            if (customToggle) {
+                customToggle.checked = false;
+            }
+        });
+
+        customList?.addEventListener('click', (event) => {
+            const targetItem = event.target.closest('[data-inline-item]');
+            if (!targetItem) return;
+            const inlineId = targetItem.dataset.inlineItem;
+            if (!inlineId) return;
+            const moveBtn = event.target.closest('[data-move]');
+            if (moveBtn) {
+                event.preventDefault();
+                moveInlineItem(modal, inlineId, moveBtn.dataset.move);
+                return;
+            }
+            selectInlineItem(modal, inlineId, { scrollPreview: true });
+        });
+
+        let dragId = null;
+        customList?.addEventListener('dragstart', (event) => {
+            const row = event.target.closest('[data-inline-item]');
+            if (!row) return;
+            dragId = row.dataset.inlineItem;
+            row.classList.add('is-dragging');
+            event.dataTransfer.effectAllowed = 'move';
+        });
+
+        customList?.addEventListener('dragend', (event) => {
+            const row = event.target.closest('[data-inline-item]');
+            if (row) {
+                row.classList.remove('is-dragging');
+            }
+            dragId = null;
+        });
+
+        customList?.addEventListener('dragover', (event) => {
+            if (!dragId) return;
+            const overRow = event.target.closest('[data-inline-item]');
+            if (!overRow || overRow.dataset.inlineItem === dragId) return;
+            event.preventDefault();
+        });
+
+        customList?.addEventListener('drop', (event) => {
+            if (!dragId) return;
+            const targetRow = event.target.closest('[data-inline-item]');
+            if (!targetRow || !targetRow.dataset.inlineItem || targetRow.dataset.inlineItem === dragId) {
+                dragId = null;
+                return;
+            }
+            event.preventDefault();
+            reorderInlineItems(modal, dragId, targetRow.dataset.inlineItem);
+            dragId = null;
+        });
+
+        previewScroll?.addEventListener('click', (event) => {
+            const inlineBlock = event.target.closest('[data-inline-id]');
+            if (!inlineBlock) return;
+            const state = modal.__previewState;
+            if (!state?.customEnabled) return;
+            selectInlineItem(modal, inlineBlock.dataset.inlineId, { focusList: true, scrollPreview: false });
+        });
+
+        modal.__previewUiReady = true;
+    }
+
+    function setCustomMode(modal, enabled) {
+        const state = modal.__previewState;
+        const customToggle = modal.querySelector('[data-preview-custom-toggle]');
+        const panel = modal.querySelector('[data-preview-custom-panel]');
+        if (!state || !panel) return;
+
+        if (!state.inlineItems.length || !state.applyInlineOrder) {
+            enabled = false;
+        }
+
+        state.customEnabled = enabled;
+        panel.classList.toggle('is-visible', enabled);
+        modal.classList.toggle('preview-custom-active', enabled);
+        if (customToggle) {
+            customToggle.checked = enabled;
+        }
+        if (enabled) {
+            renderCustomList(modal);
+        } else {
+            state.selectedInlineId = null;
+            highlightInlineBlock(modal, null);
+        }
+    }
+
+    function updateCustomModeUi(modal) {
+        const state = modal.__previewState;
+        if (!state) return;
+        const customToggle = modal.querySelector('[data-preview-custom-toggle]');
+        const panel = modal.querySelector('[data-preview-custom-panel]');
+        const emptyHint = modal.querySelector('[data-preview-custom-empty]');
+
+        const hasInlineItems = Boolean(state.inlineItems.length && state.applyInlineOrder);
+
+        if (customToggle) {
+            customToggle.disabled = !hasInlineItems;
+            if (!hasInlineItems) {
+                customToggle.checked = false;
+            }
+        }
+
+        if (!hasInlineItems) {
+            panel?.classList.remove('is-visible');
+            modal.classList.remove('preview-custom-active');
+        } else if (state.customEnabled) {
+            panel?.classList.add('is-visible');
+            modal.classList.add('preview-custom-active');
+            renderCustomList(modal);
+        }
+
+        emptyHint?.classList.toggle('is-visible', !hasInlineItems);
+    }
+
+    function renderCustomList(modal) {
+        const state = modal.__previewState;
+        const listEl = modal.querySelector('[data-preview-custom-list]');
+        const panel = modal.querySelector('[data-preview-custom-panel]');
+        const emptyHint = modal.querySelector('[data-preview-custom-empty]');
+        if (!state || !listEl || !panel) return;
+
+        panel.classList.toggle('is-empty', !state.inlineItems.length);
+        emptyHint?.classList.toggle('is-visible', !state.inlineItems.length);
+        if (!state.inlineItems.length) {
+            listEl.innerHTML = '';
             return;
         }
 
-        if (type === 'blog' && typeof previewRenderers.renderBlogPreview === 'function') {
-            previewContent.innerHTML = previewRenderers.renderBlogPreview(data);
-        } else if (type === 'product' && typeof previewRenderers.renderProductPreview === 'function') {
-            previewContent.innerHTML = previewRenderers.renderProductPreview(data);
-        } else {
-            previewContent.innerHTML = '<p class="preview-error">Khong tim thay ham render phu hop.</p>';
-        }
+        const itemsHtml = state.inlineItems
+            .map((item, index) => {
+                const isSelected = state.selectedInlineId === item.clientId;
+                const thumb = item.url
+                    ? `<img src="${escapeHtmlLite(item.url)}" alt="${escapeHtmlLite(item.label || 'Media')}" />`
+                    : '<span class="thumb-placeholder"><i class="fas fa-image"></i></span>';
+                const caption = item.caption ? `<p class="custom-item-caption">${escapeHtmlLite(item.caption)}</p>` : '';
+                return `
+                    <li class="preview-custom-item${isSelected ? ' is-selected' : ''}" draggable="true" data-inline-item="${escapeHtmlLite(
+                        item.clientId
+                    )}" data-source-key="${escapeHtmlLite(item.sourceKey || '')}">
+                        <div class="custom-item-thumb">${thumb}</div>
+                        <div class="custom-item-info">
+                            <p class="custom-item-label">${escapeHtmlLite(item.label || 'Media')} · #${index + 1}</p>
+                            ${caption}
+                        </div>
+                        <div class="custom-item-actions">
+                            <button type="button" class="custom-action-btn" data-move="up" title="Di chuyển lên">
+                                <i class="fas fa-arrow-up"></i>
+                            </button>
+                            <button type="button" class="custom-action-btn" data-move="down" title="Di chuyển xuống">
+                                <i class="fas fa-arrow-down"></i>
+                            </button>
+                            <span class="custom-item-handle" title="Kéo để sắp xếp">
+                                <i class="fas fa-grip-vertical"></i>
+                            </span>
+                        </div>
+                    </li>
+                `;
+            })
+            .join('');
 
+        listEl.innerHTML = itemsHtml;
+    }
+
+    function selectInlineItem(modal, inlineId, { scrollPreview = false, focusList = false } = {}) {
+        const state = modal.__previewState;
+        const listItems = modal.querySelectorAll('[data-inline-item]');
+        if (!state) return;
+        state.selectedInlineId = inlineId;
+        listItems.forEach((item) => {
+            item.classList.toggle('is-selected', item.dataset.inlineItem === inlineId);
+            if (focusList && item.dataset.inlineItem === inlineId) {
+                item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+        highlightInlineBlock(modal, inlineId, { scrollIntoView: scrollPreview });
+    }
+
+    function highlightInlineBlock(modal, inlineId, { scrollIntoView = false } = {}) {
+        const previewContent = modal.querySelector('.preview-content');
+        if (!previewContent) return;
+        previewContent.querySelectorAll('.preview-inline-block').forEach((node) => {
+            node.classList.toggle('is-highlighted', inlineId && node.dataset.inlineId === inlineId);
+        });
+        if (!inlineId) return;
+        const selector = `[data-inline-id="${escapeSelector(inlineId)}"]`;
+        const target = previewContent.querySelector(selector);
+        if (target && scrollIntoView) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    function moveInlineItem(modal, inlineId, direction) {
+        const state = modal.__previewState;
+        if (!state || !state.inlineItems.length) return;
+        const index = state.inlineItems.findIndex((item) => item.clientId === inlineId);
+        if (index === -1) return;
+        const delta = direction === 'up' ? -1 : 1;
+        const targetIndex = index + delta;
+        if (targetIndex < 0 || targetIndex >= state.inlineItems.length) return;
+        const [moved] = state.inlineItems.splice(index, 1);
+        state.inlineItems.splice(targetIndex, 0, moved);
+        renderCustomList(modal);
+        selectInlineItem(modal, inlineId);
+        commitInlineOrder(modal);
+    }
+
+    function reorderInlineItems(modal, draggedId, targetId) {
+        const state = modal.__previewState;
+        if (!state) return;
+        const current = state.inlineItems.slice();
+        const fromIndex = current.findIndex((item) => item.clientId === draggedId);
+        const toIndex = current.findIndex((item) => item.clientId === targetId);
+        if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return;
+        const [moved] = current.splice(fromIndex, 1);
+        current.splice(toIndex, 0, moved);
+        state.inlineItems = current;
+        renderCustomList(modal);
+        selectInlineItem(modal, moved.clientId);
+        commitInlineOrder(modal);
+    }
+
+    async function commitInlineOrder(modal) {
+        const state = modal.__previewState;
+        if (!state || typeof state.applyInlineOrder !== 'function') return;
+        if (state.isSyncing) return;
+        state.isSyncing = true;
+        modal.classList.add('is-syncing');
+        try {
+            const orderedItems = state.inlineItems.map((item, index) => ({
+                ...item,
+                position: index
+            }));
+            const snapshot = await Promise.resolve(state.applyInlineOrder(orderedItems));
+            if (snapshot?.data) {
+                state.data = snapshot.data;
+                state.inlineItems = sortInlineMeta(snapshot.inlineItems || orderedItems);
+                renderPreviewContent(modal);
+                renderCustomList(modal);
+                if (state.selectedInlineId) {
+                    selectInlineItem(modal, state.selectedInlineId);
+                }
+            }
+        } catch (error) {
+            console.warn('Không thể cập nhật vị trí inline:', error);
+        } finally {
+            state.isSyncing = false;
+            modal.classList.remove('is-syncing');
+        }
+    }
+
+    function renderPreviewContent(modal) {
+        const state = modal.__previewState;
+        const previewContent = modal.querySelector('.preview-content');
+        if (!state || !previewContent) return;
+        previewContent.innerHTML = renderPreviewHTML(state.type, state.data);
+        if (state.customEnabled && state.selectedInlineId) {
+            highlightInlineBlock(modal, state.selectedInlineId);
+        }
+    }
+
+    function showPreviewModal(type, data, options = {}) {
+        const modal = ensurePreviewModal();
+        modal.__previewState = {
+            type,
+            data,
+            inlineItems: sortInlineMeta(options.inlineItems || []),
+            applyInlineOrder: typeof options.applyInlineOrder === 'function' ? options.applyInlineOrder : null,
+            customEnabled: false,
+            selectedInlineId: null
+        };
+        renderPreviewContent(modal);
+        updateCustomModeUi(modal);
         modal.classList.add('is-active');
     }
 
@@ -156,34 +501,76 @@ document.addEventListener('DOMContentLoaded', () => {
             .filter(Boolean);
     }
 
+    function parsePositionValue(value) {
+        if (value === undefined || value === null || value === '') {
+            return null;
+        }
+        const parsed = Number.parseInt(value, 10);
+        return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
+    }
+
+    const hasInlinePositionValue = (item) => typeof parsePositionValue(item?.position) === 'number';
+
     const BLOG_MEDIA_TYPES = [
-        { value: 'cover', label: 'Anh bia' },
-        { value: 'body', label: 'Anh noi dung' },
-        { value: 'inline', label: 'Anh chen' },
-        { value: 'quote', label: 'Anh trich dan' },
-        { value: 'gallery', label: 'Anh gallery' }
+        { value: 'cover', label: 'Ảnh bìa' },
+        { value: 'body', label: 'Ảnh nội dung' },
+        { value: 'inline', label: 'Ảnh chèn' },
+        { value: 'quote', label: 'Ảnh trích dẫn' },
+        { value: 'gallery', label: 'Ảnh gallery' }
     ];
 
     const BLOG_VIDEO_TYPES = [
-        { value: 'hero', label: 'Video mo dau' },
-        { value: 'body', label: 'Video noi dung' },
+        { value: 'hero', label: 'Video mở đầu' },
+        { value: 'body', label: 'Video nội dung' },
         { value: 'demo', label: 'Video demo' },
-        { value: 'interview', label: 'Video phong van' }
+        { value: 'interview', label: 'Video phỏng vấn' }
     ];
 
     const PRODUCT_MEDIA_TYPES = [
-        { value: 'hero', label: 'Anh hero' },
-        { value: 'gallery', label: 'Anh gallery' },
-        { value: 'body', label: 'Anh chi tiet' },
-        { value: 'detail', label: 'Anh tinh nang' }
+        { value: 'hero', label: 'Ảnh hero' },
+        { value: 'gallery', label: 'Ảnh gallery' },
+        { value: 'body', label: 'Ảnh chi tiết' },
+        { value: 'detail', label: 'Ảnh tính năng' }
     ];
 
     const PRODUCT_VIDEO_TYPES = [
         { value: 'hero', label: 'Video hero' },
         { value: 'demo', label: 'Video demo' },
-        { value: 'body', label: 'Video noi dung' },
-        { value: 'testimonial', label: 'Video khach hang' }
+        { value: 'body', label: 'Video nội dung' },
+        { value: 'testimonial', label: 'Video khách hàng' }
     ];
+
+    const buildTypeLabelMap = (items = []) =>
+        items.reduce((acc, entry) => {
+            acc[entry.value] = entry.label;
+            return acc;
+        }, {});
+
+    const mapRepeaterItemsForPreview = (items = [], sourceKey, keepMeta = false) =>
+        (items || []).map((item) => {
+            const { __clientId, ...rest } = item;
+            if (!keepMeta) {
+                return rest;
+            }
+            return {
+                ...rest,
+                __clientId,
+                __inlineSource: sourceKey
+            };
+        });
+
+    const buildInlineMetaList = (items = [], { sourceKey, kind, labelMap }) =>
+        (items || [])
+            .filter((item) => hasInlinePositionValue(item))
+            .map((item) => ({
+                clientId: item.__clientId,
+                sourceKey,
+                kind,
+                label: labelMap[item.type] || (kind === 'video' ? 'Video' : 'Ảnh chèn'),
+                caption: item.caption || '',
+                url: item.url || '',
+                position: parsePositionValue(item.position) ?? 0
+            }));
 
     function createRepeaterManager({ listSelector, addBtnSelector, buildRow }) {
         const listEl = document.querySelector(listSelector);
@@ -192,14 +579,26 @@ document.addEventListener('DOMContentLoaded', () => {
             return null;
         }
 
+        const rowRegistry = new Map();
+
+        function registerRow(row, data = {}) {
+            const providedId = data.__clientId || row.dataset.repeaterId;
+            const rowId = providedId || generateClientId();
+            row.dataset.repeaterId = rowId;
+            row.__clientId = rowId;
+            rowRegistry.set(rowId, row);
+        }
+
         function addItem(data = {}) {
-            const row = buildRow(data);
+            const row = buildRow({ ...data });
             if (!row) return;
             row.dataset.repeaterItem = 'true';
+            registerRow(row, data);
             const removeBtn = row.querySelector('[data-remove-row]');
             if (removeBtn) {
                 removeBtn.addEventListener('click', (event) => {
                     event.preventDefault();
+                    rowRegistry.delete(row.dataset.repeaterId);
                     row.remove();
                 });
             }
@@ -214,16 +613,37 @@ document.addEventListener('DOMContentLoaded', () => {
         return {
             addItem,
             clear() {
+                rowRegistry.clear();
                 listEl.innerHTML = '';
             },
             setItems(items = []) {
+                rowRegistry.clear();
                 listEl.innerHTML = '';
                 items.forEach((item) => addItem(item));
             },
-            getItems() {
+            getItems(options = {}) {
+                const includeMeta = Boolean(options.includeMeta);
                 return Array.from(listEl.querySelectorAll('[data-repeater-item]'))
-                    .map((row) => (typeof row.__getValue === 'function' ? row.__getValue() : null))
+                    .map((row) => {
+                        const value = typeof row.__getValue === 'function' ? row.__getValue() : null;
+                        if (!value) return null;
+                        if (includeMeta) {
+                            return {
+                                ...value,
+                                __clientId: row.dataset.repeaterId || null
+                            };
+                        }
+                        return value;
+                    })
                     .filter(Boolean);
+            },
+            setInlinePosition(clientId, position) {
+                const row = rowRegistry.get(clientId);
+                if (!row || typeof row.__setInlinePosition !== 'function') {
+                    return false;
+                }
+                row.__setInlinePosition(position);
+                return true;
             }
         };
     }
@@ -240,7 +660,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="media-row__fields">
                 <div class="form-control">
-                    <label>Loai</label>
+                    <label>Loại</label>
                     <select class="media-type"></select>
                 </div>
                 <div class="form-control">
@@ -248,8 +668,32 @@ document.addEventListener('DOMContentLoaded', () => {
                     <input type="url" class="media-url" placeholder="${urlPlaceholder || 'https://...'}">
                 </div>
                 <div class="form-control">
-                    <label>Chu thich</label>
-                    <input type="text" class="media-caption" placeholder="${captionPlaceholder || 'Mo ta ngan duoi anh'}">
+                    <label>Chú thích</label>
+                    <input type="text" class="media-caption" placeholder="${captionPlaceholder || 'Mô tả ngắn dưới ảnh/video'}">
+                </div>
+                <div class="form-control">
+                    <label>Vị trí hiển thị</label>
+                    <select class="media-placement-mode">
+                        <option value="library">Chỉ hiển thị trong thư viện</option>
+                        <option value="inline">Chèn vào nội dung bài viết</option>
+                    </select>
+                    <small class="input-hint">Chọn "Chèn vào nội dung" khi muốn ảnh/video xuất hiện xen giữa các đoạn văn.</small>
+                </div>
+                <div class="form-control media-position-group">
+                    <label>Chèn sau đoạn số</label>
+                    <div class="media-position-stepper">
+                        <button type="button" class="stepper-btn" data-step="-1" aria-label="Giảm vị trí">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <input type="number" min="0" class="media-position" placeholder="0">
+                        <button type="button" class="stepper-btn" data-step="1" aria-label="Tăng vị trí">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="media-position-preview">
+                        <span class="media-position-label">Trước đoạn đầu tiên</span>
+                    </div>
+                    <small class="input-hint">0 = Trước đoạn đầu tiên, 1 = Sau đoạn 1, 2 = Sau đoạn 2...</small>
                 </div>
             </div>
         `;
@@ -267,15 +711,106 @@ document.addEventListener('DOMContentLoaded', () => {
 
         row.querySelector('.media-url').value = data.url || '';
         row.querySelector('.media-caption').value = data.caption || '';
+        const placementSelect = row.querySelector('.media-placement-mode');
+        const positionGroup = row.querySelector('.media-position-group');
+        const positionInput = row.querySelector('.media-position');
+        const positionLabel = row.querySelector('.media-position-label');
+        const stepButtons = row.querySelectorAll('.media-position-stepper .stepper-btn');
+
+        const hasInlinePosition =
+            typeof data.position === 'number' && Number.isFinite(data.position) && data.position >= 0;
+
+        placementSelect.value = hasInlinePosition ? 'inline' : 'library';
+        positionInput.value = hasInlinePosition ? data.position : '';
+
+        const formatPositionText = (value) =>
+            value <= 0 ? 'Trước đoạn đầu tiên' : `Sau đoạn ${value}`;
+
+        const updatePositionLabel = () => {
+            const parsed = parsePositionValue(positionInput.value);
+            positionLabel.textContent = formatPositionText(parsed ?? 0);
+        };
+
+        const syncPlacementState = ({ skipReset } = {}) => {
+            const inlineMode = placementSelect.value === 'inline';
+            positionGroup.classList.toggle('is-hidden', !inlineMode);
+            positionInput.disabled = !inlineMode;
+            if (!inlineMode && !skipReset) {
+                positionInput.value = '';
+            }
+            updatePositionLabel();
+        };
+
+        placementSelect.addEventListener('change', () => {
+            syncPlacementState();
+        });
+
+        positionInput.addEventListener('focus', () => {
+            if (placementSelect.value !== 'inline') {
+                placementSelect.value = 'inline';
+                syncPlacementState({ skipReset: true });
+            }
+        });
+
+        positionInput.addEventListener('input', () => {
+            if (positionInput.value === '') {
+                updatePositionLabel();
+                return;
+            }
+            const parsed = parsePositionValue(positionInput.value);
+            if (parsed === null) {
+                const digits = positionInput.value.replace(/[^0-9]/g, '');
+                if (!digits) {
+                    positionInput.value = '';
+                    updatePositionLabel();
+                    return;
+                }
+                positionInput.value = Number.parseInt(digits, 10);
+            } else {
+                positionInput.value = parsed;
+            }
+            updatePositionLabel();
+        });
+
+        stepButtons.forEach((btn) => {
+            btn.addEventListener('click', (event) => {
+                event.preventDefault();
+                const step = Number.parseInt(btn.dataset.step, 10) || 0;
+                placementSelect.value = 'inline';
+                const current = parsePositionValue(positionInput.value) ?? 0;
+                const nextValue = Math.max(0, current + step);
+                positionInput.value = nextValue;
+                syncPlacementState({ skipReset: true });
+            });
+        });
+
+        syncPlacementState({ skipReset: true });
+        updatePositionLabel();
 
         row.__getValue = () => {
             const url = row.querySelector('.media-url').value.trim();
             if (!url) return null;
+            const inlineMode = placementSelect.value === 'inline';
+            const inlinePosition = parsePositionValue(positionInput.value);
             return {
                 url,
                 type: row.querySelector('.media-type').value,
-                caption: row.querySelector('.media-caption').value.trim()
+                caption: row.querySelector('.media-caption').value.trim(),
+                position: inlineMode ? inlinePosition ?? 0 : null
             };
+        };
+
+        row.__setInlinePosition = (position) => {
+            if (position === null || position === undefined) {
+                placementSelect.value = 'library';
+                positionInput.value = '';
+                syncPlacementState();
+                return;
+            }
+            const safeValue = Math.max(0, Number.parseInt(position, 10) || 0);
+            placementSelect.value = 'inline';
+            positionInput.value = safeValue;
+            syncPlacementState({ skipReset: true });
         };
 
         return row;
@@ -287,7 +822,7 @@ document.addEventListener('DOMContentLoaded', () => {
             typeOptions,
             defaultType,
             urlPlaceholder: urlPlaceholder || 'https://www.youtube.com/embed/...',
-            captionPlaceholder: captionPlaceholder || 'Mo ta video',
+            captionPlaceholder: captionPlaceholder || 'Mô tả video',
             data
         });
     }
@@ -304,11 +839,11 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="media-row__fields media-row__fields--two">
                 <div class="form-control">
-                    <label>Mo ta nguon</label>
-                    <input type="text" class="source-label" placeholder="VD: Bao Cong thuong">
+                    <label>Mô tả nguồn</label>
+                    <input type="text" class="source-label" placeholder="VD: Báo Công Thương">
                 </div>
                 <div class="form-control">
-                    <label>URL nguon</label>
+                    <label>URL nguồn</label>
                     <input type="url" class="source-url" placeholder="https://...">
                 </div>
             </div>
@@ -321,7 +856,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const url = row.querySelector('.source-url').value.trim();
             if (!url) return null;
             return {
-                label: row.querySelector('.source-label').value.trim() || 'Nguon tham khao',
+                label: row.querySelector('.source-label').value.trim() || 'Nguồn tham khảo',
                 url
             };
         };
@@ -337,7 +872,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return null;
             }
             if (userLabel) {
-                userLabel.textContent = `Xin chao, ${user.displayName || user.username}`;
+                userLabel.textContent = `Xin chào, ${user.displayName || user.username}`;
             }
             return user;
         } catch (error) {
@@ -361,6 +896,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const resetBtn = document.getElementById('resetBlogForm');
         const messageEl = document.getElementById('blogFormMessage');
         const previewBtn = document.getElementById('previewBlogBtn');
+
+        const blogMediaLabelMap = buildTypeLabelMap(BLOG_MEDIA_TYPES);
+        const blogVideoLabelMap = buildTypeLabelMap(BLOG_VIDEO_TYPES);
 
         const fields = {
             code: document.getElementById('blogCode'),
@@ -386,7 +924,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     typeOptions: BLOG_MEDIA_TYPES,
                     defaultType: 'body',
                     urlPlaceholder: 'https://example.com/image.jpg',
-                    captionPlaceholder: 'Mo ta ngan duoi anh',
+                    captionPlaceholder: 'Mô tả ngắn dưới ảnh',
                     data
                 })
         });
@@ -400,7 +938,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     typeOptions: BLOG_VIDEO_TYPES,
                     defaultType: 'body',
                     urlPlaceholder: 'https://www.youtube.com/embed/...',
-                    captionPlaceholder: 'Mo ta video',
+                    captionPlaceholder: 'Mô tả video',
                     data
                 })
         });
@@ -408,8 +946,50 @@ document.addEventListener('DOMContentLoaded', () => {
         const blogSourceRepeater = createRepeaterManager({
             listSelector: '#blogSourceList',
             addBtnSelector: '#addBlogSourceBtn',
-            buildRow: (data) => buildSourceRow({ title: 'Nguon', data })
+            buildRow: (data) => buildSourceRow({ title: 'Nguồn', data })
         });
+
+        function buildBlogPreviewSnapshot() {
+            const galleryRaw = blogMediaRepeater?.getItems({ includeMeta: true }) || [];
+            const videoRaw = blogVideoRepeater?.getItems({ includeMeta: true }) || [];
+            const sourceLinks = blogSourceRepeater?.getItems() || [];
+
+            const galleryMedia = mapRepeaterItemsForPreview(galleryRaw, 'galleryMedia', true);
+            const videoItems = mapRepeaterItemsForPreview(videoRaw, 'videoItems', true);
+
+            const data = {
+                code: fields.code.value.trim(),
+                title: fields.title.value.trim(),
+                subtitle: fields.subtitle.value.trim(),
+                category: fields.category.value.trim(),
+                imageUrl: fields.image.value.trim(),
+                publishedAt: fields.publishedAt.value,
+                excerpt: fields.excerpt.value.trim(),
+                content: fields.content.value,
+                tags: parseCommaList(fields.tags.value),
+                keywords: parseCommaList(fields.keywords.value),
+                authorName: fields.author.value.trim(),
+                authorRole: fields.authorRole.value.trim(),
+                galleryMedia,
+                videoItems,
+                sourceLinks
+            };
+
+            const inlineItems = [
+                ...buildInlineMetaList(galleryRaw, {
+                    sourceKey: 'galleryMedia',
+                    kind: 'media',
+                    labelMap: blogMediaLabelMap
+                }),
+                ...buildInlineMetaList(videoRaw, {
+                    sourceKey: 'videoItems',
+                    kind: 'video',
+                    labelMap: blogVideoLabelMap
+                })
+            ].sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+
+            return { data, inlineItems };
+        }
 
         let editingCode = params.get('code');
         let originalPayload = null;
@@ -474,30 +1054,21 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
             const code = fields.code.value.trim();
             if (!code) {
-                showMessage('Vui long nhap ma bai viet truoc khi xem truoc.', 'error');
+                showMessage('Vui lòng nhập mã bài viết trước khi xem trước.', 'error');
                 return;
             }
-            
-            // Collect preview data
-            const previewData = {
-                code: fields.code.value.trim(),
-                title: fields.title.value.trim(),
-                subtitle: fields.subtitle.value.trim(),
-                category: fields.category.value.trim(),
-                imageUrl: fields.image.value.trim(),
-                publishedAt: fields.publishedAt.value,
-                excerpt: fields.excerpt.value.trim(),
-                content: fields.content.value,
-                tags: parseCommaList(fields.tags.value),
-                authorName: fields.author.value.trim(),
-                authorRole: fields.authorRole.value.trim(),
-                galleryMedia: blogMediaRepeater?.getItems() || [],
-                videoItems: blogVideoRepeater?.getItems() || [],
-                sourceLinks: blogSourceRepeater?.getItems() || []
-            };
-            
-            // Open preview modal
-            showPreviewModal('blog', previewData);
+
+            const snapshot = buildBlogPreviewSnapshot();
+            showPreviewModal('blog', snapshot.data, {
+                inlineItems: snapshot.inlineItems,
+                applyInlineOrder: (orderedItems) => {
+                    orderedItems.forEach((item, index) => {
+                        const targetRepeater = item.sourceKey === 'videoItems' ? blogVideoRepeater : blogMediaRepeater;
+                        targetRepeater?.setInlinePosition(item.clientId, index);
+                    });
+                    return buildBlogPreviewSnapshot();
+                }
+            });
         });
 
         blogForm?.addEventListener('submit', async (event) => {
@@ -529,36 +1100,36 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (!payload.title || !payload.content) {
-                showMessage('Tieu de va noi dung la bat buoc.', 'error');
+                showMessage('Tiêu đề và nội dung là bắt buộc.', 'error');
                 return;
             }
 
             try {
                 if (editingCode) {
                     await api.updateBlogPost(editingCode, payload);
-                    showMessage('Da cap nhat bai viet thanh cong.', 'success');
+                    showMessage('Đã cập nhật bài viết thành công.', 'success');
                 } else {
                     await api.createBlogPost(payload);
-                    showMessage('Da tao bai viet moi.', 'success');
+                    showMessage('Đã tạo bài viết mới.', 'success');
                     editingCode = payload.code;
                     fields.code.disabled = true;
                 }
                 originalPayload = { ...payload };
                 setTimeout(() => navigateToDashboard(), 1200);
             } catch (error) {
-                showMessage(error.message || 'Khong the luu bai viet.', 'error');
+                showMessage(error.message || 'Không thể lưu bài viết.', 'error');
             }
         });
 
         if (editingCode) {
             setEditorState({
-                title: 'Chinh sua bai viet',
-                subtitle: 'Cap nhat noi dung va thong tin bai viet.'
+                title: 'Chỉnh sửa bài viết',
+                subtitle: 'Cập nhật nội dung và thông tin bài viết.'
             });
             try {
                 const blog = await api.fetchBlogPost(editingCode);
                 if (!blog) {
-                    showMessage('Khong tim thay bai viet.', 'error');
+                    showMessage('Không tìm thấy bài viết.', 'error');
                     fields.code.disabled = false;
                     editingCode = null;
                     resetForm();
@@ -571,7 +1142,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 blogVideoRepeater?.setItems(blog.videoItems || []);
                 blogSourceRepeater?.setItems(blog.sourceLinks || []);
             } catch (error) {
-                showMessage(error.message || 'Khong the tai bai viet.', 'error');
+                showMessage(error.message || 'Không thể tải bài viết.', 'error');
             }
         } else {
             resetForm();
@@ -583,6 +1154,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const resetBtn = document.getElementById('resetProductForm');
         const messageEl = document.getElementById('productFormMessage');
         const previewBtn = document.getElementById('previewProductBtn');
+
+        const productMediaLabelMap = buildTypeLabelMap(PRODUCT_MEDIA_TYPES);
+        const productVideoLabelMap = buildTypeLabelMap(PRODUCT_VIDEO_TYPES);
 
         const fields = {
             code: document.getElementById('productCode'),
@@ -608,7 +1182,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     typeOptions: PRODUCT_MEDIA_TYPES,
                     defaultType: 'gallery',
                     urlPlaceholder: 'https://example.com/image.jpg',
-                    captionPlaceholder: 'Mo ta ngan ve anh',
+                    captionPlaceholder: 'Mô tả ngắn về ảnh',
                     data
                 })
         });
@@ -622,10 +1196,43 @@ document.addEventListener('DOMContentLoaded', () => {
                     typeOptions: PRODUCT_VIDEO_TYPES,
                     defaultType: 'demo',
                     urlPlaceholder: 'https://www.youtube.com/embed/...',
-                    captionPlaceholder: 'Mo ta video',
+                    captionPlaceholder: 'Mô tả video',
                     data
                 })
         });
+
+        function buildProductPreviewSnapshot() {
+            const galleryRaw = productMediaRepeater?.getItems({ includeMeta: true }) || [];
+            const videoRaw = productVideoRepeater?.getItems({ includeMeta: true }) || [];
+
+            const data = {
+                code: fields.code.value.trim(),
+                name: fields.name.value.trim(),
+                category: fields.category.value.trim(),
+                imageUrl: fields.image.value.trim(),
+                shortDescription: fields.summary.value.trim(),
+                description: fields.description.value,
+                featureTags: parseCommaList(fields.features.value),
+                highlights: parseLines(fields.highlights.value),
+                galleryMedia: mapRepeaterItemsForPreview(galleryRaw, 'galleryMedia', true),
+                videoItems: mapRepeaterItemsForPreview(videoRaw, 'videoItems', true)
+            };
+
+            const inlineItems = [
+                ...buildInlineMetaList(galleryRaw, {
+                    sourceKey: 'galleryMedia',
+                    kind: 'media',
+                    labelMap: productMediaLabelMap
+                }),
+                ...buildInlineMetaList(videoRaw, {
+                    sourceKey: 'videoItems',
+                    kind: 'video',
+                    labelMap: productVideoLabelMap
+                })
+            ].sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+
+            return { data, inlineItems };
+        }
 
         let editingCode = params.get('code');
         let originalPayload = null;
@@ -687,26 +1294,21 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
             const code = fields.code.value.trim();
             if (!code) {
-                showMessage('Vui long nhap ma san pham truoc khi xem truoc.', 'error');
+                showMessage('Vui lòng nhập mã sản phẩm trước khi xem trước.', 'error');
                 return;
             }
-            
-            // Collect preview data
-            const previewData = {
-                code: fields.code.value.trim(),
-                name: fields.name.value.trim(),
-                category: fields.category.value.trim(),
-                imageUrl: fields.image.value.trim(),
-                shortDescription: fields.summary.value.trim(),
-                description: fields.description.value,
-                featureTags: parseCommaList(fields.features.value),
-                highlights: parseLines(fields.highlights.value),
-                galleryMedia: productMediaRepeater?.getItems() || [],
-                videoItems: productVideoRepeater?.getItems() || []
-            };
-            
-            // Open preview modal
-            showPreviewModal('product', previewData);
+
+            const snapshot = buildProductPreviewSnapshot();
+            showPreviewModal('product', snapshot.data, {
+                inlineItems: snapshot.inlineItems,
+                applyInlineOrder: (orderedItems) => {
+                    orderedItems.forEach((item, index) => {
+                        const targetRepeater = item.sourceKey === 'videoItems' ? productVideoRepeater : productMediaRepeater;
+                        targetRepeater?.setInlinePosition(item.clientId, index);
+                    });
+                    return buildProductPreviewSnapshot();
+                }
+            });
         });
 
         productForm?.addEventListener('submit', async (event) => {
@@ -741,36 +1343,36 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (!payload.name || !payload.description) {
-                showMessage('Ten va mo ta chi tiet la bat buoc.', 'error');
+                showMessage('Tên sản phẩm và mô tả chi tiết là bắt buộc.', 'error');
                 return;
             }
 
             try {
                 if (editingCode) {
                     await api.updateProduct(editingCode, payload);
-                    showMessage('Da cap nhat san pham thanh cong.', 'success');
+                    showMessage('Đã cập nhật sản phẩm thành công.', 'success');
                 } else {
                     await api.createProduct(payload);
-                    showMessage('Da tao san pham moi.', 'success');
+                    showMessage('Đã tạo sản phẩm mới.', 'success');
                     editingCode = payload.code;
                     fields.code.disabled = true;
                 }
                 originalPayload = { ...payload };
                 setTimeout(() => navigateToDashboard(), 1200);
             } catch (error) {
-                showMessage(error.message || 'Khong the luu san pham.', 'error');
+                showMessage(error.message || 'Không thể lưu sản phẩm.', 'error');
             }
         });
 
         if (editingCode) {
             setEditorState({
-                title: 'Chinh sua san pham',
-                subtitle: 'Cap nhat noi dung va thong tin san pham.'
+                title: 'Chỉnh sửa sản phẩm',
+                subtitle: 'Cập nhật nội dung và thông tin sản phẩm.'
             });
             try {
                 const product = await api.fetchProduct(editingCode);
                 if (!product) {
-                    showMessage('Khong tim thay san pham.', 'error');
+                    showMessage('Không tìm thấy sản phẩm.', 'error');
                     fields.code.disabled = false;
                     editingCode = null;
                     resetForm();
@@ -780,7 +1382,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 fillForm(product);
                 fields.code.disabled = true;
             } catch (error) {
-                showMessage(error.message || 'Khong the tai san pham.', 'error');
+                showMessage(error.message || 'Không thể tải sản phẩm.', 'error');
             }
         } else {
             resetForm();
@@ -827,7 +1429,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 fields.username.disabled = true;
                 fields.password.required = false;
                 if (passwordHint) {
-                    passwordHint.textContent = 'De trong de giu nguyen mat khau cu.';
+                    passwordHint.textContent = 'Để trống để giữ nguyên mật khẩu cũ.';
                 }
                 return;
             }
@@ -835,7 +1437,7 @@ document.addEventListener('DOMContentLoaded', () => {
             fields.username.disabled = false;
             fields.password.required = true;
             if (passwordHint) {
-                passwordHint.textContent = 'Toi thieu 8 ky tu.';
+                passwordHint.textContent = 'Tối thiểu 8 ký tự.';
             }
         }
 
@@ -855,7 +1457,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             if (!payload.username || !payload.displayName) {
-                showMessage('Ten dang nhap va ten hien thi la bat buoc.', 'error');
+                showMessage('Tên đăng nhập và tên hiển thị là bắt buộc.', 'error');
                 return;
             }
 
@@ -863,50 +1465,50 @@ document.addEventListener('DOMContentLoaded', () => {
             if (editingId) {
                 if (passwordValue) {
                     if (passwordValue.length < 8) {
-                        showMessage('Mat khau phai co it nhat 8 ky tu.', 'error');
+                        showMessage('Mật khẩu phải có ít nhất 8 ký tự.', 'error');
                         return;
                     }
                     payload.password = passwordValue;
                 }
                 try {
                     await api.updateUser(editingId, payload);
-                    showMessage('Da cap nhat nguoi dung.', 'success');
+                    showMessage('Đã cập nhật người dùng.', 'success');
                     setTimeout(() => navigateToDashboard(), 1000);
                 } catch (error) {
-                    showMessage(error.message || 'Khong the cap nhat nguoi dung.', 'error');
+                    showMessage(error.message || 'Không thể cập nhật người dùng.', 'error');
                 }
             } else {
                 if (!passwordValue || passwordValue.length < 8) {
-                    showMessage('Vui long nhap mat khau toi thieu 8 ky tu.', 'error');
+                    showMessage('Vui lòng nhập mật khẩu tối thiểu 8 ký tự.', 'error');
                     return;
                 }
                 payload.password = passwordValue;
                 try {
                     await api.createUser(payload);
-                    showMessage('Da tao nguoi dung moi.', 'success');
+                    showMessage('Đã tạo người dùng mới.', 'success');
                     setTimeout(() => navigateToDashboard(), 1000);
                 } catch (error) {
-                    showMessage(error.message || 'Khong the tao nguoi dung.', 'error');
+                    showMessage(error.message || 'Không thể tạo người dùng.', 'error');
                 }
             }
         });
 
         if (editingId) {
             setEditorState({
-                title: 'Chinh sua nguoi dung',
-                subtitle: 'Cap nhat vai tro va thong tin nguoi dung.'
+                title: 'Chỉnh sửa người dùng',
+                subtitle: 'Cập nhật vai trò và thông tin người dùng.'
             });
             try {
                 const user = await api.fetchUser(editingId);
                 if (!user) {
-                    showMessage('Khong tim thay nguoi dung.', 'error');
+                    showMessage('Không tìm thấy người dùng.', 'error');
                     resetForm();
                     return;
                 }
                 originalPayload = user;
                 resetForm();
             } catch (error) {
-                showMessage(error.message || 'Khong the tai nguoi dung.', 'error');
+                showMessage(error.message || 'Không thể tải người dùng.', 'error');
             }
         } else {
             resetForm();

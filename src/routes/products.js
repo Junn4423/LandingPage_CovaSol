@@ -8,6 +8,14 @@ const router = express.Router();
 const PRODUCT_IMAGE_TYPES = ['hero', 'gallery', 'body', 'detail'];
 const PRODUCT_VIDEO_TYPES = ['hero', 'demo', 'body', 'testimonial'];
 
+const normalizePosition = (value) => {
+  if (value === undefined || value === null || value === '') {
+    return null;
+  }
+  const parsed = Number.parseInt(value, 10);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
+};
+
 function parseJsonColumn(value) {
   if (!value) return [];
   try {
@@ -80,7 +88,8 @@ function normalizeMediaItems(items = []) {
     .map((item) => ({
       url: ensureValue(item?.url),
       type: PRODUCT_IMAGE_TYPES.includes(item?.type) ? item.type : 'gallery',
-      caption: ensureValue(item?.caption)
+      caption: ensureValue(item?.caption),
+      position: normalizePosition(item?.position)
     }))
     .filter((item) => item.url);
 }
@@ -91,7 +100,8 @@ function normalizeVideoItems(items = []) {
     .map((item) => ({
       url: ensureValue(item?.url),
       type: PRODUCT_VIDEO_TYPES.includes(item?.type) ? item.type : 'demo',
-      caption: ensureValue(item?.caption)
+      caption: ensureValue(item?.caption),
+      position: normalizePosition(item?.position)
     }))
     .filter((item) => item.url);
 }

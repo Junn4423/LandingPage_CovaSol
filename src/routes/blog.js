@@ -8,6 +8,14 @@ const router = express.Router();
 const BLOG_IMAGE_TYPES = ['cover', 'body', 'inline', 'quote', 'gallery'];
 const BLOG_VIDEO_TYPES = ['hero', 'body', 'demo', 'interview'];
 
+const normalizePosition = (value) => {
+  if (value === undefined || value === null || value === '') {
+    return null;
+  }
+  const parsed = Number.parseInt(value, 10);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
+};
+
 function parseJsonColumn(value) {
   if (!value) return [];
   try {
@@ -77,7 +85,8 @@ function normalizeMediaItems(items = []) {
     .map((item) => ({
       url: ensureValue(item?.url),
       type: BLOG_IMAGE_TYPES.includes(item?.type) ? item.type : 'body',
-      caption: ensureValue(item?.caption)
+      caption: ensureValue(item?.caption),
+      position: normalizePosition(item?.position)
     }))
     .filter((item) => item.url);
 }
@@ -88,7 +97,8 @@ function normalizeVideoItems(items = []) {
     .map((item) => ({
       url: ensureValue(item?.url),
       type: BLOG_VIDEO_TYPES.includes(item?.type) ? item.type : 'body',
-      caption: ensureValue(item?.caption)
+      caption: ensureValue(item?.caption),
+      position: normalizePosition(item?.position)
     }))
     .filter((item) => item.url);
 }
