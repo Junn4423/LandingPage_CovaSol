@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/admin.css">
 </head>
-<body class="admin-app">
+<body class="admin-app" data-nav-current="blog">
     <main class="admin-app__viewport">
         <section class="auth-screen" id="loginSection">
             <div class="auth-card">
@@ -46,19 +46,19 @@
                     </div>
                 </div>
                 <nav class="sidebar-nav">
-                    <button class="tab-btn active" data-tab="blogTab">
+                    <button type="button" class="tab-btn active" data-tab="blogTab" data-nav-key="blog">
                         <i class="fas fa-newspaper"></i>
                         <span>Blog</span>
                     </button>
-                    <button class="tab-btn" data-tab="productTab">
+                    <button type="button" class="tab-btn" data-tab="productTab" data-nav-key="product">
                         <i class="fas fa-cubes"></i>
                         <span>Sản phẩm</span>
                     </button>
-                    <button class="tab-btn" data-tab="usersTab">
+                    <button type="button" class="tab-btn" data-tab="usersTab" data-nav-key="user">
                         <i class="fas fa-users"></i>
                         <span>Người dùng</span>
                     </button>
-                    <button class="tab-btn" data-tab="databaseTab">
+                    <button type="button" class="tab-btn" data-tab="databaseTab" data-nav-key="database">
                         <i class="fas fa-database"></i>
                         <span>Database</span>
                     </button>
@@ -68,10 +68,6 @@
                         <i class="fas fa-sync-alt"></i>
                         <span>Làm mới dữ liệu</span>
                     </button>
-                    <a href="database-viewer.html" class="sidebar-action">
-                        <i class="fas fa-table"></i>
-                        <span>Xem database</span>
-                    </a>
                 </div>
             </aside>
 
@@ -107,10 +103,10 @@
                         </div>
                         <div class="panel-header__actions">
                             <span class="panel-counter" id="blogCount">0 bài viết</span>
-                            <button class="btn btn-primary" id="createBlogBtn">
-                                <i class="fas fa-plus"></i>
+                            <a href="live-blog-editor.html" class="btn btn-primary" id="createBlogBtn">
+                                <i class="fas fa-pen-to-square"></i>
                                 <span>Soạn bài viết</span>
-                            </button>
+                            </a>
                         </div>
                     </div>
                     <p class="panel-feedback" id="blogFeedback"></p>
@@ -139,10 +135,10 @@
                         </div>
                         <div class="panel-header__actions">
                             <span class="panel-counter" id="productCount">0 sản phẩm</span>
-                            <button class="btn btn-primary" id="createProductBtn">
-                                <i class="fas fa-plus"></i>
+                            <a href="live-product-editor.html" class="btn btn-primary" id="createProductBtn">
+                                <i class="fas fa-box"></i>
                                 <span>Thêm sản phẩm</span>
-                            </button>
+                            </a>
                         </div>
                     </div>
                     <p class="panel-feedback" id="productFeedback"></p>
@@ -271,6 +267,7 @@
 
     <script src="assets/js/config.js"></script>
     <script src="assets/js/data-service.js"></script>
+    <script src="assets/js/admin-sidebar.js"></script>
     <script src="assets/js/admin.js"></script>
 </body>
 </html>

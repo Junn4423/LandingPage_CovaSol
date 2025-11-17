@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Product Editor | COVASOL</title>
+    <meta name="robots" content="noindex,nofollow">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/admin.css">
+    <link rel="stylesheet" href="assets/css/live-editor.css">
+</head>
+<body class="live-editor-app" data-live-editor="product" data-nav-current="product">
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-brand">
+            <img src="assets/img/logo.png" alt="COVASOL logo">
+            <div>
+                <span class="brand-caption">COVASOL</span>
+                <strong>Quản trị</strong>
+            </div>
+        </div>
+        <nav class="editor-nav">
+            <a href="admin.html" class="editor-nav-btn" data-nav-key="dashboard">
+                <i class="fas fa-gauge"></i>
+                <span>Bảng điều khiển</span>
+            </a>
+            <a href="live-blog-editor.html" class="editor-nav-btn" data-nav-key="blog">
+                <i class="fas fa-newspaper"></i>
+                <span>Blog</span>
+            </a>
+            <a href="live-product-editor.html" class="editor-nav-btn" data-nav-key="product">
+                <i class="fas fa-cubes"></i>
+                <span>Sản phẩm</span>
+            </a>
+            <a href="admin-user-editor.html" class="editor-nav-btn" data-nav-key="user">
+                <i class="fas fa-users"></i>
+                <span>Người dùng</span>
+            </a>
+            <a href="database-viewer.html" class="editor-nav-btn" data-nav-key="database">
+                <i class="fas fa-database"></i>
+                <span>Database</span>
+            </a>
+        </nav>
+        <div class="sidebar-meta">
+            <button class="sidebar-action" id="liveSaveBtn">
+                <i class="fas fa-save"></i>
+                <span>Lưu sản phẩm</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Editor Area -->
+    <div class="live-editor-main">
+        <!-- Top Toolbar -->
+        <div class="live-editor-toolbar" id="editorToolbar">
+            <div class="toolbar-section">
+                <h2 class="toolbar-title">Quản lý sản phẩm</h2>
+            </div>
+            <div class="toolbar-section toolbar-actions">
+                <button type="button" class="toolbar-btn" data-action="insert-image" title="Chèn ảnh vào vị trí con trỏ">
+                    <i class="fas fa-image"></i>
+                    <span>Chèn ảnh</span>
+                </button>
+                <button type="button" class="toolbar-btn" data-action="insert-video" title="Chèn video vào vị trí con trỏ">
+                    <i class="fas fa-video"></i>
+                    <span>Chèn video</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Split View: Editor + Preview -->
+        <div class="live-editor-split">
+            <!-- Left: Content Editor -->
+            <div class="live-editor-pane live-editor-input">
+                <div class="editor-input-wrapper">
+                    <!-- Metadata Section -->
+                    <section class="metadata-section">
+                        <div class="meta-field meta-field-inline">
+                            <label for="liveTitle">Tên sản phẩm</label>
+                            <input type="text" id="liveTitle" placeholder="Nhập tên sản phẩm..." required />
+                        </div>
+                        <div class="meta-field meta-field-inline">
+                            <label for="liveSubtitle">Mô tả ngắn</label>
+                            <input type="text" id="liveSubtitle" placeholder="Mô tả ngắn gọn..." />
+                        </div>
+                        <div class="meta-grid">
+                            <div class="meta-field">
+                                <label for="liveCategory">Danh mục</label>
+                                <input type="text" id="liveCategory" placeholder="VD: Automation" />
+                            </div>
+                            <div class="meta-field">
+                                <label for="liveImageUrl">URL ảnh đại diện</label>
+                                <input type="url" id="liveImageUrl" placeholder="https://" />
+                            </div>
+                        </div>
+                        <div class="meta-field">
+                            <label for="liveExcerpt">Tóm tắt sản phẩm</label>
+                            <textarea id="liveExcerpt" rows="2" placeholder="Mô tả xuất hiện trong danh sách sản phẩm..."></textarea>
+                        </div>
+                        <div class="meta-grid meta-grid-3">
+                            <div class="meta-field">
+                                <label for="liveTags">Tags</label>
+                                <input type="text" id="liveTags" placeholder="VD: IoT, Cloud (phân cách bằng dấu phẩy)" />
+                            </div>
+                            <div class="meta-field">
+                                <label for="livePrimaryCTA">CTA Chính</label>
+                                <input type="text" id="livePrimaryCTA" placeholder="VD: Đặt lịch demo" />
+                            </div>
+                            <div class="meta-field">
+                                <label for="livePrimaryCTAUrl">Link CTA Chính</label>
+                                <input type="url" id="livePrimaryCTAUrl" placeholder="https://" />
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Content Editor -->
+                    <section class="content-editor-section">
+                        <div class="content-editor-header">
+                            <label for="liveContentEditor">Mô tả chi tiết sản phẩm</label>
+                            <span class="editor-hint">
+                                <i class="fas fa-info-circle"></i>
+                                Đặt con trỏ ở đoạn muốn chèn ảnh/video, sau đó nhấn nút trên toolbar
+                            </span>
+                        </div>
+                        <textarea 
+                            id="liveContentEditor" 
+                            placeholder="Viết mô tả chi tiết về sản phẩm tại đây...&#10;&#10;Mỗi đoạn văn cách nhau bởi 1 dòng trống.&#10;&#10;Đặt con trỏ vào giữa các đoạn để chèn ảnh/video."
+                            spellcheck="true"
+                        ></textarea>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Right: Live Preview -->
+            <div class="live-editor-pane live-editor-preview">
+                <div class="preview-header-bar">
+                    <h3>
+                        <i class="fas fa-eye"></i>
+                        Preview trực tiếp
+                    </h3>
+                    <span class="preview-badge">Real-time</span>
+                </div>
+                <div class="preview-scroll-wrapper">
+                    <article id="livePreviewPane" class="live-preview-content">
+                        <div class="live-preview-placeholder">
+                            <i class="fas fa-box-open"></i>
+                            <p>Bắt đầu nhập thông tin sản phẩm để xem preview</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/data-service.js"></script>
+    <script src="assets/js/admin-sidebar.js"></script>
+    <script src="assets/js/preview-renderers.js"></script>
+    <script src="assets/js/live-editor.js"></script>
+</body>
+</html>

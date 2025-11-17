@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/admin.css">
 </head>
-<body class="admin-editor" data-editor="user">
+<body class="admin-editor" data-editor="user" data-nav-current="user">
     <aside class="admin-sidebar">
         <div class="sidebar-brand">
             <img src="assets/img/logo.png" alt="COVASOL logo">
@@ -19,21 +19,25 @@
             </div>
         </div>
         <nav class="editor-nav">
-            <a href="admin.html" class="editor-nav-btn">
+            <a href="admin.html" class="editor-nav-btn" data-nav-key="dashboard">
                 <i class="fas fa-gauge"></i>
                 <span>Bảng điều khiển</span>
             </a>
-            <a href="admin-blog-editor.html" class="editor-nav-btn">
+            <a href="live-blog-editor.html" class="editor-nav-btn" data-nav-key="blog">
                 <i class="fas fa-newspaper"></i>
-                <span>Bài viết Blog</span>
+                <span>Blog</span>
             </a>
-            <a href="admin-product-editor.html" class="editor-nav-btn">
+            <a href="live-product-editor.html" class="editor-nav-btn" data-nav-key="product">
                 <i class="fas fa-cubes"></i>
                 <span>Sản phẩm</span>
             </a>
-            <a href="admin-user-editor.html" class="editor-nav-btn active">
+            <a href="admin-user-editor.html" class="editor-nav-btn" data-nav-key="user">
                 <i class="fas fa-users"></i>
                 <span>Người dùng</span>
+            </a>
+            <a href="database-viewer.html" class="editor-nav-btn" data-nav-key="database">
+                <i class="fas fa-database"></i>
+                <span>Database</span>
             </a>
         </nav>
         <div class="sidebar-meta">
@@ -116,6 +120,7 @@
     </div>
     <script src="assets/js/config.js"></script>
     <script src="assets/js/data-service.js"></script>
+    <script src="assets/js/admin-sidebar.js"></script>
     <script src="assets/js/preview-renderers.js"></script>
     <script src="assets/js/admin-editor.js"></script>
 </body>

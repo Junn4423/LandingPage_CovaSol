@@ -81,15 +81,11 @@ app.get('/admin', (req, res) => {
 });
 
 app.get('/admin/blog-editor', (req, res) => {
-  res.sendFile(path.join(publicDir, 'admin-blog-editor.html'));
+  res.sendFile(path.join(publicDir, 'live-blog-editor.html'));
 });
 
 app.get('/admin/product-editor', (req, res) => {
-  res.sendFile(path.join(publicDir, 'admin-product-editor.html'));
-});
-
-app.get('/admin/user-editor', (req, res) => {
-  res.sendFile(path.join(publicDir, 'admin-user-editor.html'));
+  res.sendFile(path.join(publicDir, 'live-product-editor.html'));
 });
 
 app.get('/database-viewer', (req, res) => {

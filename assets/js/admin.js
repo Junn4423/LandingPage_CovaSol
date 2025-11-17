@@ -54,6 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
         element.classList.add(`is-${type}`);
     }
 
+    function showNotification(message, type = 'info') {
+        const text = message || '';
+        window.alert(text);
+    }
+
     function toggleSections(isAuthenticated) {
         loginSection.classList.toggle('is-hidden', isAuthenticated);
         dashboardSection.classList.toggle('is-hidden', !isAuthenticated);
@@ -269,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
             editBtn.className = 'action-chip';
             editBtn.textContent = 'Sua';
             editBtn.addEventListener('click', () => {
-                navigateTo('admin-blog-editor.html', { code: post.code });
+                navigateTo('live-blog-editor.html', { code: post.code });
             });
 
             const deleteBtn = document.createElement('button');
@@ -337,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
             editBtn.className = 'action-chip';
             editBtn.textContent = 'Sua';
             editBtn.addEventListener('click', () => {
-                navigateTo('admin-product-editor.html', { code: product.code });
+                navigateTo('live-product-editor.html', { code: product.code });
             });
 
             const deleteBtn = document.createElement('button');
@@ -385,7 +390,8 @@ document.addEventListener('DOMContentLoaded', () => {
             editBtn.className = 'action-chip';
             editBtn.textContent = 'Sua';
             editBtn.addEventListener('click', () => {
-                navigateTo('admin-user-editor.html', { id: user.id });
+                // navigateTo('admin-user-editor.html', { id: user.id });
+                showNotification('Chức năng chỉnh sửa người dùng đang được phát triển', 'info');
             });
 
             const deleteBtn = document.createElement('button');
@@ -555,16 +561,19 @@ document.addEventListener('DOMContentLoaded', () => {
         loadAllData();
     });
 
-    createBlogBtn.addEventListener('click', () => {
-    navigateTo('admin-blog-editor.html');
+    createBlogBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        navigateTo('live-blog-editor.html');
     });
 
-    createProductBtn.addEventListener('click', () => {
-    navigateTo('admin-product-editor.html');
+    createProductBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        navigateTo('live-product-editor.html');
     });
 
     createUserBtn.addEventListener('click', () => {
-    navigateTo('admin-user-editor.html');
+    // navigateTo('admin-user-editor.html');
+    showNotification('Chức năng tạo người dùng đang được phát triển', 'info');
     });
 
     exportDatabaseBtn.addEventListener('click', async () => {
@@ -672,6 +681,11 @@ document.addEventListener('DOMContentLoaded', () => {
             tabPanels.forEach((panel) => panel.classList.add('is-hidden'));
             button.classList.add('active');
             document.getElementById(target).classList.remove('is-hidden');
+
+            const navKey = button.dataset.navKey;
+            if (navKey && window.covasolSidebar && typeof window.covasolSidebar.setActiveNav === 'function') {
+                window.covasolSidebar.setActiveNav(navKey);
+            }
         });
     });
 
