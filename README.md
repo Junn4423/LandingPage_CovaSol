@@ -143,6 +143,13 @@ Server sẽ chạy tại: `http://localhost:3000`
 
 ---
 
+## Triển khai
+
+- Toàn bộ checklist triển khai production (PM2, reverse proxy, backup, biến môi trường) nằm trong [`DEPLOYMENT.md`](DEPLOYMENT.md).
+- File mẫu [`.env.example`](.env.example) đã sẵn sàng để bạn sao chép và cấu hình bí mật trước khi khởi chạy.
+
+---
+
 ## Sử dụng
 
 ### Truy cập trang web
