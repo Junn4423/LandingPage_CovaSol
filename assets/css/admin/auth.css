@@ -1,0 +1,230 @@
+/* ============================================================================
+   Admin Auth
+   Login/onboarding flows and supporting UI
+   ============================================================================ */
+
+/* -----------------------------------------------
+   Login screen
+------------------------------------------------ */
+.auth-screen {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    background: radial-gradient(circle at top, rgba(18, 78, 102, 0.12), transparent 55%), var(--white, #ffffff);
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+    padding: 2.5rem;
+    border-radius: 1.5rem;
+    background: var(--white, #ffffff);
+    box-shadow: var(--shadow-lg, 0 24px 48px rgba(15, 23, 42, 0.14));
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.auth-brand {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.auth-brand img {
+    width: 72px;
+    height: auto;
+    margin: 0 auto;
+}
+
+.auth-brand h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--primary-dark, #124e66);
+}
+
+.auth-brand p {
+    font-size: 0.95rem;
+    color: var(--gray-600, #64748b);
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.form-control {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-control label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--gray-700, #334155);
+}
+
+.form-control input,
+.form-control select,
+.form-control textarea {
+    padding: 0.85rem 1rem;
+    border-radius: 0.9rem;
+    border: 1px solid rgba(148, 163, 184, 0.45);
+    background: var(--white, #ffffff);
+    color: inherit;
+    font: inherit;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control input:focus,
+.form-control select:focus,
+.form-control textarea:focus {
+    outline: none;
+    border-color: var(--primary-blue, #1c6e8c);
+    box-shadow: 0 0 0 3px rgba(28, 110, 140, 0.25);
+}
+
+.input-hint {
+    font-size: 0.85rem;
+    color: var(--gray-500, #6b7280);
+}
+
+.form-feedback {
+    font-size: 0.9rem;
+    min-height: 1.25rem;
+    color: var(--gray-600, #64748b);
+    transition: color 0.2s ease;
+}
+
+.form-feedback.is-error {
+    color: #dc2626;
+}
+
+.form-feedback.is-success {
+    color: #16a34a;
+}
+
+.form-feedback.is-info {
+    color: #2563eb;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.9rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    line-height: 1;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+}
+
+.btn i {
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background: var(--gradient-primary, linear-gradient(135deg, #124e66, #1c6e8c));
+    color: var(--white, #ffffff);
+    box-shadow: 0 12px 18px rgba(18, 78, 102, 0.18);
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 24px rgba(18, 78, 102, 0.24);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid rgba(18, 78, 102, 0.4);
+    color: var(--primary-dark, #124e66);
+}
+
+.btn-outline:hover {
+    background: rgba(18, 78, 102, 0.08);
+}
+
+.btn-ghost {
+    background: transparent;
+    color: var(--gray-600, #475569);
+    border: 1px dashed rgba(148, 163, 184, 0.6);
+}
+
+.btn-ghost:hover {
+    border-style: solid;
+    color: var(--primary-dark, #124e66);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #fff;
+}
+
+.btn-danger:hover {
+    box-shadow: 0 12px 20px rgba(220, 38, 38, 0.24);
+    transform: translateY(-1px);
+}
+
+.btn-full {
+    width: 100%;
+    justify-content: center;
+}
+
+.btn-link {
+    color: var(--primary-blue, #1c6e8c);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.btn-link:hover {
+    text-decoration: underline;
+}
+
+.action-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(15, 23, 42, 0.15);
+    border-radius: 999px;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.85rem;
+    background: var(--white, #ffffff);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.action-chip:hover {
+    background: var(--primary-dark, #124e66);
+    color: #ffffff;
+    border-color: transparent;
+}
+
+.action-chip.delete {
+    color: #dc2626;
+    border-color: rgba(220, 38, 38, 0.35);
+}
+
+.action-chip.delete:hover {
+    background: #dc2626;
+    color: #ffffff;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    background: rgba(28, 110, 140, 0.12);
+    color: var(--primary-blue, #1c6e8c);
+    font-weight: 600;
+}

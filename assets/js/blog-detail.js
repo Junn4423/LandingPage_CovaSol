@@ -105,11 +105,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
 
             if (!relatedListEl.children.length) {
-                relatedListEl.innerHTML = '<li>Chua co bai viet lien quan.</li>';
+                relatedListEl.innerHTML = '<li>Chưa có bài viết liên quan</li>';
             }
         } catch (error) {
-            console.error('Khong the tai bai viet lien quan:', error);
-            relatedListEl.innerHTML = '<li>Khong tai duoc danh sach lien quan.</li>';
+            console.error('Không thể tải bài viết liên quan:', error);
+            relatedListEl.innerHTML = '<li>Không tải được danh sách liên quan.</li>';
         }
     }
 
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (!isPublishedArticle(article)) {
-            showError('Bai viet nay dang duoc an hoac chua xuat ban.');
+            showError('Bài viết này đang được ẩn hoặc chưa xuất bản.');
             return;
         }
 
@@ -137,22 +137,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (previewEl) {
             previewEl.innerHTML = `
                 <div class="article-error preview-error">
-                    <h2>Khong tim thay bai viet</h2>
-                    <p>${message || 'Vui long quay lai trang blog de chon bai viet khac.'}</p>
-                    <a class="btn btn-primary" href="blog.html">Quay lai Blog</a>
+                    <h2>Không tìm thấy bài viết</h2>
+                    <p>${message || 'Vui lòng quay lại trang blog để chọn bài viết khác.'}</p>
+                    <a class="btn btn-primary" href="blog.html">Quay lại Blog</a>
                 </div>
             `;
         }
         if (relatedListEl) {
-            relatedListEl.innerHTML = '<li>Khong co du lieu.</li>';
+            relatedListEl.innerHTML = '<li>Không có dữ liệu.</li>';
         }
-        document.title = 'Khong tim thay bai viet | COVASOL';
+        document.title = 'Không tìm thấy bài viết | COVASOL';
     }
 
     try {
         const identifier = resolveIdentifier();
         if (!identifier) {
-            throw new Error('Khong xac dinh duoc ma bai viet.');
+            throw new Error('Không xác định được mã bài viết.');
         }
 
         const payload = await api.fetchBlogPost(identifier);

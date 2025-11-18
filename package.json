@@ -10,7 +10,7 @@
     "db:migrate": "node src/db/migrate.js",
     "db:seed": "node src/db/seed.js",
     "build": "npm run minify-css && npm run minify-js",
-    "minify-css": "cleancss -o assets/css/style.min.css assets/css/style.css",
+    "minify-css": "cleancss -o assets/css/variables.min.css assets/css/variables.css && cleancss -o assets/css/base.min.css assets/css/base.css && cleancss -o assets/css/style.min.css assets/css/style.css && cleancss -o assets/css/admin.min.css assets/css/admin.css",
     "minify-js": "uglifyjs assets/js/script.js -o assets/js/script.min.js -c -m",
     "validate": "html-validate index.html",
     "lighthouse": "lighthouse http://localhost:8000 --output html --output-path ./lighthouse-report.html"
