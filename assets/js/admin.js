@@ -166,6 +166,43 @@ document.addEventListener('DOMContentLoaded', () => {
         return cell;
     }
 
+    function setFeaturedButtonContent(button, isActive) {
+        if (!button) return;
+        button.classList.toggle('is-active', isActive);
+        button.innerHTML = `<i class="${isActive ? 'fas' : 'far'} fa-star"></i><span>${isActive ? 'Dang noi bat' : 'Danh noi bat'}</span>`;
+    }
+
+    function createFeaturedControl(post) {
+        const cell = document.createElement('td');
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'action-chip featured-toggle';
+        setFeaturedButtonContent(button, Boolean(post.isFeatured));
+        button.disabled = Boolean(post.isFeatured);
+
+        button.addEventListener('click', async () => {
+            if (button.disabled) {
+                return;
+            }
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Dang cap nhat...</span>';
+            try {
+                const detail = await api.fetchBlogPost(post.code);
+                const payload = buildBlogPayload(detail, { isFeatured: true });
+                await api.updateBlogPost(post.code, payload);
+                await loadBlogs();
+                setFeedback(blogFeedback, `Da chon "${post.title}" lam bai noi bat.`, 'success');
+            } catch (error) {
+                alert(error.message || 'Khong the cap nhat noi bat.');
+                button.disabled = false;
+                setFeaturedButtonContent(button, false);
+            }
+        });
+
+        cell.appendChild(button);
+        return cell;
+    }
+
     function buildBlogPayload(source, overrides = {}) {
         return {
             code: source.code,
@@ -183,6 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
             galleryMedia: Array.isArray(source.galleryMedia) ? source.galleryMedia : [],
             videoItems: Array.isArray(source.videoItems) ? source.videoItems : [],
             sourceLinks: Array.isArray(source.sourceLinks) ? source.sourceLinks : [],
+            isFeatured: overrides.isFeatured ?? source.isFeatured ?? false,
             status: overrides.status ?? source.status ?? 'draft'
         };
     }
@@ -261,6 +299,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
             row.insertBefore(statusCell, actionsCell);
+            const featuredCell = createFeaturedControl(post);
+            row.insertBefore(featuredCell, statusCell);
 
             const viewLink = document.createElement('a');
             viewLink.className = 'btn-link';
@@ -299,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
             blogTableBody.appendChild(row);
         });
 
-        ensureTableContent(blogTableBody, 6, 'Chua co bai viet nao.');
+        ensureTableContent(blogTableBody, 7, 'Chua co bai viet nao.');
         blogCountLabel.textContent = `${posts.length} bai viet`;
     }
 
@@ -429,7 +469,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error loading blogs:', error);
             setFeedback(blogFeedback, error.message || 'Khong the tai danh sach blog.', 'error');
             blogTableBody.innerHTML = '';
-            ensureTableContent(blogTableBody, 6, 'Khong the tai du lieu.');
+            ensureTableContent(blogTableBody, 7, 'Khong the tai du lieu.');
             blogCountLabel.textContent = '0 bai viet';
         }
     }

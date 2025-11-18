@@ -4,10 +4,21 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    const DEFAULT_POST_IMAGE = 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80';
     const postsGrid = document.querySelector('.blog-posts .posts-grid');
     const blogContainer = document.querySelector('.blog-posts .container');
     const loadMoreBtn = document.querySelector('.blog-posts .load-more-section .btn');
     const categoryButtons = Array.from(document.querySelectorAll('.blog-categories .category-btn'));
+    const featuredSection = document.getElementById('featuredPostSection');
+    const featuredImage = document.getElementById('featuredPostImage');
+    const featuredCategory = document.getElementById('featuredPostCategory');
+    const featuredDate = document.getElementById('featuredPostDate');
+    const featuredTitle = document.getElementById('featuredPostTitle');
+    const featuredExcerpt = document.getElementById('featuredPostExcerpt');
+    const featuredAuthor = document.getElementById('featuredPostAuthor');
+    const featuredAuthorRole = document.getElementById('featuredPostAuthorRole');
+    const featuredButton = document.getElementById('featuredPostButton');
+    let featuredButtonTarget = null;
 
     if (!postsGrid || !blogContainer || !loadMoreBtn) {
         return;
@@ -42,7 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
         category: null,
         search: '',
         isLoading: false,
-        hasMore: true
+        hasMore: true,
+        highlightedCode: null
     };
 
     const categoryMappings = {
@@ -110,6 +122,30 @@ document.addEventListener('DOMContentLoaded', () => {
         return category.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     }
 
+    function setFeaturedButtonTarget(url) {
+        featuredButtonTarget = url || null;
+        if (!featuredButton) return;
+        if (featuredButtonTarget) {
+            featuredButton.href = featuredButtonTarget;
+            featuredButton.removeAttribute('aria-disabled');
+        } else {
+            featuredButton.removeAttribute('href');
+            featuredButton.setAttribute('aria-disabled', 'true');
+        }
+    }
+
+    if (featuredButton) {
+        featuredButton.addEventListener('click', (event) => {
+            if (!featuredButtonTarget) {
+                event.preventDefault();
+                return;
+            }
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            window.location.href = featuredButtonTarget;
+        });
+    }
+
     function renderPost(post, index) {
     const article = document.createElement('article');
     article.className = 'post-card';
@@ -122,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
         imageWrapper.className = 'post-image';
         imageWrapper.innerHTML = `
             <a href="${detailUrl}">
-                <img src="${post.imageUrl || 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80'}" alt="${post.title}">
+                <img src="${post.imageUrl || DEFAULT_POST_IMAGE}" alt="${post.title}">
             </a>
         `;
 
@@ -184,6 +220,88 @@ document.addEventListener('DOMContentLoaded', () => {
         postsGrid.appendChild(article);
     }
 
+    function updateFeaturedSection(post) {
+        if (!featuredSection || !post) {
+            return;
+        }
+
+        const detailUrl = `blog-detail.html?code=${encodeURIComponent(post.code)}`;
+
+        if (featuredImage) {
+            featuredImage.src = post.imageUrl || DEFAULT_POST_IMAGE;
+            featuredImage.alt = post.title || 'Blog noi bat';
+        }
+        if (featuredCategory) {
+            featuredCategory.textContent = post.category || 'Tin tuc';
+        }
+        if (featuredDate) {
+            featuredDate.textContent = formatDate(post.publishedAt);
+        }
+        if (featuredTitle) {
+            featuredTitle.textContent = post.title || 'Bai viet noi bat';
+        }
+        if (featuredExcerpt) {
+            const fallbackExcerpt = post.excerpt || (post.content ? `${post.content.slice(0, 180)}...` : '');
+            featuredExcerpt.textContent = fallbackExcerpt;
+        }
+        if (featuredAuthor) {
+            featuredAuthor.textContent = post.authorName || 'COVASOL Team';
+        }
+        if (featuredAuthorRole) {
+            featuredAuthorRole.textContent = post.authorRole || 'Editorial';
+        }
+        setFeaturedButtonTarget(detailUrl);
+
+        state.highlightedCode = post.code;
+        featuredSection.classList.remove('is-hidden');
+    }
+
+    function hideFeaturedSection() {
+        if (featuredSection) {
+            featuredSection.classList.add('is-hidden');
+        }
+        setFeaturedButtonTarget(null);
+    }
+
+    async function loadFeaturedPost() {
+        if (!featuredSection) {
+            return null;
+        }
+
+        try {
+            let hero = null;
+            const featuredPosts = await window.covasolApi.fetchBlogPosts({
+                limit: 1,
+                status: 'published',
+                featured: true
+            });
+
+            if (featuredPosts && featuredPosts.length > 0) {
+                hero = featuredPosts[0];
+            } else {
+                const latestPosts = await window.covasolApi.fetchBlogPosts({
+                    limit: 1,
+                    status: 'published'
+                });
+                hero = latestPosts && latestPosts.length > 0 ? latestPosts[0] : null;
+            }
+
+            if (hero) {
+                updateFeaturedSection(hero);
+            } else {
+                state.highlightedCode = null;
+                hideFeaturedSection();
+            }
+
+            return hero;
+        } catch (error) {
+            console.error('Khong the tai bai viet noi bat:', error);
+            state.highlightedCode = null;
+            hideFeaturedSection();
+            return null;
+        }
+    }
+
     function toggleLoading(show) {
         loadingIndicator.classList.toggle('is-hidden', !show);
     }
@@ -237,7 +355,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const posts = await window.covasolApi.fetchBlogPosts(query);
-            const visiblePosts = (posts || []).filter(isPublishedPost);
+            const visiblePosts = (posts || [])
+                .filter(isPublishedPost)
+                .filter((post) => post.code !== state.highlightedCode);
             if (reset && visiblePosts.length === 0) {
                 showEmptyState('Chưa có bài viết nào cho lựa chọn này.');
             } else {
@@ -267,7 +387,10 @@ document.addEventListener('DOMContentLoaded', () => {
         loadPosts();
     });
 
-    loadPosts(true);
+    (async function initBlogPage() {
+        await loadFeaturedPost();
+        loadPosts(true);
+    })();
 });
 
 

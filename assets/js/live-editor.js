@@ -42,7 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
         primaryCTAUrl: '',
         inlineMedia: [],
         sourceLinks: [],
-        status: 'draft'
+        status: 'draft',
+        isFeatured: false
     };
 
     let cursorPosition = 0;
@@ -485,11 +486,20 @@ document.addEventListener('DOMContentLoaded', () => {
             authorName: document.getElementById('liveAuthorName'),
             authorRole: document.getElementById('liveAuthorRole'),
             primaryCTA: document.getElementById('livePrimaryCTA'),
-            primaryCTAUrl: document.getElementById('livePrimaryCTAUrl')
+            primaryCTAUrl: document.getElementById('livePrimaryCTAUrl'),
+            isFeatured: document.getElementById('liveIsFeatured')
         };
 
         Object.entries(fields).forEach(([key, field]) => {
             if (!field) return;
+
+            if (field.type === 'checkbox') {
+                field.addEventListener('change', () => {
+                    editorState[key] = field.checked;
+                    markDirty();
+                });
+                return;
+            }
             
             field.addEventListener('input', debounce(() => {
                 if (key === 'tags') {
@@ -583,6 +593,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     payload.authorName = editorState.authorName || null;
                     payload.authorRole = editorState.authorRole || null;
                     payload.publishedAt = editorState.publishedAt || new Date().toISOString();
+                    payload.isFeatured = Boolean(editorState.isFeatured);
                     
                     if (editingId) {
                         await api.updateBlogPost(editingId, payload);
@@ -635,6 +646,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load existing content
     async function loadExistingContent() {
         if (!editingId) {
+            const featuredField = document.getElementById('liveIsFeatured');
+            if (featuredField) {
+                featuredField.checked = false;
+            }
             renderPreview();
             return;
         }
@@ -676,7 +691,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         position: m.position ?? 999
                     }))
                 ],
-                status: data.status || 'draft'
+                status: data.status || 'draft',
+                isFeatured: data.isFeatured || false
             };
 
             // Populate fields
@@ -691,6 +707,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const authorRoleField = document.getElementById('liveAuthorRole');
             const primaryCTAField = document.getElementById('livePrimaryCTA');
             const primaryCTAUrlField = document.getElementById('livePrimaryCTAUrl');
+            const featuredField = document.getElementById('liveIsFeatured');
 
             if (titleField) titleField.value = editorState.title;
             if (subtitleField) subtitleField.value = editorState.subtitle;
@@ -702,6 +719,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (authorRoleField) authorRoleField.value = editorState.authorRole;
             if (primaryCTAField) primaryCTAField.value = editorState.primaryCTA;
             if (primaryCTAUrlField) primaryCTAUrlField.value = editorState.primaryCTAUrl;
+            if (featuredField) featuredField.checked = Boolean(editorState.isFeatured);
 
             renderPreview();
         } catch (error) {

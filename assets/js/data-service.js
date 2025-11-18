@@ -59,6 +59,8 @@
         if (query.tag) params.set('tag', query.tag);
         if (query.category) params.set('category', query.category);
         if (query.status) params.set('status', query.status);
+        if (query.featured !== undefined) params.set('featured', query.featured ? '1' : '0');
+        if (query.excludeFeatured) params.set('excludeFeatured', '1');
 
         const qs = params.toString();
         const data = await apiRequest(`/blog${qs ? `?${qs}` : ''}`);

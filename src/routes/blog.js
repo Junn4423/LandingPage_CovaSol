@@ -8,6 +8,18 @@ const router = express.Router();
 const BLOG_IMAGE_TYPES = ['cover', 'body', 'inline', 'quote', 'gallery'];
 const BLOG_VIDEO_TYPES = ['hero', 'body', 'demo', 'interview'];
 
+const toBoolean = (value, fallback = false) => {
+  if (value === undefined || value === null) return fallback;
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'number') return value === 1;
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase();
+    if (!normalized) return fallback;
+    return normalized === '1' || normalized === 'true' || normalized === 'yes' || normalized === 'on';
+  }
+  return fallback;
+};
+
 const normalizePosition = (value) => {
   if (value === undefined || value === null || value === '') {
     return null;
@@ -53,6 +65,7 @@ function serializeBlog(row) {
     authorRole: row.author_role,
     publishedAt: row.published_at,
     status: row.status,
+    isFeatured: row.is_featured === 1,
     galleryMedia: parseObjectArray(row.gallery_media),
     videoItems: parseObjectArray(row.video_items),
     sourceLinks: parseObjectArray(row.source_links),
@@ -120,6 +133,8 @@ router.get('/', (req, res) => {
   const tag = (req.query.tag || '').trim();
   const category = (req.query.category || '').trim();
   const statusFilter = (req.query.status || '').trim();
+  const featuredFilter = (req.query.featured || '').trim().toLowerCase();
+  const excludeFeatured = (req.query.excludeFeatured || '').trim().toLowerCase();
 
   const whereClauses = [];
   const params = {
@@ -149,6 +164,12 @@ router.get('/', (req, res) => {
     params.status = statusFilter;
   }
 
+  if (featuredFilter && featuredFilter !== '0' && featuredFilter !== 'false') {
+    whereClauses.push('(is_featured = 1)');
+  } else if (excludeFeatured && excludeFeatured !== '0' && excludeFeatured !== 'false') {
+    whereClauses.push('(is_featured = 0)');
+  }
+
   const whereSql = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
 
   const rows = db
@@ -172,11 +193,9 @@ router.get('/', (req, res) => {
         gallery_media,
         video_items,
         source_links,
+        is_featured,
         created_at,
-        updated_at,
-        gallery_media,
-        video_items,
-        source_links
+        updated_at
       FROM blog_posts
       ${whereSql}
       ORDER BY datetime(published_at) DESC
@@ -223,6 +242,7 @@ router.get('/:identifier', (req, res) => {
         gallery_media,
         video_items,
         source_links,
+        is_featured,
         created_at,
         updated_at
       FROM blog_posts
@@ -255,7 +275,8 @@ router.post('/', requireAuth, (req, res) => {
     status,
     galleryMedia,
     videoItems,
-    sourceLinks
+    sourceLinks,
+    isFeatured = false
   } = req.body || {};
 
   if (!code || !title || !content) {
@@ -270,8 +291,12 @@ router.post('/', requireAuth, (req, res) => {
   const publishDate = publishedAt ? new Date(publishedAt).toISOString() : new Date().toISOString();
   const slugBase = slugify(title, { lower: true, strict: true });
   const slug = `${slugBase}-${code.toLowerCase()}`;
+  const featuredFlag = toBoolean(isFeatured);
 
   try {
+    if (featuredFlag) {
+      db.prepare('UPDATE blog_posts SET is_featured = 0 WHERE is_featured = 1').run();
+    }
     db.prepare(
       `
       INSERT INTO blog_posts (
@@ -291,7 +316,8 @@ router.post('/', requireAuth, (req, res) => {
         status,
         gallery_media,
         video_items,
-        source_links
+        source_links,
+        is_featured
       ) VALUES (
         @code,
         @slug,
@@ -309,7 +335,8 @@ router.post('/', requireAuth, (req, res) => {
         @status,
         @gallery_media,
         @video_items,
-        @source_links
+        @source_links,
+        @is_featured
       )
     `
     ).run({
@@ -329,7 +356,8 @@ router.post('/', requireAuth, (req, res) => {
       status: status || 'published',
       gallery_media: JSON.stringify(normalizedMedia),
       video_items: JSON.stringify(normalizedVideos),
-      source_links: JSON.stringify(normalizedSources)
+      source_links: JSON.stringify(normalizedSources),
+      is_featured: featuredFlag ? 1 : 0
     });
 
     const created = db
@@ -367,7 +395,8 @@ router.put('/:code', requireAuth, (req, res) => {
     status = existing.status,
     galleryMedia = parseObjectArray(existing.gallery_media),
     videoItems = parseObjectArray(existing.video_items),
-    sourceLinks = parseObjectArray(existing.source_links)
+    sourceLinks = parseObjectArray(existing.source_links),
+    isFeatured = existing.is_featured === 1
   } = req.body || {};
 
   const normalizedTags = normalizeArray(tags);
@@ -377,8 +406,12 @@ router.put('/:code', requireAuth, (req, res) => {
   const normalizedSources = normalizeSourceLinks(sourceLinks);
   const slugBase = slugify(title, { lower: true, strict: true });
   const slug = `${slugBase}-${existing.code.toLowerCase()}`;
+  const featuredFlag = toBoolean(isFeatured, existing.is_featured === 1);
 
   try {
+    if (featuredFlag) {
+      db.prepare('UPDATE blog_posts SET is_featured = 0 WHERE is_featured = 1 AND code != @code').run({ code: existing.code });
+    }
     db.prepare(
       `
       UPDATE blog_posts SET
@@ -397,7 +430,8 @@ router.put('/:code', requireAuth, (req, res) => {
         video_items = @video_items,
         source_links = @source_links,
         status = @status,
-        slug = @slug
+        slug = @slug,
+        is_featured = @is_featured
       WHERE code = @code
     `
     ).run({
@@ -417,6 +451,7 @@ router.put('/:code', requireAuth, (req, res) => {
       source_links: JSON.stringify(normalizedSources),
       status,
       slug,
+      is_featured: featuredFlag ? 1 : 0,
       code: existing.code
     });
 

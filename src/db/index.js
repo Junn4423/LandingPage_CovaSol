@@ -60,6 +60,7 @@ function initializeDatabase() {
       gallery_media TEXT DEFAULT '[]',
       video_items TEXT DEFAULT '[]',
       source_links TEXT DEFAULT '[]',
+      is_featured INTEGER NOT NULL DEFAULT 0 CHECK (is_featured IN (0,1)),
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
@@ -111,6 +112,13 @@ function initializeDatabase() {
   ensureColumn('blog_posts', 'gallery_media', "TEXT DEFAULT '[]'");
   ensureColumn('blog_posts', 'video_items', "TEXT DEFAULT '[]'");
   ensureColumn('blog_posts', 'source_links', "TEXT DEFAULT '[]'");
+  ensureColumn('blog_posts', 'is_featured', "INTEGER NOT NULL DEFAULT 0 CHECK (is_featured IN (0,1))");
+
+  db.exec(`
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_blog_posts_featured
+      ON blog_posts (is_featured)
+      WHERE is_featured = 1;
+  `);
 
   ensureColumn('products', 'gallery_media', "TEXT DEFAULT '[]'");
   ensureColumn('products', 'video_items', "TEXT DEFAULT '[]'");

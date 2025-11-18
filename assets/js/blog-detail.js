@@ -76,12 +76,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        relatedListEl.innerHTML = '<li>Dang tai bai viet lien quan...</li>';
+        relatedListEl.innerHTML = '<li>Dang tai bai viet gan day...</li>';
         try {
             const posts = await api.fetchBlogPosts({
-                limit: 4,
+                limit: 6,
                 offset: 0,
-                tag: category || undefined,
                 status: 'published'
             });
 
@@ -93,23 +92,40 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .forEach((post) => {
                     const item = document.createElement('li');
                     const link = document.createElement('a');
-                    link.href = `blog-detail.html?code=${encodeURIComponent(post.code)}`;
-                    link.textContent = post.title;
+                    const textWrapper = document.createElement('div');
+                    const titleEl = document.createElement('span');
+                    const dateEl = document.createElement('span');
+                    const icon = document.createElement('i');
 
-                    const meta = document.createElement('span');
-                    meta.textContent = formatDate(post.publishedAt);
+                    const detailUrl = `blog-detail.html?code=${encodeURIComponent(post.code)}`;
+
+                    link.className = 'recent-post-link';
+                    link.href = detailUrl;
+                    link.setAttribute('aria-label', `Xem bai viet ${post.title}`);
+
+                    textWrapper.className = 'recent-post-body';
+                    titleEl.className = 'recent-post-title';
+                    dateEl.className = 'recent-post-date';
+                    icon.className = 'fas fa-arrow-right';
+
+                    titleEl.textContent = post.title;
+                    dateEl.textContent = formatDate(post.publishedAt);
+
+                    textWrapper.appendChild(titleEl);
+                    textWrapper.appendChild(dateEl);
+                    link.appendChild(textWrapper);
+                    link.appendChild(icon);
 
                     item.appendChild(link);
-                    item.appendChild(meta);
                     relatedListEl.appendChild(item);
                 });
 
             if (!relatedListEl.children.length) {
-                relatedListEl.innerHTML = '<li>Chưa có bài viết liên quan</li>';
+                relatedListEl.innerHTML = '<li>Chua co bai viet gan day</li>';
             }
         } catch (error) {
             console.error('Không thể tải bài viết liên quan:', error);
-            relatedListEl.innerHTML = '<li>Không tải được danh sách liên quan.</li>';
+            relatedListEl.innerHTML = '<li>Khong tai duoc danh sach bai viet gan day.</li>';
         }
     }
 

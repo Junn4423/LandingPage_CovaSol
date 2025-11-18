@@ -48,8 +48,8 @@ function seedBlogPosts() {
         'Trong bài viết này, Covasol chia sẻ 5 trụ cột giúp doanh nghiệp triển khai chuyển đổi số hiệu quả gồm: (1) Khung đánh giá trưởng thành số, (2) Tái thiết kế quy trình vận hành, (3) Cấu trúc dữ liệu thống nhất, (4) Lộ trình triển khai công nghệ và (5) Nâng cao năng lực nhân sự.',
         'Bên cạnh đó, chúng tôi gợi ý bộ KPI thực tế để đo lường tiến độ, các rủi ro phổ biến cần tránh và câu chuyện thành công từ doanh nghiệp trong nước.'
       ].join('\n\n'),
-      imageUrl:
-        'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=1200&q=80',
+      isFeatured: true,
+      imageUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=1200&q=80',
       category: 'Digital Transformation',
       tags: ['Digital Transformation', 'Strategy', 'Vietnam Market'],
       keywords: ['chuyển đổi số', 'digital transformation', 'covasol'],
@@ -118,7 +118,8 @@ function seedBlogPosts() {
       keywords: ['api security', 'owasp', 'startup growth'],
       authorName: 'Phạm Quang Huy',
       authorRole: 'Senior Software Architect',
-      publishedAt: '2024-08-05T07:10:00.000Z'
+      publishedAt: '2024-08-05T07:10:00.000Z',
+      isFeatured: false
     },
     {
       code: 'BLOG20240718',
@@ -138,7 +139,8 @@ function seedBlogPosts() {
       keywords: ['ux design', 'localization', 'sea market'],
       authorName: 'Lê Hoài Phương',
       authorRole: 'UX Research Lead',
-      publishedAt: '2024-07-18T05:45:00.000Z'
+      publishedAt: '2024-07-18T05:45:00.000Z',
+      isFeatured: false
     }
   ];
 
@@ -160,7 +162,8 @@ function seedBlogPosts() {
       status,
       gallery_media,
       video_items,
-      source_links
+      source_links,
+      is_featured
     )
     VALUES (
       @code,
@@ -179,7 +182,8 @@ function seedBlogPosts() {
       'published',
       @gallery_media,
       @video_items,
-      @source_links
+      @source_links,
+      @is_featured
     )
   `);
 
@@ -202,8 +206,8 @@ function seedBlogPosts() {
         published_at: row.publishedAt,
         gallery_media: JSON.stringify(row.galleryMedia || []),
         video_items: JSON.stringify(row.videoItems || []),
-        source_links: JSON.stringify(row.sourceLinks || [])
-      });
+        source_links: JSON.stringify(row.sourceLinks || []),
+        is_featured: row.isFeatured ? 1 : 0
     });
   });
 
@@ -358,7 +362,7 @@ function seedProducts() {
 }
 
 seedAdminUser();
-seedBlogPosts();
+// seedBlogPosts();
 seedProducts();
 
 console.log('Seeding completed.');
