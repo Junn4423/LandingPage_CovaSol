@@ -10,7 +10,6 @@ const sectionToFile = {
   'Login screen': 'admin/auth.css',
   'Dashboard layout': 'admin/dashboard.css',
   'Editor layout with sidebar': 'admin/editor.css',
-  'Preview Modal': 'admin/preview.css',
   'Responsive tweaks': 'admin/responsive.css'
 };
 
@@ -19,7 +18,6 @@ const fileHeaders = {
   'admin/auth.css': '/* ============================================================================\n   Admin Auth\n   Login/onboarding flows and supporting UI\n   ============================================================================ */\n\n',
   'admin/dashboard.css': '/* ============================================================================\n   Admin Dashboard\n   Shell layout, sidebar, cards, and activity modules\n   ============================================================================ */\n\n',
   'admin/editor.css': '/* ============================================================================\n   Admin Editors\n   Live editor layout, forms, and content panes\n   ============================================================================ */\n\n',
-  'admin/preview.css': '/* ============================================================================\n   Preview Modal\n   Live preview container, states, and interactions\n   ============================================================================ */\n\n',
   'admin/responsive.css': '/* ============================================================================\n   Admin Responsive\n   Breakpoint-specific adjustments and utilities\n   ============================================================================ */\n\n'
 };
 
