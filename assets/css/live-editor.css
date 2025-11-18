@@ -191,7 +191,7 @@
     padding: 1.25rem;
     border: 1px solid #cbd5e1;
     border-radius: 0.75rem;
-    font-family: 'Georgia', 'Times New Roman', serif;
+    font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 1rem;
     line-height: 1.8;
     resize: vertical;
@@ -256,6 +256,7 @@
     border-radius: 1.25rem;
     box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
     min-height: 100%;
+    font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .live-preview-placeholder {
@@ -352,6 +353,7 @@
 }
 
 .preview-paragraph {
+    font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 1.05rem;
     line-height: 1.8;
     color: #334155;
@@ -363,11 +365,11 @@
 ------------------------------------------------ */
 .live-inline-media {
     position: relative;
-    margin: 2.5rem 0;
-    padding: 1.25rem;
-    border-radius: 1rem;
-    background: #f8fafc;
-    border: 2px solid #e2e8f0;
+    margin: 1.5rem 0;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    border: none;
     transition: border-color 0.2s ease;
 }
 
@@ -420,13 +422,13 @@
 .live-inline-media img {
     width: 100%;
     height: auto;
-    border-radius: 0.75rem;
+    border-radius: 0.5rem;
     display: block;
-    margin-top: 0.5rem;
+    margin-top: 0;
 }
 
 .live-inline-media figcaption {
-    margin-top: 0.75rem;
+    margin-top: 0.5rem;
     font-size: 0.9rem;
     color: #64748b;
     font-style: italic;
@@ -437,8 +439,8 @@
     position: relative;
     width: 100%;
     padding-bottom: 56.25%;
-    margin-top: 0.5rem;
-    border-radius: 0.75rem;
+    margin-top: 0;
+    border-radius: 0.5rem;
     overflow: hidden;
     background: #0f172a;
 }
@@ -453,7 +455,7 @@
 }
 
 .live-inline-video .video-caption {
-    margin-top: 0.75rem;
+    margin-top: 0.5rem;
     font-size: 0.9rem;
     color: #64748b;
     font-style: italic;
@@ -490,6 +492,39 @@
     color: #1c6e8c;
     font-size: 0.85rem;
     font-weight: 600;
+}
+
+.preview-footer-panel {
+    margin-top: 2.5rem;
+    padding: 2rem;
+    border-radius: 1.25rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 18px 32px rgba(15, 23, 42, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.preview-footer-panel .preview-tags,
+.preview-footer-panel .keyword-tags,
+.preview-footer-panel .preview-meta {
+    border: none;
+    padding-top: 0;
+    margin-top: 0;
+}
+
+.preview-footer-panel .preview-sources {
+    margin-top: 0;
+}
+
+.preview-sources h4,
+.preview-media-section h3,
+.preview-video-section h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.75rem;
 }
 
 /* -----------------------------------------------

@@ -120,7 +120,6 @@
                 }" data-inline-id="${inlineId}" data-inline-kind="media" data-inline-source="${inlineSource}" data-inline-position="${
                     item.position ?? ''
                 }">
-                    <span class="preview-inline-badge">${badge}</span>
                     <img src="${safeUrl}" alt="${altText}" loading="lazy" />
                     ${caption}
                 </figure>
@@ -143,7 +142,6 @@
                 }" data-inline-id="${inlineId}" data-inline-kind="video" data-inline-source="${inlineSource}" data-inline-position="${
                     item.position ?? ''
                 }">
-                    <span class="preview-inline-badge">${badge}</span>
                     <div class="preview-inline-frame">
                         ${buildVideoFrame(item.url)}
                     </div>
@@ -239,7 +237,6 @@
                 const altText = escapeHtml(item.caption || badge);
                 return `
                     <figure class="preview-media-card" data-type="${item.type || 'media'}">
-                        <span class="preview-media-badge">${badge}</span>
                         <img src="${safeUrl}" alt="${altText}" loading="lazy" />
                         ${caption}
                     </figure>
@@ -273,7 +270,6 @@
                     : '';
                 return `
                     <article class="preview-video-item" data-type="${item.type || 'video'}">
-                        <span class="preview-media-badge">${badge}</span>
                         <div class="preview-video-frame">
                             ${buildVideoFrame(item.url)}
                         </div>
@@ -305,7 +301,7 @@
                 (item) => `
                 <li>
                     <a href="${escapeHtml(item.url)}" target="_blank" rel="noopener">
-                        ${escapeHtml(item.label || 'Nguon tham khao')}
+                        ${escapeHtml(item.label || 'Nguồn tham khảo')}
                     </a>
                 </li>
             `
@@ -314,7 +310,7 @@
         if (!items) return '';
         return `
             <section class="preview-sources">
-                <h4>Nguon tham khao</h4>
+                <h4>Nguồn tham khảo</h4>
                 <ul>
                     ${items}
                 </ul>
@@ -323,19 +319,64 @@
     };
 
     const renderBlogPreview = (data = {}) => {
+        const safeTitle = escapeHtml(data.title || 'Khong co tieu de');
+        const subtitleHtml = data.subtitle
+            ? `<p class="preview-subtitle">${escapeHtml(data.subtitle)}</p>`
+            : '';
+
+        const metaItems = [];
+        if (data.category) {
+            metaItems.push(`<span class="meta-badge">${escapeHtml(data.category)}</span>`);
+        }
+
+        const formattedDate = data.publishedAt ? formatDate(data.publishedAt) : '';
+        if (formattedDate && formattedDate !== 'Chua xac dinh') {
+            metaItems.push(
+                `<span class="meta-date">${escapeHtml(formattedDate)}</span>`
+            );
+        }
+
+        if (data.authorName) {
+            const authorRole = data.authorRole ? ` - ${escapeHtml(data.authorRole)}` : '';
+            metaItems.push(
+                `<span class="meta-author">B&#7903;i ${escapeHtml(data.authorName)}${authorRole}</span>`
+            );
+        }
+
+        const metaHtml = metaItems.length
+            ? `<div class="preview-meta">${metaItems.join('')}</div>`
+            : '';
+
+        const heroImageHtml = data.imageUrl
+            ? `<div class="preview-hero-image"><img src="${escapeHtml(
+                  data.imageUrl
+              )}" alt="${safeTitle}" loading="lazy" /></div>`
+            : '';
+
+        const excerptHtml = data.excerpt
+            ? `<p class="preview-excerpt">${escapeHtml(data.excerpt)}</p>`
+            : '';
+
         const tagsHtml =
             data.tags && data.tags.length > 0
                 ? `<div class="preview-tags">
-                ${data.tags.map((tag) => `<span class="preview-tag">${tag}</span>`).join('')}
+                ${data.tags.map((tag) => `<span class="preview-tag">${escapeHtml(tag)}</span>`).join('')}
                </div>`
                 : '';
 
-        const keywordsHtml =
+        const keywordTags =
             data.keywords && data.keywords.length > 0
-                ? `<div class="preview-tags keyword-tags">
-                ${data.keywords.map((keyword) => `<span class="preview-tag is-muted">${keyword}</span>`).join('')}
-               </div>`
+                ? data.keywords
+                      .map((keyword) => `<span class="preview-tag is-muted">${escapeHtml(keyword)}</span>`)
+                      .join('')
                 : '';
+
+        const keywordsHtml = keywordTags
+            ? `<div class="preview-meta keyword-meta">
+                    <span><strong>Tu khoa:</strong></span>
+                    <div class="preview-tags keyword-tags">${keywordTags}</div>
+               </div>`
+            : '';
 
         const bodyContent = data.content || 'Khong co noi dung';
 
@@ -363,43 +404,26 @@
 
         const sourcesHtml = renderSourceList(data.sourceLinks);
 
+        const footerSections = [tagsHtml, keywordsHtml, sourcesHtml]
+            .filter(Boolean)
+            .join('');
+
+        const footerHtml = footerSections
+            ? `<div class="preview-footer-panel">${footerSections}</div>`
+            : '';
+
         return `
-            <h1>${data.title || 'Khong co tieu de'}</h1>
-            ${data.subtitle ? `<p class="preview-subtitle">${data.subtitle}</p>` : ''}
-            <div class="preview-meta">
-                ${
-                    data.category
-                        ? `<span><strong>Danh muc:</strong> ${data.category}</span>`
-                        : ''
-                }
-                <span><strong>Ngay:</strong> ${formatDate(data.publishedAt)}</span>
-                ${
-                    data.authorName
-                        ? `<span><strong>Tac gia:</strong> ${data.authorName}${
-                              data.authorRole ? ' - ' + data.authorRole : ''
-                          }</span>`
-                        : ''
-                }
+            <div class="live-preview-header">
+                <h1>${safeTitle}</h1>
+                ${subtitleHtml}
+                ${metaHtml}
             </div>
-            ${
-                data.imageUrl
-                    ? `<img src="${data.imageUrl}" alt="${data.title || 'Anh bai viet'}" />`
-                    : ''
-            }
-            ${data.excerpt ? `<p class="preview-excerpt">${data.excerpt}</p>` : ''}
-            <div class="preview-body" data-paragraph-count="${inlineBody.paragraphCount}">${inlineBody.html}</div>
+            ${heroImageHtml}
+            ${excerptHtml}
+            <div class="preview-body live-preview-body" data-paragraph-count="${inlineBody.paragraphCount}">${inlineBody.html}</div>
             ${galleryHtml}
             ${videoHtml}
-            ${tagsHtml}
-            ${
-                keywordsHtml
-                    ? `<div class="preview-meta keyword-meta">
-                    <span><strong>Tu khoa:</strong></span>
-                    ${keywordsHtml}
-                </div>`
-                    : ''
-            }
-            ${sourcesHtml}
+            ${footerHtml}
         `;
     };
 
@@ -452,6 +476,14 @@
             labels: { ...PRODUCT_VIDEO_LABELS, default: 'Video' }
         });
 
+        const footerSections = [featuresHtml, highlightsHtml]
+            .filter(Boolean)
+            .join('');
+
+        const footerHtml = footerSections
+            ? `<div class="preview-footer-panel">${footerSections}</div>`
+            : '';
+
         return `
             <h1>${data.name || 'Khong co ten san pham'}</h1>
             ${data.category ? `<p class="preview-category">${data.category}</p>` : ''}
@@ -464,8 +496,7 @@
             <div class="preview-body" data-paragraph-count="${inlineBody.paragraphCount}">${inlineBody.html}</div>
             ${galleryHtml}
             ${videoHtml}
-            ${featuresHtml}
-            ${highlightsHtml}
+            ${footerHtml}
         `;
     };
 

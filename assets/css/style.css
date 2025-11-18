@@ -963,6 +963,9 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
   box-shadow: var(--shadow-sm);
   transition: var(--transition-normal);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .post-card:hover {
@@ -973,6 +976,7 @@ h1, h2, h3, h4, h5, h6 {
 .post-image {
   height: 200px;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .post-image img {
@@ -988,6 +992,9 @@ h1, h2, h3, h4, h5, h6 {
 
 .post-content {
   padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .post-content h3 {
@@ -1026,6 +1033,8 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   gap: 8px;
   transition: var(--transition-fast);
+  margin-top: auto;
+  padding-top: 12px;
 }
 
 .read-more:hover {
@@ -3134,12 +3143,26 @@ section {
     background: linear-gradient(180deg, #f4f7fb 0%, #ffffff 100%);
 }
 
+.live-preview-header {
+  margin-bottom: 1.5rem;
+}
+
+.live-preview-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #0d1b2a;
+  margin: 0 0 0.75rem;
+  line-height: 1.2;
+}
+
 .preview-content {
+    max-width: 900px;
     padding: 3rem;
     border-radius: 1.5rem;
     background: #ffffff;
     box-shadow: 0 30px 60px rgba(13, 27, 42, 0.08);
     border: 1px solid rgba(13, 27, 42, 0.05);
+    font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .preview-surface h1 {
@@ -3150,70 +3173,128 @@ section {
 }
 
 .preview-subtitle {
-    font-size: 1.2rem;
-    color: #4b5c6a;
+    font-size: 1.25rem;
+    color: #475569;
+    margin: 0 0 1.5rem;
+    line-height: 1.5;
+}
+
+.preview-category {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1c6e8c;
+    background: rgba(28, 110, 140, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    display: inline-block;
     margin-bottom: 1.5rem;
 }
 
 .preview-meta {
     display: flex;
-    flex-wrap: wrap;
-    gap: 1rem 1.5rem;
+    align-items: center;
+    gap: 1rem;
     padding: 1rem 0;
-    border-top: 1px solid #eef3f8;
-    border-bottom: 1px solid #eef3f8;
     margin-bottom: 2rem;
-    color: #5f717a;
+    border-bottom: 2px solid #e2e8f0;
+    color: #64748b;
     font-size: 0.95rem;
 }
 
+.meta-badge {
+  display: inline-flex;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(28, 110, 140, 0.1);
+  color: #1c6e8c;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.meta-date {
+  color: #1c6e8c;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.meta-author {
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
 .preview-meta strong {
-    color: var(--primary-dark);
+    color: #0f172a;
 }
 
 .preview-content img {
     width: 100%;
-    border-radius: 1.25rem;
-    margin: 1.75rem 0;
-    box-shadow: 0 18px 35px rgba(13, 27, 42, 0.18);
+    border-radius: 1rem;
+    margin: 2rem 0;
+    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
 }
 
 .preview-excerpt {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
+    color: #475569;
     font-style: italic;
-    padding: 1rem 1.5rem;
+    margin: 0 0 2rem;
+    padding: 1.25rem;
     background: #f8fafc;
-    border-left: 4px solid var(--primary-blue);
-    border-radius: 0.75rem;
-    color: #334155;
-    margin-bottom: 2rem;
+    border-left: 4px solid #1c6e8c;
+    border-radius: 0.5rem;
+}
+
+.preview-hero-image {
+  margin: 2rem 0;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.preview-hero-image img {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 .preview-body {
-    white-space: pre-wrap;
+    font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    margin: 2rem 0;
     line-height: 1.8;
-    color: #24323a;
+    color: #334155;
     font-size: 1.05rem;
 }
 
+.live-preview-body {
+  margin: 2rem 0;
+}
+
+.preview-body .preview-paragraph {
+    font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #334155;
+    margin-bottom: 1.5rem;
+}
+
+/* Preview Tags - Default (when NOT in footer panel) */
 .preview-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #eef3f8;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 2px solid #e2e8f0;
 }
 
 .preview-tag {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.35rem 1rem;
-    border-radius: 999px;
-    background: rgba(28, 110, 140, 0.08);
-    color: var(--primary-blue);
-    font-weight: 600;
-    font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(28, 110, 140, 0.1);
+  color: #1c6e8c;
+  font-weight: 600;
+  font-size: 0.85rem;
 }
 
 .preview-tag.is-muted {
@@ -3229,15 +3310,105 @@ section {
 }
 
 .preview-tags.keyword-tags {
-    border: none;
-    padding-top: 0;
-    margin-top: 0;
+  border: none;
+  padding-top: 0;
+  margin-top: 0;
 }
 
 .preview-media-section,
 .preview-video-section,
 .preview-sources {
     margin-top: 2.5rem;
+}
+
+/* Preview Footer Panel - Beautiful container for tags, keywords, sources */
+.preview-footer-panel {
+  margin-top: 2.5rem;
+  padding: 2rem;
+  border-radius: 1.25rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 18px 32px rgba(15, 23, 42, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Remove all borders, margins, padding from direct children in footer panel */
+.preview-footer-panel > *:first-child {
+  margin-top: 0 !important;
+}
+
+.preview-footer-panel > * {
+  border-top: none !important;
+  padding-top: 0 !important;
+}
+
+/* Specific overrides for tags in footer panel */
+.preview-footer-panel .preview-tags {
+  border-top: none !important;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+.preview-footer-panel .keyword-tags {
+  border-top: none !important;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+.preview-footer-panel .preview-meta {
+  border: none !important;
+  border-bottom: none !important;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.preview-footer-panel .preview-meta.keyword-meta {
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+}
+
+/* Sources in footer panel */
+.preview-footer-panel .preview-sources {
+  margin-top: 0 !important;
+  border-top: none !important;
+  padding-top: 0 !important;
+}
+
+.preview-footer-panel .preview-sources h4 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Highlights in footer panel */
+.preview-footer-panel .preview-highlights {
+  margin-top: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+
+.preview-footer-panel .preview-highlights h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.preview-sources h4,
+.preview-media-section h3,
+.preview-video-section h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.75rem;
 }
 
 .preview-media-grid {
@@ -3262,22 +3433,16 @@ section {
 }
 
 .preview-media-badge {
-    position: absolute;
-    top: 0.85rem;
-    left: 0.85rem;
-    background: rgba(15, 23, 42, 0.8);
-    color: #ffffff;
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 0.2rem 0.75rem;
-    border-radius: 999px;
+    display: none;
 }
 
 .preview-caption {
     font-size: 0.85rem;
     font-style: italic;
     color: #475569;
-    padding: 0.75rem 1rem 1rem;
+    padding: 0.5rem 0 0;
+    margin-top: 0.5rem;
+    text-align: center;
 }
 
 .preview-video-list {
@@ -3324,26 +3489,26 @@ section {
 }
 
 .preview-inline-block {
-  margin: 1.75rem 0;
-  padding: 1rem 1.25rem 1.25rem;
-  border-radius: 1.1rem;
-  background: #ffffff;
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+  margin: 1.5rem 0;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .preview-inline-block--media img {
   width: 100%;
-  border-radius: 0.9rem;
-  margin-top: 0.75rem;
+  border-radius: 0.5rem;
+  margin-top: 0;
   object-fit: cover;
 }
 
 .preview-inline-block--video .preview-inline-frame {
-  border-radius: 0.9rem;
+  border-radius: 0.5rem;
   overflow: hidden;
   background: #000;
   aspect-ratio: 16 / 9;
-  margin: 0.75rem 0 0.5rem;
+  margin: 0;
 }
 
 .preview-inline-block--video iframe,
@@ -3355,17 +3520,7 @@ section {
 }
 
 .preview-inline-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.2rem 0.85rem;
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.08);
-  color: #0f172a;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  display: none;
 }
 
 .preview-sources ul {
