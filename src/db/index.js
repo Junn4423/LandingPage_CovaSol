@@ -94,6 +94,7 @@ function initializeDatabase() {
       cta_secondary_url TEXT,
       gallery_media TEXT DEFAULT '[]',
       video_items TEXT DEFAULT '[]',
+      demo_media TEXT DEFAULT '[]',
       status TEXT NOT NULL DEFAULT 'active',
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -122,6 +123,7 @@ function initializeDatabase() {
 
   ensureColumn('products', 'gallery_media', "TEXT DEFAULT '[]'");
   ensureColumn('products', 'video_items', "TEXT DEFAULT '[]'");
+  ensureColumn('products', 'demo_media', "TEXT DEFAULT '[]'");
 }
 
 module.exports = {

@@ -23,8 +23,58 @@ document.addEventListener('DOMContentLoaded', () => {
     const previewPane = document.getElementById('livePreviewPane');
     const saveBtn = document.getElementById('liveSaveBtn');
     const toolbar = document.getElementById('editorToolbar');
+    const demoComboList = document.getElementById('demoComboList');
+    const addDemoComboBtn = document.getElementById('addDemoComboBtn');
+    const DEMO_COMBO_LIMIT = 9;
 
     // State
+    const ADMIN_FLASH_STORAGE_KEY = 'covasolAdminFlash';
+
+    function persistAdminFlash(message, tabKey, type = 'success') {
+        try {
+            const storage = window.sessionStorage;
+            if (!storage) {
+                return;
+            }
+            storage.setItem(
+                ADMIN_FLASH_STORAGE_KEY,
+                JSON.stringify({
+                    message,
+                    tab: tabKey,
+                    type,
+                    timestamp: Date.now()
+                })
+            );
+        } catch (error) {
+            console.warn('Unable to cache admin flash message:', error);
+        }
+    }
+
+    function resolveAdminUrl(tabKey) {
+        try {
+            const segments = window.location.pathname.split('/');
+            if (segments.length) {
+                segments[segments.length - 1] = 'admin.html';
+            }
+            const adminPath = segments.join('/') || '/admin.html';
+            const adminUrl = new URL(adminPath, window.location.origin);
+            if (tabKey) {
+                adminUrl.searchParams.set('tab', tabKey);
+            }
+            return adminUrl.toString();
+        } catch (error) {
+            const suffix = tabKey ? `?tab=${encodeURIComponent(tabKey)}` : '';
+            return `admin.html${suffix}`;
+        }
+    }
+
+    function redirectToAdminDashboard(tabKey, message) {
+        if (message) {
+            persistAdminFlash(message, tabKey, 'success');
+        }
+        window.location.href = resolveAdminUrl(tabKey);
+    }
+
     let editorState = {
         code: '',
         title: '',
@@ -43,7 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
         inlineMedia: [],
         sourceLinks: [],
         status: 'draft',
-        isFeatured: false
+        isFeatured: false,
+        demoMedia: []
     };
 
     let cursorPosition = 0;
@@ -516,6 +567,146 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function getDemoMediaPayload() {
+        if (!isProduct) {
+            return [];
+        }
+        return (editorState.demoMedia || [])
+            .map((item) => ({
+                url: (item.url || '').trim(),
+                caption: (item.caption || '').trim() || null
+            }))
+            .filter((item) => item.url);
+    }
+
+    function updateDemoComboButtonState() {
+        if (!addDemoComboBtn) {
+            return;
+        }
+        const count = editorState.demoMedia?.length || 0;
+        const disabled = count >= DEMO_COMBO_LIMIT;
+        addDemoComboBtn.disabled = disabled;
+        addDemoComboBtn.classList.toggle('is-disabled', disabled);
+        if (disabled) {
+            addDemoComboBtn.setAttribute('aria-disabled', 'true');
+        } else {
+            addDemoComboBtn.removeAttribute('aria-disabled');
+        }
+    }
+
+    function handleDemoComboInput(id, field, value) {
+        if (!Array.isArray(editorState.demoMedia)) {
+            editorState.demoMedia = [];
+        }
+        const target = editorState.demoMedia.find((item) => item.id === id);
+        if (!target) {
+            return;
+        }
+        target[field] = value;
+        markDirty();
+    }
+
+    function removeDemoComboItem(id) {
+        if (!Array.isArray(editorState.demoMedia)) {
+            return;
+        }
+        editorState.demoMedia = editorState.demoMedia.filter((item) => item.id !== id);
+        renderDemoComboList();
+        markDirty();
+    }
+
+    function addDemoComboItem(prefill = {}) {
+        if (!isProduct) {
+            return;
+        }
+        if (!Array.isArray(editorState.demoMedia)) {
+            editorState.demoMedia = [];
+        }
+        if (editorState.demoMedia.length >= DEMO_COMBO_LIMIT) {
+            showNotification(`Bạn chỉ có thể thêm tối đa ${DEMO_COMBO_LIMIT} ảnh demo.`, 'info');
+            return;
+        }
+        editorState.demoMedia.push({
+            id: prefill.id || generateId(),
+            url: prefill.url || '',
+            caption: prefill.caption || ''
+        });
+        renderDemoComboList();
+        setTimeout(() => {
+            const lastRow = demoComboList?.lastElementChild;
+            lastRow?.querySelector('.demo-combo-url')?.focus();
+        }, 0);
+        markDirty();
+    }
+
+    function renderDemoComboList() {
+        if (!isProduct || !demoComboList) {
+            return;
+        }
+
+        const items = editorState.demoMedia || [];
+        demoComboList.innerHTML = '';
+
+        if (!items.length) {
+            demoComboList.innerHTML = '<p class="demo-combo-placeholder">Chưa có ảnh demo. Thêm ít nhất 1 ảnh để khách hàng xem giao diện thực tế.</p>';
+            updateDemoComboButtonState();
+            return;
+        }
+
+        items.forEach((item, index) => {
+            const row = document.createElement('div');
+            row.className = 'demo-combo-item';
+            row.dataset.comboId = item.id;
+            row.innerHTML = `
+                <div class="demo-combo-thumb"></div>
+                <div class="demo-combo-fields">
+                    <label>Ảnh ${index + 1}</label>
+                    <input type="url" class="demo-combo-url" placeholder="https://" value="${escapeHtml(item.url || '')}" />
+                    <input type="text" class="demo-combo-caption" placeholder="Chú thích (tùy chọn)" value="${escapeHtml(item.caption || '')}" />
+                </div>
+                <button type="button" class="demo-combo-remove" title="Xóa ảnh demo">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+
+            const thumb = row.querySelector('.demo-combo-thumb');
+            const urlInput = row.querySelector('.demo-combo-url');
+            const captionInput = row.querySelector('.demo-combo-caption');
+            const removeBtn = row.querySelector('.demo-combo-remove');
+
+            const renderThumb = (value) => {
+                if (value && value.trim()) {
+                    thumb.innerHTML = `<img src="${escapeHtml(value.trim())}" alt="Ảnh demo ${index + 1}">`;
+                } else {
+                    thumb.innerHTML = '<i class="fas fa-image"></i>';
+                }
+            };
+
+            renderThumb(item.url);
+
+            urlInput.addEventListener('input', debounce((event) => {
+                handleDemoComboInput(item.id, 'url', event.target.value);
+                renderThumb(event.target.value);
+            }, 300));
+
+            captionInput.addEventListener('input', debounce((event) => {
+                handleDemoComboInput(item.id, 'caption', event.target.value);
+            }, 300));
+
+            removeBtn.addEventListener('click', () => {
+                removeDemoComboItem(item.id);
+            });
+
+            demoComboList.appendChild(row);
+        });
+
+        updateDemoComboButtonState();
+    }
+
+    addDemoComboBtn?.addEventListener('click', () => {
+        addDemoComboItem();
+    });
+
     // Save functionality
     function setupSave() {
         if (!saveBtn) return;
@@ -549,13 +740,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     tags: editorState.tags || [],
                     keywords: editorState.keywords || [],
                     status: 'published',
-                    galleryMedia: editorState.inlineMedia.filter(m => m.type === 'image').map(m => ({
+                    galleryMedia: editorState.inlineMedia.filter((m) => m.type === 'image').map((m) => ({
                         type: isProduct ? 'gallery' : 'inline',
                         url: m.url,
                         caption: m.caption,
                         position: m.position
                     })),
-                    videoItems: editorState.inlineMedia.filter(m => m.type === 'video').map(m => ({
+                    videoItems: editorState.inlineMedia.filter((m) => m.type === 'video').map((m) => ({
                         type: 'body',
                         url: m.url,
                         caption: m.caption,
@@ -563,6 +754,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     })),
                     sourceLinks: editorState.sourceLinks || []
                 };
+
+                const targetTabKey = isProduct ? 'product' : 'blog';
+                let successMessage = '';
+                const demoMediaPayload = getDemoMediaPayload();
 
                 if (isProduct) {
                     payload.name = payload.title;
@@ -573,6 +768,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         label: editorState.primaryCTA || null,
                         url: editorState.primaryCTAUrl || null
                     };
+                    payload.demoMedia = demoMediaPayload;
                     delete payload.title;
                     delete payload.excerpt;
                     delete payload.tags;
@@ -583,31 +779,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (editingId) {
                         await api.updateProduct(editingId, payload);
-                        showNotification('Đã cập nhật sản phẩm', 'success');
+                        successMessage = 'Đã cập nhật sản phẩm';
                     } else {
-                        const result = await api.createProduct(payload);
-                        editingId = result.code;
-                        showNotification('Đã tạo sản phẩm mới', 'success');
+                        const createdProduct = await api.createProduct(payload);
+                        const createdCode = createdProduct?.code;
+                        if (createdCode) {
+                            editingId = createdCode;
+                            editorState.code = createdCode;
+                        }
+                        successMessage = 'Đã tạo sản phẩm mới';
                     }
                 } else {
                     payload.authorName = editorState.authorName || null;
                     payload.authorRole = editorState.authorRole || null;
                     payload.publishedAt = editorState.publishedAt || new Date().toISOString();
                     payload.isFeatured = Boolean(editorState.isFeatured);
-                    
+
                     if (editingId) {
                         await api.updateBlogPost(editingId, payload);
-                        showNotification('Đã cập nhật bài viết', 'success');
+                        successMessage = 'Đã cập nhật bài viết';
                     } else {
-                        const result = await api.createBlogPost(payload);
-                        editingId = result.code;
-                        editorState.code = result.code;
-                        showNotification('Đã tạo bài viết mới', 'success');
+                        const createdBlog = await api.createBlogPost(payload);
+                        const createdCode = createdBlog?.code;
+                        if (createdCode) {
+                            editingId = createdCode;
+                            editorState.code = createdCode;
+                        }
+                        successMessage = 'Đã tạo bài viết mới';
                     }
                 }
 
                 isDirty = false;
                 updateSaveButton();
+
+                if (successMessage) {
+                    showNotification(successMessage, 'success');
+                    setTimeout(() => redirectToAdminDashboard(targetTabKey, successMessage), 900);
+                } else {
+                    redirectToAdminDashboard(targetTabKey);
+                }
             } catch (error) {
                 showNotification(error.message || 'Lỗi khi lưu', 'error');
             } finally {
@@ -651,6 +861,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 featuredField.checked = false;
             }
             renderPreview();
+            renderDemoComboList();
             return;
         }
 
@@ -692,7 +903,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     }))
                 ],
                 status: data.status || 'draft',
-                isFeatured: data.isFeatured || false
+                isFeatured: data.isFeatured || false,
+                demoMedia: (data.demoMedia || []).map((media) => ({
+                    id: generateId(),
+                    url: media.url || '',
+                    caption: media.caption || ''
+                }))
             };
 
             // Populate fields
@@ -722,6 +938,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (featuredField) featuredField.checked = Boolean(editorState.isFeatured);
 
             renderPreview();
+            renderDemoComboList();
         } catch (error) {
             showNotification(`Không thể tải ${isProduct ? 'sản phẩm' : 'bài viết'}`, 'error');
         }

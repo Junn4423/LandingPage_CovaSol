@@ -208,6 +208,7 @@ function seedBlogPosts() {
         video_items: JSON.stringify(row.videoItems || []),
         source_links: JSON.stringify(row.sourceLinks || []),
         is_featured: row.isFeatured ? 1 : 0
+      });
     });
   });
 
@@ -242,6 +243,20 @@ function seedProducts() {
         'Workflow automation với hơn 30 mẫu dựng sẵn',
         'Báo cáo KPI dành cho cả Sales lẫn Customer Success'
       ],
+      demoMedia: [
+        {
+          url: 'https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=80',
+          caption: 'Dashboard chăm sóc khách hàng theo thời gian thực'
+        },
+        {
+          url: 'https://images.unsplash.com/photo-1525182008055-f88b95ff7980?auto=format&fit=crop&w=1200&q=80',
+          caption: 'Luồng automation cho đội ngũ CS'
+        },
+        {
+          url: 'https://images.unsplash.com/photo-1531497865144-0464ef8fb9e0?auto=format&fit=crop&w=1200&q=80',
+          caption: 'Trung tâm thông tin khách hàng đa kênh'
+        }
+      ],
       ctaPrimaryLabel: 'Dùng thử 14 ngày',
       ctaPrimaryUrl: '#request-demo',
       ctaSecondaryLabel: 'Tài liệu sản phẩm',
@@ -265,6 +280,20 @@ function seedProducts() {
         'Triển khai trên hạ tầng riêng hoặc đám mây',
         'Tích hợp sẵn với Slack, Teams, Zalo OA',
         'Dashboard đánh giá chất lượng câu trả lời'
+      ],
+      demoMedia: [
+        {
+          url: 'https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1200&q=80',
+          caption: 'Trợ lý AI trả lời người dùng cuối'
+        },
+        {
+          url: 'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=1200&q=80',
+          caption: 'Bộ soạn thảo kịch bản hội thoại'
+        },
+        {
+          url: 'https://images.unsplash.com/photo-1523475472560-d2df97ec485c?auto=format&fit=crop&w=1200&q=80',
+          caption: 'Báo cáo chất lượng câu trả lời theo đội'
+        }
       ],
       ctaPrimaryLabel: 'Đăng ký demo',
       ctaPrimaryUrl: '#request-demo',
@@ -290,6 +319,20 @@ function seedProducts() {
         'Cảnh báo chủ động qua Email, SMS, MS Teams',
         'Mô hình dự báo downtime dựa trên lịch sử thiết bị'
       ],
+      demoMedia: [
+        {
+          url: 'https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80',
+          caption: 'Bảng điều khiển vận hành tại nhà máy'
+        },
+        {
+          url: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3e0?auto=format&fit=crop&w=1200&q=80',
+          caption: 'Bản đồ IoT và cảnh báo bất thường'
+        },
+        {
+          url: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80',
+          caption: 'Forecast downtime dựa trên dữ liệu thực'
+        }
+      ],
       ctaPrimaryLabel: 'Nhận tư vấn',
       ctaPrimaryUrl: '#contact-sales',
       ctaSecondaryLabel: 'Tải brochure',
@@ -310,6 +353,7 @@ function seedProducts() {
       highlights,
       gallery_media,
       video_items,
+      demo_media,
       cta_primary_label,
       cta_primary_url,
       cta_secondary_label,
@@ -328,6 +372,7 @@ function seedProducts() {
       @highlights,
       @gallery_media,
       @video_items,
+      @demo_media,
       @cta_primary_label,
       @cta_primary_url,
       @cta_secondary_label,
@@ -349,6 +394,9 @@ function seedProducts() {
         image_url: row.imageUrl || null,
         feature_tags: JSON.stringify(row.featureTags || []),
         highlights: JSON.stringify(row.highlights || []),
+        gallery_media: JSON.stringify(row.galleryMedia || []),
+        video_items: JSON.stringify(row.videoItems || []),
+        demo_media: JSON.stringify(row.demoMedia || []),
         cta_primary_label: row.ctaPrimaryLabel || null,
         cta_primary_url: row.ctaPrimaryUrl || null,
         cta_secondary_label: row.ctaSecondaryLabel || null,

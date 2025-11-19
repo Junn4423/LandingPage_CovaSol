@@ -50,6 +50,7 @@ function serializeProduct(row) {
     highlights: parseJsonColumn(row.highlights),
     galleryMedia: parseObjectArray(row.gallery_media),
     videoItems: parseObjectArray(row.video_items),
+    demoMedia: parseObjectArray(row.demo_media),
     ctaPrimary: {
       label: row.cta_primary_label,
       url: row.cta_primary_url
@@ -106,6 +107,16 @@ function normalizeVideoItems(items = []) {
     .filter((item) => item.url);
 }
 
+function normalizeDemoImages(items = []) {
+  if (!Array.isArray(items)) return [];
+  return items
+    .map((item) => ({
+      url: ensureValue(item?.url),
+      caption: ensureValue(item?.caption)
+    }))
+    .filter((item) => item.url);
+}
+
 router.get('/', (req, res) => {
   const limit = Math.min(parseInt(req.query.limit, 10) || 20, 50);
   const offset = parseInt(req.query.offset, 10) || 0;
@@ -150,6 +161,7 @@ router.get('/', (req, res) => {
         highlights,
         gallery_media,
         video_items,
+        demo_media,
         cta_primary_label,
         cta_primary_url,
         cta_secondary_label,
@@ -197,6 +209,7 @@ router.get('/:identifier', (req, res) => {
         highlights,
         gallery_media,
         video_items,
+        demo_media,
         cta_primary_label,
         cta_primary_url,
         cta_secondary_label,
@@ -231,7 +244,8 @@ router.post('/', requireAuth, (req, res) => {
     ctaSecondary,
     status,
     galleryMedia,
-    videoItems
+    videoItems,
+    demoMedia
   } = req.body || {};
 
   if (!code || !name || !description) {
@@ -242,6 +256,7 @@ router.post('/', requireAuth, (req, res) => {
   const normalizedHighlights = normalizeArray(highlights);
   const normalizedMedia = normalizeMediaItems(galleryMedia);
   const normalizedVideos = normalizeVideoItems(videoItems);
+  const normalizedDemoMedia = normalizeDemoImages(demoMedia);
   const slugBase = slugify(name, { lower: true, strict: true });
   const slug = `${slugBase}-${code.toLowerCase()}`;
 
@@ -260,6 +275,7 @@ router.post('/', requireAuth, (req, res) => {
         highlights,
         gallery_media,
         video_items,
+        demo_media,
         cta_primary_label,
         cta_primary_url,
         cta_secondary_label,
@@ -277,6 +293,7 @@ router.post('/', requireAuth, (req, res) => {
         @highlights,
         @gallery_media,
         @video_items,
+        @demo_media,
         @cta_primary_label,
         @cta_primary_url,
         @cta_secondary_label,
@@ -296,6 +313,7 @@ router.post('/', requireAuth, (req, res) => {
       highlights: JSON.stringify(normalizedHighlights),
       gallery_media: JSON.stringify(normalizedMedia),
       video_items: JSON.stringify(normalizedVideos),
+      demo_media: JSON.stringify(normalizedDemoMedia),
       cta_primary_label: ctaPrimary?.label || null,
       cta_primary_url: ctaPrimary?.url || null,
       cta_secondary_label: ctaSecondary?.label || null,
@@ -331,6 +349,7 @@ router.put('/:code', requireAuth, (req, res) => {
     highlights = parseJsonColumn(existing.highlights),
     galleryMedia = parseObjectArray(existing.gallery_media),
     videoItems = parseObjectArray(existing.video_items),
+    demoMedia = parseObjectArray(existing.demo_media),
     ctaPrimary = {
       label: existing.cta_primary_label,
       url: existing.cta_primary_url
@@ -346,6 +365,7 @@ router.put('/:code', requireAuth, (req, res) => {
   const normalizedHighlights = normalizeArray(highlights);
   const normalizedMedia = normalizeMediaItems(galleryMedia);
   const normalizedVideos = normalizeVideoItems(videoItems);
+  const normalizedDemoMedia = normalizeDemoImages(demoMedia);
   const slugBase = slugify(name, { lower: true, strict: true });
   const slug = `${slugBase}-${existing.code.toLowerCase()}`;
 
@@ -362,6 +382,7 @@ router.put('/:code', requireAuth, (req, res) => {
         highlights = @highlights,
         gallery_media = @gallery_media,
         video_items = @video_items,
+        demo_media = @demo_media,
         cta_primary_label = @cta_primary_label,
         cta_primary_url = @cta_primary_url,
         cta_secondary_label = @cta_secondary_label,
@@ -380,6 +401,7 @@ router.put('/:code', requireAuth, (req, res) => {
       highlights: JSON.stringify(normalizedHighlights),
       gallery_media: JSON.stringify(normalizedMedia),
       video_items: JSON.stringify(normalizedVideos),
+      demo_media: JSON.stringify(normalizedDemoMedia),
       cta_primary_label: ctaPrimary?.label || null,
       cta_primary_url: ctaPrimary?.url || null,
       cta_secondary_label: ctaSecondary?.label || null,

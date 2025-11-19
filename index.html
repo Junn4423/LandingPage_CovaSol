@@ -92,6 +92,13 @@
 
     <!-- Hero Section -->
     <section id="home" class="hero">
+        <div class="hero-media" aria-hidden="true">
+            <video autoplay muted loop playsinline preload="metadata">
+                <source src="assets/video/Hero_section_Landing_page_3D_animation.mp4" type="video/mp4">
+                Trình duyệt của bạn không hỗ trợ video.
+            </video>
+            <div class="hero-media-overlay"></div>
+        </div>
         <div class="hero-container">
             <div class="hero-content" data-aos="fade-up" data-aos-duration="1000">
                 <h1 class="hero-title">
@@ -107,20 +114,18 @@
                     <a href="#services" class="btn btn-primary" data-key="hero-btn-services">Khám phá dịch vụ</a>
                     <a href="#contact" class="btn btn-secondary" data-key="hero-btn-contact">Liên hệ ngay</a>
                 </div>
-            </div>
-            <div class="hero-visual" data-aos="fade-left" data-aos-duration="1200" data-aos-delay="200">
-                <div class="hero-graphic">
-                    <div class="floating-card card-1" data-aos="float-up" data-aos-duration="2000" data-aos-delay="500">
-                        <i class="fas fa-code"></i>
-                        <span>Web Development</span>
+                <div class="hero-stats" data-aos="fade-up" data-aos-delay="200">
+                    <div class="hero-stat">
+                        <span class="stat-label">Dự án triển khai</span>
+                        <strong>120+</strong>
                     </div>
-                    <div class="floating-card card-2" data-aos="float-up" data-aos-duration="2000" data-aos-delay="700">
-                        <i class="fas fa-mobile-alt"></i>
-                        <span>Mobile Apps</span>
+                    <div class="hero-stat">
+                        <span class="stat-label">Khách hàng hài lòng</span>
+                        <strong>60+</strong>
                     </div>
-                    <div class="floating-card card-3" data-aos="float-up" data-aos-duration="2000" data-aos-delay="900">
-                        <i class="fas fa-palette"></i>
-                        <span>UI/UX Design</span>
+                    <div class="hero-stat">
+                        <span class="stat-label">Đối tác chiến lược</span>
+                        <strong>12</strong>
                     </div>
                 </div>
             </div>
@@ -138,7 +143,7 @@
         <div class="container">
             <div class="section-header" data-aos="fade-up">
                 <h2 data-key="home-products-title">Giải pháp nổi bật</h2>
-                <p data-key="home-products-subtitle">Các sản phẩm được cập nhật trực tiếp từ hệ thống quản trị.</p>
+                <p data-key="home-products-subtitle">Các sản phẩm cập nhật trực tiếp từ hệ thống quản trị.</p>
             </div>
             <div class="posts-status">
                 <div class="posts-loading" id="homeProductsLoading">
@@ -374,8 +379,30 @@
                     </div>
                 </div>
                 <div class="about-image" data-aos="fade-left">
-                    <div class="image-container">
-                        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="COVASOL Team">
+                    <div class="about-gallery">
+                        <figure class="about-photo about-photo--primary">
+                            <img src="/assets/img/anh4.jpeg" alt="Đội ngũ COVASOL đang làm việc" loading="lazy">
+                            <figcaption class="about-photo-caption">
+                                <i class="fas fa-people-group"></i>
+                                <span>Đội ngũ triển khai dự án</span>
+                            </figcaption>
+                        </figure>
+                        <div class="about-gallery-stack">
+                            <figure class="about-photo about-photo--secondary">
+                                <img src="/assets/img/anh3.jpeg" alt="Không gian IT tại văn phòng COVASOL" loading="lazy">
+                                <figcaption class="about-photo-caption">
+                                    <i class="fas fa-microchip"></i>
+                                    <span>Văn phòng IT Lab</span>
+                                </figcaption>
+                            </figure>
+                            <figure class="about-photo about-photo--tertiary">
+                                <img src="/assets/img/anh1.jpeg" alt="Phòng họp chiến lược của COVASOL" loading="lazy">
+                                <figcaption class="about-photo-caption">
+                                    <i class="fas fa-handshake"></i>
+                                    <span>Không gian họp chiến lược</span>
+                                </figcaption>
+                            </figure>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1061,7 +1088,7 @@
                             <i class="fas fa-map-marker-alt"></i>
                             <div>
                                 <span>Địa chỉ</span>
-                                <span>Hà Nội, Việt Nam</span>
+                                <span>Hồ Chí Minh, Việt Nam</span>
                             </div>
                         </div>
                     </div>

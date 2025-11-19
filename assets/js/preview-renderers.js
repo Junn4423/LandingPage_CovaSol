@@ -427,6 +427,51 @@
         `;
     };
 
+    const sanitizeDemoMedia = (items = []) =>
+        Array.isArray(items)
+            ? items
+                  .map((item, index) => ({
+                      url: escapeHtml((item?.url || '').trim()),
+                      caption: escapeHtml((item?.caption || '').trim()),
+                      index
+                  }))
+                  .filter((item) => item.url)
+            : [];
+
+    const renderDemoComboSection = (items = []) => {
+        const sanitized = sanitizeDemoMedia(items);
+        if (!sanitized.length) {
+            return '';
+        }
+
+        const stackLayers = sanitized.slice(0, 3);
+        const totalLabel = sanitized.length.toString().padStart(2, '0');
+
+        const stackHtml = stackLayers
+            .map(
+                (item, idx) => `
+                <span class="demo-stack-layer demo-stack-layer-${idx + 1}">
+                    <img src="${item.url}" alt="${item.caption || `Ảnh demo ${idx + 1}`}" loading="lazy" />
+                </span>
+            `
+            )
+            .join('');
+
+        return `
+            <section class="product-demo-callout" data-demo-available="true">
+                <button type="button" class="demo-stack-card" data-demo-open aria-label="Xem combo ảnh demo">
+                    <div class="demo-stack-layers">
+                        ${stackHtml}
+                    </div>
+                    <div class="demo-stack-counter">
+                        <strong>${totalLabel}</strong>
+                        <span>ảnh demo</span>
+                    </div>
+                </button>
+            </section>
+        `;
+    };
+
     const renderProductPreview = (data = {}) => {
         const featuresHtml =
             data.featureTags && data.featureTags.length > 0
@@ -465,6 +510,7 @@
         ];
 
         const inlineBody = renderBodyWithInlineEmbeds(descriptionContent, inlineBlocks);
+        const demoCalloutHtml = renderDemoComboSection(data.demoMedia);
 
         const galleryHtml = renderMediaSection(galleryMedia, {
             title: 'Thu vien anh san pham',
@@ -494,6 +540,7 @@
             }
             ${data.shortDescription ? `<p class="preview-excerpt">${data.shortDescription}</p>` : ''}
             <div class="preview-body" data-paragraph-count="${inlineBody.paragraphCount}">${inlineBody.html}</div>
+            ${demoCalloutHtml}
             ${galleryHtml}
             ${videoHtml}
             ${footerHtml}

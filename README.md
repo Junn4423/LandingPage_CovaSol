@@ -170,6 +170,13 @@ npm run static
 ```
 Truy cập tại: `http://localhost:8000`
 
+### Thêm combo ảnh demo cho sản phẩm
+1. Mở `live-product-editor.html` hoặc tab "Sản phẩm" trong admin, chọn (hoặc tạo) sản phẩm cần chỉnh.
+2. Trong khối "Combo ảnh demo", nhấn **Thêm ảnh demo** để tạo một ô mới.
+3. Chỉ dán URL ảnh đang được host (VD: CDN, Google Drive đã bật chia sẻ công khai, hoặc ảnh trong thư mục `assets/img`). Hệ thống không hỗ trợ upload trực tiếp từ máy.
+4. (Tuỳ chọn) Nhập chú thích để hiển thị trong lớp phủ animation demo.
+5. Lưu sản phẩm. Các ảnh này sẽ được dùng để dựng animation combo trên trang sản phẩm.
+
 ---
 
 ## Cấu trúc dự án

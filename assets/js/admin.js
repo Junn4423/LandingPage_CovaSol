@@ -44,14 +44,100 @@ document.addEventListener('DOMContentLoaded', () => {
     const importFileInput = document.getElementById('importFileInput');
     const importMessage = document.getElementById('importMessage');
 
-    const tabButtons = Array.from(document.querySelectorAll('.tab-btn'));
+    const tabButtons = Array.from(document.querySelectorAll('.tab-btn[data-tab]'));
     const tabPanels = Array.from(document.querySelectorAll('.tab-panel'));
+    const FLASH_STORAGE_KEY = 'covasolAdminFlash';
+    const urlParams = new URLSearchParams(window.location.search);
+    let pendingFlash = consumeFlashMessage();
+    const requestedTabKey = urlParams.get('tab');
+    const defaultTabKey = tabButtons[0]?.dataset.navKey || 'blog';
+    const initialTabKey = requestedTabKey || pendingFlash?.tab || defaultTabKey;
 
     function setFeedback(element, message, type = 'info') {
         if (!element) return;
         element.textContent = message;
         element.classList.remove('is-error', 'is-success', 'is-info');
         element.classList.add(`is-${type}`);
+    }
+
+    function consumeFlashMessage() {
+        try {
+            const raw = window.sessionStorage?.getItem(FLASH_STORAGE_KEY);
+            if (!raw) {
+                return null;
+            }
+            window.sessionStorage.removeItem(FLASH_STORAGE_KEY);
+            return JSON.parse(raw);
+        } catch (error) {
+            console.warn('Unable to read admin flash message from session storage:', error);
+            return null;
+        }
+    }
+
+    function displayFlashMessage() {
+        if (!pendingFlash || !pendingFlash.message) {
+            return;
+        }
+
+        const targetKey = pendingFlash.tab || 'blog';
+        const targetFeedback =
+            targetKey === 'product'
+                ? productFeedback
+                : targetKey === 'user'
+                ? userFeedback
+                : blogFeedback;
+
+        setFeedback(targetFeedback, pendingFlash.message, pendingFlash.type || 'success');
+        pendingFlash = null;
+    }
+
+    function updateUrlTabParam(navKey) {
+        if (!navKey || !window.history || typeof window.history.replaceState !== 'function') {
+            return;
+        }
+        const params = new URLSearchParams(window.location.search);
+        params.set('tab', navKey);
+        const query = params.toString();
+        const nextUrl = `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`;
+        window.history.replaceState({}, '', nextUrl);
+    }
+
+    function showTab(button) {
+        if (!button) {
+            return;
+        }
+
+        const target = button.dataset.tab;
+        tabButtons.forEach((btn) => btn.classList.remove('active'));
+        tabPanels.forEach((panel) => panel.classList.add('is-hidden'));
+        button.classList.add('active');
+
+        if (target) {
+            const panel = document.getElementById(target);
+            if (panel) {
+                panel.classList.remove('is-hidden');
+            }
+        }
+
+        const navKey = button.dataset.navKey;
+        if (navKey) {
+            if (window.covasolSidebar && typeof window.covasolSidebar.setActiveNav === 'function') {
+                window.covasolSidebar.setActiveNav(navKey);
+            }
+            updateUrlTabParam(navKey);
+        }
+    }
+
+    function activateTabByKey(navKey) {
+        if (!navKey) {
+            return false;
+        }
+        const button = tabButtons.find((btn) => btn.dataset.navKey === navKey);
+        if (!button) {
+            return false;
+        }
+        showTab(button);
+        return true;
     }
 
     function showNotification(message, type = 'info') {
@@ -582,6 +668,7 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleSections(true);
             currentUserLabel.textContent = `Xin chao, ${user.displayName || user.username}`;
             await loadAllData();
+            displayFlashMessage();
         } catch (error) {
             loginError.textContent = error.message || 'Dang nhap that bai.';
         }
@@ -716,18 +803,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     tabButtons.forEach((button) => {
         button.addEventListener('click', () => {
-            const target = button.dataset.tab;
-            tabButtons.forEach((btn) => btn.classList.remove('active'));
-            tabPanels.forEach((panel) => panel.classList.add('is-hidden'));
-            button.classList.add('active');
-            document.getElementById(target).classList.remove('is-hidden');
-
-            const navKey = button.dataset.navKey;
-            if (navKey && window.covasolSidebar && typeof window.covasolSidebar.setActiveNav === 'function') {
-                window.covasolSidebar.setActiveNav(navKey);
-            }
+            showTab(button);
         });
     });
+
+    if (!activateTabByKey(initialTabKey)) {
+        activateTabByKey(defaultTabKey);
+    }
 
     (async function bootstrap() {
         try {
@@ -736,6 +818,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 toggleSections(true);
                 currentUserLabel.textContent = `Xin chao, ${user.displayName || user.username}`;
                 await loadAllData();
+                displayFlashMessage();
             } else {
                 toggleSections(false);
             }

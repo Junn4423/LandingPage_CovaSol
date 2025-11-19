@@ -34,18 +34,21 @@
 
 @media (max-width: 1024px) {
   .hero-container {
-    grid-template-columns: 1fr;
-    gap: 40px;
+    align-items: center;
+    text-align: center;
+    padding: 120px 30px 90px;
+  }
+  
+  .hero-content {
     text-align: center;
   }
   
-  .hero-visual {
-    order: -1; /* Put visual above content on tablet */
+  .hero-buttons {
+    justify-content: center;
   }
   
-  .hero-graphic {
-    width: 300px;
-    height: 300px;
+  .hero-stats {
+    width: 100%;
   }
   
   .about-content {
@@ -177,11 +180,15 @@
   /* Hero Section Mobile */
   .hero {
     min-height: calc(100vh - 60px);
-    padding-top: 60px;
   }
   
   .hero-container {
-    padding: 40px 20px;
+    padding: 100px 20px 80px;
+    align-items: center;
+  }
+  
+  .hero-content {
+    text-align: center;
   }
   
   .title-main {
@@ -197,10 +204,9 @@
     font-size: 1.125rem;
     margin-bottom: 30px;
   }
-  
-  .hero-graphic {
-    width: 250px;
-    height: 250px;
+
+  .hero-stats {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   }
 
   .page-hero {
@@ -398,11 +404,11 @@
   /* Hero Mobile Small */
   .hero {
     min-height: calc(100vh - 55px);
-    padding-top: 55px;
   }
   
   .hero-container {
-    padding: 30px 15px;
+    padding: 80px 15px 60px;
+    align-items: flex-start;
   }
   
   .title-main {
@@ -419,14 +425,10 @@
     font-size: 1rem;
     margin-bottom: 25px;
   }
-  
-  .hero-graphic {
-    width: 200px;
-    height: 200px;
-  }
-  
-  .floating-card {
-    display: none; /* Hide floating cards on very small screens */
+
+  .hero-stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 
   .page-hero {
@@ -735,11 +737,6 @@
 
 /* Mobile-specific animations */
 @media (max-width: 768px) {
-  /* Reduce motion for better performance */
-  .floating-card {
-    animation: none;
-  }
-  
   .particle {
     display: none; /* Hide particles on mobile for performance */
   }
@@ -757,7 +754,7 @@
   }
   
   .hero-container {
-    padding: 20px;
+    padding: 40px 20px;
   }
   
   .title-main {
@@ -803,10 +800,6 @@
     animation: none;
   }
   
-  .floating-card {
-    animation: none;
-  }
-  
   .particle {
     animation: none;
   }
@@ -817,7 +810,6 @@
   .navbar,
   .back-to-top,
   .hero-particles,
-  .floating-card,
   .loading-screen {
     display: none !important;
   }

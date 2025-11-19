@@ -125,10 +125,11 @@
     }
 
     async function createBlogPost(payload) {
-        return apiRequest('/blog', {
+        const response = await apiRequest('/blog', {
             method: 'POST',
             body: JSON.stringify(payload)
         });
+        return response?.data;
     }
 
     async function updateBlogPost(code, payload) {
@@ -145,10 +146,11 @@
     }
 
     async function createProduct(payload) {
-        return apiRequest('/products', {
+        const response = await apiRequest('/products', {
             method: 'POST',
             body: JSON.stringify(payload)
         });
+        return response?.data;
     }
 
     async function updateProduct(code, payload) {

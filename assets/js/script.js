@@ -695,39 +695,6 @@ document.addEventListener('DOMContentLoaded', function() {
     lazyLoadImages();
     
     // ============================================================================
-    // FLOATING CARDS ANIMATION
-    // ============================================================================
-    
-    function initFloatingCards() {
-        const cards = document.querySelectorAll('.floating-card');
-        
-        cards.forEach((card, index) => {
-            // Add mouse interaction
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-10px) scale(1.05)';
-                this.style.transition = 'all 0.3s ease';
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0) scale(1)';
-            });
-            
-            // Add random floating animation
-            const floatAnimation = () => {
-                const randomY = Math.sin(Date.now() * 0.001 + index) * 5;
-                const randomX = Math.cos(Date.now() * 0.0015 + index) * 3;
-                card.style.transform = `translate(${randomX}px, ${randomY}px)`;
-                requestAnimationFrame(floatAnimation);
-            };
-            
-            floatAnimation();
-        });
-    }
-    
-    // Initialize floating cards animation
-    setTimeout(initFloatingCards, 2000); // Start after loading animation
-    
-    // ============================================================================
     // PARTICLE ANIMATION
     // ============================================================================
     
@@ -821,11 +788,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (index > 2) { // Keep only 3 particles on mobile
                 particle.remove();
             }
-        });
-        
-        // Disable floating cards animation on mobile for performance
-        document.querySelectorAll('.floating-card').forEach(card => {
-            card.style.animation = 'none';
         });
         
         // Add touch class to body

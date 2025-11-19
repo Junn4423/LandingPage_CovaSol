@@ -87,6 +87,31 @@
         </section>
     </main>
 
+    <div class="product-demo-overlay" id="productDemoOverlay" aria-hidden="true">
+        <div class="demo-overlay-backdrop" id="productDemoBackdrop"></div>
+        <div class="demo-overlay-panel" role="dialog" aria-modal="true" aria-labelledby="productDemoTitle" tabindex="-1">
+            <button type="button" class="demo-overlay-close" id="productDemoClose" aria-label="Đóng demo">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="demo-overlay-header">
+                <p class="eyebrow">Realtime showcase</p>
+                <h3 id="productDemoTitle">Combo ảnh demo</h3>
+                <p>Hiệu ứng lưới động mô phỏng các màn hình sản phẩm đang phân tán trong không gian 3D.</p>
+            </div>
+            <div class="demo-overlay-body">
+                <div class="demo-overlay-grid" id="productDemoGrid" aria-live="polite"></div>
+                <div class="demo-overlay-zoom" id="productDemoZoom" role="region" aria-live="polite">
+                    <img id="productDemoZoomImg" alt="Xem trước ảnh demo" loading="lazy" />
+                    <p id="productDemoZoomCaption">Chọn một ảnh bất kỳ để xem rõ hơn.</p>
+                </div>
+            </div>
+            <div class="demo-overlay-footer">
+                <span><i class="fas fa-mouse-pointer"></i> Chạm vào từng ảnh trong lưới để phóng to</span>
+                <span><i class="fas fa-images"></i> Hỗ trợ tối đa 9 ảnh demo</span>
+            </div>
+        </div>
+    </div>
+
     <footer class="footer">
         <div class="container">
             <div class="footer-content">

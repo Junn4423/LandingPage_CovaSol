@@ -230,7 +230,7 @@ const translations = {
         
         // Home Dynamic Sections
         'home-products-title': 'Giải pháp nổi bật',
-        'home-products-subtitle': 'Các sản phẩm được cập nhật trực tiếp từ hệ thống quản trị.',
+        'home-products-subtitle': 'Các sản phẩm cập nhật trực tiếp từ hệ thống quản trị.',
         'home-products-loading': 'Đang tải sản phẩm...',
         'home-products-empty': 'Chưa có sản phẩm nào được xuất bản.',
         'home-products-button': 'Xem tất cả sản phẩm',
