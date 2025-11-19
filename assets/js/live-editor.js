@@ -541,6 +541,40 @@ document.addEventListener('DOMContentLoaded', () => {
             isFeatured: document.getElementById('liveIsFeatured')
         };
 
+        // Setup word counter for excerpt
+        const excerptWordCounter = document.getElementById('excerptWordCount');
+        const MAX_EXCERPT_WORDS = 60;
+
+        function countWords(text) {
+            return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+        }
+
+        function updateExcerptCounter() {
+            const excerptField = fields.excerpt;
+            if (!excerptField || !excerptWordCounter) return;
+
+            const text = excerptField.value;
+            const wordCount = countWords(text);
+            excerptWordCounter.textContent = `(${wordCount}/${MAX_EXCERPT_WORDS} từ)`;
+
+            // Change color based on word count
+            if (wordCount > MAX_EXCERPT_WORDS) {
+                excerptWordCounter.style.color = 'var(--danger-red, #dc3545)';
+            } else if (wordCount > MAX_EXCERPT_WORDS * 0.9) {
+                excerptWordCounter.style.color = 'var(--warning-yellow, #ffc107)';
+            } else {
+                excerptWordCounter.style.color = 'var(--gray-600, #6c757d)';
+            }
+        }
+
+        function limitExcerptWords(text) {
+            const words = text.trim().split(/\s+/);
+            if (words.length <= MAX_EXCERPT_WORDS) {
+                return text;
+            }
+            return words.slice(0, MAX_EXCERPT_WORDS).join(' ');
+        }
+
         Object.entries(fields).forEach(([key, field]) => {
             if (!field) return;
 
@@ -553,7 +587,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             field.addEventListener('input', debounce(() => {
-                if (key === 'tags') {
+                if (key === 'excerpt') {
+                    updateExcerptCounter();
+                    const limitedText = limitExcerptWords(field.value);
+                    if (limitedText !== field.value) {
+                        field.value = limitedText;
+                    }
+                    editorState[key] = field.value;
+                } else if (key === 'tags') {
                     editorState[key] = field.value
                         .split(',')
                         .map(t => t.trim())
@@ -565,6 +606,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 markDirty();
             }, 300));
         });
+
+        // Initialize counter on page load
+        if (fields.excerpt && excerptWordCounter) {
+            updateExcerptCounter();
+        }
     }
 
     function getDemoMediaPayload() {

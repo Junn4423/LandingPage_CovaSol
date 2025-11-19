@@ -473,7 +473,9 @@
                 <p data-key="reviews-subtitle">Những phản hồi từ các doanh nghiệp đã tin tưởng và hợp tác cùng COVASOL</p>
             </div>
             
-            <div class="reviews-grid">
+            <div class="reviews-carousel-wrapper">
+                <div class="reviews-carousel">
+                    <div class="reviews-track">
                 <!-- Review 1 -->
                 <div class="review-card" data-aos="fade-up" data-aos-delay="100">
                     <div class="review-header">
@@ -1013,6 +1015,19 @@
                     <p class="review-text">"Nền tảng streaming video có khả năng scale tốt. Xử lý được hàng nghìn user đồng thời mà không bị lag hay buffering."</p>
                     <div class="review-date">8 tuần trước</div>
                 </div>
+                    </div>
+                </div>
+                
+                <!-- Carousel Navigation -->
+                <button class="carousel-nav carousel-prev" aria-label="Previous reviews">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="carousel-nav carousel-next" aria-label="Next reviews">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                
+                <!-- Carousel Indicators -->
+                <div class="carousel-indicators"></div>
             </div>
             
             <div class="reviews-summary" data-aos="fade-up" data-aos-delay="400">
@@ -1198,6 +1213,7 @@
     <script src="assets/js/config.js"></script>
     <script src="assets/js/translations.js"></script>
     <script src="assets/js/data-service.js"></script>
+    <script src="assets/js/reviews-carousel.js"></script>
     <script src="assets/js/script.js"></script>
 </body>
 </html>

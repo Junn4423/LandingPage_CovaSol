@@ -122,6 +122,16 @@
     font-weight: 600;
     font-size: 0.9rem;
     color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.meta-field label .word-count {
+    font-weight: 400;
+    font-size: 0.85rem;
+    color: var(--gray-600);
+    font-style: italic;
 }
 
 .meta-field input,
