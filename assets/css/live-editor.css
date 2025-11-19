@@ -259,6 +259,13 @@
     font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
+.live-preview-content,
+.live-preview-content * {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+}
+
 .live-preview-placeholder {
     display: flex;
     flex-direction: column;

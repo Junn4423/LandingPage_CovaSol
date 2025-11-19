@@ -19,6 +19,13 @@ body.detail-preview {
     font-family: inherit;
 }
 
+.detail-preview .preview-content,
+.detail-preview .preview-content * {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+}
+
 .detail-preview .live-preview-header {
     margin-bottom: 1.5rem;
 }
