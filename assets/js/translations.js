@@ -65,16 +65,16 @@ const translations = {
         'web-dev-desc': 'Thiết kế & phát triển website, web app, hệ thống nội bộ, dashboard quản lý, portal khách hàng.',
         'web-dev-target': 'Startup, SME, tổ chức cần hệ thống quản lý hoặc kênh tương tác.',
         'mobile-dev-title': 'Mobile App Development',
-        'mobile-dev-desc': 'Ứng dụng di động Android/iOS (React Native / Flutter).',
+        'mobile-dev-desc': 'Ứng dụng di động Android/iOS (React Native / Flutter), phát triển ứng dụng đa nền tảng.',
         'mobile-dev-target': 'Doanh nghiệp cần sản phẩm hướng tới người dùng cuối.',
         'api-dev-title': 'API & Backend Development',
-        'api-dev-desc': 'Xây dựng hệ thống API, cơ sở dữ liệu, microservice, bảo mật.',
+        'api-dev-desc': 'Xây dựng hệ thống API, cơ sở dữ liệu, microservice, bảo mật, mở rộng nền tảng.',
         'api-dev-target': 'Các dự án cần kết nối dữ liệu hoặc nền tảng mở rộng.',
         'automation-title': 'Automation & Integration',
         'automation-desc': 'Tự động hóa quy trình, kết nối ứng dụng (Zapier, n8n, custom API).',
         'automation-target': 'Công ty muốn giảm thao tác thủ công, tăng hiệu suất.',
         'api-dev-title': 'API & Backend Development',
-        'api-dev-desc': 'Xây dựng hệ thống API, cơ sở dữ liệu, microservice, bảo mật.',
+        'api-dev-desc': 'Xây dựng hệ thống API, cơ sở dữ liệu, microservice, bảo mật, mở rộng nền tảng.',
         'automation-title': 'Automation & Integration',
         'automation-desc': 'Tự động hóa quy trình, kết nối ứng dụng (Zapier, n8n, custom API).',
         
@@ -125,6 +125,11 @@ const translations = {
         'contact-form-service': '-- Chọn dịch vụ quan tâm * --',
         'contact-form-message': 'Mô tả chi tiết yêu cầu của bạn... *',
         'contact-form-submit': 'Gửi yêu cầu báo giá',
+        'contact-fab-label': 'Liên hệ',
+        'contact-fab-zalo': 'Zalo',
+        'contact-fab-phone': 'Gọi ngay',
+        'contact-fab-mail': 'Gửi Gmail',
+        'contact-fab-facebook': 'Facebook',
         
         // Service Options
         'service-option-web': 'Phát triển Website',
@@ -371,6 +376,11 @@ const translations = {
         'contact-form-service': '-- Select Service of Interest * --',
         'contact-form-message': 'Describe your project requirements... *',
         'contact-form-submit': 'Send Quote Request',
+        'contact-fab-label': 'Contact',
+        'contact-fab-zalo': 'Zalo Chat',
+        'contact-fab-phone': 'Call now',
+        'contact-fab-mail': 'Send Email',
+        'contact-fab-facebook': 'Facebook',
         
         // Service Options
         'service-option-web': 'Website Development',
@@ -505,6 +515,11 @@ const translations = {
         'contact-form-service': '-- Sélectionnez le service d\'intérêt * --',
         'contact-form-message': 'Décrivez les exigences de votre projet... *',
         'contact-form-submit': 'Envoyer la demande de devis',
+        'contact-fab-label': 'Contact',
+        'contact-fab-zalo': 'Zalo',
+        'contact-fab-phone': 'Appeler',
+        'contact-fab-mail': 'Envoyer un email',
+        'contact-fab-facebook': 'Facebook',
         
         // Service Options
         'service-option-web': 'Développement de sites web',

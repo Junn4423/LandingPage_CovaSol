@@ -671,6 +671,50 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // ============================================================================
+    // CONTACT FLOATING BUTTON
+    // ============================================================================
+
+    const contactFab = document.querySelector('.contact-fab');
+
+    if (contactFab) {
+        const toggleButton = contactFab.querySelector('.contact-fab__toggle');
+        const actionLinks = contactFab.querySelectorAll('.contact-fab__action');
+
+        const closeFab = () => {
+            contactFab.classList.remove('open');
+            if (toggleButton) {
+                toggleButton.setAttribute('aria-expanded', 'false');
+            }
+        };
+
+        if (toggleButton) {
+            toggleButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                const isOpen = contactFab.classList.toggle('open');
+                toggleButton.setAttribute('aria-expanded', String(isOpen));
+            });
+        }
+
+        actionLinks.forEach((link) => {
+            link.addEventListener('click', () => {
+                closeFab();
+            });
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!contactFab.contains(event.target)) {
+                closeFab();
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeFab();
+            }
+        });
+    }
+    
+    // ============================================================================
     // PERFORMANCE OPTIMIZATIONS
     // ============================================================================
     

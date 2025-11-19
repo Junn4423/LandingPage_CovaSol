@@ -444,3 +444,120 @@ h1, h2, h3, h4, h5, h6 {
   transform: translateY(-3px);
   box-shadow: var(--shadow-xl);
 }
+
+/* ============================================================================
+   CONTACT FLOATING BUTTON
+   ============================================================================ */
+
+.contact-fab {
+  position: fixed;
+  bottom: 100px;
+  right: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  z-index: 1000;
+}
+
+.contact-fab__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px;
+  height: 48px;
+  border: none;
+  border-radius: 999px;
+  background: var(--gradient-primary);
+  color: var(--white);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+  transition: var(--transition-normal);
+}
+
+.contact-fab__toggle i {
+  font-size: 1rem;
+}
+
+.contact-fab__toggle:hover,
+.contact-fab.open .contact-fab__toggle {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+}
+
+.contact-fab__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: var(--transition-normal);
+  pointer-events: none;
+}
+
+.contact-fab.open .contact-fab__actions {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.contact-fab__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(8, 17, 40, 0.9);
+  color: var(--white);
+  padding: 6px 12px 6px 6px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.85rem;
+  box-shadow: var(--shadow-lg);
+  transition: var(--transition-fast);
+}
+
+.contact-fab__action:hover {
+  transform: translateX(-4px);
+  background: rgba(8, 17, 40, 1);
+}
+
+.contact-fab__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-navy);
+  flex-shrink: 0;
+}
+
+.contact-fab__icon img {
+  width: 22px;
+  height: 22px;
+}
+
+.contact-fab__icon--zalo {
+  background: #0068ff;
+}
+
+.contact-fab__icon--phone {
+  background: #00c48c;
+}
+
+.contact-fab__icon--gmail {
+  background: #ff5a5f;
+}
+
+.contact-fab__icon--facebook {
+  background: #1877f2;
+}
+
+.contact-fab__label {
+  padding: 0 10px;
+}

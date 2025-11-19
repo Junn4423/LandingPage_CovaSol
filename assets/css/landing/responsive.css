@@ -572,6 +572,31 @@
     right: 20px;
     font-size: 1.1rem;
   }
+
+  .contact-fab {
+    bottom: 90px;
+    right: 20px;
+  }
+
+  .contact-fab__toggle {
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
+  }
+
+  .contact-fab__toggle span {
+    display: none;
+  }
+
+  .contact-fab__action {
+    padding: 6px;
+  }
+
+  .contact-fab__label {
+    display: none;
+  }
   
   /* Loading Screen Small Mobile */
   .loading-logo {
@@ -715,7 +740,9 @@
   .nav-cta,
   .btn,
   .service-link,
-  .back-to-top {
+  .back-to-top,
+  .contact-fab__toggle,
+  .contact-fab__action {
     min-height: 44px; /* iOS recommended touch target */
     display: flex;
     align-items: center;
@@ -809,6 +836,7 @@
 @media print {
   .navbar,
   .back-to-top,
+  .contact-fab,
   .hero-particles,
   .loading-screen {
     display: none !important;
