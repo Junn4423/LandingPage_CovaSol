@@ -30,14 +30,14 @@
 
 .services-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+  gap: clamp(1.5rem, 4vw, 2.5rem);
 }
 
 .service-card {
   background: var(--white);
   border-radius: var(--radius-lg);
-  padding: 40px 30px;
+  padding: clamp(28px, 4vw, 40px) clamp(24px, 3.5vw, 30px);
   box-shadow: var(--shadow-md);
   transition: var(--transition-normal);
   border: 1px solid var(--gray-200);
@@ -49,8 +49,8 @@
 }
 
 .service-icon {
-  width: 70px;
-  height: 70px;
+  width: clamp(56px, 6vw, 70px);
+  height: clamp(56px, 6vw, 70px);
   background: var(--gradient-secondary);
   border-radius: var(--radius-md);
   display: flex;
@@ -66,7 +66,7 @@
 
 .service-card h3 {
   font-family: var(--font-heading);
-  font-size: 1.5rem;
+  font-size: clamp(1.25rem, 2.6vw, 1.5rem);
   font-weight: 600;
   color: var(--primary-navy);
   margin-bottom: 16px;
@@ -76,6 +76,7 @@
   color: var(--gray-600);
   margin-bottom: 20px;
   line-height: 1.6;
+  font-size: clamp(1rem, 1.9vw, 1.0625rem);
 }
 
 .service-card ul {
@@ -150,8 +151,8 @@
 
 .service-detail-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  gap: clamp(1.25rem, 3vw, 2rem);
 }
 
 .detail-card {
@@ -390,16 +391,6 @@
     transform: translateY(-6px) scale(1.02) !important;
   }
 }
-    transform: none !important;
-  }
-  
-  .about-photo:hover,
-  .about-photo--primary:hover,
-  .about-photo--secondary:hover,
-  .about-photo--tertiary:hover {
-    transform: translateY(-6px) scale(1.02) !important;
-  }
-}
 
 /* ============================================================================
    WHY CHOOSE SECTION
@@ -411,14 +402,14 @@
 
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  gap: clamp(1.5rem, 4vw, 2.5rem);
 }
 
 .feature-item {
   background: var(--white);
   border-radius: var(--radius-lg);
-  padding: 40px 30px;
+  padding: clamp(28px, 4vw, 40px) clamp(24px, 3.5vw, 30px);
   text-align: center;
   box-shadow: var(--shadow-md);
   transition: var(--transition-normal);
@@ -431,8 +422,8 @@
 }
 
 .feature-icon {
-  width: 80px;
-  height: 80px;
+  width: clamp(60px, 7vw, 80px);
+  height: clamp(60px, 7vw, 80px);
   background: var(--gradient-primary);
   border-radius: 50%;
   display: flex;
@@ -470,9 +461,9 @@
 
 .reviews-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 30px;
-  margin-bottom: 60px;
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+  margin-bottom: clamp(2.5rem, 5vw, 3.75rem);
 }
 
 .review-card {

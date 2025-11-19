@@ -35,8 +35,8 @@ const translations = {
         'service3-desc': 'Đưa công nghệ vào hoạt động thực tế, không chỉ dừng ở phần mềm',
         'service4-title': 'Tư vấn & Bảo trì',
         'service4-desc': 'Đồng hành lâu dài, phát triển bền vững cùng doanh nghiệp',
-        'service5-title': 'Marketing & Chiến lược số',
-        'service5-desc': 'Hợp nhất công nghệ và marketing để tạo kết quả thực tế',
+        'service5-title': 'Marketing & Chiến lược',
+        'service5-desc': 'Hợp nhất công nghệ và marketing tạo kết quả thực tế',
         'service6-title': 'Giải pháp đặc biệt',
         'service6-desc': 'Xây dựng sản phẩm riêng – có thể thương mại hóa',
         

@@ -14,9 +14,9 @@
 
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 30px;
-  margin-top: 60px;
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+  margin-top: clamp(2.5rem, 6vw, 3.75rem);
 }
 
 .product-card {
@@ -74,7 +74,7 @@
 }
 
 .product-content {
-  padding: 30px;
+  padding: clamp(24px, 4vw, 30px);
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -121,7 +121,7 @@
 
 .product-actions {
   display: flex;
-  gap: 12px;
+  gap: clamp(0.5rem, 2vw, 0.75rem);
   flex-wrap: wrap;
   margin-top: auto;
   padding-top: 16px;
@@ -134,14 +134,14 @@
 }
 
 .cta-content h2 {
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 4.5vw, 2.75rem);
   color: var(--primary-navy);
   margin-bottom: 20px;
 }
 
 .cta-content p {
   color: var(--gray-600);
-  font-size: 1.125rem;
+  font-size: clamp(1rem, 2vw, 1.125rem);
   margin-bottom: 40px;
   max-width: 600px;
   margin-left: auto;

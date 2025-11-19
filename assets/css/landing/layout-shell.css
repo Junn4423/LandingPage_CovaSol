@@ -75,6 +75,7 @@
   border-bottom: 1px solid rgba(230, 235, 238, 0.1);
   z-index: 1000;
   padding: 0;
+  min-height: var(--nav-height);
   transition: var(--transition-normal);
 }
 
@@ -97,13 +98,14 @@
 }
 
 .nav-container {
-  max-width: 1200px;
+  max-width: var(--content-wide);
   margin: 0 auto;
-  padding: 0 20px;
+  padding-inline: clamp(16px, 4vw, 48px);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 70px;
+  height: var(--nav-height);
+  gap: clamp(0.5rem, 2vw, 2rem);
 }
 
 .nav-logo {
@@ -112,7 +114,7 @@
   gap: 12px;
   font-family: var(--font-heading);
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: clamp(1.25rem, 1.2vw + 1rem, 1.75rem);
   color: var(--white);
   flex-shrink: 0;
 }
@@ -126,8 +128,8 @@
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 24px;
-  margin: 0 40px;
+  gap: clamp(1rem, 2.5vw, 2rem);
+  margin: 0 clamp(1.5rem, 4vw, 3rem);
 }
 
 .nav-link {
@@ -344,17 +346,17 @@ h1, h2, h3, h4, h5, h6 {
    ============================================================================ */
 
 .page-hero {
-  min-height: 60vh;
+  min-height: clamp(55vh, 65vh, 70vh);
   background: var(--gradient-primary);
   display: flex;
   align-items: center;
   position: relative;
   overflow: hidden;
-  padding: 120px 0 80px;
+  padding: clamp(100px, 12vh, 140px) 0 clamp(60px, 10vh, 100px);
 }
 
 .page-title {
-  font-size: 3.5rem;
+  font-size: clamp(2.5rem, 5vw, 3.75rem);
   font-weight: 800;
   color: var(--white);
   margin-bottom: 24px;
@@ -362,7 +364,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .page-description {
-  font-size: 1.25rem;
+  font-size: clamp(1rem, 2vw, 1.25rem);
   color: rgba(255, 255, 255, 0.9);
   line-height: 1.7;
   max-width: 800px;

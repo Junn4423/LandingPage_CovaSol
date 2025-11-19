@@ -11,7 +11,7 @@
 
 html {
   scroll-behavior: smooth;
-  font-size: 16px;
+  font-size: clamp(15px, calc(0.35vw + 14px), 16px);
   overflow-x: hidden;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
@@ -32,6 +32,7 @@ body {
   word-spacing: 0.05em;
   font-variant-ligatures: common-ligatures;
   font-kerning: normal;
+  min-height: 100vh;
 }
 
 img {
@@ -52,30 +53,30 @@ ul {
 
 .container {
   width: 100%;
-  max-width: 1200px;
+  max-width: var(--content-max);
   margin: 0 auto;
-  padding: 0 20px;
+  padding-inline: clamp(20px, 4vw, 48px);
 }
 
 section {
-  padding: 100px 0;
+  padding: var(--section-padding) 0;
 }
 
 .section-header {
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
 }
 
 .section-header h2 {
   font-family: var(--font-heading);
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 700;
   color: var(--primary-navy);
-  margin-bottom: 16px;
+  margin-bottom: clamp(0.75rem, 2vw, 1rem);
 }
 
 .section-header p {
-  font-size: 1.25rem;
+  font-size: clamp(1rem, 1.75vw, 1.25rem);
   color: var(--gray-600);
   max-width: 600px;
   margin: 0 auto;
@@ -84,8 +85,8 @@ section {
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 14px 32px;
+  gap: clamp(0.4rem, 1.5vw, 0.75rem);
+  padding: clamp(12px, 2.5vw, 14px) clamp(24px, 6vw, 36px);
   border-radius: var(--radius-lg);
   font-weight: 600;
   font-size: 1rem;
@@ -94,7 +95,7 @@ section {
   transition: var(--transition-normal);
   border: none;
   text-decoration: none;
-  min-width: 160px;
+  min-width: clamp(140px, 18vw, 190px);
   justify-content: center;
 }
 

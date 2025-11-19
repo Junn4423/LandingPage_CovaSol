@@ -51,4 +51,20 @@
   --transition-fast: 0.2s ease;
   --transition-normal: 0.3s ease;
   --transition-slow: 0.5s ease;
+
+  /* Layout & Spacing */
+  --content-max: 1200px;
+  --content-wide: 1400px;
+  --section-padding: clamp(64px, 8vw, 120px);
+  --gutter: clamp(20px, 4vw, 48px);
+  --gutter-tight: clamp(16px, 3vw, 32px);
+  --nav-height: 72px;
+
+  /* Breakpoints */
+  --bp-desktop: 1200px;
+  --bp-laptop: 1024px;
+  --bp-tablet: 900px;
+  --bp-medium: 768px;
+  --bp-mobile: 640px;
+  --bp-small: 480px;
 }

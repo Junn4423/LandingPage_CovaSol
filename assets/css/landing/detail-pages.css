@@ -1,5 +1,5 @@
 .product-hero {
-   padding: 7rem 0 4rem;
+   padding: clamp(4rem, 10vw, 7rem) 0 clamp(3rem, 8vw, 4rem);
    background: linear-gradient(180deg, #f3f9ff 0%, #ffffff 100%);
    color: #0f172a;
 }
@@ -7,7 +7,7 @@
 .hero-layout {
    display: grid;
    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-   gap: 3rem;
+   gap: clamp(1.75rem, 4vw, 3rem);
    align-items: center;
 }
 
@@ -25,20 +25,20 @@
 }
 
 .product-hero h1 {
-   font-size: 2.8rem;
+   font-size: clamp(2.25rem, 4.5vw, 3rem);
    margin: 1rem 0;
    color: #0f172a;
 }
 
 .product-hero p {
-   font-size: 1.05rem;
+   font-size: clamp(1rem, 2vw, 1.1rem);
    color: #4b5c6a;
 }
 
 .hero-actions {
    display: flex;
    flex-wrap: wrap;
-   gap: 1rem;
+   gap: clamp(0.75rem, 2vw, 1rem);
    margin: 2rem 0 1.5rem;
 }
 
@@ -64,7 +64,7 @@
 .product-layout {
    display: grid;
    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-   gap: 3rem;
+   gap: clamp(1.75rem, 4vw, 3rem);
    padding-bottom: 4rem;
 }
 
@@ -72,7 +72,7 @@
    display: flex;
    flex-direction: column;
    gap: 1.5rem;
-   font-size: 1.05rem;
+   font-size: clamp(1rem, 2vw, 1.05rem);
    line-height: 1.8;
    color: #27333a;
 }
@@ -83,7 +83,7 @@
 
 .product-highlights {
    margin-top: 2rem;
-   padding: 1.75rem;
+   padding: clamp(1.25rem, 3vw, 1.75rem);
    background: #f7f9fa;
    border-radius: 1.25rem;
    box-shadow: 0 12px 28px rgba(18, 78, 102, 0.08);
@@ -152,14 +152,44 @@
    }
 }
 
+@media (max-width: 768px) {
+   .hero-actions {
+      flex-direction: column;
+      align-items: stretch;
+   }
+
+   .preview-meta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+   }
+
+   .preview-content {
+      padding: 1.5rem;
+   }
+}
+
 @media (max-width: 600px) {
    .product-hero h1 {
       font-size: 2.1rem;
    }
+
+   .hero-tags {
+      flex-direction: column;
+      align-items: flex-start;
+   }
+
+   .preview-content {
+      border-radius: 1rem;
+   }
+
+   .preview-meta {
+      font-size: 0.9rem;
+   }
 }
 .article-preview-section,
 .product-preview-section {
-   padding: 5rem 0;
+   padding: clamp(3rem, 8vw, 5rem) 0;
    background: linear-gradient(180deg, #f4f7fb 0%, #ffffff 100%);
 }
 
@@ -177,7 +207,8 @@
 
 .preview-content {
    max-width: 900px;
-   padding: 3rem;
+   width: min(100%, 900px);
+   padding: clamp(1.5rem, 4vw, 3rem);
    border-radius: 1.5rem;
    background: #ffffff;
    box-shadow: 0 30px 60px rgba(13, 27, 42, 0.08);
@@ -256,12 +287,12 @@
 .preview-content img {
    width: 100%;
    border-radius: 1rem;
-   margin: 2rem 0;
+   margin: clamp(1.5rem, 4vw, 2.5rem) 0;
    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
 }
 
 .preview-excerpt {
-   font-size: 1.15rem;
+   font-size: clamp(1rem, 2.2vw, 1.15rem);
    color: #475569;
    font-style: italic;
    margin: 0 0 2rem;
@@ -288,7 +319,7 @@
    margin: 2rem 0;
    line-height: 1.8;
    color: #334155;
-   font-size: 1.05rem;
+   font-size: clamp(1rem, 2vw, 1.05rem);
 }
 
 .live-preview-body {
@@ -297,7 +328,7 @@
 
 .preview-body .preview-paragraph {
    font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-   font-size: 1.05rem;
+   font-size: clamp(1rem, 2vw, 1.05rem);
    line-height: 1.8;
    color: #334155;
    margin-bottom: 1.5rem;
@@ -430,8 +461,8 @@
 
 .preview-media-grid {
    display: grid;
-   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-   gap: 1.25rem;
+   grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+   gap: clamp(1rem, 3vw, 1.25rem);
 }
 
 .preview-media-card {
@@ -464,8 +495,8 @@
 
 .preview-video-list {
    display: grid;
-   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-   gap: 1.5rem;
+   grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+   gap: clamp(1rem, 3vw, 1.5rem);
 }
 
 .preview-video-item {
