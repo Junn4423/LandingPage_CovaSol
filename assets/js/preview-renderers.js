@@ -9,7 +9,7 @@
 
     const formatDate = (value) => {
         if (!value) {
-            return 'Chua xac dinh';
+            return window.covasolTranslate('preview-undefined', 'Chưa xác định');
         }
         try {
             return new Date(value).toLocaleDateString('vi-VN', {
@@ -19,37 +19,37 @@
             });
         } catch (error) {
             console.warn('Unable to format date for preview:', error);
-            return 'Chua xac dinh';
+            return window.covasolTranslate('preview-undefined', 'Chưa xác định');
         }
     };
 
     const BLOG_MEDIA_LABELS = {
-        cover: 'Anh bia',
-        body: 'Anh noi dung',
-        inline: 'Anh chen',
-        quote: 'Anh trich dan',
-        gallery: 'Anh gallery'
+        cover: window.covasolTranslate('preview-img-cover', 'Ảnh bìa'),
+        body: window.covasolTranslate('preview-img-content', 'Ảnh nội dung'),
+        inline: window.covasolTranslate('preview-img-insert', 'Ảnh chèn'),
+        quote: window.covasolTranslate('preview-img-quote', 'Ảnh trích dẫn'),
+        gallery: window.covasolTranslate('preview-img-gallery', 'Ảnh gallery')
     };
 
     const BLOG_VIDEO_LABELS = {
-        hero: 'Video mo dau',
-        body: 'Video noi dung',
-        demo: 'Video demo',
-        interview: 'Video phong van'
+        hero: window.covasolTranslate('preview-vid-intro', 'Video mở đầu'),
+        body: window.covasolTranslate('preview-vid-content', 'Video nội dung'),
+        demo: window.covasolTranslate('preview-vid-demo', 'Video demo'),
+        interview: window.covasolTranslate('preview-vid-interview', 'Video phỏng vấn')
     };
 
     const PRODUCT_MEDIA_LABELS = {
-        hero: 'Anh hero',
-        gallery: 'Anh gallery',
-        body: 'Anh noi dung',
-        detail: 'Anh tinh nang'
+        hero: window.covasolTranslate('preview-prod-img-hero', 'Ảnh hero'),
+        gallery: window.covasolTranslate('preview-prod-img-gallery', 'Ảnh gallery'),
+        body: window.covasolTranslate('preview-prod-img-content', 'Ảnh nội dung'),
+        detail: window.covasolTranslate('preview-prod-img-feature', 'Ảnh tính năng')
     };
 
     const PRODUCT_VIDEO_LABELS = {
-        hero: 'Video hero',
-        demo: 'Video demo',
-        body: 'Video noi dung',
-        testimonial: 'Video khach hang'
+        hero: window.covasolTranslate('preview-prod-vid-hero', 'Video hero'),
+        demo: window.covasolTranslate('preview-prod-vid-demo', 'Video demo'),
+        body: window.covasolTranslate('preview-prod-vid-content', 'Video nội dung'),
+        testimonial: window.covasolTranslate('preview-prod-vid-testimonial', 'Video khách hàng')
     };
 
     const getPositionNumber = (value) => {
@@ -104,7 +104,7 @@
     };
 
     const buildInlineImageBlock = (item = {}, labels = {}) => {
-        const badge = labels[item.type] || labels.default || 'Anh';
+        const badge = labels[item.type] || labels.default || window.covasolTranslate('preview-default-img', 'Ảnh');
         const caption = item.caption
             ? `<figcaption class="preview-caption"><em>${escapeHtml(item.caption)}</em></figcaption>`
             : '';
@@ -115,10 +115,8 @@
         return {
             position: item.position,
             html: `
-                <figure class="preview-inline-block preview-inline-block--media" data-type="${
-                    item.type || 'media'
-                }" data-inline-id="${inlineId}" data-inline-kind="media" data-inline-source="${inlineSource}" data-inline-position="${
-                    item.position ?? ''
+                <figure class="preview-inline-block preview-inline-block--media" data-type="${item.type || 'media'
+                }" data-inline-id="${inlineId}" data-inline-kind="media" data-inline-source="${inlineSource}" data-inline-position="${item.position ?? ''
                 }">
                     <img src="${safeUrl}" alt="${altText}" loading="lazy" />
                     ${caption}
@@ -128,7 +126,7 @@
     };
 
     const buildInlineVideoBlock = (item = {}, labels = {}) => {
-        const badge = labels[item.type] || labels.default || 'Video';
+        const badge = labels[item.type] || labels.default || window.covasolTranslate('preview-default-vid', 'Video');
         const caption = item.caption
             ? `<p class="preview-caption"><em>${escapeHtml(item.caption)}</em></p>`
             : '';
@@ -137,10 +135,8 @@
         return {
             position: item.position,
             html: `
-                <article class="preview-inline-block preview-inline-block--video" data-type="${
-                    item.type || 'video'
-                }" data-inline-id="${inlineId}" data-inline-kind="video" data-inline-source="${inlineSource}" data-inline-position="${
-                    item.position ?? ''
+                <article class="preview-inline-block preview-inline-block--video" data-type="${item.type || 'video'
+                }" data-inline-id="${inlineId}" data-inline-kind="video" data-inline-source="${inlineSource}" data-inline-position="${item.position ?? ''
                 }">
                     <div class="preview-inline-frame">
                         ${buildVideoFrame(item.url)}
@@ -160,7 +156,7 @@
         if (!blocks.length) {
             const inlineHtml = sortedEmbeds.map((embed) => embed.html).join('');
             return {
-                html: `${content || 'Không có nội dung'}${inlineHtml}`,
+                html: `${content || window.covasolTranslate('blog-no-content', 'Không có nội dung')}${inlineHtml}`,
                 paragraphCount: 0
             };
         }
@@ -217,7 +213,7 @@
                 normalized
             )}" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>`;
         }
-        return `<a class="preview-video-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">Xem video</a>`;
+        return `<a class="preview-video-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">${window.covasolTranslate('preview-watch-video', 'Xem video')}</a>`;
     };
 
     const renderMediaSection = (items = [], { title, labels }) => {
@@ -229,7 +225,7 @@
             .sort(sortByPosition)
             .filter((item) => item?.url)
             .map((item) => {
-                const badge = labels[item.type] || labels.default || 'Anh';
+                const badge = labels[item.type] || labels.default || window.covasolTranslate('preview-default-img', 'Ảnh');
                 const caption = item.caption
                     ? `<figcaption class="preview-caption"><em>${escapeHtml(item.caption)}</em></figcaption>`
                     : '';
@@ -264,7 +260,7 @@
             .sort(sortByPosition)
             .filter((item) => item?.url)
             .map((item) => {
-                const badge = labels[item.type] || labels.default || 'Video';
+                const badge = labels[item.type] || labels.default || window.covasolTranslate('preview-default-vid', 'Video');
                 const caption = item.caption
                     ? `<p class="preview-caption"><em>${escapeHtml(item.caption)}</em></p>`
                     : '';
@@ -301,7 +297,7 @@
                 (item) => `
                 <li>
                     <a href="${escapeHtml(item.url)}" target="_blank" rel="noopener">
-                        ${escapeHtml(item.label || 'Nguồn tham khảo')}
+                        ${escapeHtml(item.label || window.covasolTranslate('blog-source-label', 'Nguồn tham khảo'))}
                     </a>
                 </li>
             `
@@ -310,7 +306,7 @@
         if (!items) return '';
         return `
             <section class="preview-sources">
-                <h4>Nguồn tham khảo</h4>
+                <h4>${window.covasolTranslate('blog-sources-title', 'Nguồn tham khảo')}</h4>
                 <ul>
                     ${items}
                 </ul>
@@ -319,7 +315,7 @@
     };
 
     const renderBlogPreview = (data = {}) => {
-        const safeTitle = escapeHtml(data.title || 'Không có tiêu đề');
+        const safeTitle = escapeHtml(data.title || window.covasolTranslate('blog-no-title', 'Không có tiêu đề'));
         const subtitleHtml = data.subtitle
             ? `<p class="preview-subtitle">${escapeHtml(data.subtitle)}</p>`
             : '';
@@ -330,7 +326,7 @@
         }
 
         const formattedDate = data.publishedAt ? formatDate(data.publishedAt) : '';
-        if (formattedDate && formattedDate !== 'Chua xac dinh') {
+        if (formattedDate && formattedDate !== window.covasolTranslate('preview-undefined', 'Chưa xác định')) {
             metaItems.push(
                 `<span class="meta-date">${escapeHtml(formattedDate)}</span>`
             );
@@ -339,7 +335,7 @@
         if (data.authorName) {
             const authorRole = data.authorRole ? ` - ${escapeHtml(data.authorRole)}` : '';
             metaItems.push(
-                `<span class="meta-author">B&#7903;i ${escapeHtml(data.authorName)}${authorRole}</span>`
+                `<span class="meta-author">${window.covasolTranslate('blog-by', 'Bởi')} ${escapeHtml(data.authorName)}${authorRole}</span>`
             );
         }
 
@@ -349,8 +345,8 @@
 
         const heroImageHtml = data.imageUrl
             ? `<div class="preview-hero-image"><img src="${escapeHtml(
-                  data.imageUrl
-              )}" alt="${safeTitle}" loading="lazy" /></div>`
+                data.imageUrl
+            )}" alt="${safeTitle}" loading="lazy" /></div>`
             : '';
 
         const excerptHtml = data.excerpt
@@ -367,18 +363,18 @@
         const keywordTags =
             data.keywords && data.keywords.length > 0
                 ? data.keywords
-                      .map((keyword) => `<span class="preview-tag is-muted">${escapeHtml(keyword)}</span>`)
-                      .join('')
+                    .map((keyword) => `<span class="preview-tag is-muted">${escapeHtml(keyword)}</span>`)
+                    .join('')
                 : '';
 
         const keywordsHtml = keywordTags
             ? `<div class="preview-meta keyword-meta">
-                    <span><strong>Tu khoa:</strong></span>
+                    <span><strong>${window.covasolTranslate('blog-keywords-label', 'Từ khóa:')}</strong></span>
                     <div class="preview-tags keyword-tags">${keywordTags}</div>
                </div>`
             : '';
 
-        const bodyContent = data.content || 'Không có nội dung';
+        const bodyContent = data.content || window.covasolTranslate('blog-no-content', 'Không có nội dung');
 
         const { inline: inlineMedia, remainder: galleryMedia } = splitInlineItems(
             data.galleryMedia
@@ -393,13 +389,13 @@
         const inlineBody = renderBodyWithInlineEmbeds(bodyContent, inlineBlocks);
 
         const galleryHtml = renderMediaSection(galleryMedia, {
-            title: 'Thu vien anh',
-            labels: { ...BLOG_MEDIA_LABELS, default: 'Anh' }
+            title: window.covasolTranslate('blog-gallery-title', 'Thư viện ảnh'),
+            labels: { ...BLOG_MEDIA_LABELS, default: window.covasolTranslate('preview-default-img', 'Ảnh') }
         });
 
         const videoHtml = renderVideoSection(videoItems, {
-            title: 'Video minh hoa',
-            labels: { ...BLOG_VIDEO_LABELS, default: 'Video' }
+            title: window.covasolTranslate('blog-video-section-title', 'Video minh họa'),
+            labels: { ...BLOG_VIDEO_LABELS, default: window.covasolTranslate('preview-default-vid', 'Video') }
         });
 
         const sourcesHtml = renderSourceList(data.sourceLinks);
@@ -430,12 +426,12 @@
     const sanitizeDemoMedia = (items = []) =>
         Array.isArray(items)
             ? items
-                  .map((item, index) => ({
-                      url: escapeHtml((item?.url || '').trim()),
-                      caption: escapeHtml((item?.caption || '').trim()),
-                      index
-                  }))
-                  .filter((item) => item.url)
+                .map((item, index) => ({
+                    url: escapeHtml((item?.url || '').trim()),
+                    caption: escapeHtml((item?.caption || '').trim()),
+                    index
+                }))
+                .filter((item) => item.url)
             : [];
 
     const renderDemoComboSection = (items = []) => {
@@ -451,7 +447,7 @@
             .map(
                 (item, idx) => `
                 <span class="demo-stack-layer demo-stack-layer-${idx + 1}">
-                    <img src="${item.url}" alt="${item.caption || `Ảnh demo ${idx + 1}`}" loading="lazy" />
+                    <img src="${item.url}" alt="${item.caption || window.covasolTranslate('product-demo-image-alt', 'Ảnh demo') + ' ' + (idx + 1)}" loading="lazy" />
                 </span>
             `
             )
@@ -459,13 +455,13 @@
 
         return `
             <section class="product-demo-callout" data-demo-available="true">
-                <button type="button" class="demo-stack-card" data-demo-open aria-label="Xem combo ảnh demo">
+                <button type="button" class="demo-stack-card" data-demo-open aria-label="${window.covasolTranslate('product-view-demo-combo', 'Xem combo ảnh demo')}">
                     <div class="demo-stack-layers">
                         ${stackHtml}
                     </div>
                     <div class="demo-stack-counter">
                         <strong>${totalLabel}</strong>
-                        <span>ảnh demo</span>
+                        <span>${window.covasolTranslate('product-demo-count-label', 'ảnh demo')}</span>
                     </div>
                 </button>
             </section>
@@ -483,21 +479,21 @@
         const highlightsHtml =
             data.highlights && data.highlights.length > 0
                 ? `<div class="preview-highlights">
-                <h3>Diem noi bat</h3>
+                <h3>${window.covasolTranslate('product-highlights', 'Điểm nổi bật')}</h3>
                 <ul>
                     ${data.highlights
-                        .map(
-                            (highlight) => `<li>
+                    .map(
+                        (highlight) => `<li>
                         <i class="fas fa-check-circle"></i>
                         <span>${highlight}</span>
                     </li>`
-                        )
-                        .join('')}
+                    )
+                    .join('')}
                 </ul>
                </div>`
                 : '';
 
-        const descriptionContent = data.description || 'Không có mô tả';
+        const descriptionContent = data.description || window.covasolTranslate('product-no-desc', 'Không có mô tả');
 
         const { inline: inlineMedia, remainder: galleryMedia } = splitInlineItems(
             data.galleryMedia
@@ -513,13 +509,13 @@
         const demoCalloutHtml = renderDemoComboSection(data.demoMedia);
 
         const galleryHtml = renderMediaSection(galleryMedia, {
-            title: 'Thư viện ảnh sản phẩm',
-            labels: { ...PRODUCT_MEDIA_LABELS, default: 'Ảnh' }
+            title: window.covasolTranslate('product-gallery-title', 'Thư viện ảnh sản phẩm'),
+            labels: { ...PRODUCT_MEDIA_LABELS, default: window.covasolTranslate('preview-default-img', 'Ảnh') }
         });
 
         const videoHtml = renderVideoSection(videoItems, {
-            title: 'Video demo',
-            labels: { ...PRODUCT_VIDEO_LABELS, default: 'Video' }
+            title: window.covasolTranslate('product-video-title', 'Video demo'),
+            labels: { ...PRODUCT_VIDEO_LABELS, default: window.covasolTranslate('preview-default-vid', 'Video') }
         });
 
         const footerSections = [featuresHtml, highlightsHtml]
@@ -531,12 +527,11 @@
             : '';
 
         return `
-            <h1>${data.name || 'Không có tên sản phẩm'}</h1>
+            <h1>${data.name || window.covasolTranslate('product-no-name', 'Không có tên sản phẩm')}</h1>
             ${data.category ? `<p class="preview-category">${data.category}</p>` : ''}
-            ${
-                data.imageUrl
-                    ? `<img src="${data.imageUrl}" alt="${data.name || 'Ảnh sản phẩm'}" />`
-                    : ''
+            ${data.imageUrl
+                ? `<img src="${data.imageUrl}" alt="${data.name || window.covasolTranslate('product-image-alt', 'Ảnh sản phẩm')}" />`
+                : ''
             }
             ${data.shortDescription ? `<p class="preview-excerpt">${data.shortDescription}</p>` : ''}
             <div class="preview-body" data-paragraph-count="${inlineBody.paragraphCount}">${inlineBody.html}</div>

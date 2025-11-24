@@ -3,12 +3,12 @@
  * Modern, Interactive, and Performance-optimized
  */
 
-document.addEventListener('DOMContentLoaded', function() {
-    
+document.addEventListener('DOMContentLoaded', function () {
+
     // ============================================================================
     // LANGUAGE SWITCHER
     // ============================================================================
-    
+
     let currentLanguage = localStorage.getItem('covasol-language') || 'vi';
 
     function translate(key, fallback = '') {
@@ -18,19 +18,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return fallback || key;
     }
-    
+
+    // Expose translate globally
+    window.covasolTranslate = translate;
+
     // Language switcher elements
     const langBtn = document.getElementById('langBtn');
     const langMenu = document.getElementById('langMenu');
     const currentLangSpan = document.getElementById('currentLang');
     const langOptions = document.querySelectorAll('.lang-option');
-    
+
     // Initialize language
     function initLanguage() {
         updateLanguage(currentLanguage);
         updateActiveLanguage(currentLanguage);
     }
-    
+
     // Update active language in dropdown
     function updateActiveLanguage(lang) {
         langOptions.forEach(option => {
@@ -39,47 +42,74 @@ document.addEventListener('DOMContentLoaded', function() {
                 option.classList.add('active');
             }
         });
-        
+
         // Update current language display
         const langMap = {
             'vi': 'VI',
-            'en': 'EN', 
+            'en': 'EN',
             'fr': 'FR'
         };
         if (currentLangSpan) {
             currentLangSpan.textContent = langMap[lang];
         }
-        
+
         // Update HTML lang attribute
         document.documentElement.lang = lang;
     }
-    
+
     // Update page content based on language
     function updateLanguage(lang) {
         const elements = document.querySelectorAll('[data-key]');
-        
+
         elements.forEach(element => {
             const key = element.getAttribute('data-key');
             if (translations[lang] && translations[lang][key]) {
+                const translation = translations[lang][key];
+
                 if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-                    element.placeholder = translations[lang][key];
+                    element.placeholder = translation;
+                } else if (element.tagName === 'IMG') {
+                    element.alt = translation;
                 } else if (element.tagName === 'SELECT') {
                     // Handle select options separately
                     return;
                 } else {
-                    element.textContent = translations[lang][key];
+                    // Check if element has aria-label and is likely an icon button (has children but no text)
+                    if (element.hasAttribute('aria-label') && element.children.length > 0 && !element.textContent.trim()) {
+                        element.setAttribute('aria-label', translation);
+                    } else if (element.children.length === 0) {
+                        // Safe to set textContent if no children
+                        element.textContent = translation;
+                    } else {
+                        // Has children (e.g. bold tags, icons) - be careful
+                        // If the user put data-key on a container with complex structure, we might break it.
+                        // But usually data-key is on leaf nodes.
+                        // If it has children but also text, we might want to replace the text node?
+                        // For now, let's assume data-key on a container with children implies replacing everything OR it's a mistake.
+                        // However, to be safe and support the "icon button" case above, we added the check.
+                        // If it falls here, it has children and maybe text.
+                        // If we set textContent, we lose children.
+                        // Let's check if it has aria-label, if so, maybe that's what we want to translate?
+                        if (element.hasAttribute('aria-label')) {
+                            element.setAttribute('aria-label', translation);
+                        } else {
+                            // Fallback: replace content. This matches previous behavior but is risky.
+                            // Ideally we shouldn't put data-key on containers with icons unless we want to replace them.
+                            element.textContent = translation;
+                        }
+                    }
                 }
             }
         });
-        
+
         // Update select options
         updateSelectOptions(lang);
-        
+
         // Store language preference
         localStorage.setItem('covasol-language', lang);
         currentLanguage = lang;
     }
-    
+
     // Update select dropdown options
     function updateSelectOptions(lang) {
         const serviceSelect = document.getElementById('service');
@@ -93,43 +123,43 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
-    
+
     // Language dropdown toggle
     if (langBtn) {
-        langBtn.addEventListener('click', function(e) {
+        langBtn.addEventListener('click', function (e) {
             e.stopPropagation();
             langMenu.classList.toggle('active');
         });
     }
-    
+
     // Language option selection
     langOptions.forEach(option => {
-        option.addEventListener('click', function() {
+        option.addEventListener('click', function () {
             const selectedLang = this.dataset.lang;
             updateLanguage(selectedLang);
             updateActiveLanguage(selectedLang);
             langMenu.classList.remove('active');
         });
     });
-    
+
     // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         if (langMenu && !langMenu.contains(e.target) && !langBtn.contains(e.target)) {
             langMenu.classList.remove('active');
         }
     });
-    
+
     // Initialize language on page load
     initLanguage();
-    
+
     // ============================================================================
     // LOADING SCREEN
     // ============================================================================
-    
+
     const loadingScreen = document.getElementById('loading');
-    
+
     // Hide loading screen after page load
-    window.addEventListener('load', function() {
+    window.addEventListener('load', function () {
         setTimeout(() => {
             loadingScreen.classList.add('hidden');
             // Remove loading screen from DOM after animation
@@ -140,39 +170,39 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 500);
         }, 1000); // Show loading for at least 1 second
     });
-    
+
     // ============================================================================
     // NAVIGATION
     // ============================================================================
-    
+
     const navbar = document.querySelector('.navbar');
     const navToggle = document.querySelector('.nav-toggle');
     const navMenu = document.querySelector('.nav-menu');
     const navLinks = document.querySelectorAll('.nav-link');
-    
+
     // Mobile menu toggle
     if (navToggle) {
-        navToggle.addEventListener('click', function() {
+        navToggle.addEventListener('click', function () {
             navToggle.classList.toggle('active');
             navMenu.classList.toggle('active');
             document.body.classList.toggle('nav-open');
         });
     }
-    
+
     // Close mobile menu when clicking on links
     navLinks.forEach(link => {
-        link.addEventListener('click', function() {
+        link.addEventListener('click', function () {
             navToggle.classList.remove('active');
             navMenu.classList.remove('active');
             document.body.classList.remove('nav-open');
         });
     });
-    
+
     // Navbar scroll effect
     let lastScrollTop = 0;
-    window.addEventListener('scroll', function() {
+    window.addEventListener('scroll', function () {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        
+
         if (scrollTop > 100) {
             navbar.style.background = 'rgba(13, 27, 42, 0.98)';
             navbar.style.boxShadow = '0 2px 20px rgba(13, 27, 42, 0.1)';
@@ -180,21 +210,21 @@ document.addEventListener('DOMContentLoaded', function() {
             navbar.style.background = 'rgba(13, 27, 42, 0.95)';
             navbar.style.boxShadow = 'none';
         }
-        
+
         lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
     });
-    
+
     // Active nav link highlighting
     function setActiveNavLink() {
         const sections = document.querySelectorAll('section[id]');
         const scrollPos = window.scrollY + 100;
-        
+
         sections.forEach(section => {
             const sectionTop = section.offsetTop;
             const sectionHeight = section.offsetHeight;
             const sectionId = section.getAttribute('id');
             const navLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
-            
+
             if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
                 navLinks.forEach(link => link.classList.remove('active'));
                 if (navLink) {
@@ -203,13 +233,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
+
     window.addEventListener('scroll', setActiveNavLink);
-    
+
     // ============================================================================
     // SMOOTH SCROLLING
     // ============================================================================
-    
+
     // Smooth scroll for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
@@ -224,11 +254,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
+
     // ============================================================================
     // ANIMATION INITIALIZATION
     // ============================================================================
-    
+
     // Initialize AOS (Animate On Scroll)
     if (typeof AOS !== 'undefined') {
         AOS.init({
@@ -239,30 +269,30 @@ document.addEventListener('DOMContentLoaded', function() {
             delay: 0,
             anchorPlacement: 'top-bottom'
         });
-        
+
         // Refresh AOS on window resize
-        window.addEventListener('resize', function() {
+        window.addEventListener('resize', function () {
             AOS.refresh();
         });
-        
+
         console.log('AOS Initialized successfully');
     } else {
         console.error('AOS library not loaded');
     }
-    
+
     // ============================================================================
     // COUNTER ANIMATION
     // ============================================================================
-    
+
     function animateCounters() {
         const counters = document.querySelectorAll('[data-counter]');
         const speed = 200; // Animation speed
-        
+
         counters.forEach(counter => {
             const target = parseInt(counter.getAttribute('data-counter'));
             const increment = target / speed;
             let current = 0;
-            
+
             const updateCounter = () => {
                 if (current < target) {
                     current += increment;
@@ -272,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     counter.textContent = target;
                 }
             };
-            
+
             // Start animation when element is in viewport
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -282,83 +312,83 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             }, { threshold: 0.7 });
-            
+
             observer.observe(counter);
         });
     }
-    
+
     // Initialize counter animation
     animateCounters();
-    
+
     // ============================================================================
     // REVIEWS RATING BARS ANIMATION
     // ============================================================================
-    
+
     function animateRatingBars() {
         const ratingBars = document.querySelectorAll('.bar .fill');
-        
+
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const bar = entry.target;
                     const width = bar.style.width;
-                    
+
                     // Reset and animate
                     bar.style.width = '0%';
                     setTimeout(() => {
                         bar.style.width = width;
                     }, 200);
-                    
+
                     observer.unobserve(entry.target);
                 }
             });
         }, { threshold: 0.5 });
-        
+
         ratingBars.forEach(bar => {
             observer.observe(bar);
         });
     }
-    
+
     // Initialize rating bars animation
     animateRatingBars();
-    
+
     // ============================================================================
     // CONTACT FORM WITH GOOGLE APPS SCRIPT INTEGRATION
     // ============================================================================
-    
+
     const quoteForm = document.getElementById('quoteForm');
-    
+
     if (quoteForm) {
         // Real-time validation
         const formInputs = quoteForm.querySelectorAll('input, select, textarea');
         formInputs.forEach(input => {
-            input.addEventListener('blur', function() {
+            input.addEventListener('blur', function () {
                 validateField(this);
             });
-            
-            input.addEventListener('input', function() {
+
+            input.addEventListener('input', function () {
                 clearFieldError(this);
             });
         });
     }
-    
+
     function validateForm(data) {
         let isValid = true;
         const errors = {};
-        
+
         // Name validation
         if (!data.name || data.name.length < 2) {
             errors.name = 'Họ và tên phải có ít nhất 2 ký tự';
             isValid = false;
         }
-        
+
         // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!data.email || !emailRegex.test(data.email)) {
             errors.email = 'Email không hợp lệ';
             isValid = false;
         }
-        
+
         // Phone validation - Allow Vietnamese phone formats
         const phoneRegex = /^(\+84|84|0)[3-9][0-9]{8}$/;
         const cleanPhone = data.phone.replace(/[\s\-\.]/g, '');
@@ -366,32 +396,32 @@ document.addEventListener('DOMContentLoaded', function() {
             errors.phone = 'Số điện thoại không hợp lệ (VD: 0901234567)';
             isValid = false;
         }
-        
+
         // Service validation
         if (!data.service) {
             errors.service = 'Vui lòng chọn dịch vụ';
             isValid = false;
         }
-        
+
         // Message validation
         if (!data.message || data.message.length < 10) {
             errors.message = 'Nội dung yêu cầu phải có ít nhất 10 ký tự';
             isValid = false;
         }
-        
+
         // Display errors
         Object.keys(errors).forEach(field => {
             showFieldError(field, errors[field]);
         });
-        
+
         return isValid;
     }
-    
+
     function validateField(field) {
         const value = field.value.trim();
         const name = field.name;
         let error = '';
-        
+
         switch (name) {
             case 'name':
                 if (value.length < 2) error = 'Họ và tên phải có ít nhất 2 ký tự';
@@ -411,7 +441,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (value.length < 10) error = 'Tin nhắn phải có ít nhất 10 ký tự';
                 break;
         }
-        
+
         if (error) {
             showFieldError(name, error);
             return false;
@@ -420,47 +450,47 @@ document.addEventListener('DOMContentLoaded', function() {
             return true;
         }
     }
-    
+
     function showFieldError(fieldName, message) {
         const field = document.querySelector(`[name="${fieldName}"], #${fieldName}`);
         if (!field) return;
-        
+
         const formGroup = field.closest('.form-group');
-        
+
         // Remove existing error
         const existingError = formGroup.querySelector('.error-message');
         if (existingError) {
             existingError.remove();
         }
-        
+
         // Add error styling
         field.style.borderColor = '#ff6b6b';
         field.style.boxShadow = '0 0 0 2px rgba(255, 107, 107, 0.2)';
-        
+
         // Add error message
         const errorElement = document.createElement('div');
         errorElement.className = 'error-message';
         errorElement.textContent = message;
         formGroup.appendChild(errorElement);
-        
+
         // Scroll to first error if not visible
         if (!isInViewport(field)) {
             field.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     }
-    
+
     function clearFieldError(field) {
         const formGroup = field.closest('.form-group');
         const errorMessage = formGroup.querySelector('.error-message');
-        
+
         if (errorMessage) {
             errorMessage.remove();
         }
-        
+
         // Reset field styling
         field.style.borderColor = 'rgba(255, 255, 255, 0.2)';
         field.style.boxShadow = '';
-        
+
         // Add success styling if field is valid
         if (field.value.trim() && validateSingleField(field)) {
             field.classList.add('form-success');
@@ -468,11 +498,11 @@ document.addEventListener('DOMContentLoaded', function() {
             field.classList.remove('form-success');
         }
     }
-    
+
     function validateSingleField(field) {
         const value = field.value.trim();
         const name = field.name || field.id;
-        
+
         switch (name) {
             case 'name':
                 return value.length >= 2;
@@ -491,13 +521,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 return true;
         }
     }
-    
+
     // Google Apps Script Form Submission Function
-    window.sendQuote = async function() {
+    window.sendQuote = async function () {
         const form = document.getElementById('quoteForm');
         const submitButton = document.getElementById('submitBtn');
         const originalText = submitButton.innerHTML;
-        
+
         // Get form data
         const data = {
             name: document.getElementById("name").value.trim(),
@@ -506,16 +536,16 @@ document.addEventListener('DOMContentLoaded', function() {
             service: document.getElementById("service").value,
             message: document.getElementById("message").value.trim()
         };
-        
+
         // Validate form data
         if (!validateForm(data)) {
             return;
         }
-        
+
         // Show loading state
         submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
         submitButton.disabled = true;
-        
+
         try {
             // Send to Google Apps Script
             const response = await fetch("https://script.google.com/macros/s/AKfycby1t-q3w1EcaUYyT0P8M6ilRiWwdxSLFcqtIL6pHwA3nWYYPU4bh8kQYafZxJCLR4kaHA/exec", {
@@ -526,12 +556,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify(data)
             });
-            
+
             // Since we're using no-cors mode, we can't check response status
             // Assume success if no error was thrown
             form.reset();
             showNotification('Cảm ơn bạn! COVASOL đã nhận yêu cầu báo giá và sẽ liên hệ sớm.', 'success');
-            
+
             // Clear any existing field errors
             const formGroups = form.querySelectorAll('.form-group');
             formGroups.forEach(group => {
@@ -544,7 +574,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     field.style.borderColor = 'rgba(255, 255, 255, 0.2)';
                 }
             });
-            
+
         } catch (error) {
             console.error('Error submitting form:', error);
             showNotification('Có lỗi xảy ra, vui lòng thử lại hoặc liên hệ trực tiếp qua email.', 'error');
@@ -554,16 +584,16 @@ document.addEventListener('DOMContentLoaded', function() {
             submitButton.disabled = false;
         }
     };
-    
+
     // ============================================================================
     // NOTIFICATION SYSTEM
     // ============================================================================
-    
+
     function showNotification(message, type = 'info') {
         // Remove existing notifications
         const existingNotifications = document.querySelectorAll('.notification');
         existingNotifications.forEach(notification => notification.remove());
-        
+
         const notification = document.createElement('div');
         notification.className = `notification notification-${type}`;
         notification.innerHTML = `
@@ -575,7 +605,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <i class="fas fa-times"></i>
             </button>
         `;
-        
+
         // Add styles
         Object.assign(notification.style, {
             position: 'fixed',
@@ -592,11 +622,11 @@ document.addEventListener('DOMContentLoaded', function() {
             transform: 'translateX(100%)',
             transition: 'all 0.3s ease'
         });
-        
+
         notification.querySelector('.notification-content').style.display = 'flex';
         notification.querySelector('.notification-content').style.alignItems = 'center';
         notification.querySelector('.notification-content').style.gap = '10px';
-        
+
         const closeBtn = notification.querySelector('.notification-close');
         Object.assign(closeBtn.style, {
             background: 'transparent',
@@ -606,26 +636,26 @@ document.addEventListener('DOMContentLoaded', function() {
             padding: '0',
             marginLeft: '10px'
         });
-        
+
         document.body.appendChild(notification);
-        
+
         // Animate in
         setTimeout(() => {
             notification.style.opacity = '1';
             notification.style.transform = 'translateX(0)';
         }, 100);
-        
+
         // Auto dismiss
         setTimeout(() => {
             dismissNotification(notification);
         }, 5000);
-        
+
         // Close button
         closeBtn.addEventListener('click', () => {
             dismissNotification(notification);
         });
     }
-    
+
     function dismissNotification(notification) {
         notification.style.opacity = '0';
         notification.style.transform = 'translateX(100%)';
@@ -635,7 +665,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 300);
     }
-    
+
     function getNotificationIcon(type) {
         switch (type) {
             case 'success': return 'fa-check-circle';
@@ -644,32 +674,32 @@ document.addEventListener('DOMContentLoaded', function() {
             default: return 'fa-info-circle';
         }
     }
-    
+
     // ============================================================================
     // BACK TO TOP BUTTON
     // ============================================================================
-    
+
     const backToTopButton = document.getElementById('backToTop');
-    
+
     if (backToTopButton) {
         // Show/hide back to top button
-        window.addEventListener('scroll', function() {
+        window.addEventListener('scroll', function () {
             if (window.pageYOffset > 300) {
                 backToTopButton.classList.add('visible');
             } else {
                 backToTopButton.classList.remove('visible');
             }
         });
-        
+
         // Scroll to top functionality
-        backToTopButton.addEventListener('click', function() {
+        backToTopButton.addEventListener('click', function () {
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
             });
         });
     }
-    
+
     // ============================================================================
     // CONTACT FLOATING BUTTON
     // ============================================================================
@@ -713,11 +743,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
+
     // ============================================================================
     // PERFORMANCE OPTIMIZATIONS
     // ============================================================================
-    
+
     // Lazy load images
     function lazyLoadImages() {
         const images = document.querySelectorAll('img[data-src]');
@@ -731,21 +761,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         });
-        
+
         images.forEach(img => imageObserver.observe(img));
     }
-    
+
     // Initialize lazy loading
     lazyLoadImages();
-    
+
     // ============================================================================
     // PARTICLE ANIMATION
     // ============================================================================
-    
+
     function createParticles() {
         const particlesContainer = document.querySelector('.hero-particles');
         if (!particlesContainer) return;
-        
+
         for (let i = 0; i < 20; i++) {
             const particle = document.createElement('div');
             particle.className = 'particle';
@@ -755,18 +785,18 @@ document.addEventListener('DOMContentLoaded', function() {
             particlesContainer.appendChild(particle);
         }
     }
-    
+
     // Create additional particles
     createParticles();
-    
+
     // ============================================================================
     // LOGO FALLBACK
     // ============================================================================
-    
+
     // Handle logo loading errors - but should not be needed with local file
     const logos = document.querySelectorAll('img[alt="COVASOL Logo"]');
     logos.forEach(logo => {
-        logo.addEventListener('error', function() {
+        logo.addEventListener('error', function () {
             console.warn('Logo failed to load:', this.src);
             // Create a simple text-based logo as fallback
             const textLogo = document.createElement('div');
@@ -782,17 +812,17 @@ document.addEventListener('DOMContentLoaded', function() {
             textLogo.style.borderRadius = '8px';
             textLogo.style.color = 'white';
             textLogo.style.fontSize = '10px';
-            
+
             this.parentNode.replaceChild(textLogo, this);
         });
     });
-    
+
     // ============================================================================
     // ACCESSIBILITY IMPROVEMENTS
     // ============================================================================
-    
+
     // Keyboard navigation
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
             // Close mobile menu if open
             if (navMenu.classList.contains('active')) {
@@ -802,10 +832,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
-    
+
     // Focus management for mobile menu
     if (navToggle) {
-        navToggle.addEventListener('click', function() {
+        navToggle.addEventListener('click', function () {
             if (navMenu.classList.contains('active')) {
                 // Focus first menu item when menu opens
                 const firstLink = navMenu.querySelector('.nav-link');
@@ -815,16 +845,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
+
     // ============================================================================
     // MOBILE OPTIMIZATIONS
     // ============================================================================
-    
+
     // Detect mobile device
     function isMobile() {
         return window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
-    
+
     // Optimize for mobile performance
     if (isMobile()) {
         // Reduce particle count on mobile
@@ -833,28 +863,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 particle.remove();
             }
         });
-        
+
         // Add touch class to body
         document.body.classList.add('touch-device');
     }
-    
+
     // Handle touch events for better mobile interaction
     let touchStartY = 0;
     let touchEndY = 0;
-    
-    document.addEventListener('touchstart', function(e) {
+
+    document.addEventListener('touchstart', function (e) {
         touchStartY = e.changedTouches[0].screenY;
     });
-    
-    document.addEventListener('touchend', function(e) {
+
+    document.addEventListener('touchend', function (e) {
         touchEndY = e.changedTouches[0].screenY;
         handleSwipe();
     });
-    
+
     function handleSwipe() {
         const swipeThreshold = 100;
         const diff = touchStartY - touchEndY;
-        
+
         // Swipe up to close mobile menu
         if (diff > swipeThreshold && navMenu.classList.contains('active')) {
             navToggle.classList.remove('active');
@@ -862,7 +892,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.classList.remove('nav-open');
         }
     }
-    
+
     // Prevent body scroll when mobile menu is open
     function toggleBodyScroll(disable) {
         if (disable) {
@@ -875,22 +905,22 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.style.width = '';
         }
     }
-    
+
     // Update mobile menu toggle to prevent body scroll
     if (navToggle) {
-        navToggle.addEventListener('click', function() {
+        navToggle.addEventListener('click', function () {
             const isMenuActive = navMenu.classList.contains('active');
             toggleBodyScroll(!isMenuActive);
         });
     }
-    
+
     // Close menu on link click and restore scroll
     navLinks.forEach(link => {
-        link.addEventListener('click', function() {
+        link.addEventListener('click', function () {
             toggleBodyScroll(false);
         });
     });
-    
+
     // ============================================================================
     // HOMEPAGE DYNAMIC CONTENT (API-DRIVEN SECTIONS)
     // ============================================================================
@@ -928,7 +958,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function buildHomeProductCard(product, index) {
-    const detailUrl = `product-detail.html?code=${encodeURIComponent(product.code)}`;
+        const detailUrl = `product-detail.html?code=${encodeURIComponent(product.code)}`;
         const card = document.createElement('article');
         card.className = 'product-card';
         card.setAttribute('data-aos', 'zoom-in');
@@ -1025,7 +1055,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function buildHomePostCard(post, index) {
-    const detailUrl = `blog-detail.html?code=${encodeURIComponent(post.code)}`;
+        const detailUrl = `blog-detail.html?code=${encodeURIComponent(post.code)}`;
         const article = document.createElement('article');
         article.className = 'post-card';
         article.setAttribute('data-aos', 'fade-up');
@@ -1189,9 +1219,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================================================
     // WINDOW RESIZE HANDLER
     // ============================================================================
-    
+
     let resizeTimer;
-    window.addEventListener('resize', function() {
+    window.addEventListener('resize', function () {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
             // Close mobile menu on desktop resize
@@ -1201,24 +1231,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.body.classList.remove('nav-open');
                 toggleBodyScroll(false); // Restore scroll on desktop
             }
-            
+
             // Refresh AOS on resize
             if (typeof AOS !== 'undefined') {
                 AOS.refresh();
             }
         }, 250);
     });
-    
+
     // ============================================================================
     // INTERSECTION OBSERVER FOR ANIMATIONS
     // ============================================================================
-    
+
     // Enhanced scroll animations
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
     };
-    
+
     const animationObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -1226,33 +1256,33 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }, observerOptions);
-    
+
     // Observe elements for animation
     const animatedElements = document.querySelectorAll('.service-card, .feature-item, .detail-card');
     animatedElements.forEach(el => {
         animationObserver.observe(el);
     });
-    
+
     // ============================================================================
     // ERROR HANDLING
     // ============================================================================
-    
+
     // Global error handler
-    window.addEventListener('error', function(e) {
+    window.addEventListener('error', function (e) {
         console.error('Global error:', e.error);
         // You could send this to an error tracking service
     });
-    
+
     // Unhandled promise rejection handler
-    window.addEventListener('unhandledrejection', function(e) {
+    window.addEventListener('unhandledrejection', function (e) {
         console.error('Unhandled promise rejection:', e.reason);
         e.preventDefault();
     });
-    
+
     // ============================================================================
     // CONSOLE SIGNATURE
     // ============================================================================
-    
+
     console.log(
         '%cCOVASOL Landing Page',
         'color: #2E8B57; font-size: 20px; font-weight: bold;'
@@ -1265,7 +1295,7 @@ document.addEventListener('DOMContentLoaded', function() {
         '%cDeveloped with ❤️ by COVASOL Team',
         'color: #A5B452; font-size: 12px;'
     );
-    
+
 });
 
 // ============================================================================
@@ -1288,7 +1318,7 @@ function debounce(func, wait) {
 // Throttle function for scroll events
 function throttle(func, limit) {
     let inThrottle;
-    return function() {
+    return function () {
         const args = arguments;
         const context = this;
         if (!inThrottle) {
@@ -1314,7 +1344,7 @@ function isInViewport(element) {
 function formatPhoneNumber(value) {
     const phoneNumber = value.replace(/\D/g, '');
     const phoneLength = phoneNumber.length;
-    
+
     if (phoneLength < 4) return phoneNumber;
     if (phoneLength < 7) {
         return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3)}`;

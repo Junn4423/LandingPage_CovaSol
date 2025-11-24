@@ -48,24 +48,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderFallback(article) {
         const content = article.content
             ? article.content
-                  .split(/\n{2,}/)
-                  .map((paragraph) => `<p>${paragraph}</p>`)
-                  .join('')
-            : '<p>Không có nội dung</p>';
+                .split(/\n{2,}/)
+                .map((paragraph) => `<p>${paragraph}</p>`)
+                .join('')
+            : `<p>${window.covasolTranslate('blog-no-content', 'Không có nội dung')}</p>`;
 
         return `
-            <h1>${article.title || 'Không có tiêu đề'}</h1>
+            <h1>${article.title || window.covasolTranslate('blog-no-title', 'Không có tiêu đề')}</h1>
             ${article.subtitle ? `<p class="preview-subtitle">${article.subtitle}</p>` : ''}
             <div class="preview-meta">
-                ${article.category ? `<span><strong>Danh muc:</strong> ${article.category}</span>` : ''}
-                <span><strong>Ngay:</strong> ${formatDate(article.publishedAt)}</span>
-                ${
-                    article.authorName
-                        ? `<span><strong>Tac gia:</strong> ${article.authorName}${
-                              article.authorRole ? ' - ' + article.authorRole : ''
-                          }</span>`
-                        : ''
-                }
+                ${article.category ? `<span><strong>${window.covasolTranslate('blog-category-label', 'Danh mục:')}</strong> ${article.category}</span>` : ''}
+                <span><strong>${window.covasolTranslate('blog-date-label', 'Ngày:')}</strong> ${formatDate(article.publishedAt)}</span>
+                ${article.authorName
+                ? `<span><strong>${window.covasolTranslate('blog-author-label', 'Tác giả:')}</strong> ${article.authorName}${article.authorRole ? ' - ' + article.authorRole : ''
+                }</span>`
+                : ''
+            }
             </div>
             ${content}
         `;
@@ -76,7 +74,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        relatedListEl.innerHTML = '<li>Đang tải bài viết gần đây...</li>';
+        relatedListEl.innerHTML = `<li>${window.covasolTranslate('blog-loading-recent', 'Đang tải bài viết gần đây...')}</li>`;
         try {
             const posts = await api.fetchBlogPosts({
                 limit: 6,
@@ -121,11 +119,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
 
             if (!relatedListEl.children.length) {
-                relatedListEl.innerHTML = '<li>Chưa có bài viết gần đây</li>';
+                relatedListEl.innerHTML = `<li>${window.covasolTranslate('blog-no-recent', 'Chưa có bài viết gần đây')}</li>`;
             }
         } catch (error) {
             console.error('Không thể tải bài viết liên quan:', error);
-            relatedListEl.innerHTML = '<li>Không tải được danh sách bài viết gần đây.</li>';
+            relatedListEl.innerHTML = `<li>${window.covasolTranslate('blog-error-list-recent', 'Không tải được danh sách bài viết gần đây.')}</li>`;
         }
     }
 
@@ -135,7 +133,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (!isPublishedArticle(article)) {
-            showError('Bài viết này đang được ẩn hoặc chưa xuất bản.');
+            showError(window.covasolTranslate('blog-error-hidden', 'Bài viết này đang được ẩn hoặc chưa xuất bản.'));
             return;
         }
 
@@ -153,22 +151,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (previewEl) {
             previewEl.innerHTML = `
                 <div class="article-error preview-error">
-                    <h2>Không tìm thấy bài viết</h2>
-                    <p>${message || 'Vui lòng quay lại trang blog để chọn bài viết khác.'}</p>
-                    <a class="btn btn-primary" href="blog.html">Quay lại Blog</a>
+                    <h2>${window.covasolTranslate('blog-not-found-title', 'Không tìm thấy bài viết')}</h2>
+                    <p>${message || window.covasolTranslate('blog-not-found-msg', 'Vui lòng quay lại trang blog để chọn bài viết khác.')}</p>
+                    <a class="btn btn-primary" href="blog.html">${window.covasolTranslate('blog-back', 'Quay lại Blog')}</a>
                 </div>
             `;
         }
         if (relatedListEl) {
-            relatedListEl.innerHTML = '<li>Không có dữ liệu.</li>';
+            relatedListEl.innerHTML = `<li>${window.covasolTranslate('blog-no-data', 'Không có dữ liệu.')}</li>`;
         }
-        document.title = 'Không tìm thấy bài viết | COVASOL';
+        document.title = window.covasolTranslate('blog-not-found-page-title', 'Không tìm thấy bài viết | COVASOL');
     }
 
     try {
         const identifier = resolveIdentifier();
         if (!identifier) {
-            throw new Error('Không xác định được mã bài viết.');
+            throw new Error(window.covasolTranslate('blog-error-no-code', 'Không xác định được mã bài viết.'));
         }
 
         const payload = await api.fetchBlogPost(identifier);
