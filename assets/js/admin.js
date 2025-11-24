@@ -182,13 +182,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const blogStatusLabels = {
-        active: 'Dang hien',
-        inactive: 'Da an'
+        active: 'Đang hiện',
+        inactive: 'Đã ẩn'
     };
 
     const productStatusLabels = {
-        active: 'Dang hien',
-        inactive: 'Tam dung'
+        active: 'Đang hiện',
+        inactive: 'Tạm dừng'
     };
 
     function isBlogActive(status) {
@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 checkbox.checked = !nextChecked;
                 updateStatusPill(pill, checkbox.checked, labels);
-                alert(error.message || 'Khong the cap nhat trang thai.');
+                alert(error.message || 'Không thể cập nhật trạng thái.');
             } finally {
                 checkbox.disabled = false;
             }
@@ -255,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function setFeaturedButtonContent(button, isActive) {
         if (!button) return;
         button.classList.toggle('is-active', isActive);
-        button.innerHTML = `<i class="${isActive ? 'fas' : 'far'} fa-star"></i><span>${isActive ? 'Dang noi bat' : 'Danh noi bat'}</span>`;
+        button.innerHTML = `<i class="${isActive ? 'fas' : 'far'} fa-star"></i><span>${isActive ? 'Đang nổi bật' : 'Không nổi bật'}</span>`;
     }
 
     function createFeaturedControl(post) {
@@ -271,15 +271,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             button.disabled = true;
-            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Dang cap nhat...</span>';
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Đang cập nhật...</span>';
             try {
                 const detail = await api.fetchBlogPost(post.code);
                 const payload = buildBlogPayload(detail, { isFeatured: true });
                 await api.updateBlogPost(post.code, payload);
                 await loadBlogs();
-                setFeedback(blogFeedback, `Da chon "${post.title}" lam bai noi bat.`, 'success');
+                setFeedback(blogFeedback, `Đã chọn "${post.title}" làm bài nổi bật.`, 'success');
             } catch (error) {
-                alert(error.message || 'Khong the cap nhat noi bat.');
+                alert(error.message || 'Không thể cập nhật nổi bật.');
                 button.disabled = false;
                 setFeaturedButtonContent(button, false);
             }
@@ -380,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         await persistBlogStatus(post.code, nextStatus);
                         post.status = nextStatus;
                     } catch (error) {
-                        throw new Error(error.message || 'Khong the cap nhat trang thai bai viet.');
+                        throw new Error(error.message || 'Không thể cập nhật trạng thái bài viết.');
                     }
                 }
             });
@@ -398,7 +398,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const editBtn = document.createElement('button');
             editBtn.type = 'button';
             editBtn.className = 'action-chip';
-            editBtn.textContent = 'Sua';
+            editBtn.textContent = 'Sửa';
             editBtn.addEventListener('click', () => {
                 navigateTo('live-blog-editor.html', { code: post.code });
             });
@@ -406,16 +406,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const deleteBtn = document.createElement('button');
             deleteBtn.type = 'button';
             deleteBtn.className = 'action-chip delete';
-            deleteBtn.textContent = 'Xoa';
+            deleteBtn.textContent = 'Xóa';
             deleteBtn.addEventListener('click', async () => {
-                if (!confirm(`Xoa bai viet "${post.title}"?`)) {
+                if (!confirm(`Xóa bài viết "${post.title}"?`)) {
                     return;
                 }
                 try {
                     await api.deleteBlogPost(post.code);
                     await loadBlogs();
                 } catch (error) {
-                    alert(error.message || 'Khong the xoa bai viet.');
+                    alert(error.message || 'Không thể xóa bài viết.');
                 }
             });
 
@@ -425,8 +425,8 @@ document.addEventListener('DOMContentLoaded', () => {
             blogTableBody.appendChild(row);
         });
 
-        ensureTableContent(blogTableBody, 7, 'Chua co bai viet nao.');
-        blogCountLabel.textContent = `${posts.length} bai viet`;
+        ensureTableContent(blogTableBody, 7, 'Chưa có bài viết nào.');
+        blogCountLabel.textContent = `${posts.length} bài viết`;
     }
 
     function renderProductRows(products) {
@@ -450,7 +450,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         await persistProductStatus(product.code, nextStatus);
                         product.status = nextStatus;
                     } catch (error) {
-                        throw new Error(error.message || 'Khong the cap nhat trang thai san pham.');
+                        throw new Error(error.message || 'Không thể cập nhật trạng thái sản phẩm.');
                     }
                 }
             });
@@ -466,7 +466,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const editBtn = document.createElement('button');
             editBtn.type = 'button';
             editBtn.className = 'action-chip';
-            editBtn.textContent = 'Sua';
+            editBtn.textContent = 'Sửa';
             editBtn.addEventListener('click', () => {
                 navigateTo('live-product-editor.html', { code: product.code });
             });
@@ -474,16 +474,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const deleteBtn = document.createElement('button');
             deleteBtn.type = 'button';
             deleteBtn.className = 'action-chip delete';
-            deleteBtn.textContent = 'Xoa';
+            deleteBtn.textContent = 'Xóa';
             deleteBtn.addEventListener('click', async () => {
-                if (!confirm(`Xoa san pham "${product.name}"?`)) {
+                if (!confirm(`Xóa sản phẩm "${product.name}"?`)) {
                     return;
                 }
                 try {
                     await api.deleteProduct(product.code);
                     await loadProducts();
                 } catch (error) {
-                    alert(error.message || 'Khong the xoa san pham.');
+                    alert(error.message || 'Không thể xóa sản phẩm.');
                 }
             });
 
@@ -493,8 +493,8 @@ document.addEventListener('DOMContentLoaded', () => {
             productTableBody.appendChild(row);
         });
 
-        ensureTableContent(productTableBody, 5, 'Chua co san pham nao.');
-        productCountLabel.textContent = `${products.length} san pham`;
+        ensureTableContent(productTableBody, 5, 'Chưa có sản phẩm nào.');
+        productCountLabel.textContent = `${products.length} sản phẩm`;
     }
 
     function renderUserRows(users) {
@@ -514,7 +514,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const editBtn = document.createElement('button');
             editBtn.type = 'button';
             editBtn.className = 'action-chip';
-            editBtn.textContent = 'Sua';
+            editBtn.textContent = 'Sửa';
             editBtn.addEventListener('click', () => {
                 // navigateTo('admin-user-editor.html', { id: user.id });
                 showNotification('Chức năng chỉnh sửa người dùng đang được phát triển', 'info');
@@ -523,16 +523,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const deleteBtn = document.createElement('button');
             deleteBtn.type = 'button';
             deleteBtn.className = 'action-chip delete';
-            deleteBtn.textContent = 'Xoa';
+            deleteBtn.textContent = 'Xóa';
             deleteBtn.addEventListener('click', async () => {
-                if (!confirm(`Xoa nguoi dung "${user.username}"?`)) {
+                if (!confirm(`Xóa người dùng "${user.username}"?`)) {
                     return;
                 }
                 try {
                     await api.deleteUser(user.id);
                     await loadUsers();
                 } catch (error) {
-                    alert(error.message || 'Khong the xoa nguoi dung.');
+                    alert(error.message || 'Không thể xóa người dùng.');
                 }
             });
 
@@ -541,52 +541,52 @@ document.addEventListener('DOMContentLoaded', () => {
             usersTableBody.appendChild(row);
         });
 
-        ensureTableContent(usersTableBody, 5, 'Chua co nguoi dung nao.');
-        userCountLabel.textContent = `${users.length} nguoi dung`;
+        ensureTableContent(usersTableBody, 5, 'Chưa có người dùng nào.');
+        userCountLabel.textContent = `${users.length} người dùng`;
     }
 
     async function loadBlogs() {
-        setFeedback(blogFeedback, 'Dang tai danh sach...', 'info');
+        setFeedback(blogFeedback, 'Đang tải danh sách...', 'info');
         try {
             const posts = await api.fetchBlogPosts({ limit: 100, offset: 0 });
             renderBlogRows(posts);
             setFeedback(blogFeedback, '', 'info');
         } catch (error) {
             console.error('Error loading blogs:', error);
-            setFeedback(blogFeedback, error.message || 'Khong the tai danh sach blog.', 'error');
+            setFeedback(blogFeedback, error.message || 'Không thể tải danh sách blog.', 'error');
             blogTableBody.innerHTML = '';
-            ensureTableContent(blogTableBody, 7, 'Khong the tai du lieu.');
-            blogCountLabel.textContent = '0 bai viet';
+            ensureTableContent(blogTableBody, 7, 'Không thể tải dữ liệu.');
+            blogCountLabel.textContent = '0 bài viết';
         }
     }
 
     async function loadProducts() {
-        setFeedback(productFeedback, 'Dang tai danh sach...', 'info');
+        setFeedback(productFeedback, 'Đang tải danh sách...', 'info');
         try {
             const products = await api.fetchProducts({ limit: 100, offset: 0 });
             renderProductRows(products);
             setFeedback(productFeedback, '', 'info');
         } catch (error) {
             console.error('Error loading products:', error);
-            setFeedback(productFeedback, error.message || 'Khong the tai danh sach san pham.', 'error');
+            setFeedback(productFeedback, error.message || 'Không thể tải danh sách sản phẩm.', 'error');
             productTableBody.innerHTML = '';
-            ensureTableContent(productTableBody, 5, 'Khong the tai du lieu.');
-            productCountLabel.textContent = '0 san pham';
+            ensureTableContent(productTableBody, 5, 'Không thể tải dữ liệu.');
+            productCountLabel.textContent = '0 sản phẩm';
         }
     }
 
     async function loadUsers() {
-        setFeedback(userFeedback, 'Dang tai danh sach...', 'info');
+        setFeedback(userFeedback, 'Đang tải danh sách...', 'info');
         try {
             const users = await api.fetchUsers();
             renderUserRows(users);
             setFeedback(userFeedback, '', 'info');
         } catch (error) {
             console.error('Error loading users:', error);
-            setFeedback(userFeedback, error.message || 'Khong the tai danh sach nguoi dung.', 'error');
+            setFeedback(userFeedback, error.message || 'Không thể tải danh sách người dùng.', 'error');
             usersTableBody.innerHTML = '';
-            ensureTableContent(usersTableBody, 5, 'Khong the tai du lieu.');
-            userCountLabel.textContent = '0 nguoi dung';
+            ensureTableContent(usersTableBody, 5, 'Không thể tải dữ liệu.');
+            userCountLabel.textContent = '0 người dùng';
         }
     }
 
@@ -623,30 +623,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const confirmPassword = confirmPasswordInput.value.trim();
 
         if (!currentPassword || !newPassword) {
-            changePasswordMessage.textContent = 'Vui long nhap day du thong tin.';
+            changePasswordMessage.textContent = 'Vui lòng nhập đầy đủ thông tin.';
             changePasswordMessage.classList.add('is-error');
             return;
         }
 
         if (newPassword.length < 8) {
-            changePasswordMessage.textContent = 'Mat khau moi phai co it nhat 8 ky tu.';
+            changePasswordMessage.textContent = 'Mật khẩu mới phải có ít nhất 8 ký tự.';
             changePasswordMessage.classList.add('is-error');
             return;
         }
 
         if (newPassword !== confirmPassword) {
-            changePasswordMessage.textContent = 'Mat khau nhap lai khong khop.';
+            changePasswordMessage.textContent = 'Mật khẩu nhập lại không khớp.';
             changePasswordMessage.classList.add('is-error');
             return;
         }
 
         try {
             await api.changePassword({ currentPassword, newPassword });
-            changePasswordMessage.textContent = 'Da cap nhat mat khau.';
+            changePasswordMessage.textContent = 'Đã cập nhật mật khẩu.';
             changePasswordMessage.classList.add('is-success');
             setTimeout(() => closeChangePasswordModal(), 1200);
         } catch (error) {
-            changePasswordMessage.textContent = error.message || 'Khong the cap nhat mat khau.';
+            changePasswordMessage.textContent = error.message || 'Không thể cập nhật mật khẩu.';
             changePasswordMessage.classList.add('is-error');
         }
     });
@@ -659,18 +659,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = document.getElementById('loginPassword').value.trim();
 
         if (!username || !password) {
-            loginError.textContent = 'Vui long nhap ten dang nhap va mat khau.';
+            loginError.textContent = 'Vui lòng nhập tên đăng nhập và mật khẩu.';
             return;
         }
 
         try {
             const { user } = await api.login({ username, password });
             toggleSections(true);
-            currentUserLabel.textContent = `Xin chao, ${user.displayName || user.username}`;
+            currentUserLabel.textContent = `Xin chào, ${user.displayName || user.username}`;
             await loadAllData();
             displayFlashMessage();
         } catch (error) {
-            loginError.textContent = error.message || 'Dang nhap that bai.';
+            loginError.textContent = error.message || 'Đăng nhập thất bại.';
         }
     });
 
@@ -711,7 +711,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!response.ok) {
                 const data = await response.json();
-                throw new Error(data.message || 'Khong the xuat database.');
+                throw new Error(data.message || 'Không thể xuất database.');
             }
 
             const blob = await response.blob();
@@ -724,9 +724,9 @@ document.addEventListener('DOMContentLoaded', () => {
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
 
-            alert('Da xuat database thanh cong!');
+            alert('Đã xuất database thành công!');
         } catch (error) {
-            alert(error.message || 'Khong the xuat database.');
+            alert(error.message || 'Không thể xuất database.');
         }
     });
 
@@ -738,7 +738,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!response.ok) {
                 const data = await response.json();
-                throw new Error(data.message || 'Khong the tai template.');
+                throw new Error(data.message || 'Không thể tải template.');
             }
 
             const blob = await response.blob();
@@ -751,7 +751,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
         } catch (error) {
-            alert(error.message || 'Khong the tai template.');
+            alert(error.message || 'Không thể tải template.');
         }
     });
 
@@ -761,16 +761,16 @@ document.addEventListener('DOMContentLoaded', () => {
         importMessage.classList.remove('is-success', 'is-error');
 
         if (!file) {
-            importMessage.textContent = 'Vui long chon file Excel de import.';
+            importMessage.textContent = 'Vui lòng chọn file Excel để import.';
             importMessage.classList.add('is-error');
             return;
         }
 
-        if (!confirm('Import se thay the toan bo du lieu hien tai. Ban co chac chan?')) {
+        if (!confirm('Import sẽ thay thế toàn bộ dữ liệu hiện tại. Bạn có chắc chắn không?')) {
             return;
         }
 
-        importMessage.textContent = 'Dang import...';
+        importMessage.textContent = 'Đang import...';
         importMessage.classList.add('is-info');
 
         try {
@@ -785,7 +785,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!response.ok) {
                 const data = await response.json();
-                throw new Error(data.message || 'Khong the import database.');
+                throw new Error(data.message || 'Không thể import database.');
             }
 
             const result = await response.json();
@@ -795,7 +795,7 @@ document.addEventListener('DOMContentLoaded', () => {
             importFileInput.value = '';
             await loadAllData();
         } catch (error) {
-            importMessage.textContent = error.message || 'Khong the import database.';
+            importMessage.textContent = error.message || 'Không thể import database.';
             importMessage.classList.remove('is-info');
             importMessage.classList.add('is-error');
         }
@@ -816,7 +816,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const user = await api.currentUser();
             if (user) {
                 toggleSections(true);
-                currentUserLabel.textContent = `Xin chao, ${user.displayName || user.username}`;
+                currentUserLabel.textContent = `Xin chào, ${user.displayName || user.username}`;
                 await loadAllData();
                 displayFlashMessage();
             } else {

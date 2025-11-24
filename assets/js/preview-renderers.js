@@ -160,7 +160,7 @@
         if (!blocks.length) {
             const inlineHtml = sortedEmbeds.map((embed) => embed.html).join('');
             return {
-                html: `${content || 'Khong co noi dung'}${inlineHtml}`,
+                html: `${content || 'Không có nội dung'}${inlineHtml}`,
                 paragraphCount: 0
             };
         }
@@ -319,7 +319,7 @@
     };
 
     const renderBlogPreview = (data = {}) => {
-        const safeTitle = escapeHtml(data.title || 'Khong co tieu de');
+        const safeTitle = escapeHtml(data.title || 'Không có tiêu đề');
         const subtitleHtml = data.subtitle
             ? `<p class="preview-subtitle">${escapeHtml(data.subtitle)}</p>`
             : '';
@@ -378,7 +378,7 @@
                </div>`
             : '';
 
-        const bodyContent = data.content || 'Khong co noi dung';
+        const bodyContent = data.content || 'Không có nội dung';
 
         const { inline: inlineMedia, remainder: galleryMedia } = splitInlineItems(
             data.galleryMedia
@@ -497,7 +497,7 @@
                </div>`
                 : '';
 
-        const descriptionContent = data.description || 'Khong co mo ta';
+        const descriptionContent = data.description || 'Không có mô tả';
 
         const { inline: inlineMedia, remainder: galleryMedia } = splitInlineItems(
             data.galleryMedia
@@ -513,8 +513,8 @@
         const demoCalloutHtml = renderDemoComboSection(data.demoMedia);
 
         const galleryHtml = renderMediaSection(galleryMedia, {
-            title: 'Thu vien anh san pham',
-            labels: { ...PRODUCT_MEDIA_LABELS, default: 'Anh' }
+            title: 'Thư viện ảnh sản phẩm',
+            labels: { ...PRODUCT_MEDIA_LABELS, default: 'Ảnh' }
         });
 
         const videoHtml = renderVideoSection(videoItems, {
@@ -531,11 +531,11 @@
             : '';
 
         return `
-            <h1>${data.name || 'Khong co ten san pham'}</h1>
+            <h1>${data.name || 'Không có tên sản phẩm'}</h1>
             ${data.category ? `<p class="preview-category">${data.category}</p>` : ''}
             ${
                 data.imageUrl
-                    ? `<img src="${data.imageUrl}" alt="${data.name || 'Anh san pham'}" />`
+                    ? `<img src="${data.imageUrl}" alt="${data.name || 'Ảnh sản phẩm'}" />`
                     : ''
             }
             ${data.shortDescription ? `<p class="preview-excerpt">${data.shortDescription}</p>` : ''}

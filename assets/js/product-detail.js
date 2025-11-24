@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                   .split(/\n{2,}/)
                   .map((paragraph) => `<p>${paragraph}</p>`)
                   .join('')
-            : '<p>Khong co mo ta</p>';
+            : '<p>Không có mô tả</p>';
 
         const features =
             product.featureTags && product.featureTags.length
@@ -96,11 +96,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         const demoFallback = renderDemoFallbackSection(product);
 
         return `
-            <h1>${product.name || 'Khong co ten san pham'}</h1>
+            <h1>${product.name || 'Không có tên sản phẩm'}</h1>
             ${product.category ? `<p class="preview-category">${product.category}</p>` : ''}
             ${
                 product.imageUrl
-                    ? `<img src="${product.imageUrl}" alt="${product.name || 'Anh san pham'}" />`
+                    ? `<img src="${product.imageUrl}" alt="${product.name || 'Ảnh sản phẩm'}" />`
                     : ''
             }
             ${product.shortDescription ? `<p class="preview-excerpt">${product.shortDescription}</p>` : ''}
@@ -343,30 +343,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (previewEl) {
             previewEl.innerHTML = `
                 <div class="article-error preview-error">
-                    <h2>Khong tim thay san pham</h2>
-                    <p>${message || 'Vui long quay lai chon san pham khac.'}</p>
-                    <a class="btn btn-primary" href="products.html">Quay lai danh sach</a>
+                    <h2>Không tìm thấy sản phẩm</h2>
+                    <p>${message || 'Vui lòng quay lại chọn sản phẩm khác.'}</p>
+                    <a class="btn btn-primary" href="products.html">Quay lại danh sách</a>
                 </div>
             `;
         }
         if (linksEl) {
-            linksEl.innerHTML = '<li>Khong co du lieu.</li>';
+            linksEl.innerHTML = '<li>Không có dữ liệu.</li>';
         }
         if (primaryCtaEl) {
             primaryCtaEl.style.display = 'none';
         }
-        document.title = 'Khong tim thay san pham | COVASOL';
+        document.title = 'Không tìm thấy sản phẩm | COVASOL';
     }
 
     try {
         const identifier = resolveIdentifier();
         if (!identifier) {
-            throw new Error('Khong xac dinh duoc ma san pham.');
+            throw new Error('Không xác định được mã sản phẩm.');
         }
 
         const payload = await api.fetchProduct(identifier);
         if (!isActiveProduct(payload)) {
-            showError('San pham nay hien dang bi an hoac tam dung hien thi.');
+            showError('Sản phẩm này hiện đang bị ẩn hoặc tạm dừng hiển thị.');
             return;
         }
         renderProduct(payload);

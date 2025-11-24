@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
             featuredDate.textContent = formatDate(post.publishedAt);
         }
         if (featuredTitle) {
-            featuredTitle.textContent = post.title || 'Bai viet noi bat';
+            featuredTitle.textContent = post.title || 'Bài viết nổi bật';
         }
         if (featuredExcerpt) {
             const fallbackExcerpt = post.excerpt || (post.content ? `${post.content.slice(0, 180)}...` : '');
@@ -295,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             return hero;
         } catch (error) {
-            console.error('Khong the tai bai viet noi bat:', error);
+            console.error('Không thể tải bài viết nổi bật:', error);
             state.highlightedCode = null;
             hideFeaturedSection();
             return null;

@@ -51,10 +51,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                   .split(/\n{2,}/)
                   .map((paragraph) => `<p>${paragraph}</p>`)
                   .join('')
-            : '<p>Khong co noi dung</p>';
+            : '<p>Không có nội dung</p>';
 
         return `
-            <h1>${article.title || 'Khong co tieu de'}</h1>
+            <h1>${article.title || 'Không có tiêu đề'}</h1>
             ${article.subtitle ? `<p class="preview-subtitle">${article.subtitle}</p>` : ''}
             <div class="preview-meta">
                 ${article.category ? `<span><strong>Danh muc:</strong> ${article.category}</span>` : ''}
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        relatedListEl.innerHTML = '<li>Dang tai bai viet gan day...</li>';
+        relatedListEl.innerHTML = '<li>Đang tải bài viết gần đây...</li>';
         try {
             const posts = await api.fetchBlogPosts({
                 limit: 6,
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     link.className = 'recent-post-link';
                     link.href = detailUrl;
-                    link.setAttribute('aria-label', `Xem bai viet ${post.title}`);
+                    link.setAttribute('aria-label', `Xem bài viết ${post.title}`);
 
                     textWrapper.className = 'recent-post-body';
                     titleEl.className = 'recent-post-title';
@@ -121,11 +121,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
 
             if (!relatedListEl.children.length) {
-                relatedListEl.innerHTML = '<li>Chua co bai viet gan day</li>';
+                relatedListEl.innerHTML = '<li>Chưa có bài viết gần đây</li>';
             }
         } catch (error) {
             console.error('Không thể tải bài viết liên quan:', error);
-            relatedListEl.innerHTML = '<li>Khong tai duoc danh sach bai viet gan day.</li>';
+            relatedListEl.innerHTML = '<li>Không tải được danh sách bài viết gần đây.</li>';
         }
     }
 
