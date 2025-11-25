@@ -19,9 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return fallback || key;
     }
 
-    // Expose translate globally
-    window.covasolTranslate = translate;
-
     // Language switcher elements
     const langBtn = document.getElementById('langBtn');
     const langMenu = document.getElementById('langMenu');
@@ -64,40 +61,13 @@ document.addEventListener('DOMContentLoaded', function () {
         elements.forEach(element => {
             const key = element.getAttribute('data-key');
             if (translations[lang] && translations[lang][key]) {
-                const translation = translations[lang][key];
-
                 if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-                    element.placeholder = translation;
-                } else if (element.tagName === 'IMG') {
-                    element.alt = translation;
+                    element.placeholder = translations[lang][key];
                 } else if (element.tagName === 'SELECT') {
                     // Handle select options separately
                     return;
                 } else {
-                    // Check if element has aria-label and is likely an icon button (has children but no text)
-                    if (element.hasAttribute('aria-label') && element.children.length > 0 && !element.textContent.trim()) {
-                        element.setAttribute('aria-label', translation);
-                    } else if (element.children.length === 0) {
-                        // Safe to set textContent if no children
-                        element.textContent = translation;
-                    } else {
-                        // Has children (e.g. bold tags, icons) - be careful
-                        // If the user put data-key on a container with complex structure, we might break it.
-                        // But usually data-key is on leaf nodes.
-                        // If it has children but also text, we might want to replace the text node?
-                        // For now, let's assume data-key on a container with children implies replacing everything OR it's a mistake.
-                        // However, to be safe and support the "icon button" case above, we added the check.
-                        // If it falls here, it has children and maybe text.
-                        // If we set textContent, we lose children.
-                        // Let's check if it has aria-label, if so, maybe that's what we want to translate?
-                        if (element.hasAttribute('aria-label')) {
-                            element.setAttribute('aria-label', translation);
-                        } else {
-                            // Fallback: replace content. This matches previous behavior but is risky.
-                            // Ideally we shouldn't put data-key on containers with icons unless we want to replace them.
-                            element.textContent = translation;
-                        }
-                    }
+                    element.textContent = translations[lang][key];
                 }
             }
         });

@@ -14,22 +14,18 @@ const translations = {
         'nav-reviews': 'Đánh giá',
         'nav-contact': 'Liên hệ',
         'nav-cta': 'Tư vấn miễn phí',
-
+        
         // Hero Section
         'hero-subtitle': 'Core Value. Smart Solutions.',
         'hero-description': 'Đối tác công nghệ đáng tin cậy cho doanh nghiệp hiện đại. Chúng tôi chuyên phát triển phần mềm, thiết kế trải nghiệm người dùng và hỗ trợ chuyển đổi số toàn diện.',
         'hero-btn-services': 'Khám phá dịch vụ',
         'hero-btn-contact': 'Liên hệ ngay',
-        'video-unsupported': 'Trình duyệt của bạn không hỗ trợ video.',
-        'stat-projects-label': 'Dự án triển khai',
-        'stat-clients-label': 'Khách hàng hài lòng',
-        'stat-partners-label': 'Đối tác chiến lược',
-
+        
         // Services Overview
         'services-title': 'Dịch vụ của chúng tôi',
         'services-subtitle': 'Giải pháp công nghệ toàn diện',
         'services-description': 'Từ ý tưởng đến triển khai, chúng tôi cung cấp các dịch vụ công nghệ chuyên nghiệp để giúp doanh nghiệp của bạn phát triển.',
-
+        
         // Service Cards
         'service1-title': 'Phát triển phần mềm',
         'service1-desc': 'Xây dựng giải pháp công nghệ theo nhu cầu',
@@ -43,31 +39,10 @@ const translations = {
         'service5-desc': 'Hợp nhất công nghệ và marketing tạo kết quả thực tế',
         'service6-title': 'Giải pháp đặc biệt',
         'service6-desc': 'Xây dựng sản phẩm riêng – có thể thương mại hóa',
-        'service1-item1': 'Web Application Development',
-        'service1-item2': 'Mobile App Development',
-        'service1-item3': 'API & Backend Development',
-        'service1-item4': 'Automation & Integration',
-        'service2-item1': 'UI/UX Design',
-        'service2-item2': 'Brand Identity Design',
-        'service2-item3': 'Prototype & Wireframe',
-        'service2-item4': 'Design System Development',
-        'service3-item1': 'Business Process Automation',
-        'service3-item2': 'System Integration',
-        'service3-item3': 'Digital Workspace Setup',
-        'service3-item4': 'Data Analytics & Reporting',
-        'service4-item1': 'Technical Consulting',
-        'service4-item2': 'Software Maintenance',
-        'service4-item3': 'Training & Documentation',
-        'service5-item1': 'Website Optimization',
-        'service5-item2': 'Campaign Landing Page',
-        'service5-item3': 'Automation Marketing',
-        'service6-item1': 'Công cụ SaaS nội bộ',
-        'service6-item2': 'AI Assistant tích hợp',
-        'service6-item3': 'Custom Cloud Service',
-
+        
         // Common
         'learn-more': 'Tìm hiểu thêm',
-
+        
         // Detailed Services
         'detailed-services-title': 'Chi tiết dịch vụ',
         'web-dev-title': 'Phát triển Website',
@@ -78,11 +53,11 @@ const translations = {
         'ecommerce-desc': 'Xây dựng hệ thống bán hàng online hoàn chỉnh với tích hợp thanh toán.',
         'cloud-title': 'Giải pháp Cloud',
         'cloud-desc': 'Triển khai và quản lý hạ tầng cloud an toàn, linh hoạt và tiết kiệm chi phí.',
-
+        
         // Common
         'learn-more': 'Tìm hiểu thêm',
         'target-label': 'Đối tượng:',
-
+        
         // Detailed Services
         'detailed-services-title': 'Phát triển phần mềm',
         'detailed-services-subtitle': '"Xây dựng giải pháp công nghệ theo nhu cầu."',
@@ -102,30 +77,27 @@ const translations = {
         'api-dev-desc': 'Xây dựng hệ thống API, cơ sở dữ liệu, microservice, bảo mật, mở rộng nền tảng.',
         'automation-title': 'Automation & Integration',
         'automation-desc': 'Tự động hóa quy trình, kết nối ứng dụng (Zapier, n8n, custom API).',
-
+        
         // Target Clients
         'target-label': 'Đối tượng:',
         'web-dev-target': 'Startup, SME, tổ chức cần hệ thống quản lý hoặc kênh tương tác.',
         'mobile-dev-target': 'Doanh nghiệp cần sản phẩm hướng tới người dùng cuối.',
         'api-dev-target': 'Các dự án cần kết nối dữ liệu hoặc nền tảng mở rộng.',
         'automation-target': 'Công ty muốn giảm thao tác thủ công, tăng hiệu suất.',
-
+        
         // About Section
         'about-title': 'Về COVASOL',
         'about-text': 'COVASOL là công ty công nghệ chuyên cung cấp giải pháp phần mềm và dịch vụ chuyển đổi số cho các doanh nghiệp vừa và nhỏ. Với phương châm "Core Value. Smart Solutions.", chúng tôi cam kết mang đến những giải pháp công nghệ thông minh, hiệu quả và bền vững.',
-        'about-caption-team': 'Đội ngũ triển khai dự án',
-        'about-caption-office': 'Văn phòng IT Lab',
-        'about-caption-meeting': 'Không gian họp chiến lược',
-
+        
         // Stats
         'stat1-label': 'Dự án hoàn thành',
         'stat2-label': 'Khách hàng hài lòng',
         'stat3-label': 'Năm kinh nghiệm',
-
+        
         // Why Choose Section
         'why-choose-title': 'Tại sao nên chọn COVASOL?',
         'why-choose-subtitle': 'Những giá trị cốt lõi tạo nên sự khác biệt',
-
+        
         // Features
         'feature1-title': 'Giải pháp sáng tạo',
         'feature1-desc': 'Luôn tìm kiếm những cách tiếp cận mới và sáng tạo để giải quyết vấn đề của khách hàng.',
@@ -139,73 +111,11 @@ const translations = {
         'feature5-desc': 'Đội ngũ hỗ trợ kỹ thuật luôn sẵn sàng hỗ trợ khách hàng mọi lúc, mọi nơi.',
         'feature6-title': 'Tối ưu hiệu quả',
         'feature6-desc': 'Tập trung vào việc tối ưu hóa hiệu quả hoạt động và ROI cho khách hàng.',
-
+        
         // Reviews Section  
         'reviews-title': 'Khách hàng nói gì về chúng tôi',
         'reviews-subtitle': 'Những phản hồi từ các doanh nghiệp đã tin tưởng và hợp tác cùng COVASOL',
-
-        // Review Items
-        'review1-role': 'CEO - TechStart',
-        'review1-text': 'Đội ngũ COVASOL rất chuyên nghiệp và tận tâm. Sản phẩm hoàn thiện vượt mong đợi của chúng tôi.',
-        'review1-date': '2 tuần trước',
-        'review2-role': 'Marketing Manager - RetailPro',
-        'review2-text': 'Website và app mobile do COVASOL phát triển đã giúp doanh thu online tăng 300%. UI/UX thiết kế rất đẹp và dễ sử dụng.',
-        'review2-date': '1 tháng trước',
-        'review3-role': 'CTO - FinanceCore',
-        'review3-text': 'Hệ thống API và microservice rất ổn định. COVASOL hiểu rõ yêu cầu kỹ thuật và đưa ra giải pháp phù hợp với ngân sách.',
-        'review3-date': '3 tuần trước',
-        'review4-role': 'Founder - EduTech Vietnam',
-        'review4-text': 'Nền tảng học online được xây dựng rất chuyên nghiệp. Học sinh và giáo viên đều feedback tích cực về giao diện và tính năng.',
-        'review4-date': '1 tháng trước',
-        'review5-role': 'Giám đốc - Logistics Plus',
-        'review5-text': 'Hệ thống quản lý vận chuyển giúp tối ưu hóa tuyến đường và giảm 25% chi phí nhiên liệu. Tính năng tracking real-time rất hữu ích.',
-        'review5-date': '6 tuần trước',
-        'review6-role': 'HR Manager - GreenTech Co.',
-        'review6-text': 'App HR quản lý nhân sự rất tiện lợi. Nhân viên có thể chấm công, xin phép, theo dõi lương thưởng dễ dàng từ điện thoại.',
-        'review6-date': '2 tháng trước',
-        'review7-role': 'CEO - SmartHome Solutions',
-        'review7-text': 'Hệ thống IoT và dashboard monitoring hoạt động cực kỳ ổn định. COVASOL có kiến thức sâu về công nghệ mới nhất.',
-        'review7-date': '3 tuần trước',
-        'review8-role': 'Marketing Director - FoodieHub',
-        'review8-text': 'App giao đồ ăn đã ra mắt thành công. Một số tính năng còn cần cải thiện nhưng nhìn chung đã đáp ứng được yêu cầu cơ bản.',
-        'review8-date': '4 tháng trước',
-        'review9-role': 'Owner - RetailChain VN',
-        'review9-text': 'Hệ thống POS và quản lý chuỗi cửa hàng hoạt động mượt mà. Báo cáo thống kê chi tiết giúp ra quyết định kinh doanh chính xác.',
-        'review9-date': '5 tuần trước',
-        'review10-role': 'CFO - InvestSmart',
-        'review10-text': 'Nền tảng fintech được phát triển với tính bảo mật cao. API tích hợp ngân hàng hoạt động ổn định và tuân thủ quy định.',
-        'review10-date': '7 tuần trước',
-        'review11-role': 'CTO - HealthCare Tech',
-        'review11-text': 'Hệ thống quản lý bệnh viện từ COVASOL giúp số hóa toàn bộ quy trình khám chữa bệnh. Bác sĩ và bệnh nhân đều hài lòng.',
-        'review11-date': '6 tuần trước',
-        'review12-role': 'Operations Manager - LogiFlow',
-        'review12-text': 'Automation workflow tiết kiệm 40% thời gian xử lý đơn hàng. Tích hợp với các hệ thống có sẵn rất smooth.',
-        'review12-date': '3 tháng trước',
-        'review13-role': 'Founder - AgriTech Vietnam',
-        'review13-text': 'Nền tảng nông nghiệp thông minh kết nối nông dân với người tiêu dùng rất hiệu quả. Giao diện đơn giản, dễ sử dụng cho mọi lứa tuổi.',
-        'review13-date': '1 tháng trước',
-        'review14-role': 'Brand Manager - FashionHub',
-        'review14-text': 'Website thương mại điện tử có thiết kế đẹp mắt. Một số chức năng checkout còn cần tối ưu thêm để tăng conversion rate.',
-        'review14-date': '5 tháng trước',
-        'review15-role': 'IT Manager - AutoService',
-        'review15-text': 'Hệ thống quản lý garage ô tô với booking online rất tiện lợi. Khách hàng có thể đặt lịch và theo dõi tiến độ sửa chữa.',
-        'review15-date': '4 tuần trước',
-        'review16-role': 'Director - RealEstate Pro',
-        'review16-text': 'Nền tảng bất động sản có tính năng tìm kiếm thông minh và bản đồ tương tác. Giúp tăng 50% lượng leads chất lượng.',
-        'review16-date': '2 tháng trước',
-        'review17-role': 'CEO - TravelSmart',
-        'review17-text': 'App du lịch với AI recommendation rất ấn tượng. Khách hàng có thể plan và book toàn bộ chuyến đi chỉ trong vài click.',
-        'review17-date': '6 tuần trước',
-        'review18-role': 'Product Manager - SportsTech',
-        'review18-text': 'App thể thao với tracking workout khá tốt. Performance tracking chính xác nhưng UI cần cải thiện để user-friendly hơn.',
-        'review18-date': '7 tháng trước',
-        'review19-role': 'Technical Lead - CloudFirst',
-        'review19-text': 'Migration từ on-premise lên cloud được COVASOL thực hiện rất chuyên nghiệp. Zero downtime và performance tăng đáng kể.',
-        'review19-date': '1 tháng trước',
-        'review20-role': 'COO - MediaStreaming',
-        'review20-text': 'Nền tảng streaming video có khả năng scale tốt. Xử lý được hàng nghìn user đồng thời mà không bị lag hay buffering.',
-        'review20-date': '8 tuần trước',
-
+        
         // Contact Section
         'contact-title': 'Liên hệ với chúng tôi',
         'contact-subtitle': 'Hãy để COVASOL đồng hành cùng doanh nghiệp của bạn trên con đường chuyển đổi số.',
@@ -220,7 +130,7 @@ const translations = {
         'contact-fab-phone': 'Gọi ngay',
         'contact-fab-mail': 'Gửi Gmail',
         'contact-fab-facebook': 'Facebook',
-
+        
         // Service Options
         'service-option-web': 'Phát triển Website',
         'service-option-mobile': 'Ứng dụng di động',
@@ -236,7 +146,7 @@ const translations = {
         'products-grid-subtitle': 'Các giải pháp công nghệ được thiết kế để thay đổi cách bạn làm việc',
         'featured': 'Nổi bật',
         'new': 'Mới',
-
+        
         // Product Items
         'product1-name': 'CovaFlow',
         'product1-category': 'Workflow Management',
@@ -256,17 +166,7 @@ const translations = {
         'product6-name': 'CovaSecure',
         'product6-category': 'Security Platform',
         'product6-desc': 'Giải pháp bảo mật toàn diện cho doanh nghiệp. Monitoring 24/7, threat detection và incident response tự động.',
-
-        'product-demo-grid-desc': 'Hiệu ứng lưới động mô phỏng các màn hình sản phẩm đang phân tán trong không gian 3D.',
-        'product-demo-close': 'Đóng demo',
-        'product-demo-preview-alt': 'Xem trước ảnh demo',
-        'product-logo-alt': 'Logo COVASOL',
-
-        'product-demo-grid-desc': 'Dynamic grid effect simulating product screens distributed in 3D space.',
-        'product-demo-close': 'Close demo',
-        'product-demo-preview-alt': 'Demo image preview',
-        'product-logo-alt': 'COVASOL Logo',
-
+        
         // Product Features
         'ai-powered': 'AI-Powered',
         'real-time': 'Real-time',
@@ -281,7 +181,7 @@ const translations = {
         'predictive': 'Predictive AI',
         'security': 'Security',
         'monitoring': '24/7 Monitoring',
-
+        
         // Product Actions
         'try-free': 'Dùng thử miễn phí',
         'demo': 'Xem Demo',
@@ -289,7 +189,7 @@ const translations = {
         'get-started': 'Bắt đầu',
         'explore': 'Khám phá',
         'contact-sales': 'Liên hệ Sales',
-
+        
         // Products CTA
         'cta-title': 'Sẵn sàng trải nghiệm sản phẩm của chúng tôi?',
         'cta-description': 'Liên hệ với đội ngũ COVASOL để được tư vấn chi tiết về sản phẩm phù hợp với nhu cầu của bạn.',
@@ -299,7 +199,7 @@ const translations = {
         // Blog Page
         'blog-title': 'Blog COVASOL',
         'blog-description': 'Chia sẻ kiến thức, xu hướng công nghệ và insights từ đội ngũ chuyên gia COVASOL. Cập nhật những thông tin mới nhất về phát triển phần mềm, AI, và chuyển đổi số.',
-
+        
         // Blog Categories
         'all-posts': 'Tất cả bài viết',
         'development': 'Phát triển',
@@ -307,14 +207,14 @@ const translations = {
         'design': 'Thiết kế',
         'business': 'Kinh doanh',
         'tutorials': 'Hướng dẫn',
-
+        
         // Featured Post
         'category-ai': 'AI & Technology',
         'featured-title': 'Tương lai của AI trong phát triển phần mềm: Xu hướng 2025-2026',
         'featured-excerpt': 'Khám phá cách Artificial Intelligence đang thay đổi cách chúng ta phát triển phần mềm. Từ code generation đến automated testing, AI đang mở ra những khả năng mới...',
         'tech-lead': 'Tech Lead',
         'read-full': 'Đọc toàn bộ',
-
+        
         // Blog Posts
         'post1-title': '10 Tips tối ưu hiệu suất React App trong 2025',
         'post1-excerpt': 'Khám phá các kỹ thuật mới nhất để tối ưu hiệu suất ứng dụng React. Từ lazy loading đến code splitting...',
@@ -328,11 +228,11 @@ const translations = {
         'post5-excerpt': 'Tìm hiểu cách áp dụng Machine Learning vào các dự án web development. Recommendation systems, chatbots và nhiều hơn nữa...',
         'post6-title': 'API Security Best Practices: Bảo mật REST API hiệu quả',
         'post6-excerpt': 'Hướng dẫn toàn diện về bảo mật API. Authentication, authorization, rate limiting và các biện pháp bảo vệ khác...',
-
+        
         // Blog Actions
         'read-more': 'Đọc thêm',
         'load-more': 'Tải thêm bài viết',
-
+        
         // Home Dynamic Sections
         'home-products-title': 'Giải pháp nổi bật',
         'home-products-subtitle': 'Các sản phẩm cập nhật trực tiếp từ hệ thống quản trị.',
@@ -344,130 +244,14 @@ const translations = {
         'home-blog-loading': 'Đang tải bài viết...',
         'home-blog-empty': 'Chưa có bài viết nào được xuất bản.',
         'home-blog-button': 'Đọc thêm trên Blog',
-
+        
         // Newsletter
         'newsletter-title': 'Đăng ký nhận bản tin',
         'newsletter-description': 'Nhận những bài viết mới nhất và insights về công nghệ từ COVASOL. Chúng tôi sẽ gửi bạn nội dung chất lượng mỗi tuần.',
         'newsletter-email': 'Email của bạn',
-        'subscribe': 'Đăng ký',
-
-        // Footer
-        'footer-rights': 'All rights reserved.',
-        'footer-slogan': 'Core Value. Smart Solutions.',
-
-        // Product Detail Page
-        'product-loading': 'Đang tải nội dung sản phẩm...',
-        'product-request-demo': 'Yêu cầu demo',
-        'product-back-list': 'Quay lại danh sách',
-        'product-docs-links': 'Tài liệu & Liên kết',
-        'product-get-consult': 'Nhận tư vấn',
-        'product-consult-desc': 'Để lại thông tin liên hệ, đối tác COVASOL sẽ hỗ trợ trong 24 giờ.',
-        'product-schedule-consult': 'Đặt lịch tư vấn',
-        'product-demo-showcase': 'Realtime showcase',
-        'product-demo-combo': 'Combo ảnh demo',
-        'product-demo-grid-desc': 'Hiệu ứng lưới động mô phỏng các màn hình sản phẩm đang phân tán trong không gian 3D.',
-        'product-demo-zoom-caption': 'Chọn một ảnh bất kỳ để xem rõ hơn.',
-        'product-demo-footer-tap': 'Chạm vào từng ảnh trong lưới để phóng to',
-        'product-demo-footer-limit': 'Hỗ trợ tối đa 9 ảnh demo',
-        'product-no-desc': 'Không có mô tả',
-        'product-highlights': 'Điểm nổi bật',
-        'product-no-name': 'Không có tên sản phẩm',
-        'product-image-alt': 'Ảnh sản phẩm',
-        'product-demo-image-alt': 'Ảnh demo',
-        'product-view-demo-combo': 'Xem combo ảnh demo',
-        'product-demo-count-label': 'ảnh demo',
-        'product-demo-realtime-caption': 'Ảnh demo realtime từ sản phẩm',
-        'product-no-demo-images': 'Chưa có ảnh demo',
-        'product-no-docs': 'Chưa có tài liệu đính kèm.',
-        'product-default-name': 'Sản phẩm',
-        'product-not-found-title': 'Không tìm thấy sản phẩm',
-        'product-not-found-msg': 'Vui lòng quay lại chọn sản phẩm khác.',
-        'product-no-data': 'Không có dữ liệu.',
-        'product-not-found-page-title': 'Không tìm thấy sản phẩm | COVASOL',
-        'product-error-no-code': 'Không xác định được mã sản phẩm.',
-        'product-error-hidden': 'Sản phẩm này hiện đang bị ẩn hoặc tạm dừng hiển thị.',
-        'product-zoom-alt': 'Ảnh phóng to',
-        'product-gallery-title': 'Thư viện ảnh sản phẩm',
-        'product-video-title': 'Video demo',
-
-        // Blog Detail Page
-        'blog-loading': 'Đang tải nội dung bài viết...',
-        'blog-back': 'Quay lại Blog',
-        'blog-recent': 'Bài viết gần đây',
-        'blog-connect-title': 'Kết nối với COVASOL',
-        'blog-connect-desc': 'Liên hệ với đội ngũ COVASOL để được tư vấn giải pháp phù hợp nhất cho doanh nghiệp.',
-        'blog-schedule-consult': 'Đặt lịch tư vấn',
-        'blog-no-content': 'Không có nội dung',
-        'blog-no-title': 'Không có tiêu đề',
-        'blog-category-label': 'Danh mục:',
-        'blog-date-label': 'Ngày:',
-        'blog-author-label': 'Tác giả:',
-        'blog-loading-recent': 'Đang tải bài viết gần đây...',
-        'blog-view-post': 'Xem bài viết',
-        'blog-no-recent': 'Chưa có bài viết gần đây',
-        'blog-error-load-recent': 'Không thể tải bài viết liên quan:',
-        'blog-error-list-recent': 'Không tải được danh sách bài viết gần đây.',
-        'blog-error-hidden': 'Bài viết này đang được ẩn hoặc chưa xuất bản.',
-        'blog-not-found-title': 'Không tìm thấy bài viết',
-        'blog-not-found-msg': 'Vui lòng quay lại trang blog để chọn bài viết khác.',
-        'blog-no-data': 'Không có dữ liệu.',
-        'blog-not-found-page-title': 'Không tìm thấy bài viết | COVASOL',
-        'blog-error-no-code': 'Không xác định được mã bài viết.',
-        'blog-undefined': 'Chưa xác định',
-        'blog-media-cover': 'Ảnh bìa',
-        'blog-media-content': 'Ảnh nội dung',
-        'blog-media-insert': 'Ảnh chèn',
-        'blog-media-quote': 'Ảnh trích dẫn',
-        'blog-media-gallery': 'Ảnh gallery',
-        'blog-video-intro': 'Video mở đầu',
-        'blog-video-content': 'Video nội dung',
-        'blog-video-demo': 'Video demo',
-        'blog-video-interview': 'Video phỏng vấn',
-        'blog-image-alt': 'Ảnh',
-        'blog-video-alt': 'Video',
-        'blog-watch-video': 'Xem video',
-        'blog-gallery-title': 'Thư viện ảnh',
-        'blog-video-section-title': 'Video minh họa',
-        'blog-sources-title': 'Nguồn tham khảo',
-        'blog-source-label': 'Nguồn tham khảo',
-        'blog-by': 'Bởi',
-        'blog-keywords-label': 'Từ khóa:',
-
-        // Preview Renderers
-        'preview-undefined': 'Chưa xác định',
-        'preview-img-cover': 'Ảnh bìa',
-        'preview-img-content': 'Ảnh nội dung',
-        'preview-img-insert': 'Ảnh chèn',
-        'preview-img-quote': 'Ảnh trích dẫn',
-        'preview-img-gallery': 'Ảnh gallery',
-        'preview-vid-intro': 'Video mở đầu',
-        'preview-vid-content': 'Video nội dung',
-        'preview-vid-demo': 'Video demo',
-        'preview-vid-interview': 'Video phỏng vấn',
-        'preview-prod-img-hero': 'Ảnh hero',
-        'preview-prod-img-gallery': 'Ảnh gallery',
-        'preview-prod-img-content': 'Ảnh nội dung',
-        'preview-prod-img-feature': 'Ảnh tính năng',
-        'preview-prod-vid-hero': 'Video hero',
-        'preview-prod-vid-demo': 'Video demo',
-        'preview-prod-vid-content': 'Video nội dung',
-        'preview-prod-vid-testimonial': 'Video khách hàng',
-        'preview-default-img': 'Ảnh',
-        'preview-default-vid': 'Video',
-        'preview-watch-video': 'Xem video',
-        'preview-image-badge': 'Ảnh',
-        'preview-video-badge': 'Video',
-
-        // API Errors
-        'api-error-connect': 'Không thể kết nối tới máy chủ API.',
-        'api-error-generic': 'Đã xảy ra lỗi.',
-        'api-error-static': 'API endpoint không khả dụng ở chế độ tĩnh.',
-        'api-error-no-post-code': 'Vui lòng cung cấp mã bài viết.',
-        'api-error-post-not-found': 'Không tìm thấy bài viết.',
-        'api-error-no-product-code': 'Vui lòng cung cấp mã sản phẩm.',
-        'api-error-product-not-found': 'Không tìm thấy sản phẩm.'
+        'subscribe': 'Đăng ký'
     },
-
+    
     en: {
         // Navigation
         'nav-home': 'Home',
@@ -478,22 +262,30 @@ const translations = {
         'nav-reviews': 'Reviews',
         'nav-contact': 'Contact',
         'nav-cta': 'Free Consultation',
-
+        
         // Hero Section
         'hero-subtitle': 'Core Value. Smart Solutions.',
         'hero-description': 'Your trusted technology partner for modern businesses. We specialize in software development, user experience design, and comprehensive digital transformation support.',
         'hero-btn-services': 'Explore Services',
         'hero-btn-contact': 'Contact Now',
-        'video-unsupported': 'Your browser does not support the video tag.',
-        'stat-projects-label': 'Projects Delivered',
-        'stat-clients-label': 'Happy Clients',
-        'stat-partners-label': 'Strategic Partners',
-
+        
         // Services Overview
         'services-title': 'Our Services',
         'services-subtitle': 'Comprehensive Technology Solutions',
         'services-description': 'From concept to deployment, we provide professional technology services to help your business grow.',
 
+        // Home Dynamic Sections
+        'home-products-title': 'Featured Solutions',
+        'home-products-subtitle': 'New solutions curated directly from the admin system.',
+        'home-products-loading': 'Loading products...',
+        'home-products-empty': 'No products have been published yet.',
+        'home-products-button': 'View all products',
+        'home-blog-title': 'Latest Insights',
+        'home-blog-subtitle': 'News and articles from the COVASOL expert team.',
+        'home-blog-loading': 'Loading articles...',
+        'home-blog-empty': 'No articles have been published yet.',
+        'home-blog-button': 'Read more on the Blog',
+        
         // Service Cards
         'service1-title': 'Software Development',
         'service1-desc': 'Building technology solutions according to needs',
@@ -501,94 +293,83 @@ const translations = {
         'service2-desc': 'Creating streamlined, clear, and easy-to-use brand and product experiences',
         'service3-title': 'Digital Transformation',
         'service3-desc': 'Bringing technology into real operations, not just stopping at software',
-
+        'service4-title': 'Consulting & Maintenance',
+        'service4-desc': 'Long-term partnership, sustainable development with businesses',
+        'service5-title': 'Marketing & Digital Strategy',
+        'service5-desc': 'Combining technology and marketing to create real results',
+        'service6-title': 'Special Solutions',
+        'service6-desc': 'Building proprietary products - commercially viable',
+        
+        // Common
+        'learn-more': 'Learn More',
+        
+        // Detailed Services
+        'detailed-services-title': 'Service Details',
+        'web-dev-title': 'Website Development',
+        'web-dev-desc': 'Create professional websites that are SEO-optimized and responsive across all devices.',
+        'mobile-dev-title': 'Mobile Applications',
+        'mobile-dev-desc': 'Develop high-performance iOS and Android applications with user-friendly interfaces.',
+        'ecommerce-title': 'E-commerce',
+        'ecommerce-desc': 'Build complete online sales systems with integrated payment solutions.',
+        'cloud-title': 'Cloud Solutions',
+        'cloud-desc': 'Deploy and manage secure, flexible, and cost-effective cloud infrastructure.',
+        
+        // Detailed Services Update
+        'target-label': 'Target:',
+        'web-dev-target': 'Startups, SMEs, organizations needing management systems or interaction channels.',
+        'mobile-dev-target': 'Businesses needing end-user-oriented products.',
+        'api-dev-title': 'API & Backend Development',
+        'api-dev-desc': 'Build API systems, databases, microservices, security.',
+        'api-dev-target': 'Projects needing data connectivity or scalable platforms.',
+        'automation-title': 'Automation & Integration',
+        'automation-desc': 'Process automation, app integration (Zapier, n8n, custom API).',
+        'automation-target': 'Companies wanting to reduce manual tasks, increase efficiency.',
+        'api-dev-title': 'API & Backend Development',
+        'api-dev-desc': 'Building API systems, databases, microservices, security.',
+        'automation-title': 'Automation & Integration',
+        'automation-desc': 'Process automation, application integration (Zapier, n8n, custom API).',
+        
+        // Target Clients
+        'target-label': 'Target:',
+        'web-dev-target': 'Startups, SMEs, organizations needing management systems or interaction channels.',
+        'mobile-dev-target': 'Businesses needing products targeting end users.',
+        'api-dev-target': 'Projects needing data connection or platform expansion.',
+        'automation-target': 'Companies wanting to reduce manual operations, increase efficiency.',
+        
+        // About Section
+        'about-title': 'About COVASOL',
+        'about-text': 'COVASOL is a technology company specializing in providing software solutions and digital transformation services for small and medium enterprises. With the motto "Core Value. Smart Solutions.", we are committed to bringing smart, effective and sustainable technology solutions.',
+        
+        // Stats
+        'stat1-label': 'Projects Completed',
+        'stat2-label': 'Satisfied Customers',
+        'stat3-label': 'Years Experience',
+        
         // Why Choose Section
         'why-choose-title': 'Why Choose COVASOL?',
         'why-choose-subtitle': 'Core values that make the difference',
-
+        
         // Features
         'feature1-title': 'Creative Solutions',
-        'feature1-desc': 'Always looking for new and innovative approaches to solve client problems.',
+        'feature1-desc': 'Always seeking new and innovative approaches to solve customer problems.',
         'feature2-title': 'Professional Team',
         'feature2-desc': 'Gathering experienced and passionate experts in the technology field.',
         'feature3-title': 'Time Commitment',
-        'feature3-desc': 'Always ensuring project progress and delivery within the agreed timeframe.',
+        'feature3-desc': 'Always ensuring project progress and delivery on committed deadlines.',
         'feature4-title': 'Absolute Security',
-        'feature4-desc': 'Ensuring the safety of client information and data with advanced security measures.',
+        'feature4-desc': 'Ensuring customer information and data safety with advanced security measures.',
         'feature5-title': '24/7 Support',
-        'feature5-desc': 'Technical support team always ready to assist clients anytime, anywhere.',
+        'feature5-desc': 'Technical support team always ready to assist customers anytime, anywhere.',
         'feature6-title': 'Efficiency Optimization',
-        'feature6-desc': 'Focusing on optimizing operational efficiency and ROI for clients.',
-
+        'feature6-desc': 'Focusing on optimizing operational efficiency and ROI for customers.',
+        
         // Reviews Section
         'reviews-title': 'What Our Clients Say',
         'reviews-subtitle': 'Feedback from businesses that trust and collaborate with COVASOL',
-
-        // Review Items
-        'review1-role': 'CEO - TechStart',
-        'review1-text': 'COVASOL team is very professional and dedicated. The product exceeded our expectations.',
-        'review1-date': '2 weeks ago',
-        'review2-role': 'Marketing Manager - RetailPro',
-        'review2-text': 'Website and mobile app developed by COVASOL helped increase online revenue by 300%. UI/UX design is beautiful and easy to use.',
-        'review2-date': '1 month ago',
-        'review3-role': 'CTO - FinanceCore',
-        'review3-text': 'API system and microservices are very stable. COVASOL understands technical requirements well and provides budget-friendly solutions.',
-        'review3-date': '3 weeks ago',
-        'review4-role': 'Founder - EduTech Vietnam',
-        'review4-text': 'Online learning platform is very professional. Students and teachers gave positive feedback on interface and features.',
-        'review4-date': '1 month ago',
-        'review5-role': 'Director - Logistics Plus',
-        'review5-text': 'Transport management system helps optimize routes and reduce fuel costs by 25%. Real-time tracking feature is very useful.',
-        'review5-date': '6 weeks ago',
-        'review6-role': 'HR Manager - GreenTech Co.',
-        'review6-text': 'HR app is very convenient. Employees can check in, request leave, and track salary easily from phone.',
-        'review6-date': '2 months ago',
-        'review7-role': 'CEO - SmartHome Solutions',
-        'review7-text': 'IoT system and monitoring dashboard work extremely stably. COVASOL has deep knowledge of latest technologies.',
-        'review7-date': '3 weeks ago',
-        'review8-role': 'Marketing Director - FoodieHub',
-        'review8-text': 'Food delivery app launched successfully. Some features need improvement but overall met basic requirements.',
-        'review8-date': '4 months ago',
-        'review9-role': 'Owner - RetailChain VN',
-        'review9-text': 'POS system and store chain management work smoothly. Detailed statistical reports help make accurate business decisions.',
-        'review9-date': '5 weeks ago',
-        'review10-role': 'CFO - InvestSmart',
-        'review10-text': 'Fintech platform developed with high security. Bank integration API works stably and complies with regulations.',
-        'review10-date': '7 weeks ago',
-        'review11-role': 'CTO - HealthCare Tech',
-        'review11-text': 'Hospital management system from COVASOL helps digitize the entire examination and treatment process. Doctors and patients are satisfied.',
-        'review11-date': '6 weeks ago',
-        'review12-role': 'Operations Manager - LogiFlow',
-        'review12-text': 'Automation workflow saves 40% of order processing time. Integration with existing systems is very smooth.',
-        'review12-date': '3 months ago',
-        'review13-role': 'Founder - AgriTech Vietnam',
-        'review13-text': 'Smart agriculture platform connecting farmers with consumers is very effective. Simple interface, easy to use for all ages.',
-        'review13-date': '1 month ago',
-        'review14-role': 'Brand Manager - FashionHub',
-        'review14-text': 'E-commerce website has beautiful design. Some checkout functions need optimization to increase conversion rate.',
-        'review14-date': '5 months ago',
-        'review15-role': 'IT Manager - AutoService',
-        'review15-text': 'Garage management system with online booking is very convenient. Customers can schedule and track repair progress.',
-        'review15-date': '4 weeks ago',
-        'review16-role': 'Director - RealEstate Pro',
-        'review16-text': 'Real estate platform has smart search and interactive maps. Helps increase quality leads by 50%.',
-        'review16-date': '2 months ago',
-        'review17-role': 'CEO - TravelSmart',
-        'review17-text': 'Travel app with AI recommendation is very impressive. Customers can plan and book entire trip in a few clicks.',
-        'review17-date': '6 weeks ago',
-        'review18-role': 'Product Manager - SportsTech',
-        'review18-text': 'Sports app with workout tracking is quite good. Performance tracking is accurate but UI needs improvement to be more user-friendly.',
-        'review18-date': '7 months ago',
-        'review19-role': 'Technical Lead - CloudFirst',
-        'review19-text': 'Migration from on-premise to cloud was done very professionally by COVASOL. Zero downtime and performance increased significantly.',
-        'review19-date': '1 month ago',
-        'review20-role': 'COO - MediaStreaming',
-        'review20-text': 'Video streaming platform scales well. Handles thousands of concurrent users without lag or buffering.',
-        'review20-date': '8 weeks ago',
-
+        
         // Contact Section
         'contact-title': 'Contact Us',
-        'contact-subtitle': 'Let COVASOL accompany your business in digital transformation.',
+        'contact-subtitle': 'Let COVASOL accompany your business on the digital transformation journey.',
         'contact-form-name': 'Full Name *',
         'contact-form-email': 'Email *',
         'contact-form-phone': 'Phone Number *',
@@ -596,253 +377,117 @@ const translations = {
         'contact-form-message': 'Describe your project requirements... *',
         'contact-form-submit': 'Send Quote Request',
         'contact-fab-label': 'Contact',
-        'contact-fab-zalo': 'Zalo',
-        'contact-fab-phone': 'Call',
+        'contact-fab-zalo': 'Zalo Chat',
+        'contact-fab-phone': 'Call now',
         'contact-fab-mail': 'Send Email',
         'contact-fab-facebook': 'Facebook',
-
+        
         // Service Options
         'service-option-web': 'Website Development',
         'service-option-mobile': 'Mobile Applications',
         'service-option-ecommerce': 'E-commerce',
         'service-option-uiux': 'UI/UX Design',
         'service-option-digital': 'Digital Transformation',
-        'service-option-other': 'Other',
-
-        // Products Page
-        'products-title': 'COVASOL Products',
-        'products-description': 'Discover exclusive technology products developed by COVASOL. From SaaS tools to AI assistants, we create smart solutions to optimize your workflow.',
-        'products-grid-title': 'Product Collection',
-        'products-grid-subtitle': 'Technology solutions designed to change the way you work',
-        'featured': 'Featured',
-        'new': 'New',
-
-        // Product Items
-        'product1-name': 'CovaFlow',
-        'product1-category': 'Workflow Management',
-        'product1-desc': 'Smart workflow management platform with integrated AI. Automate tasks, track progress, and optimize team performance.',
-        'product2-name': 'CovaCRM',
-        'product2-category': 'Customer Management',
-        'product2-desc': 'Smart CRM system for effective customer management. Integrated AI chatbot and detailed analytics.',
-        'product3-name': 'CovaAI Assistant',
-        'product3-category': 'AI Assistant',
-        'product3-desc': 'Smart AI assistant supporting content writing, data analysis, and daily task automation.',
-        'product4-name': 'CovaSync',
-        'product4-category': 'Integration Platform',
-        'product4-desc': 'Data integration and synchronization platform between applications. Connect everything in your tech ecosystem.',
-        'product5-name': 'CovaAnalytics',
-        'product5-category': 'Business Intelligence',
-        'product5-desc': 'Data analysis and business intelligence tool. Intuitive dashboard with smart reports and AI predictions.',
-        'product6-name': 'CovaSecure',
-        'product6-category': 'Security Platform',
-        'product6-desc': 'Comprehensive security solution for businesses. 24/7 monitoring, threat detection, and automatic incident response.',
-
-        // Product Features
-        'ai-powered': 'AI Powered',
-        'real-time': 'Real-time',
-        'cloud-based': 'Cloud Based',
-        'chatbot': 'AI Chatbot',
-        'analytics': 'Analytics',
-        'content-generation': 'Content Generation',
-        'data-analysis': 'Data Analysis',
-        'integration': 'Integration',
-        'sync': 'Auto Sync',
-        'bi': 'Business Intelligence',
-        'predictive': 'Predictive AI',
-        'security': 'Security',
-        'monitoring': '24/7 Monitoring',
-
-        // Product Actions
-        'try-free': 'Try Free',
-        'demo': 'View Demo',
-        'try-beta': 'Try Beta',
-        'get-started': 'Get Started',
-        'explore': 'Explore',
-        'contact-sales': 'Contact Sales',
-
-        // Products CTA
-        'cta-title': 'Ready to discover our products?',
-        'cta-description': 'Contact the COVASOL team for a detailed consultation on the product that fits your needs.',
-        'contact-now': 'Contact Now',
-        'schedule-demo': 'Schedule Demo',
-
-        // Blog Page
-        'blog-title': 'COVASOL Blog',
-        'blog-description': 'Sharing knowledge, technology trends, and insights from the COVASOL expert team. Update the latest information on software development, AI, and digital transformation.',
-
-        // Blog Categories
-        'all-posts': 'All Posts',
-        'development': 'Development',
-        'ai-tech': 'AI & Tech',
-        'design': 'Design',
-        'business': 'Business',
-        'tutorials': 'Tutorials',
-
-        // Featured Post
-        'category-ai': 'AI & Technology',
-        'featured-title': 'The Future of AI in Software Development: Trends 2025-2026',
-        'featured-excerpt': 'Discover how Artificial Intelligence is changing the way we develop software. From code generation to automated testing, AI opens up new possibilities...',
-        'tech-lead': 'Tech Lead',
-        'read-full': 'Read Full',
-
-        // Blog Posts
-        'post1-title': '10 Tips to Optimize React App Performance in 2025',
-        'post1-excerpt': 'Discover the latest techniques to optimize React application performance. From lazy loading to code splitting...',
-        'post2-title': 'UI/UX Design Trends 2025: Minimalism & AI Integration',
-        'post2-excerpt': 'Discover the latest design trends in 2025. Minimalism combined with AI creates unique experiences...',
-        'post3-title': 'Digital Transformation for SMEs: Practical Roadmap from A to Z',
-        'post3-excerpt': 'Detailed guide on digital transformation for small and medium enterprises. From assessing current state to practical implementation...',
-        'post4-title': 'Docker for Beginners: Setting Up Development Environment',
-        'post4-excerpt': 'Beginner to advanced guide on Docker. Setting up efficient development environments with containers...',
-        'post5-title': 'Machine Learning in Web Development: Practical Applications',
-        'post5-excerpt': 'Learn how to apply Machine Learning to web development projects. Recommendation systems, chatbots, and more...',
-        'post6-title': 'API Security Best Practices: Effective REST API Security',
-        'post6-excerpt': 'Comprehensive guide on API security. Authentication, authorization, rate limiting, and other protection measures...',
-
-        // Blog Actions
-        'read-more': 'Read More',
-        'load-more': 'Load More Articles',
+        'service-option-other': 'Other'
+    },
+    
+    fr: {
+        // Navigation
+        'nav-home': 'Accueil',
+        'nav-services': 'Services',
+        'nav-products': 'Produits',
+        'nav-blog': 'Blog',
+        'nav-about': 'À propos',
+        'nav-reviews': 'Avis',
+        'nav-contact': 'Contact',
+        'nav-cta': 'Consultation gratuite',
+        
+        // Hero Section
+        'hero-subtitle': 'Core Value. Smart Solutions.',
+        'hero-description': 'Votre partenaire technologique de confiance pour les entreprises modernes. Nous nous spécialisons dans le développement de logiciels, la conception d\'expérience utilisateur et le support complet de transformation numérique.',
+        'hero-btn-services': 'Découvrir nos services',
+        'hero-btn-contact': 'Contactez-nous',
+        
+        // Services Overview
+        'services-title': 'Nos Services',
+        'services-subtitle': 'Solutions technologiques complètes',
+        'services-description': 'De la conception au déploiement, nous fournissons des services technologiques professionnels pour aider votre entreprise à croître.',
 
         // Home Dynamic Sections
-        'home-products-title': 'Featured Solutions',
-        'home-products-subtitle': 'Solutions updated directly from the admin panel.',
-        'home-products-loading': 'Loading solutions...',
-        'home-products-empty': 'No products have been published yet.',
-        'home-products-button': 'View All Products',
-        'home-blog-title': 'Recent News',
-        'home-blog-subtitle': 'Articles and analyses published by the COVASOL expert team.',
-        'home-blog-loading': 'Loading articles...',
-        'home-blog-empty': 'No articles have been published yet.',
-        'home-blog-button': 'Read More on Blog',
-
-        // Newsletter
-        'newsletter-title': 'Subscribe to Newsletter',
-        'newsletter-description': 'Receive the latest technology articles and insights from COVASOL. We will send you quality content every week.',
-        'newsletter-email': 'Your Email',
-        'subscribe': 'Subscribe',
-
-        // Footer
-        'footer-rights': 'All rights reserved.',
-        'footer-slogan': 'Core Value. Smart Solutions.',
-
-        // Product Detail Page
-        'product-loading': 'Loading product content...',
-        'product-request-demo': 'Request Demo',
-        'product-back-list': 'Back to List',
-        'product-docs-links': 'Documents & Links',
-        'product-get-consult': 'Get Consultation',
-        'product-consult-desc': 'Leave your details, COVASOL partners will assist you within 24 hours.',
-        'product-schedule-consult': 'Schedule Consultation',
-        'product-demo-showcase': 'Real-time Showcase',
-        'product-demo-combo': 'Demo Image Combo',
-        'product-demo-grid-desc': 'Dynamic grid effect simulating product screens scattered in 3D space.',
-        'product-demo-zoom-caption': 'Select an image to view details.',
-        'product-demo-footer-tap': 'Tap each image in the grid to zoom',
-        'product-demo-footer-limit': 'Supports up to 9 demo images',
-        'product-no-desc': 'No description',
-        'product-highlights': 'Highlights',
-        'product-no-name': 'No product name',
-        'product-image-alt': 'Product Image',
-        'product-demo-image-alt': 'Demo Image',
-        'product-view-demo-combo': 'View Demo Image Combo',
-        'product-demo-count-label': 'demo images',
-        'product-demo-realtime-caption': 'Real-time product demo image',
-        'product-no-demo-images': 'No demo images yet',
-        'product-no-docs': 'No attached documents.',
-        'product-default-name': 'Product',
-        'product-not-found-title': 'Product Not Found',
-        'product-not-found-msg': 'Please go back and choose another product.',
-        'product-no-data': 'No data.',
-        'product-not-found-page-title': 'Product Not Found | COVASOL',
-        'product-error-no-code': 'Unable to determine product code.',
-        'product-error-hidden': 'This product is currently hidden or suspended.',
-        'product-zoom-alt': 'Zoomed Image',
-        'product-gallery-title': 'Product Image Library',
-        'product-video-title': 'Demo Video',
-
-        // Blog Detail Page
-        'blog-loading': 'Loading article content...',
-        'blog-back': 'Back to Blog',
-        'blog-recent': 'Recent Articles',
-        'blog-connect-title': 'Connect with COVASOL',
-        'blog-connect-desc': 'Contact the COVASOL team for the most suitable solution for your business.',
-        'blog-schedule-consult': 'Schedule Consultation',
-        'blog-no-content': 'No content',
-        'blog-no-title': 'No title',
-        'blog-category-label': 'Category:',
-        'blog-date-label': 'Date:',
-        'blog-author-label': 'Author:',
-        'blog-loading-recent': 'Loading recent articles...',
-        'blog-view-post': 'View Article',
-        'blog-no-recent': 'No recent articles yet',
-        'blog-error-load-recent': 'Unable to load related articles:',
-        'blog-error-list-recent': 'Unable to load recent article list.',
-        'blog-error-hidden': 'This article is hidden or unpublished.',
-        'blog-not-found-title': 'Article Not Found',
-        'blog-not-found-msg': 'Please return to the blog page to choose another article.',
-        'blog-no-data': 'No data.',
-        'blog-not-found-page-title': 'Article Not Found | COVASOL',
-        'blog-error-no-code': 'Unable to determine article code.',
-        'blog-undefined': 'Undefined',
-        'blog-media-cover': 'Cover Image',
-        'blog-media-content': 'Content Image',
-        'blog-media-insert': 'Inserted Image',
-        'blog-media-quote': 'Quote Image',
-        'blog-media-gallery': 'Gallery Image',
-        'blog-video-intro': 'Intro Video',
-        'blog-video-content': 'Content Video',
-        'blog-video-demo': 'Demo Video',
-        'blog-video-interview': 'Interview Video',
-        'blog-image-alt': 'Image',
-        'blog-video-alt': 'Video',
-        'blog-watch-video': 'Watch Video',
-        'blog-gallery-title': 'Image Gallery',
-        'blog-video-section-title': 'Illustrative Video',
-        'blog-sources-title': 'References',
-        'blog-source-label': 'Reference Source',
-        'blog-by': 'By',
-        'blog-keywords-label': 'Keywords:',
-
-        // Preview Renderers
-        'preview-undefined': 'Undefined',
-        'preview-img-cover': 'Cover Image',
-        'preview-img-content': 'Content Image',
-        'preview-img-insert': 'Inserted Image',
-        'preview-img-quote': 'Quote Image',
-        'preview-img-gallery': 'Gallery Image',
-        'preview-vid-intro': 'Intro Video',
-        'preview-vid-content': 'Content Video',
-        'preview-vid-demo': 'Demo Video',
-        'preview-vid-interview': 'Interview Video',
-        'preview-prod-img-hero': 'Hero Image',
-        'preview-prod-img-gallery': 'Gallery Image',
-        'preview-prod-img-content': 'Content Image',
-        'preview-prod-img-feature': 'Feature Image',
-        'preview-prod-vid-hero': 'Hero Video',
-        'preview-prod-vid-demo': 'Demo Video',
-        'preview-prod-vid-content': 'Content Video',
-        'preview-prod-vid-testimonial': 'Customer Video',
-        'preview-default-img': 'Image',
-        'preview-default-vid': 'Video',
-        'preview-watch-video': 'Watch Video',
-        'preview-image-badge': 'Image',
-        'preview-video-badge': 'Video',
-
-        // API Errors
-        'api-error-connect': 'Cannot connect to API server.',
-        'api-error-generic': 'An error occurred.',
-        'api-error-static': 'API endpoint is not available in static mode.',
-        'api-error-no-post-code': 'Please provide a post code.',
-        'api-error-post-not-found': 'Post not found.',
-        'api-error-no-product-code': 'Please provide a product code.',
-        'api-error-product-not-found': 'Product not found.',
-    },
-
-    fr: {
+        'home-products-title': 'Solutions à la une',
+        'home-products-subtitle': 'Les solutions mises à jour directement depuis le panneau d’administration.',
+        'home-products-loading': 'Chargement des solutions...',
+        'home-products-empty': 'Aucun produit n’a encore été publié.',
+        'home-products-button': 'Voir tous les produits',
+        'home-blog-title': 'Actualités récentes',
+        'home-blog-subtitle': 'Articles et analyses publiés par l’équipe d’experts COVASOL.',
+        'home-blog-loading': 'Chargement des articles...',
+        'home-blog-empty': 'Aucun article n’a encore été publié.',
+        'home-blog-button': 'Lire plus sur le blog',
+        
+        // Service Cards
+        'service1-title': 'Développement logiciel',
+        'service1-desc': 'Créer des solutions technologiques selon les besoins',
+        'service2-title': 'Design & Interface',
+        'service2-desc': 'Créer des expériences de marque et de produit épurées - claires - faciles à utiliser',
+        'service3-title': 'Transformation numérique',
+        'service3-desc': 'Apporter la technologie aux opérations réelles, pas seulement au logiciel',
+        'service4-title': 'Conseil & Maintenance',
+        'service4-desc': 'Partenariat à long terme, développement durable avec les entreprises',
+        'service5-title': 'Marketing & Stratégie numérique',
+        'service5-desc': 'Combiner technologie et marketing pour créer des résultats réels',
+        'service6-title': 'Solutions spéciales',
+        'service6-desc': 'Construire des produits propriétaires - commercialement viables',
+        
+        // Common
+        'learn-more': 'En savoir plus',
+        
+        // Detailed Services
+        'detailed-services-title': 'Détails des services',
+        'web-dev-title': 'Développement de sites web',
+        'web-dev-desc': 'Créer des sites web professionnels optimisés pour le SEO et responsifs sur tous les appareils.',
+        'mobile-dev-title': 'Applications mobiles',
+        'mobile-dev-desc': 'Développer des applications iOS et Android haute performance avec des interfaces conviviales.',
+        'ecommerce-title': 'Commerce électronique',
+        'ecommerce-desc': 'Construire des systèmes de vente en ligne complets avec des solutions de paiement intégrées.',
+        'cloud-title': 'Solutions Cloud',
+        'cloud-desc': 'Déployer et gérer une infrastructure cloud sécurisée, flexible et rentable.',
+        
+        // Detailed Services Update
+        'target-label': 'Cible:',
+        'web-dev-target': 'Startups, PME, organisations ayant besoin de systèmes de gestion ou de canaux d\'interaction.',
+        'mobile-dev-target': 'Entreprises ayant besoin de produits orientés utilisateur final.',
+        'api-dev-title': 'Développement API & Backend',
+        'api-dev-desc': 'Construire des systèmes API, bases de données, microservices, sécurité.',
+        'api-dev-target': 'Projets nécessitant une connectivité de données ou des plateformes évolutives.',
+        'automation-title': 'Automatisation & Intégration',
+        'automation-desc': 'Automatisation des processus, intégration d\'applications (Zapier, n8n, API personnalisée).',
+        'automation-target': 'Entreprises souhaitant réduire les tâches manuelles, augmenter l\'efficacité.',
+        'api-dev-title': 'Développement API & Backend',
+        'api-dev-desc': 'Construire des systèmes API, bases de données, microservices, sécurité.',
+        'automation-title': 'Automatisation & Intégration',
+        'automation-desc': 'Automatisation des processus, intégration d\'applications (Zapier, n8n, API personnalisée).',
+        
+        // Target Clients
+        'target-label': 'Cible:',
+        'web-dev-target': 'Startups, PME, organisations ayant besoin de systèmes de gestion ou de canaux d\'interaction.',
+        'mobile-dev-target': 'Entreprises ayant besoin de produits ciblant les utilisateurs finaux.',
+        'api-dev-target': 'Projets nécessitant une connexion de données ou une expansion de plateforme.',
+        'automation-target': 'Entreprises souhaitant réduire les opérations manuelles, augmenter l\'efficacité.',
+        
+        // About Section
+        'about-title': 'À propos de COVASOL',
+        'about-text': 'COVASOL est une entreprise technologique spécialisée dans la fourniture de solutions logicielles et de services de transformation numérique pour les petites et moyennes entreprises. Avec la devise "Core Value. Smart Solutions.", nous nous engageons à apporter des solutions technologiques intelligentes, efficaces et durables.',
+        
+        // Stats
+        'stat1-label': 'Projets terminés',
+        'stat2-label': 'Clients satisfaits',
+        'stat3-label': 'Années d\'expérience',
+        
         // Why Choose Section
         'why-choose-title': 'Pourquoi choisir COVASOL ?',
         'why-choose-subtitle': 'Valeurs fondamentales qui font la différence',
-
+        
         // Features
         'feature1-title': 'Solutions créatives',
         'feature1-desc': 'Toujours à la recherche d\'approches nouvelles et innovantes pour résoudre les problèmes des clients.',
@@ -856,73 +501,11 @@ const translations = {
         'feature5-desc': 'Équipe de support technique toujours prête à aider les clients à tout moment, partout.',
         'feature6-title': 'Optimisation de l\'efficacité',
         'feature6-desc': 'Se concentrer sur l\'optimisation de l\'efficacité opérationnelle et du ROI pour les clients.',
-
+        
         // Reviews Section
         'reviews-title': 'Ce que disent nos clients',
         'reviews-subtitle': 'Commentaires des entreprises qui font confiance et collaborent avec COVASOL',
-
-        // Review Items
-        'review1-role': 'PDG - TechStart',
-        'review1-text': 'L\'équipe COVASOL est très professionnelle et dévouée. Le produit a dépassé nos attentes.',
-        'review1-date': 'Il y a 2 semaines',
-        'review2-role': 'Directeur Marketing - RetailPro',
-        'review2-text': 'Le site web et l\'application mobile développés par COVASOL ont permis d\'augmenter les revenus en ligne de 300%. Le design UI/UX est beau et facile à utiliser.',
-        'review2-date': 'Il y a 1 mois',
-        'review3-role': 'CTO - FinanceCore',
-        'review3-text': 'Le système API et les microservices sont très stables. COVASOL comprend bien les exigences techniques et propose des solutions adaptées au budget.',
-        'review3-date': 'Il y a 3 semaines',
-        'review4-role': 'Fondateur - EduTech Vietnam',
-        'review4-text': 'La plateforme d\'apprentissage en ligne est très professionnelle. Les étudiants et les enseignants ont donné des retours positifs sur l\'interface et les fonctionnalités.',
-        'review4-date': 'Il y a 1 mois',
-        'review5-role': 'Directeur - Logistics Plus',
-        'review5-text': 'Le système de gestion des transports aide à optimiser les itinéraires et à réduire les coûts de carburant de 25%. La fonctionnalité de suivi en temps réel est très utile.',
-        'review5-date': 'Il y a 6 semaines',
-        'review6-role': 'DRH - GreenTech Co.',
-        'review6-text': 'L\'application RH est très pratique. Les employés peuvent pointer, demander des congés et suivre leurs salaires facilement depuis leur téléphone.',
-        'review6-date': 'Il y a 2 mois',
-        'review7-role': 'PDG - SmartHome Solutions',
-        'review7-text': 'Le système IoT et le tableau de bord de surveillance fonctionnent de manière extrêmement stable. COVASOL possède une connaissance approfondie des dernières technologies.',
-        'review7-date': 'Il y a 3 semaines',
-        'review8-role': 'Directeur Marketing - FoodieHub',
-        'review8-text': 'L\'application de livraison de nourriture a été lancée avec succès. Certaines fonctionnalités doivent encore être améliorées mais dans l\'ensemble, elle répond aux exigences de base.',
-        'review8-date': 'Il y a 4 mois',
-        'review9-role': 'Propriétaire - RetailChain VN',
-        'review9-text': 'Le système POS et la gestion de la chaîne de magasins fonctionnent sans problème. Les rapports statistiques détaillés aident à prendre des décisions commerciales précises.',
-        'review9-date': 'Il y a 5 semaines',
-        'review10-role': 'CFO - InvestSmart',
-        'review10-text': 'La plateforme fintech est développée avec une haute sécurité. L\'API d\'intégration bancaire fonctionne de manière stable et conforme aux réglementations.',
-        'review10-date': 'Il y a 7 semaines',
-        'review11-role': 'CTO - HealthCare Tech',
-        'review11-text': 'Le système de gestion hospitalière de COVASOL aide à numériser l\'ensemble du processus d\'examen et de traitement. Les médecins et les patients sont satisfaits.',
-        'review11-date': 'Il y a 6 semaines',
-        'review12-role': 'Responsable des opérations - LogiFlow',
-        'review12-text': 'Le flux de travail automatisé permet d\'économiser 40% du temps de traitement des commandes. L\'intégration avec les systèmes existants est très fluide.',
-        'review12-date': 'Il y a 3 mois',
-        'review13-role': 'Fondateur - AgriTech Vietnam',
-        'review13-text': 'La plateforme agricole intelligente connectant les agriculteurs aux consommateurs est très efficace. Interface simple, facile à utiliser pour tous les âges.',
-        'review13-date': 'Il y a 1 mois',
-        'review14-role': 'Brand Manager - FashionHub',
-        'review14-text': 'Le site e-commerce a un beau design. Certaines fonctions de paiement doivent encore être optimisées pour augmenter le taux de conversion.',
-        'review14-date': 'Il y a 5 mois',
-        'review15-role': 'Responsable IT - AutoService',
-        'review15-text': 'Le système de gestion de garage avec réservation en ligne est très pratique. Les clients peuvent prendre rendez-vous et suivre l\'avancement des réparations.',
-        'review15-date': 'Il y a 4 semaines',
-        'review16-role': 'Directeur - RealEstate Pro',
-        'review16-text': 'La plateforme immobilière dispose d\'une recherche intelligente et de cartes interactives. Aide à augmenter de 50% le nombre de leads de qualité.',
-        'review16-date': 'Il y a 2 mois',
-        'review17-role': 'PDG - TravelSmart',
-        'review17-text': 'L\'application de voyage avec recommandation IA est très impressionnante. Les clients peuvent planifier et réserver tout leur voyage en quelques clics.',
-        'review17-date': 'Il y a 6 semaines',
-        'review18-role': 'Chef de produit - SportsTech',
-        'review18-text': 'L\'application de sport avec suivi d\'entraînement est assez bonne. Le suivi des performances est précis mais l\'interface utilisateur doit être améliorée pour être plus conviviale.',
-        'review18-date': 'Il y a 7 mois',
-        'review19-role': 'Tech Lead - CloudFirst',
-        'review19-text': 'La migration de sur site vers le cloud a été réalisée de manière très professionnelle par COVASOL. Aucun temps d\'arrêt et les performances ont considérablement augmenté.',
-        'review19-date': 'Il y a 1 mois',
-        'review20-role': 'COO - MediaStreaming',
-        'review20-text': 'La plateforme de streaming vidéo a une bonne capacité de mise à l\'échelle. Gère des milliers d\'utilisateurs simultanés sans décalage ni mise en mémoire tampon.',
-        'review20-date': 'Il y a 8 semaines',
-
+        
         // Contact Section
         'contact-title': 'Contactez-nous',
         'contact-subtitle': 'Laissez COVASOL accompagner votre entreprise dans la transformation numérique.',
@@ -937,250 +520,18 @@ const translations = {
         'contact-fab-phone': 'Appeler',
         'contact-fab-mail': 'Envoyer un email',
         'contact-fab-facebook': 'Facebook',
-
+        
         // Service Options
         'service-option-web': 'Développement de sites web',
         'service-option-mobile': 'Applications mobiles',
         'service-option-ecommerce': 'Commerce électronique',
         'service-option-uiux': 'Design UI/UX',
         'service-option-digital': 'Transformation numérique',
-        'service-option-other': 'Autre',
-
-        // Products Page
-        'products-title': 'Produits COVASOL',
-        'products-description': 'Découvrez les produits technologiques exclusifs développés par COVASOL. Des outils SaaS aux assistants IA, nous créons des solutions intelligentes pour optimiser votre flux de travail.',
-        'products-grid-title': 'Collection de produits',
-        'products-grid-subtitle': 'Solutions technologiques conçues pour changer votre façon de travailler',
-        'featured': 'En vedette',
-        'new': 'Nouveau',
-
-        // Product Items
-        'product1-name': 'CovaFlow',
-        'product1-category': 'Gestion de flux de travail',
-        'product1-desc': 'Plateforme de gestion de flux de travail intelligente avec IA intégrée. Automatisez les tâches, suivez les progrès et optimisez les performances de l\'équipe.',
-        'product2-name': 'CovaCRM',
-        'product2-category': 'Gestion client',
-        'product2-desc': 'Système CRM intelligent pour une gestion client efficace. Chatbot IA intégré et analyses détaillées.',
-        'product3-name': 'CovaAI Assistant',
-        'product3-category': 'Assistant IA',
-        'product3-desc': 'Assistant IA intelligent prenant en charge la rédaction de contenu, l\'analyse de données et l\'automatisation des tâches quotidiennes.',
-        'product4-name': 'CovaSync',
-        'product4-category': 'Plateforme d\'intégration',
-        'product4-desc': 'Plateforme d\'intégration et de synchronisation de données entre applications. Connectez tout dans votre écosystème technologique.',
-        'product5-name': 'CovaAnalytics',
-        'product5-category': 'Business Intelligence',
-        'product5-desc': 'Outil d\'analyse de données et de business intelligence. Tableau de bord intuitif avec rapports intelligents et prédictions IA.',
-        'product6-name': 'CovaSecure',
-        'product6-category': 'Plateforme de sécurité',
-        'product6-desc': 'Solution de sécurité complète pour les entreprises. Surveillance 24/7, détection des menaces et réponse automatique aux incidents.',
-
-        'product-demo-grid-desc': 'Effet de grille dynamique simulant des écrans de produits distribués dans l\'espace 3D.',
-        'product-demo-close': 'Fermer la démo',
-        'product-demo-preview-alt': 'Aperçu de l\'image de démonstration',
-        'product-logo-alt': 'Logo COVASOL',
-
-        // Product Features
-        'ai-powered': 'Alimenté par IA',
-        'real-time': 'Temps réel',
-        'cloud-based': 'Basé sur le cloud',
-        'chatbot': 'Chatbot IA',
-        'analytics': 'Analytique',
-        'content-generation': 'Génération de contenu',
-        'data-analysis': 'Analyse de données',
-        'integration': 'Intégration',
-        'sync': 'Synchro auto',
-        'bi': 'Business Intelligence',
-        'predictive': 'IA prédictive',
-        'security': 'Sécurité',
-        'monitoring': 'Surveillance 24/7',
-
-        // Product Actions
-        'try-free': 'Essai gratuit',
-        'demo': 'Voir la démo',
-        'try-beta': 'Essayer la bêta',
-        'get-started': 'Commencer',
-        'explore': 'Explorer',
-        'contact-sales': 'Contacter les ventes',
-
-        // Products CTA
-        'cta-title': 'Prêt à découvrir nos produits ?',
-        'cta-description': 'Contactez l\'équipe COVASOL pour une consultation détaillée sur le produit adapté à vos besoins.',
-        'contact-now': 'Contacter maintenant',
-        'schedule-demo': 'Planifier une démo',
-
-        // Blog Page
-        'blog-title': 'Blog COVASOL',
-        'blog-description': 'Partage de connaissances, tendances technologiques et insights de l\'équipe d\'experts COVASOL. Mettez à jour les dernières informations sur le développement logiciel, l\'IA et la transformation numérique.',
-
-        // Blog Categories
-        'all-posts': 'Tous les articles',
-        'development': 'Développement',
-        'ai-tech': 'IA & Tech',
-        'design': 'Design',
-        'business': 'Affaires',
-        'tutorials': 'Tutoriels',
-
-        // Featured Post
-        'category-ai': 'IA & Technologie',
-        'featured-title': 'L\'avenir de l\'IA dans le développement logiciel : Tendances 2025-2026',
-        'featured-excerpt': 'Découvrez comment l\'Intelligence Artificielle change la façon dont nous développons des logiciels. De la génération de code aux tests automatisés, l\'IA ouvre de nouvelles possibilités...',
-        'tech-lead': 'Tech Lead',
-        'read-full': 'Lire la suite',
-
-        // Blog Posts
-        'post1-title': '10 Conseils pour optimiser les performances des applications React en 2025',
-        'post1-excerpt': 'Découvrez les dernières techniques pour optimiser les performances des applications React. Du lazy loading au code splitting...',
-        'post2-title': 'Tendances Design UI/UX 2025 : Minimalisme & Intégration IA',
-        'post2-excerpt': 'Découvrez les dernières tendances design en 2025. Le minimalisme combiné à l\'IA crée des expériences uniques...',
-        'post3-title': 'Transformation numérique pour les PME : Feuille de route pratique de A à Z',
-        'post3-excerpt': 'Guide détaillé sur la transformation numérique pour les petites et moyennes entreprises. De l\'évaluation de l\'état actuel à la mise en œuvre pratique...',
-        'post4-title': 'Docker pour les débutants : Configuration de l\'environnement de développement',
-        'post4-excerpt': 'Guide du débutant à avancé sur Docker. Configuration d\'environnements de développement efficaces avec des conteneurs...',
-        'post5-title': 'Machine Learning dans le développement Web : Applications pratiques',
-        'post5-excerpt': 'Apprenez à appliquer le Machine Learning aux projets de développement web. Systèmes de recommandation, chatbots et plus encore...',
-        'post6-title': 'Meilleures pratiques de sécurité API : Sécurité API REST efficace',
-        'post6-excerpt': 'Guide complet sur la sécurité des API. Authentification, autorisation, limitation de débit et autres mesures de protection...',
-
-        // Blog Actions
-        'read-more': 'Lire la suite',
-        'load-more': 'Charger plus d\'articles',
-
-        // Home Dynamic Sections
-        'home-products-title': 'Solutions à la une',
-        'home-products-subtitle': 'Les solutions mises à jour directement depuis le panneau d’administration.',
-        'home-products-loading': 'Chargement des solutions...',
-        'home-products-empty': 'Aucun produit n’a encore été publié.',
-        'home-products-button': 'Voir tous les produits',
-        'home-blog-title': 'Actualités récentes',
-        'home-blog-subtitle': 'Articles et analyses publiés par l’équipe d’experts COVASOL.',
-        'home-blog-loading': 'Chargement des articles...',
-        'home-blog-empty': 'Aucun article n’a encore été publié.',
-        'home-blog-button': 'Lire plus sur le blog',
-
-        // Newsletter
-        'newsletter-title': 'S\'abonner à la newsletter',
-        'newsletter-description': 'Recevez les derniers articles et insights technologiques de COVASOL. Nous vous enverrons du contenu de qualité chaque semaine.',
-        'newsletter-email': 'Votre email',
-        'subscribe': 'S\'abonner',
-
-        // Footer
-        'footer-rights': 'Tous droits réservés.',
-        'footer-slogan': 'Core Value. Smart Solutions.',
-
-        // Product Detail Page
-        'product-loading': 'Chargement du contenu du produit...',
-        'product-request-demo': 'Demander une démo',
-        'product-back-list': 'Retour à la liste',
-        'product-docs-links': 'Documents & Liens',
-        'product-get-consult': 'Obtenir une consultation',
-        'product-consult-desc': 'Laissez vos coordonnées, les partenaires COVASOL vous aideront dans les 24 heures.',
-        'product-schedule-consult': 'Planifier une consultation',
-        'product-demo-showcase': 'Vitrine en temps réel',
-        'product-demo-combo': 'Combo d\'images de démo',
-        'product-demo-grid-desc': 'Effet de grille dynamique simulant des écrans de produits dispersés dans l\'espace 3D.',
-        'product-demo-zoom-caption': 'Sélectionnez une image pour voir les détails.',
-        'product-demo-footer-tap': 'Appuyez sur chaque image de la grille pour zoomer',
-        'product-demo-footer-limit': 'Prend en charge jusqu\'à 9 images de démo',
-        'product-no-desc': 'Pas de description',
-        'product-highlights': 'Points forts',
-        'product-no-name': 'Pas de nom de produit',
-        'product-image-alt': 'Image du produit',
-        'product-demo-image-alt': 'Image de démo',
-        'product-view-demo-combo': 'Voir le combo d\'images de démo',
-        'product-demo-count-label': 'images de démo',
-        'product-demo-realtime-caption': 'Image de démo en temps réel du produit',
-        'product-no-demo-images': 'Pas encore d\'images de démo',
-        'product-no-docs': 'Pas de documents joints.',
-        'product-default-name': 'Produit',
-        'product-not-found-title': 'Produit non trouvé',
-        'product-not-found-msg': 'Veuillez retourner choisir un autre produit.',
-        'product-no-data': 'Pas de données.',
-        'product-not-found-page-title': 'Produit non trouvé | COVASOL',
-        'product-error-no-code': 'Impossible de déterminer le code du produit.',
-        'product-error-hidden': 'Ce produit est actuellement masqué ou suspendu.',
-        'product-zoom-alt': 'Image zoomée',
-        'product-gallery-title': 'Bibliothèque d\'images du produit',
-        'product-video-title': 'Vidéo de démo',
-
-        // Blog Detail Page
-        'blog-loading': 'Chargement du contenu de l\'article...',
-        'blog-back': 'Retour au blog',
-        'blog-recent': 'Articles récents',
-        'blog-connect-title': 'Connectez-vous avec COVASOL',
-        'blog-connect-desc': 'Contactez l\'équipe COVASOL pour la solution la plus adaptée à votre entreprise.',
-        'blog-schedule-consult': 'Planifier une consultation',
-        'blog-no-content': 'Pas de contenu',
-        'blog-no-title': 'Pas de titre',
-        'blog-category-label': 'Catégorie :',
-        'blog-date-label': 'Date :',
-        'blog-author-label': 'Auteur :',
-        'blog-loading-recent': 'Chargement des articles récents...',
-        'blog-view-post': 'Voir l\'article',
-        'blog-no-recent': 'Pas encore d\'articles récents',
-        'blog-error-load-recent': 'Impossible de charger les articles connexes :',
-        'blog-error-list-recent': 'Impossible de charger la liste des articles récents.',
-        'blog-error-hidden': 'Cet article est masqué ou non publié.',
-        'blog-not-found-title': 'Article non trouvé',
-        'blog-not-found-msg': 'Veuillez retourner à la page du blog pour choisir un autre article.',
-        'blog-no-data': 'Pas de données.',
-        'blog-not-found-page-title': 'Article non trouvé | COVASOL',
-        'blog-error-no-code': 'Impossible de déterminer le code de l\'article.',
-        'blog-undefined': 'Indéfini',
-        'blog-media-cover': 'Image de couverture',
-        'blog-media-content': 'Image de contenu',
-        'blog-media-insert': 'Image insérée',
-        'blog-media-quote': 'Image de citation',
-        'blog-media-gallery': 'Image de galerie',
-        'blog-video-intro': 'Vidéo d\'intro',
-        'blog-video-content': 'Vidéo de contenu',
-        'blog-video-demo': 'Vidéo de démo',
-        'blog-video-interview': 'Vidéo d\'interview',
-        'blog-image-alt': 'Image',
-        'blog-video-alt': 'Vidéo',
-        'blog-watch-video': 'Regarder la vidéo',
-        'blog-gallery-title': 'Galerie d\'images',
-        'blog-video-section-title': 'Vidéo illustrative',
-        'blog-sources-title': 'Références',
-        'blog-source-label': 'Source de référence',
-        'blog-by': 'Par',
-        'blog-keywords-label': 'Mots-clés :',
-
-        // Preview Renderers
-        'preview-undefined': 'Indéfini',
-        'preview-img-cover': 'Image de couverture',
-        'preview-img-content': 'Image de contenu',
-        'preview-img-insert': 'Image insérée',
-        'preview-img-quote': 'Image de citation',
-        'preview-img-gallery': 'Image de galerie',
-        'preview-vid-intro': 'Vidéo d\'intro',
-        'preview-vid-content': 'Vidéo de contenu',
-        'preview-vid-demo': 'Vidéo de démo',
-        'preview-vid-interview': 'Vidéo d\'interview',
-        'preview-prod-img-hero': 'Image héro',
-        'preview-prod-img-gallery': 'Image de galerie',
-        'preview-prod-img-content': 'Image de contenu',
-        'preview-prod-img-feature': 'Image de fonctionnalité',
-        'preview-prod-vid-hero': 'Vidéo héro',
-        'preview-prod-vid-demo': 'Vidéo de démo',
-        'preview-prod-vid-content': 'Vidéo de contenu',
-        'preview-prod-vid-testimonial': 'Vidéo client',
-        'preview-default-img': 'Image',
-        'preview-default-vid': 'Vidéo',
-        'preview-watch-video': 'Regarder la vidéo',
-        'preview-image-badge': 'Image',
-        'preview-video-badge': 'Vidéo',
-
-        // API Errors
-        'api-error-connect': 'Impossible de se connecter au serveur API.',
-        'api-error-generic': 'Une erreur est survenue.',
-        'api-error-static': 'Le point de terminaison API n\'est pas disponible en mode statique.',
-        'api-error-no-post-code': 'Veuillez fournir un code d\'article.',
-        'api-error-post-not-found': 'Article non trouvé.',
-        'api-error-no-product-code': 'Veuillez fournir un code produit.',
-        'api-error-product-not-found': 'Produit non trouvé.'
+        'service-option-other': 'Autre'
     }
 };
 
+// Export for use in other files
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = translations;
 }

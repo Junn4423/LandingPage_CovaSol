@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .split(/\n{2,}/)
                 .map((paragraph) => `<p>${paragraph}</p>`)
                 .join('')
-            : `<p>${window.covasolTranslate('product-no-desc', 'Không có mô tả')}</p>`;
+            : '<p>Không có mô tả</p>';
 
         const features =
             product.featureTags && product.featureTags.length
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const highlights =
             product.highlights && product.highlights.length
                 ? `<div class="preview-highlights">
-                <h3>${window.covasolTranslate('product-highlights', 'Điểm nổi bật')}</h3>
+                <h3>Diem noi bat</h3>
                 <ul>
                     ${product.highlights
                     .map(
@@ -96,10 +96,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         const demoFallback = renderDemoFallbackSection(product);
 
         return `
-            <h1>${product.name || window.covasolTranslate('product-no-name', 'Không có tên sản phẩm')}</h1>
+            <h1>${product.name || 'Không có tên sản phẩm'}</h1>
             ${product.category ? `<p class="preview-category">${product.category}</p>` : ''}
             ${product.imageUrl
-                ? `<img src="${product.imageUrl}" alt="${product.name || window.covasolTranslate('product-image-alt', 'Ảnh sản phẩm')}" />`
+                ? `<img src="${product.imageUrl}" alt="${product.name || 'Ảnh sản phẩm'}" />`
                 : ''
             }
             ${product.shortDescription ? `<p class="preview-excerpt">${product.shortDescription}</p>` : ''}
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 (item, idx) => `
                 <span class="demo-stack-layer demo-stack-layer-${idx + 1}">
                     <img src="${escapeHtml(item.url)}" alt="${escapeHtml(
-                    item.caption || window.covasolTranslate('product-demo-image-alt', 'Ảnh demo') + ' ' + (idx + 1)
+                    item.caption || `Ảnh demo ${idx + 1}`
                 )}" loading="lazy" />
                 </span>
             `
@@ -147,13 +147,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         return `
             <section class="product-demo-callout" data-demo-available="true">
-                <button type="button" class="demo-stack-card" data-demo-open aria-label="${window.covasolTranslate('product-view-demo-combo', 'Xem combo ảnh demo')}">
+                <button type="button" class="demo-stack-card" data-demo-open aria-label="Xem combo ảnh demo">
                     <div class="demo-stack-layers">
                         ${stackHtml}
                     </div>
                     <div class="demo-stack-counter">
                         <strong>${totalLabel}</strong>
-                        <span>${window.covasolTranslate('product-demo-count-label', 'ảnh demo')}</span>
+                        <span>ảnh demo</span>
                     </div>
                 </button>
             </section>
@@ -215,10 +215,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         const media = demoMediaCache[safeIndex];
         if (demoZoomImgEl) {
             demoZoomImgEl.src = media.url;
-            demoZoomImgEl.alt = media.caption || window.covasolTranslate('product-demo-image-alt', 'Ảnh demo') + ' ' + (safeIndex + 1);
+            demoZoomImgEl.alt = media.caption || `Ảnh demo ${safeIndex + 1}`;
         }
         if (demoZoomCaptionEl) {
-            demoZoomCaptionEl.textContent = media.caption || window.covasolTranslate('product-demo-realtime-caption', 'Ảnh demo realtime từ sản phẩm');
+            demoZoomCaptionEl.textContent = media.caption || 'Ảnh demo realtime từ sản phẩm';
         }
     }
 
@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 demoZoomImgEl.removeAttribute('src');
             }
             if (demoZoomCaptionEl) {
-                demoZoomCaptionEl.textContent = window.covasolTranslate('product-no-demo-images', 'Chưa có ảnh demo');
+                demoZoomCaptionEl.textContent = 'Chưa có ảnh demo';
             }
             return;
         }
@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return `
                     <button type="button" class="demo-grid-item" data-demo-index="${index}" style="--burst-row: ${slot.row}; --burst-col: ${slot.col};" aria-pressed="false">
                         <img src="${escapeHtml(item.url)}" alt="${escapeHtml(
-                    item.caption || window.covasolTranslate('product-demo-image-alt', 'Ảnh demo') + ' ' + (index + 1)
+                    item.caption || `Ảnh demo ${index + 1}`
                 )}" loading="lazy" />
                     </button>
                 `;
@@ -287,7 +287,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (!links.length) {
-            container.innerHTML = `<li>${window.covasolTranslate('product-no-docs', 'Chưa có tài liệu đính kèm.')}</li>`;
+            container.innerHTML = '<li>Chua co tai lieu dinh kem.</li>';
             return;
         }
 
@@ -335,37 +335,37 @@ document.addEventListener('DOMContentLoaded', async () => {
         setPrimaryCta(product);
         renderDemoOverlay(product.demoMedia);
 
-        document.title = `${product.name || window.covasolTranslate('product-default-name', 'Sản phẩm')} | COVASOL`;
+        document.title = `${product.name || 'San pham'} | COVASOL`;
     }
 
     function showError(message) {
         if (previewEl) {
             previewEl.innerHTML = `
                 <div class="article-error preview-error">
-                    <h2>${window.covasolTranslate('product-not-found-title', 'Không tìm thấy sản phẩm')}</h2>
-                    <p>${message || window.covasolTranslate('product-not-found-msg', 'Vui lòng quay lại chọn sản phẩm khác.')}</p>
-                    <a class="btn btn-primary" href="products.html">${window.covasolTranslate('product-back-list', 'Quay lại danh sách')}</a>
+                    <h2>Không tìm thấy sản phẩm</h2>
+                    <p>${message || 'Vui lòng quay lại chọn sản phẩm khác.'}</p>
+                    <a class="btn btn-primary" href="products.html">Quay lại danh sách</a>
                 </div>
             `;
         }
         if (linksEl) {
-            linksEl.innerHTML = `<li>${window.covasolTranslate('product-no-data', 'Không có dữ liệu.')}</li>`;
+            linksEl.innerHTML = '<li>Không có dữ liệu.</li>';
         }
         if (primaryCtaEl) {
             primaryCtaEl.style.display = 'none';
         }
-        document.title = window.covasolTranslate('product-not-found-page-title', 'Không tìm thấy sản phẩm | COVASOL');
+        document.title = 'Không tìm thấy sản phẩm | COVASOL';
     }
 
     try {
         const identifier = resolveIdentifier();
         if (!identifier) {
-            throw new Error(window.covasolTranslate('product-error-no-code', 'Không xác định được mã sản phẩm.'));
+            throw new Error('Không xác định được mã sản phẩm.');
         }
 
         const payload = await api.fetchProduct(identifier);
         if (!isActiveProduct(payload)) {
-            showError(window.covasolTranslate('product-error-hidden', 'Sản phẩm này hiện đang bị ẩn hoặc tạm dừng hiển thị.'));
+            showError('Sản phẩm này hiện đang bị ẩn hoặc tạm dừng hiển thị.');
             return;
         }
         renderProduct(payload);
@@ -438,7 +438,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         imagePopup = document.createElement('div');
         imagePopup.className = 'demo-image-popup';
-        imagePopup.innerHTML = `<img src="" alt="${window.covasolTranslate('product-zoom-alt', 'Ảnh phóng to')}" />`;
+        imagePopup.innerHTML = '<img src="" alt="Ảnh phóng to" />';
         document.body.appendChild(imagePopup);
 
         imagePopup.addEventListener('click', () => {
