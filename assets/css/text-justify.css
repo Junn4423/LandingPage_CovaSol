@@ -1,0 +1,28 @@
+/* Text Justification for Blog and Product Detail Pages */
+.preview-content {
+    text-align: justify;
+}
+
+.preview-body,
+.live-preview-body,
+.preview-body .preview-paragraph,
+.article-body,
+.product-description-block {
+    text-align: justify;
+}
+
+/* Keep headings left-aligned */
+.preview-surface h1,
+.preview-surface h2,
+.preview-surface h3,
+.preview-surface h4,
+.preview-surface h5,
+.preview-surface h6,
+.preview-content h1,
+.preview-content h2,
+.preview-content h3,
+.preview-content h4,
+.preview-content h5,
+.preview-content h6 {
+    text-align: left;
+}
