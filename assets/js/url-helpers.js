@@ -12,7 +12,7 @@
     function getBlogUrl(post) {
         if (!post) return 'blog-detail.html';
         const identifier = post.slug || post.code;
-        return `blog-detail.html?slug=${encodeURIComponent(identifier)}`;
+        return `blog-detail.html/${encodeURIComponent(identifier)}`;
     }
 
     /**
@@ -23,7 +23,7 @@
     function getProductUrl(product) {
         if (!product) return 'product-detail.html';
         const identifier = product.slug || product.code;
-        return `product-detail.html?slug=${encodeURIComponent(identifier)}`;
+        return `product-detail.html/${encodeURIComponent(identifier)}`;
     }
 
     /**

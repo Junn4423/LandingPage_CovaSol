@@ -96,7 +96,15 @@ app.get('/blog/post/:identifier', (req, res) => {
   res.sendFile(path.join(publicDir, 'blog-detail.html'));
 });
 
+app.get('/blog-detail.html/:identifier', (req, res) => {
+  res.sendFile(path.join(publicDir, 'blog-detail.html'));
+});
+
 app.get('/products/item/:identifier', (req, res) => {
+  res.sendFile(path.join(publicDir, 'product-detail.html'));
+});
+
+app.get('/product-detail.html/:identifier', (req, res) => {
   res.sendFile(path.join(publicDir, 'product-detail.html'));
 });
 

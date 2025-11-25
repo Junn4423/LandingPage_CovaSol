@@ -392,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
             viewLink.className = 'btn-link';
             viewLink.href = window.covasolUrls
                 ? window.covasolUrls.getBlogUrl(post)
-                : `blog-detail.html?slug=${encodeURIComponent(post.slug || post.code)}`;
+                : `blog/post/${encodeURIComponent(post.slug || post.code)}`;
             viewLink.target = '_blank';
             viewLink.rel = 'noopener';
             viewLink.textContent = 'Xem';
@@ -462,7 +462,7 @@ document.addEventListener('DOMContentLoaded', () => {
             viewLink.className = 'btn-link';
             viewLink.href = window.covasolUrls
                 ? window.covasolUrls.getProductUrl(product)
-                : `product-detail.html?slug=${encodeURIComponent(product.slug || product.code)}`;
+                : `products/item/${encodeURIComponent(product.slug || product.code)}`;
             viewLink.target = '_blank';
             viewLink.rel = 'noopener';
             viewLink.textContent = 'Xem';

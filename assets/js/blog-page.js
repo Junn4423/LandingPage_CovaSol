@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
         article.setAttribute('data-aos-delay', `${(index % 6) * 100}`);
         const detailUrl = window.covasolUrls
             ? window.covasolUrls.getBlogUrl(post)
-            : `blog-detail.html?slug=${encodeURIComponent(post.slug || post.code)}`;
+            : `blog-detail.html/${encodeURIComponent(post.slug || post.code)}`;
 
         const imageWrapper = document.createElement('div');
         imageWrapper.className = 'post-image';

@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     const detailUrl = window.covasolUrls
                         ? window.covasolUrls.getBlogUrl(post)
-                        : `blog-detail.html?slug=${encodeURIComponent(post.slug || post.code)}`;
+                        : `blog-detail.html/${encodeURIComponent(post.slug || post.code)}`;
 
                     link.className = 'recent-post-link';
                     link.href = detailUrl;
