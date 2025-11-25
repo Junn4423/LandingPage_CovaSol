@@ -57,7 +57,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const imageWrapper = document.createElement('div');
         imageWrapper.className = 'product-image';
-        const detailUrl = `product-detail.html?code=${encodeURIComponent(product.code)}`;
+        const detailUrl = window.covasolUrls
+            ? window.covasolUrls.getProductUrl(product)
+            : `product-detail.html?slug=${encodeURIComponent(product.slug || product.code)}`;
         imageWrapper.innerHTML = `
             <a href="${detailUrl}">
                 <img src="${product.imageUrl || 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80'}" alt="${product.name}">

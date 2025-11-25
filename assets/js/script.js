@@ -928,7 +928,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function buildHomeProductCard(product, index) {
-        const detailUrl = `product-detail.html?code=${encodeURIComponent(product.code)}`;
+        const detailUrl = window.covasolUrls
+            ? window.covasolUrls.getProductUrl(product)
+            : `product-detail.html?slug=${encodeURIComponent(product.slug || product.code)}`;
         const card = document.createElement('article');
         card.className = 'product-card';
         card.setAttribute('data-aos', 'zoom-in');
@@ -1025,7 +1027,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function buildHomePostCard(post, index) {
-        const detailUrl = `blog-detail.html?code=${encodeURIComponent(post.code)}`;
+        const detailUrl = window.covasolUrls
+            ? window.covasolUrls.getBlogUrl(post)
+            : `blog-detail.html?slug=${encodeURIComponent(post.slug || post.code)}`;
         const article = document.createElement('article');
         article.className = 'post-card';
         article.setAttribute('data-aos', 'fade-up');

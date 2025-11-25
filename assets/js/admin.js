@@ -84,8 +84,8 @@ document.addEventListener('DOMContentLoaded', () => {
             targetKey === 'product'
                 ? productFeedback
                 : targetKey === 'user'
-                ? userFeedback
-                : blogFeedback;
+                    ? userFeedback
+                    : blogFeedback;
 
         setFeedback(targetFeedback, pendingFlash.message, pendingFlash.type || 'success');
         pendingFlash = null;
@@ -390,7 +390,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const viewLink = document.createElement('a');
             viewLink.className = 'btn-link';
-            viewLink.href = `blog-detail.html?code=${encodeURIComponent(post.code)}`;
+            viewLink.href = window.covasolUrls
+                ? window.covasolUrls.getBlogUrl(post)
+                : `blog-detail.html?slug=${encodeURIComponent(post.slug || post.code)}`;
             viewLink.target = '_blank';
             viewLink.rel = 'noopener';
             viewLink.textContent = 'Xem';
@@ -458,7 +460,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const viewLink = document.createElement('a');
             viewLink.className = 'btn-link';
-            viewLink.href = `product-detail.html?code=${encodeURIComponent(product.code)}`;
+            viewLink.href = window.covasolUrls
+                ? window.covasolUrls.getProductUrl(product)
+                : `product-detail.html?slug=${encodeURIComponent(product.slug || product.code)}`;
             viewLink.target = '_blank';
             viewLink.rel = 'noopener';
             viewLink.textContent = 'Xem';
@@ -699,8 +703,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     createUserBtn.addEventListener('click', () => {
-    // navigateTo('admin-user-editor.html');
-    showNotification('Chức năng tạo người dùng đang được phát triển', 'info');
+        // navigateTo('admin-user-editor.html');
+        showNotification('Chức năng tạo người dùng đang được phát triển', 'info');
     });
 
     exportDatabaseBtn.addEventListener('click', async () => {

@@ -152,7 +152,9 @@ document.addEventListener('DOMContentLoaded', () => {
         article.dataset.category = slugifyCategory(post.category);
         article.setAttribute('data-aos', 'fade-up');
         article.setAttribute('data-aos-delay', `${(index % 6) * 100}`);
-        const detailUrl = `blog-detail.html?code=${encodeURIComponent(post.code)}`;
+        const detailUrl = window.covasolUrls
+            ? window.covasolUrls.getBlogUrl(post)
+            : `blog-detail.html?slug=${encodeURIComponent(post.slug || post.code)}`;
 
         const imageWrapper = document.createElement('div');
         imageWrapper.className = 'post-image';
@@ -225,7 +227,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const detailUrl = `blog-detail.html?code=${encodeURIComponent(post.code)}`;
+        const detailUrl = window.covasolUrls
+            ? window.covasolUrls.getBlogUrl(post)
+            : `blog-detail.html?slug=${encodeURIComponent(post.slug || post.code)}`;
 
         if (featuredImage) {
             featuredImage.src = post.imageUrl || DEFAULT_POST_IMAGE;

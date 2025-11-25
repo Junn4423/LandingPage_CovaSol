@@ -11,8 +11,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function resolveIdentifier() {
         const params = new URLSearchParams(window.location.search);
+        // Priority: slug > code > id > blog
         const fromQuery =
-            params.get('code') || params.get('id') || params.get('blog');
+            params.get('slug') || params.get('code') || params.get('id') || params.get('blog');
         if (fromQuery && fromQuery.trim()) {
             return decodeURIComponent(fromQuery.trim());
         }
@@ -95,7 +96,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const dateEl = document.createElement('span');
                     const icon = document.createElement('i');
 
-                    const detailUrl = `blog-detail.html?code=${encodeURIComponent(post.code)}`;
+                    const detailUrl = window.covasolUrls
+                        ? window.covasolUrls.getBlogUrl(post)
+                        : `blog-detail.html?slug=${encodeURIComponent(post.slug || post.code)}`;
 
                     link.className = 'recent-post-link';
                     link.href = detailUrl;

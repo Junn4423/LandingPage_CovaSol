@@ -42,8 +42,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function resolveIdentifier() {
         const params = new URLSearchParams(window.location.search);
+        // Priority: slug > code > id > product
         const fromQuery =
-            params.get('code') || params.get('id') || params.get('product');
+            params.get('slug') || params.get('code') || params.get('id') || params.get('product');
         if (fromQuery && fromQuery.trim()) {
             return decodeURIComponent(fromQuery.trim());
         }
