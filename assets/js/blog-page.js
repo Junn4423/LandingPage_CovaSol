@@ -396,9 +396,3 @@ document.addEventListener('DOMContentLoaded', () => {
         loadPosts(true);
     })();
 });
-
-
-
-
-
-
