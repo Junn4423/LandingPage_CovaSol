@@ -1,72 +1,37 @@
 {
-  "name": "covasol-landing-page",
-  "version": "1.0.0",
-  "description": "Landing page for COVASOL Technology Solutions - Core Value. Smart Solutions.",
-  "main": "src/server.js",
-  "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js",
-  "static": "node scripts/static-server.js",
-    "db:migrate": "node src/db/migrate.js",
-    "db:seed": "node src/db/seed.js",
-    "build": "npm run minify-css && npm run minify-js",
-    "minify-css": "cleancss -o assets/css/variables.min.css assets/css/variables.css && cleancss -o assets/css/base.min.css assets/css/base.css && cleancss -o assets/css/style.min.css assets/css/style.css && cleancss -o assets/css/admin.min.css assets/css/admin.css",
-    "minify-js": "uglifyjs assets/js/script.js -o assets/js/script.min.js -c -m",
-    "validate": "html-validate index.html",
-    "lighthouse": "lighthouse http://localhost:8000 --output html --output-path ./lighthouse-report.html"
-  },
-  "keywords": [
-    "covasol",
-    "landing-page",
-    "technology",
-    "software-development",
-    "ui-ux-design",
-    "digital-transformation",
-    "vietnam",
-    "responsive",
-    "modern"
+  "name": "covasol-platform",
+  "version": "2.0.0",
+  "private": true,
+  "description": "COVASOL full-stack platform (Next.js frontend + Express API backend)",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
   ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace apps/backend\" \"npm run dev --workspace apps/frontend\"",
+    "dev:backend": "npm run dev --workspace apps/backend",
+    "dev:frontend": "npm run dev --workspace apps/frontend",
+    "build": "npm run build --workspaces",
+    "lint": "npm run lint --workspaces",
+    "format": "npm run format --workspaces",
+    "test": "npm run test --workspaces"
+  },
   "author": {
     "name": "COVASOL Team",
     "email": "covasol.studio@gmail.com",
     "url": "https://covasol.top"
   },
-  "license": "UNLICENSED",
-  "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/covasol/landing-page"
+    "url": "https://github.com/Junn4423/LandingPage_CovaSol"
   },
-  "homepage": "https://covasol.top",
-  "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "better-sqlite3": "^9.4.1",
-    "connect-sqlite3": "^0.9.0",
-    "dotenv": "^16.4.1",
-    "express": "^4.19.2",
-    "express-session": "^1.17.3",
-    "helmet": "^7.0.0",
-    "morgan": "^1.10.0",
-    "multer": "^2.0.2",
-    "slugify": "^1.6.6",
-    "xlsx": "^0.18.5"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead",
-    "not ie <= 11"
-  ],
+  "license": "UNLICENSED",
   "engines": {
-    "node": ">=14.0.0",
-    "npm": ">=6.0.0"
+    "node": ">=18.18.0",
+    "npm": ">=9.0.0"
   },
   "devDependencies": {
-    "clean-css-cli": "^5.6.2",
-    "html-validate": "^8.7.4",
-    "lighthouse": "^10.4.0",
-    "live-server": "^1.2.2",
-    "nodemon": "^3.0.2",
-    "uglify-js": "^3.17.4"
-  }
+    "concurrently": "^8.2.2"
+  },
+  "packageManager": "npm@10.8.1"
 }

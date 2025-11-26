@@ -1,4 +1,123 @@
-# COVASOL Landing Page
+# COVASOL Platform (Next.js + Express)
+
+Full-stack rewrite of the COVASOL landing site with a modern Next.js 14 frontend, an Express + Prisma API surface, and a shared type package. The new architecture separates marketing pages from the admin/CRUD experience while keeping a single source of truth (MySQL via Laragon/phpMyAdmin).
+
+## Stack at a Glance
+- **Frontend:** Next.js App Router, React 18, Tailwind CSS, TanStack Query, shared types from `packages/types`
+- **Backend:** Express 4, Prisma ORM, MySQL (develop locally with Laragon), JWT auth over HTTP-only cookies
+- **Tooling:** TypeScript everywhere, ts-node-dev for the API, concurrently for full-stack dev, ESLint + Prettier
+
+## Prerequisites
+- Node.js **18.18+** and npm **9+**
+- [Laragon](https://laragon.org/) or any MySQL 8+ server reachable from your host machine
+- Recommended: browsers with cookies enabled (Chrome/Edge) to test the admin flows
+
+## Environment Setup
+1. Clone and install once:
+   ```bash
+   git clone https://github.com/Junn4423/LandingPage_CovaSol.git
+   cd LandingPage_CovaSol
+   npm install
+   ```
+2. Copy env vars and adjust to your machine:
+   ```bash
+   cp .env.example .env
+   ```
+3. Update the `.env` file (kept at the repo root) with the values you need:
+
+   | Variable | Purpose | Suggested value for Laragon |
+   | --- | --- | --- |
+   | `NEXT_PUBLIC_API_BASE_URL`, `API_BASE_URL` | URL the frontend will call | `http://localhost:4000` |
+   | `PORT` | Express port | `4000` |
+   | `CORS_ORIGINS` | Allowed frontend origins (comma separated) | `http://localhost:3000` |
+   | `DATABASE_URL` | Prisma connection string | `mysql://root:@127.0.0.1:3306/covasol` |
+   | `ADMIN_SEED_PASSWORD` | Password used by the seed script | `CovaSol#2025` (change if needed) |
+
+   > `dotenv` runs inside each workspace, but placing `.env` at the repo root keeps a single source of truth for both apps.
+
+## Database via Laragon/phpMyAdmin
+1. Start Laragon and make sure MySQL is running.
+2. Using phpMyAdmin (or `mysql` CLI), create a schema named `covasol` with UTF-8 collation.
+3. Run migrations and seed the default admin + sample blog/product entries:
+   ```bash
+   npm run prisma:migrate --workspace apps/backend
+   npm run prisma:seed --workspace apps/backend
+   ```
+   - You can also inspect/update the schema in `apps/backend/prisma/schema.prisma`.
+   - The default admin credentials after seeding are `admin / CovaSol#2025` (or the password you set via `ADMIN_SEED_PASSWORD`).
+
+## Local Development Workflow
+### 1. Start the API first (cookies depend on it)
+```bash
+npm run dev:backend
+```
+- Runs `ts-node-dev` with `tsconfig-paths/register`, so Prisma + shared types resolve correctly.
+- Server listens on `http://localhost:4000` (change via `PORT`).
+- Health check: `GET http://localhost:4000/health` → `{ status: "ok" }`.
+
+### 2. Start the Next.js frontend
+```bash
+npm run dev:frontend
+```
+- Next.js dev server on `http://localhost:3000`.
+- All admin requests hit `/v1/*` endpoints with `credentials: include`, so keep both apps on the same host/port combo or update the env vars accordingly.
+
+### 3. Optional: run both simultaneously
+```bash
+npm run dev
+```
+(Uses `concurrently` to start both scripts; still ensure the DB is up.)
+
+## Manual QA: Admin Login + CRUD
+Follow this sequence whenever you need to verify that `/admin` works end-to-end:
+1. Navigate to `http://localhost:3000/admin` in a fresh browser session.
+2. Log in with the seeded admin user. On success, two HTTP-only cookies (`cova_token`, `cova_refresh`) should appear for `localhost`.
+3. Visit each admin module:
+   - **Blog Editor** – create/update/delete posts and confirm the list updates immediately.
+   - **Product Editor** – verify feature arrays and metrics persist correctly.
+   - **User Management** – create a secondary admin, update their display name/role, then delete them.
+4. Refresh the dashboard. The overview cards pull data from `/v1/admin/analytics/overview`; numbers should match your CRUD actions.
+5. Log out from the top-right button to ensure cookies clear.
+
+## API Surface (all under `/v1`)
+| Area | Method & Path | Notes |
+| --- | --- | --- |
+| Auth | `POST /auth/login` | Sets cookies for access + refresh tokens |
+|  | `POST /auth/logout` | Clears cookies |
+|  | `GET /auth/me` | Returns the current admin profile |
+| Admin Blog | `GET /admin/blog` | Requires auth; full list |
+|  | `POST /admin/blog` | Create blog post |
+|  | `PUT /admin/blog/:id` | Update post |
+|  | `DELETE /admin/blog/:id` | Remove post |
+| Admin Products | `GET /admin/products` | Requires auth |
+|  | `POST /admin/products` | Create product |
+|  | `PUT /admin/products/:id` | Update product |
+|  | `DELETE /admin/products/:id` | Remove product |
+| Users | `GET /users` | List admin accounts |
+|  | `POST /users` | Create admin |
+|  | `PUT /users/:id` | Update admin |
+|  | `DELETE /users/:id` | Delete admin (cannot delete yourself) |
+| Analytics | `GET /admin/analytics/overview` | Totals for dashboard |
+| Public Blog | `GET /blog`, `GET /blog/:slug` | Used by marketing pages |
+| Public Products | `GET /products`, `GET /products/:slug` | Used by marketing pages |
+
+## Useful Scripts
+| Command | Description |
+| --- | --- |
+| `npm run dev:backend` | Start Express API with live reload |
+| `npm run dev:frontend` | Start Next.js dev server |
+| `npm run prisma:migrate --workspace apps/backend` | Apply Prisma migrations |
+| `npm run prisma:seed --workspace apps/backend` | Seed default data/users |
+| `npm run build` | Build every workspace (Next + API) |
+| `npm run lint` / `npm run format` | Consistent linting & formatting across the monorepo |
+
+## Troubleshooting
+- **Backend fails to start** → ensure Laragon is running and `DATABASE_URL` is reachable; Prisma will throw `P1001` if MySQL is unreachable.
+- **Cookies missing from the browser** → double-check `CORS_ORIGINS` includes the exact protocol + port of your Next.js dev server.
+- **Admin page redirects to 404** → we intentionally removed the `/admin → /admin/dashboard` redirect. Access `/admin` directly.
+- **Need richer UX (toasts/validation)** → foundations are ready; plug a toast lib (e.g., `sonner`) inside `AppProviders` once the UX direction is finalized.
+
+That’s the current baseline. Backend now boots cleanly, the admin UI can authenticate against `/v1`, and you can iterate on UX polish next.# COVASOL Landing Page
 
 Core Value. Smart Solutions.
 
