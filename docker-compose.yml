@@ -1,0 +1,80 @@
+# ================================
+# CovaSol - Docker Compose
+# ================================
+# Development and production setup with MariaDB
+
+services:
+  # MariaDB Database (MySQL compatible)
+  db:
+    image: mariadb:11-jammy
+    container_name: covasol-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_secret}
+      MYSQL_DATABASE: ${DB_NAME:-covasol}
+      MYSQL_USER: ${DB_USER:-covasol}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-covasol_secret}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./database:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+
+  # CovaSol API Server
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: covasol-api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 3001
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: ${DB_USER:-covasol}
+      DB_PASSWORD: ${DB_PASSWORD:-covasol_secret}
+      DB_NAME: ${DB_NAME:-covasol}
+      SESSION_SECRET: ${SESSION_SECRET:-change-this-in-production}
+      SESSION_TABLE: ${SESSION_TABLE:-sessions}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://localhost:5500}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+    ports:
+      - "${API_PORT:-3001}:3001"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 5s
+      retries: 3
+
+volumes:
+  mariadb_data:
+    driver: local
+
+# ================================
+# Usage:
+# ================================
+# Development:
+#   docker compose up -d
+#
+# Production:
+#   docker compose -f docker-compose.yml up -d
+#
+# View logs:
+#   docker compose logs -f api
+#
+# Stop all:
+#   docker compose down
+#
+# Remove volumes (WARNING: deletes data):
+#   docker compose down -v

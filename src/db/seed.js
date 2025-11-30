@@ -3,20 +3,19 @@ const slugify = require('slugify');
 const { db, initializeDatabase } = require('./index');
 const config = require('../config');
 
-initializeDatabase();
-
-function seedAdminUser() {
-  const existing = db
+async function seedAdminUser() {
+  const existing = await db
     .prepare('SELECT COUNT(*) as count FROM admin_users WHERE username = ?')
     .get(config.adminDefault.username);
 
-  if (existing.count > 0) {
+  if (existing && existing.count > 0) {
     console.log('Admin user already exists. Skipping admin seed.');
     return;
   }
 
   const passwordHash = bcrypt.hashSync(config.adminDefault.password, 12);
-  db.prepare(`
+  await db
+    .prepare(`
       INSERT INTO admin_users (username, password_hash, display_name, role)
       VALUES (@username, @password_hash, @display_name, 'admin')
     `)
@@ -29,9 +28,9 @@ function seedAdminUser() {
   console.log(`Default admin user '${config.adminDefault.username}' created.`);
 }
 
-function seedBlogPosts() {
-  const count = db.prepare('SELECT COUNT(*) as count FROM blog_posts').get();
-  if (count.count > 0) {
+async function seedBlogPosts() {
+  const count = await db.prepare('SELECT COUNT(*) as count FROM blog_posts').get();
+  if (count && count.count > 0) {
     console.log('Blog posts already seeded. Skipping blog seed.');
     return;
   }
@@ -144,53 +143,53 @@ function seedBlogPosts() {
     }
   ];
 
-  const insert = db.prepare(`
-    INSERT INTO blog_posts (
-      code,
-      slug,
-      title,
-      subtitle,
-      excerpt,
-      content,
-      image_url,
-      category,
-      tags,
-      keywords,
-      author_name,
-      author_role,
-      published_at,
-      status,
-      gallery_media,
-      video_items,
-      source_links,
-      is_featured
-    )
-    VALUES (
-      @code,
-      @slug,
-      @title,
-      @subtitle,
-      @excerpt,
-      @content,
-      @image_url,
-      @category,
-      @tags,
-      @keywords,
-      @author_name,
-      @author_role,
-      @published_at,
-      'published',
-      @gallery_media,
-      @video_items,
-      @source_links,
-      @is_featured
-    )
-  `);
+  await db.transaction(async (tx) => {
+    const insert = tx.prepare(`
+      INSERT INTO blog_posts (
+        code,
+        slug,
+        title,
+        subtitle,
+        excerpt,
+        content,
+        image_url,
+        category,
+        tags,
+        keywords,
+        author_name,
+        author_role,
+        published_at,
+        status,
+        gallery_media,
+        video_items,
+        source_links,
+        is_featured
+      )
+      VALUES (
+        @code,
+        @slug,
+        @title,
+        @subtitle,
+        @excerpt,
+        @content,
+        @image_url,
+        @category,
+        @tags,
+        @keywords,
+        @author_name,
+        @author_role,
+        @published_at,
+        'published',
+        @gallery_media,
+        @video_items,
+        @source_links,
+        @is_featured
+      )
+    `);
 
-  const insertMany = db.transaction((rows) => {
-    rows.forEach((row) => {
+    for (const row of blogPosts) {
       const slugBase = slugify(row.title, { lower: true, strict: true });
-      insert.run({
+      await insert.run({
         code: row.code,
         slug: `${slugBase}-${row.code.toLowerCase()}`,
         title: row.title,
@@ -209,16 +208,15 @@ function seedBlogPosts() {
         source_links: JSON.stringify(row.sourceLinks || []),
         is_featured: row.isFeatured ? 1 : 0
       });
-    });
+    }
   });
 
-  insertMany(blogPosts);
   console.log(`Seeded ${blogPosts.length} blog posts.`);
 }
 
-function seedProducts() {
-  const count = db.prepare('SELECT COUNT(*) as count FROM products').get();
-  if (count.count > 0) {
+async function seedProducts() {
+  const count = await db.prepare('SELECT COUNT(*) as count FROM products').get();
+  if (count && count.count > 0) {
     console.log('Products already seeded. Skipping product seed.');
     return;
   }
@@ -340,51 +338,51 @@ function seedProducts() {
     }
   ];
 
-  const insert = db.prepare(`
-    INSERT INTO products (
-      code,
-      slug,
-      name,
-      category,
-      short_description,
-      description,
-      image_url,
-      feature_tags,
-      highlights,
-      gallery_media,
-      video_items,
-      demo_media,
-      cta_primary_label,
-      cta_primary_url,
-      cta_secondary_label,
-      cta_secondary_url,
-      status
-    )
-    VALUES (
-      @code,
-      @slug,
-      @name,
-      @category,
-      @short_description,
-      @description,
-      @image_url,
-      @feature_tags,
-      @highlights,
-      @gallery_media,
-      @video_items,
-      @demo_media,
-      @cta_primary_label,
-      @cta_primary_url,
-      @cta_secondary_label,
-      @cta_secondary_url,
-      'active'
-    )
-  `);
+  await db.transaction(async (tx) => {
+    const insert = tx.prepare(`
+      INSERT INTO products (
+        code,
+        slug,
+        name,
+        category,
+        short_description,
+        description,
+        image_url,
+        feature_tags,
+        highlights,
+        gallery_media,
+        video_items,
+        demo_media,
+        cta_primary_label,
+        cta_primary_url,
+        cta_secondary_label,
+        cta_secondary_url,
+        status
+      )
+      VALUES (
+        @code,
+        @slug,
+        @name,
+        @category,
+        @short_description,
+        @description,
+        @image_url,
+        @feature_tags,
+        @highlights,
+        @gallery_media,
+        @video_items,
+        @demo_media,
+        @cta_primary_label,
+        @cta_primary_url,
+        @cta_secondary_label,
+        @cta_secondary_url,
+        'active'
+      )
+    `);
 
-  const insertMany = db.transaction((rows) => {
-    rows.forEach((row) => {
+    for (const row of products) {
       const slugBase = slugify(row.name, { lower: true, strict: true });
-      insert.run({
+      await insert.run({
         code: row.code,
         slug: `${slugBase}-${row.code.toLowerCase()}`,
         name: row.name,
@@ -402,18 +400,25 @@ function seedProducts() {
         cta_secondary_label: row.ctaSecondaryLabel || null,
         cta_secondary_url: row.ctaSecondaryUrl || null
       });
-    });
+    }
   });
 
-  insertMany(products);
   console.log(`Seeded ${products.length} products.`);
 }
 
-seedAdminUser();
-// seedBlogPosts();
-seedProducts();
+async function run() {
+  await initializeDatabase();
+  await seedAdminUser();
+  // await seedBlogPosts();
+  await seedProducts();
+  console.log('Seeding completed.');
+  process.exit(0);
+}
 
-console.log('Seeding completed.');
+run().catch((error) => {
+  console.error('Seeding failed:', error);
+  process.exit(1);
+});
 
 
 

@@ -5,9 +5,9 @@ const bcrypt = require('bcryptjs');
 const { db } = require('../db');
 const { requireAuth } = require('../middleware/auth');
 const path = require('path');
-const fs = require('fs');
 
 const router = express.Router();
+const MANAGED_TABLES = ['admin_users', 'blog_posts', 'products'];
 
 // Cấu hình multer để upload file
 const storage = multer.memoryStorage();
@@ -226,12 +226,14 @@ function formatWorksheet(ws, data, headerMap) {
 }
 
 // Export toàn bộ database sang Excel
-router.get('/export', requireAuth, requireAdmin, (req, res) => {
+router.get('/export', requireAuth, requireAdmin, async (req, res) => {
   try {
     // Lấy dữ liệu từ các bảng
-    const users = db.prepare('SELECT id, username, display_name, role, created_at, updated_at FROM admin_users').all();
-    const blogs = db.prepare('SELECT * FROM blog_posts').all();
-    const products = db.prepare('SELECT * FROM products').all();
+    const users = await db
+      .prepare('SELECT id, username, display_name, role, created_at, updated_at FROM admin_users')
+      .all();
+    const blogs = await db.prepare('SELECT * FROM blog_posts').all();
+    const products = await db.prepare('SELECT * FROM products').all();
     
     // Tạo workbook mới
     const wb = XLSX.utils.book_new();
@@ -413,7 +415,7 @@ function validateExcelStructure(workbook) {
 }
 
 // Import database từ file Excel
-router.post('/import', requireAuth, requireAdmin, upload.single('file'), (req, res) => {
+router.post('/import', requireAuth, requireAdmin, upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'Vui lòng chọn file Excel để import.' });
@@ -432,137 +434,133 @@ router.post('/import', requireAuth, requireAdmin, upload.single('file'), (req, r
     
     const { actualSheets } = validation;
     
-    // Bắt đầu transaction
-    db.prepare('BEGIN TRANSACTION').run();
-    
-    try {
+    let stats = { users: 0, blogs: 0, products: 0 };
+
+    await db.transaction(async (tx) => {
       // Import Users
       const usersSheet = workbook.Sheets[actualSheets.users];
       const rawUsersData = XLSX.utils.sheet_to_json(usersSheet);
       const usersData = convertVietnameseToEnglishHeaders(rawUsersData, 'users');
-      
+
       if (usersData.length > 0) {
-        // Xóa users cũ (trừ user hiện tại)
-        db.prepare('DELETE FROM admin_users WHERE id != ?').run(req.session.user.id);
-        
+        await tx
+          .prepare('DELETE FROM admin_users WHERE id != ?')
+          .run(req.session.user.id);
+
         for (const user of usersData) {
-          // Bỏ qua user hiện tại nếu có trong file
           if (user.id === req.session.user.id) {
             continue;
           }
-          
-          // Nếu có password_hash thì dùng, không thì tạo password mặc định
+
           let passwordHash = user.password_hash;
           if (!passwordHash) {
-            // Password mặc định: ChangeMe123!
             passwordHash = bcrypt.hashSync('ChangeMe123!', 12);
           }
-          
-          db.prepare(`
-            INSERT OR REPLACE INTO admin_users 
-            (id, username, password_hash, display_name, role, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-          `).run(
-            user.id || null,
-            user.username,
-            passwordHash,
-            user.display_name,
-            user.role || 'admin',
-            user.created_at || new Date().toISOString(),
-            user.updated_at || new Date().toISOString()
-          );
+
+          await tx
+            .prepare(`
+              INSERT INTO admin_users 
+              (id, username, password_hash, display_name, role, created_at, updated_at)
+              VALUES (@id, @username, @password_hash, @display_name, @role, @created_at, @updated_at)
+            `)
+            .run({
+              id: user.id || null,
+              username: user.username,
+              password_hash: passwordHash,
+              display_name: user.display_name,
+              role: user.role || 'admin',
+              created_at: user.created_at || new Date().toISOString(),
+              updated_at: user.updated_at || new Date().toISOString()
+            });
         }
+        stats.users = usersData.length;
       }
-      
+
       // Import Blogs
       const blogsSheet = workbook.Sheets[actualSheets.blogs];
       const rawBlogsData = XLSX.utils.sheet_to_json(blogsSheet);
       const blogsData = convertVietnameseToEnglishHeaders(rawBlogsData, 'blogs');
-      
+
       if (blogsData.length > 0) {
-        db.prepare('DELETE FROM blog_posts').run();
-        
+        await tx.prepare('DELETE FROM blog_posts').run();
+
         for (const blog of blogsData) {
-          db.prepare(`
-            INSERT INTO blog_posts 
-            (id, code, slug, title, subtitle, excerpt, content, image_url, category, tags, keywords, 
-             author_name, author_role, published_at, status, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-          `).run(
-            blog.id || null,
-            blog.code,
-            blog.slug,
-            blog.title,
-            blog.subtitle || null,
-            blog.excerpt || null,
-            blog.content,
-            blog.image_url || null,
-            blog.category || null,
-            blog.tags || null,
-            blog.keywords || null,
-            blog.author_name || null,
-            blog.author_role || null,
-            blog.published_at,
-            blog.status || 'published',
-            blog.created_at || new Date().toISOString(),
-            blog.updated_at || new Date().toISOString()
-          );
+          await tx
+            .prepare(`
+              INSERT INTO blog_posts 
+              (code, slug, title, subtitle, excerpt, content, image_url, category, tags, keywords, 
+               author_name, author_role, published_at, status, created_at, updated_at)
+              VALUES (@code, @slug, @title, @subtitle, @excerpt, @content, @image_url, @category, @tags,
+                @keywords, @author_name, @author_role, @published_at, @status, @created_at, @updated_at)
+            `)
+            .run({
+              code: blog.code,
+              slug: blog.slug,
+              title: blog.title,
+              subtitle: blog.subtitle || null,
+              excerpt: blog.excerpt || null,
+              content: blog.content,
+              image_url: blog.image_url || null,
+              category: blog.category || null,
+              tags: blog.tags || null,
+              keywords: blog.keywords || null,
+              author_name: blog.author_name || null,
+              author_role: blog.author_role || null,
+              published_at: blog.published_at,
+              status: blog.status || 'published',
+              created_at: blog.created_at || new Date().toISOString(),
+              updated_at: blog.updated_at || new Date().toISOString()
+            });
         }
+        stats.blogs = blogsData.length;
       }
-      
+
       // Import Products
       const productsSheet = workbook.Sheets[actualSheets.products];
       const rawProductsData = XLSX.utils.sheet_to_json(productsSheet);
       const productsData = convertVietnameseToEnglishHeaders(rawProductsData, 'products');
-      
+
       if (productsData.length > 0) {
-        db.prepare('DELETE FROM products').run();
-        
+        await tx.prepare('DELETE FROM products').run();
+
         for (const product of productsData) {
-          db.prepare(`
-            INSERT INTO products 
-            (id, code, slug, name, category, short_description, description, image_url, 
-             feature_tags, highlights, cta_primary_label, cta_primary_url, 
-             cta_secondary_label, cta_secondary_url, status, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-          `).run(
-            product.id || null,
-            product.code,
-            product.slug,
-            product.name,
-            product.category || null,
-            product.short_description || null,
-            product.description || null,
-            product.image_url || null,
-            product.feature_tags || null,
-            product.highlights || null,
-            product.cta_primary_label || null,
-            product.cta_primary_url || null,
-            product.cta_secondary_label || null,
-            product.cta_secondary_url || null,
-            product.status || 'active',
-            product.created_at || new Date().toISOString(),
-            product.updated_at || new Date().toISOString()
-          );
+          await tx
+            .prepare(`
+              INSERT INTO products 
+              (code, slug, name, category, short_description, description, image_url, 
+               feature_tags, highlights, cta_primary_label, cta_primary_url, 
+               cta_secondary_label, cta_secondary_url, status, created_at, updated_at)
+              VALUES (@code, @slug, @name, @category, @short_description, @description, @image_url,
+                @feature_tags, @highlights, @cta_primary_label, @cta_primary_url, @cta_secondary_label,
+                @cta_secondary_url, @status, @created_at, @updated_at)
+            `)
+            .run({
+              code: product.code,
+              slug: product.slug,
+              name: product.name,
+              category: product.category || null,
+              short_description: product.short_description || null,
+              description: product.description || null,
+              image_url: product.image_url || null,
+              feature_tags: product.feature_tags || null,
+              highlights: product.highlights || null,
+              cta_primary_label: product.cta_primary_label || null,
+              cta_primary_url: product.cta_primary_url || null,
+              cta_secondary_label: product.cta_secondary_label || null,
+              cta_secondary_url: product.cta_secondary_url || null,
+              status: product.status || 'active',
+              created_at: product.created_at || new Date().toISOString(),
+              updated_at: product.updated_at || new Date().toISOString()
+            });
         }
+        stats.products = productsData.length;
       }
-      
-      // Commit transaction
-      db.prepare('COMMIT').run();
-      
-      res.json({ 
-        message: 'Import database thành công.',
-        stats: {
-          users: usersData.length,
-          blogs: blogsData.length,
-          products: productsData.length
-        }
-      });
-    } catch (err) {
-      // Rollback nếu có lỗi
-      db.prepare('ROLLBACK').run();
-      throw err;
-    }
+    });
+
+    res.json({
+      message: 'Import database thành công.',
+      stats
+    });
   } catch (err) {
     console.error('Error importing database:', err);
     if (err.message.includes('Chỉ chấp nhận file Excel')) {
@@ -702,30 +700,35 @@ Sản phẩm được thiết kế để đáp ứng nhu cầu thực tế của
 });
 
 // Get database schema information
-router.get('/schema', requireAuth, requireAdmin, (req, res) => {
+router.get('/schema', requireAuth, requireAdmin, async (req, res) => {
   try {
     const tables = {};
-    
-    // Get list of tables
-    const tableList = db.prepare(`
-      SELECT name FROM sqlite_master 
-      WHERE type='table' AND name NOT LIKE 'sqlite_%'
-      ORDER BY name
-    `).all();
-    
-    tableList.forEach(table => {
-      // Get column info
-      const columns = db.prepare(`PRAGMA table_info(${table.name})`).all();
-      
-      // Get row count
-      const countResult = db.prepare(`SELECT COUNT(*) as count FROM ${table.name}`).get();
-      
-      tables[table.name] = {
-        columns: columns,
-        rowCount: countResult.count
+
+    for (const tableName of MANAGED_TABLES) {
+      // Use SHOW COLUMNS for MySQL/MariaDB
+      const columns = await db
+        .prepare(`SHOW COLUMNS FROM ${tableName}`)
+        .all();
+
+      // Transform MySQL column info to consistent format
+      const formattedColumns = columns.map(col => ({
+        name: col.Field,
+        type: col.Type,
+        notnull: col.Null === 'NO',
+        dflt_value: col.Default,
+        pk: col.Key === 'PRI' ? 1 : 0
+      }));
+
+      const countResult = await db
+        .prepare(`SELECT COUNT(*) as count FROM ${tableName}`)
+        .get();
+
+      tables[tableName] = {
+        columns: formattedColumns,
+        rowCount: Number(countResult?.count || 0)
       };
-    });
-    
+    }
+
     res.json({ tables });
   } catch (err) {
     console.error('Error getting schema:', err);
@@ -734,39 +737,41 @@ router.get('/schema', requireAuth, requireAdmin, (req, res) => {
 });
 
 // Get table data with schema
-router.get('/table/:tableName', requireAuth, requireAdmin, (req, res) => {
+router.get('/table/:tableName', requireAuth, requireAdmin, async (req, res) => {
   try {
     const { tableName } = req.params;
-    
-    // Validate table name to prevent SQL injection
-    const validTables = ['admin_users', 'blog_posts', 'products'];
-    if (!validTables.includes(tableName)) {
+
+    if (!MANAGED_TABLES.includes(tableName)) {
       return res.status(400).json({ message: 'Tên bảng không hợp lệ.' });
     }
-    
-    // Get column info
-    const columns = db.prepare(`PRAGMA table_info(${tableName})`).all();
-    
-    // Get row count
-    const countResult = db.prepare(`SELECT COUNT(*) as count FROM ${tableName}`).get();
-    
-    // Get data (limit to 100 rows for performance)
-    let rows;
-    if (tableName === 'admin_users') {
-      // Don't return password hash for security
-      rows = db.prepare(`
-        SELECT id, username, display_name, role, created_at, updated_at 
-        FROM ${tableName} 
-        LIMIT 100
-      `).all();
-    } else {
-      rows = db.prepare(`SELECT * FROM ${tableName} LIMIT 100`).all();
-    }
-    
+
+    // Use SHOW COLUMNS for MySQL/MariaDB
+    const rawColumns = await db
+      .prepare(`SHOW COLUMNS FROM ${tableName}`)
+      .all();
+
+    // Transform to consistent format
+    const columns = rawColumns.map(col => ({
+      name: col.Field,
+      type: col.Type,
+      notnull: col.Null === 'NO',
+      dflt_value: col.Default
+    }));
+
+    const countResult = await db
+      .prepare(`SELECT COUNT(*) as count FROM ${tableName}`)
+      .get();
+
+    const selectSql =
+      tableName === 'admin_users'
+        ? 'SELECT id, username, display_name, role, created_at, updated_at FROM admin_users LIMIT 100'
+        : `SELECT * FROM ${tableName} LIMIT 100`;
+    const rows = await db.prepare(selectSql).all();
+
     res.json({
       tableName,
       columns,
-      rowCount: countResult.count,
+      rowCount: Number(countResult?.count || 0),
       rows
     });
   } catch (err) {
@@ -776,50 +781,46 @@ router.get('/table/:tableName', requireAuth, requireAdmin, (req, res) => {
 });
 
 // Export single table to Excel
-router.get('/export/:tableName', requireAuth, requireAdmin, (req, res) => {
+router.get('/export/:tableName', requireAuth, requireAdmin, async (req, res) => {
   try {
     const { tableName } = req.params;
-    
-    // Validate table name
-    const validTables = ['admin_users', 'blog_posts', 'products'];
-    if (!validTables.includes(tableName)) {
+
+    if (!MANAGED_TABLES.includes(tableName)) {
       return res.status(400).json({ message: 'Tên bảng không hợp lệ.' });
     }
-    
-    // Get data
+
     let data;
     let headerType;
     let sheetName;
-    
+
     if (tableName === 'admin_users') {
-      data = db.prepare('SELECT id, username, display_name, role, created_at, updated_at FROM admin_users').all();
+      data = await db
+        .prepare('SELECT id, username, display_name, role, created_at, updated_at FROM admin_users')
+        .all();
       headerType = 'users';
       sheetName = 'Người dùng';
     } else if (tableName === 'blog_posts') {
-      data = db.prepare(`SELECT * FROM ${tableName}`).all();
+      data = await db.prepare('SELECT * FROM blog_posts').all();
       headerType = 'blogs';
       sheetName = 'Bài viết';
     } else {
-      data = db.prepare(`SELECT * FROM ${tableName}`).all();
+      data = await db.prepare('SELECT * FROM products').all();
       headerType = 'products';
       sheetName = 'Sản phẩm';
     }
-    
-    // Create workbook with formatting
+
     const wb = XLSX.utils.book_new();
-    
+
     if (data.length > 0) {
       const ws = XLSX.utils.json_to_sheet(data);
       const formattedWs = formatWorksheet(ws, data, createVietnameseHeaders(headerType));
       XLSX.utils.book_append_sheet(wb, formattedWs, sheetName);
     } else {
-      // Tạo sheet trống với header
       const emptyData = [{}];
       const ws = XLSX.utils.json_to_sheet(emptyData);
       XLSX.utils.book_append_sheet(wb, ws, sheetName);
     }
-    
-    // Thêm sheet thông tin
+
     const infoData = [
       { 'Thông tin': 'Bảng dữ liệu', 'Giá trị': sheetName },
       { 'Thông tin': 'Tên bảng gốc', 'Giá trị': tableName },
@@ -828,22 +829,20 @@ router.get('/export/:tableName', requireAuth, requireAdmin, (req, res) => {
       { 'Thông tin': '', 'Giá trị': '' },
       { 'Thông tin': 'Hệ thống', 'Giá trị': 'CovaSol Database Management' }
     ];
-    
+
     const infoSheet = XLSX.utils.json_to_sheet(infoData);
     const formattedInfoSheet = formatWorksheet(infoSheet, infoData, {
       'Thông tin': 'Thông tin',
       'Giá trị': 'Giá trị'
     });
     XLSX.utils.book_append_sheet(wb, formattedInfoSheet, 'Thông tin');
-    
-    // Generate buffer
-    const buffer = XLSX.write(wb, { 
-      type: 'buffer', 
+
+    const buffer = XLSX.write(wb, {
+      type: 'buffer',
       bookType: 'xlsx',
       cellStyles: true
     });
-    
-    // Send file
+
     const currentDate = new Date().toLocaleDateString('vi-VN').replace(/\//g, '-');
     const filename = `CovaSol_${sheetName}_${currentDate}.xlsx`;
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
@@ -856,135 +855,129 @@ router.get('/export/:tableName', requireAuth, requireAdmin, (req, res) => {
 });
 
 // Import single table from Excel
-router.post('/import/:tableName', requireAuth, requireAdmin, upload.single('file'), (req, res) => {
+router.post('/import/:tableName', requireAuth, requireAdmin, upload.single('file'), async (req, res) => {
   try {
     const { tableName } = req.params;
-    
-    // Validate table name
-    const validTables = ['admin_users', 'blog_posts', 'products'];
-    if (!validTables.includes(tableName)) {
+
+    if (!MANAGED_TABLES.includes(tableName)) {
       return res.status(400).json({ message: 'Tên bảng không hợp lệ.' });
     }
-    
+
     if (!req.file) {
       return res.status(400).json({ message: 'Vui lòng chọn file Excel để import.' });
     }
-    
-    // Read Excel file
+
     const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
     const sheetName = workbook.SheetNames[0];
     const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-    
+
     if (data.length === 0) {
       return res.status(400).json({ message: 'File Excel không có dữ liệu.' });
     }
-    
-    // Begin transaction
-    db.prepare('BEGIN TRANSACTION').run();
-    
-    try {
-      let imported = 0;
-      
+
+    let imported = 0;
+
+    await db.transaction(async (tx) => {
       if (tableName === 'admin_users') {
-        // Delete all users except current user
-        db.prepare('DELETE FROM admin_users WHERE id != ?').run(req.session.user.id);
-        
+        await tx.prepare('DELETE FROM admin_users WHERE id != ?').run(req.session.user.id);
+
         for (const user of data) {
           if (user.id === req.session.user.id) continue;
-          
+
           let passwordHash = user.password_hash;
           if (!passwordHash) {
             passwordHash = bcrypt.hashSync('ChangeMe123!', 12);
           }
-          
-          db.prepare(`
-            INSERT OR REPLACE INTO admin_users 
-            (id, username, password_hash, display_name, role, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-          `).run(
-            user.id || null,
-            user.username,
-            passwordHash,
-            user.display_name,
-            user.role || 'admin',
-            user.created_at || new Date().toISOString(),
-            user.updated_at || new Date().toISOString()
-          );
+
+          await tx
+            .prepare(`
+              INSERT INTO admin_users 
+              (username, password_hash, display_name, role, created_at, updated_at)
+              VALUES (@username, @password_hash, @display_name, @role, @created_at, @updated_at)
+            `)
+            .run({
+              username: user.username,
+              password_hash: passwordHash,
+              display_name: user.display_name,
+              role: user.role || 'admin',
+              created_at: user.created_at || new Date().toISOString(),
+              updated_at: user.updated_at || new Date().toISOString()
+            });
           imported++;
         }
       } else if (tableName === 'blog_posts') {
-        db.prepare('DELETE FROM blog_posts').run();
-        
+        await tx.prepare('DELETE FROM blog_posts').run();
+
         for (const blog of data) {
-          db.prepare(`
-            INSERT INTO blog_posts 
-            (id, code, slug, title, subtitle, excerpt, content, image_url, category, tags, keywords, 
-             author_name, author_role, published_at, status, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-          `).run(
-            blog.id || null,
-            blog.code,
-            blog.slug,
-            blog.title,
-            blog.subtitle || null,
-            blog.excerpt || null,
-            blog.content,
-            blog.image_url || null,
-            blog.category || null,
-            blog.tags || null,
-            blog.keywords || null,
-            blog.author_name || null,
-            blog.author_role || null,
-            blog.published_at,
-            blog.status || 'published',
-            blog.created_at || new Date().toISOString(),
-            blog.updated_at || new Date().toISOString()
-          );
+          await tx
+            .prepare(`
+              INSERT INTO blog_posts 
+              (code, slug, title, subtitle, excerpt, content, image_url, category, tags, keywords, 
+               author_name, author_role, published_at, status, created_at, updated_at)
+              VALUES (@code, @slug, @title, @subtitle, @excerpt, @content, @image_url, @category, @tags,
+                @keywords, @author_name, @author_role, @published_at, @status, @created_at, @updated_at)
+            `)
+            .run({
+              code: blog.code,
+              slug: blog.slug,
+              title: blog.title,
+              subtitle: blog.subtitle || null,
+              excerpt: blog.excerpt || null,
+              content: blog.content,
+              image_url: blog.image_url || null,
+              category: blog.category || null,
+              tags: blog.tags || null,
+              keywords: blog.keywords || null,
+              author_name: blog.author_name || null,
+              author_role: blog.author_role || null,
+              published_at: blog.published_at,
+              status: blog.status || 'published',
+              created_at: blog.created_at || new Date().toISOString(),
+              updated_at: blog.updated_at || new Date().toISOString()
+            });
           imported++;
         }
       } else if (tableName === 'products') {
-        db.prepare('DELETE FROM products').run();
-        
+        await tx.prepare('DELETE FROM products').run();
+
         for (const product of data) {
-          db.prepare(`
-            INSERT INTO products 
-            (id, code, slug, name, category, short_description, description, image_url, 
-             feature_tags, highlights, cta_primary_label, cta_primary_url, 
-             cta_secondary_label, cta_secondary_url, status, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-          `).run(
-            product.id || null,
-            product.code,
-            product.slug,
-            product.name,
-            product.category || null,
-            product.short_description || null,
-            product.description || null,
-            product.image_url || null,
-            product.feature_tags || null,
-            product.highlights || null,
-            product.cta_primary_label || null,
-            product.cta_primary_url || null,
-            product.cta_secondary_label || null,
-            product.cta_secondary_url || null,
-            product.status || 'active',
-            product.created_at || new Date().toISOString(),
-            product.updated_at || new Date().toISOString()
-          );
+          await tx
+            .prepare(`
+              INSERT INTO products 
+              (code, slug, name, category, short_description, description, image_url, 
+               feature_tags, highlights, cta_primary_label, cta_primary_url, 
+               cta_secondary_label, cta_secondary_url, status, created_at, updated_at)
+              VALUES (@code, @slug, @name, @category, @short_description, @description, @image_url,
+                @feature_tags, @highlights, @cta_primary_label, @cta_primary_url, @cta_secondary_label,
+                @cta_secondary_url, @status, @created_at, @updated_at)
+            `)
+            .run({
+              code: product.code,
+              slug: product.slug,
+              name: product.name,
+              category: product.category || null,
+              short_description: product.short_description || null,
+              description: product.description || null,
+              image_url: product.image_url || null,
+              feature_tags: product.feature_tags || null,
+              highlights: product.highlights || null,
+              cta_primary_label: product.cta_primary_label || null,
+              cta_primary_url: product.cta_primary_url || null,
+              cta_secondary_label: product.cta_secondary_label || null,
+              cta_secondary_url: product.cta_secondary_url || null,
+              status: product.status || 'active',
+              created_at: product.created_at || new Date().toISOString(),
+              updated_at: product.updated_at || new Date().toISOString()
+            });
           imported++;
         }
       }
-      
-      db.prepare('COMMIT').run();
-      
-      res.json({
-        message: 'Import thành công.',
-        imported
-      });
-    } catch (err) {
-      db.prepare('ROLLBACK').run();
-      throw err;
-    }
+    });
+
+    res.json({
+      message: 'Import thành công.',
+      imported
+    });
   } catch (err) {
     console.error('Error importing table:', err);
     res.status(500).json({ message: 'Không thể import bảng: ' + err.message });

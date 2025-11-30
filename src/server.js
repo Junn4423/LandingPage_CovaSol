@@ -1,21 +1,19 @@
-const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const SQLiteStoreFactory = require('connect-sqlite3');
+const cors = require('cors');
+const MySQLStore = require('express-mysql-session')(session);
 const config = require('./config');
-const { initializeDatabase } = require('./db');
+const { initializeDatabase, getPool } = require('./db');
+const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 const authRoutes = require('./routes/auth');
 const blogRoutes = require('./routes/blog');
 const productRoutes = require('./routes/products');
 const usersRoutes = require('./routes/users');
 const databaseRoutes = require('./routes/database');
 
-initializeDatabase();
-
 const app = express();
-const SQLiteStore = SQLiteStoreFactory(session);
 
 app.set('trust proxy', config.isProduction);
 
@@ -28,12 +26,36 @@ app.use(morgan(config.isProduction ? 'combined' : 'dev'));
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
 
+const corsOptions = {
+  origin: config.corsOrigins.length > 0 ? config.corsOrigins : undefined,
+  credentials: true
+};
+app.use(cors(corsOptions));
+
+// MySQL Session Store
+const sessionStore = new MySQLStore({
+  host: config.db.host,
+  port: config.db.port,
+  user: config.db.user,
+  password: config.db.password,
+  database: config.db.database,
+  clearExpired: true,
+  checkExpirationInterval: 900000, // 15 minutes
+  expiration: 1000 * 60 * 60 * 8, // 8 hours
+  createDatabaseTable: true,
+  schema: {
+    tableName: config.sessionTable,
+    columnNames: {
+      session_id: 'session_id',
+      expires: 'expires',
+      data: 'data'
+    }
+  }
+});
+
 app.use(
   session({
-    store: new SQLiteStore({
-      db: path.basename(config.sessionStoreFile),
-      dir: path.dirname(config.sessionStoreFile)
-    }),
+    store: sessionStore,
     secret: config.sessionSecret,
     resave: false,
     saveUninitialized: false,
@@ -47,27 +69,33 @@ app.use(
   })
 );
 
-const publicDir = path.join(__dirname, '..');
-const assetsDir = path.join(publicDir, 'assets');
-
-app.use(
-  '/assets',
-  express.static(assetsDir, {
-    maxAge: config.isProduction ? '7d' : 0,
-    extensions: ['css', 'js', 'png', 'jpg', 'jpeg', 'svg', 'webp']
-  })
-);
-app.use(
-  express.static(publicDir, {
-    extensions: ['html']
-  })
-);
-
-app.get('/health', (req, res) => {
-  res.json({
+app.get('/health', async (req, res) => {
+  const health = {
     status: 'ok',
-    timestamp: new Date().toISOString()
-  });
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: config.nodeEnv,
+    services: {
+      database: 'unknown'
+    }
+  };
+
+  try {
+    // Check database connectivity
+    const dbStart = Date.now();
+    await getPool().query('SELECT 1');
+    const dbLatency = Date.now() - dbStart;
+    
+    health.services.database = 'healthy';
+    health.services.databaseLatency = `${dbLatency}ms`;
+  } catch (error) {
+    health.status = 'degraded';
+    health.services.database = 'unhealthy';
+    health.services.databaseError = config.nodeEnv === 'development' ? error.message : 'Connection failed';
+  }
+
+  const statusCode = health.status === 'ok' ? 200 : 503;
+  res.status(statusCode).json(health);
 });
 
 app.use('/api/auth', authRoutes);
@@ -76,40 +104,21 @@ app.use('/api/products', productRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/database', databaseRoutes);
 
-app.get('/admin', (req, res) => {
-  res.sendFile(path.join(publicDir, 'admin.html'));
-});
+// 404 handler for unmatched API routes
+app.use('/api', notFoundHandler);
 
-app.get('/admin/blog-editor', (req, res) => {
-  res.sendFile(path.join(publicDir, 'live-blog-editor.html'));
-});
-
-app.get('/admin/product-editor', (req, res) => {
-  res.sendFile(path.join(publicDir, 'live-product-editor.html'));
-});
-
-app.get('/database-viewer', (req, res) => {
-  res.sendFile(path.join(publicDir, 'database-viewer.html'));
-});
-
-app.get('/blog/post/:identifier', (req, res) => {
-  res.sendFile(path.join(publicDir, 'blog-detail.html'));
-});
-
-app.get('/products/item/:identifier', (req, res) => {
-  res.sendFile(path.join(publicDir, 'product-detail.html'));
-});
-
-app.use('/api', (req, res) => {
-  res.status(404).json({ message: 'API endpoint không tồn tại.' });
-});
-
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).json({ message: 'Đã xảy ra lỗi máy chủ.' });
-});
+// Centralized error handler (must be last)
+app.use(errorHandler);
 
 const port = config.port;
-app.listen(port, () => {
-  console.log(`Covasol server đang chạy tại http://localhost:${port}`);
-});
+
+initializeDatabase()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`Covasol API server đang chạy tại http://localhost:${port}`);
+    });
+  })
+  .catch((error) => {
+    console.error('Không thể khởi tạo cơ sở dữ liệu:', error);
+    process.exit(1);
+  });

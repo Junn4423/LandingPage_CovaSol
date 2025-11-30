@@ -2,25 +2,37 @@ const path = require('path');
 
 require('dotenv').config();
 
-const env = process.env.NODE_ENV || 'development';
-const isProduction = env === 'production';
+const nodeEnv = process.env.NODE_ENV || 'development';
+const isProduction = nodeEnv === 'production';
 
 const dataDir = path.join(__dirname, '..', '..', 'data');
 
 module.exports = {
-  env,
+  nodeEnv,
   isProduction,
   port: parseInt(process.env.PORT, 10) || 3001,
   sessionSecret: process.env.SESSION_SECRET || 'covasol-dev-secret',
-  dbFile: process.env.DB_FILE || path.join(dataDir, 'covasol.db'),
-  sessionStoreFile: process.env.SESSION_DB_FILE || path.join(dataDir, 'sessions.sqlite'),
+  // MySQL/MariaDB connection config for Laragon
+  db: {
+    host: process.env.DB_HOST || 'localhost',
+    port: parseInt(process.env.DB_PORT, 10) || 3306,
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'covasol'
+  },
+  sessionTable: process.env.SESSION_TABLE || 'sessions',
   adminDefault: {
     username: process.env.ADMIN_USERNAME || 'admin',
     password: process.env.ADMIN_PASSWORD || '04042003Cova*',
     displayName: process.env.ADMIN_DISPLAY_NAME || 'Covasol Admin'
   },
-  corsOrigins: (process.env.CORS_ORIGINS || '')
-    .split(',')
-    .map(origin => origin.trim())
-    .filter(Boolean)
+  corsOrigins: Array.from(
+    new Set(
+      (process.env.CORS_ORIGINS || '')
+        .split(',')
+        .map(origin => origin.trim())
+        .filter(Boolean)
+        .concat(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : [])
+    )
+  )
 };
