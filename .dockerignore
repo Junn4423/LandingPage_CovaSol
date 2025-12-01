@@ -1,0 +1,67 @@
+# ================================
+# Docker Ignore File
+# ================================
+# Prevents unnecessary files from being copied to Docker image
+
+# Dependencies
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files (should be provided via Docker env)
+.env
+.env.local
+.env.*.local
+
+# Database files (SQLite legacy)
+*.db
+*.sqlite
+*.sqlite3
+data/
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+CHANGELOG.json
+docs/
+
+# Frontend assets (not needed for API)
+admin/
+assets/
+*.html
+
+# Test files
+test/
+tests/
+__tests__/
+*.test.js
+*.spec.js
+coverage/
+
+# Build artifacts
+dist/
+build/
+*.log
+
+# Scripts (not needed at runtime)
+scripts/
+
+# Docker files (not needed inside container)
+Dockerfile*
+docker-compose*.yml
+.dockerignore

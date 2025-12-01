@@ -1,132 +1,217 @@
-const fs = require('fs');
-const path = require('path');
-const Database = require('better-sqlite3');
+const mysql = require('mysql2/promise');
 const config = require('../config');
 
-fs.mkdirSync(path.dirname(config.dbFile), { recursive: true });
+let pool = null;
 
-const db = new Database(config.dbFile);
-
-function columnExists(table, column) {
-  const rows = db.prepare(`PRAGMA table_info(${table})`).all();
-  return rows.some((row) => row.name === column);
+function getPool() {
+  if (!pool) {
+    pool = mysql.createPool({
+      host: config.db.host,
+      port: config.db.port,
+      user: config.db.user,
+      password: config.db.password,
+      database: config.db.database,
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0,
+      enableKeepAlive: true,
+      keepAliveInitialDelay: 0
+    });
+  }
+  return pool;
 }
 
-function ensureColumn(table, column, definitionSql) {
-  if (!columnExists(table, column)) {
-    db.prepare(`ALTER TABLE ${table} ADD COLUMN ${column} ${definitionSql}`).run();
+async function initializeDatabase() {
+  const connection = await getPool().getConnection();
+  try {
+    await connection.beginTransaction();
+
+    // Create admin_users table
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS admin_users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(100) NOT NULL UNIQUE,
+        password_hash TEXT NOT NULL,
+        display_name VARCHAR(255) NOT NULL,
+        role VARCHAR(50) NOT NULL DEFAULT 'admin',
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `);
+
+    // Create blog_posts table
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS blog_posts (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        code VARCHAR(100) NOT NULL UNIQUE,
+        slug VARCHAR(150) NOT NULL UNIQUE,
+        title TEXT NOT NULL,
+        subtitle TEXT,
+        excerpt TEXT,
+        content LONGTEXT NOT NULL,
+        image_url TEXT,
+        category VARCHAR(120),
+        tags TEXT,
+        keywords TEXT,
+        author_name VARCHAR(120),
+        author_role VARCHAR(120),
+        published_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        status VARCHAR(40) NOT NULL DEFAULT 'published',
+        gallery_media JSON DEFAULT NULL,
+        video_items JSON DEFAULT NULL,
+        source_links JSON DEFAULT NULL,
+        is_featured TINYINT NOT NULL DEFAULT 0,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_published_at (published_at DESC),
+        INDEX idx_status (status),
+        INDEX idx_category (category)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `);
+
+    // Create products table
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS products (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        code VARCHAR(100) NOT NULL UNIQUE,
+        slug VARCHAR(150) NOT NULL UNIQUE,
+        name TEXT NOT NULL,
+        category VARCHAR(120),
+        short_description TEXT,
+        description LONGTEXT,
+        image_url TEXT,
+        feature_tags TEXT,
+        highlights TEXT,
+        cta_primary_label TEXT,
+        cta_primary_url TEXT,
+        cta_secondary_label TEXT,
+        cta_secondary_url TEXT,
+        gallery_media JSON DEFAULT NULL,
+        video_items JSON DEFAULT NULL,
+        demo_media JSON DEFAULT NULL,
+        status VARCHAR(40) NOT NULL DEFAULT 'active',
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_status (status),
+        INDEX idx_category (category)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `);
+
+    // Create sessions table for express-mysql-session
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS sessions (
+        session_id VARCHAR(128) NOT NULL PRIMARY KEY,
+        expires INT UNSIGNED NOT NULL,
+        data MEDIUMTEXT,
+        INDEX idx_expires (expires)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `);
+
+    await connection.commit();
+    console.log('Database tables initialized successfully.');
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
   }
 }
 
-function initializeDatabase() {
-  db.exec(`
-    PRAGMA foreign_keys = ON;
+// Placeholder detection and conversion
+const NAMED_PLACEHOLDER = /@([a-zA-Z0-9_]+)/g;
 
-    CREATE TABLE IF NOT EXISTS admin_users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      username TEXT NOT NULL UNIQUE,
-      password_hash TEXT NOT NULL,
-      display_name TEXT NOT NULL,
-      role TEXT NOT NULL DEFAULT 'admin',
-      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TRIGGER IF NOT EXISTS trg_admin_users_updated_at
-    AFTER UPDATE ON admin_users
-    FOR EACH ROW
-    BEGIN
-      UPDATE admin_users
-      SET updated_at = CURRENT_TIMESTAMP
-      WHERE id = NEW.id;
-    END;
-
-    CREATE TABLE IF NOT EXISTS blog_posts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      code TEXT NOT NULL UNIQUE,
-      slug TEXT NOT NULL UNIQUE,
-      title TEXT NOT NULL,
-      subtitle TEXT,
-      excerpt TEXT,
-      content TEXT NOT NULL,
-      image_url TEXT,
-      category TEXT,
-      tags TEXT,
-      keywords TEXT,
-      author_name TEXT,
-      author_role TEXT,
-      published_at TEXT NOT NULL,
-      status TEXT NOT NULL DEFAULT 'published',
-      gallery_media TEXT DEFAULT '[]',
-      video_items TEXT DEFAULT '[]',
-      source_links TEXT DEFAULT '[]',
-      is_featured INTEGER NOT NULL DEFAULT 0 CHECK (is_featured IN (0,1)),
-      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE INDEX IF NOT EXISTS idx_blog_posts_published_at
-      ON blog_posts (published_at DESC);
-
-    CREATE TRIGGER IF NOT EXISTS trg_blog_posts_updated_at
-    AFTER UPDATE ON blog_posts
-    FOR EACH ROW
-    BEGIN
-      UPDATE blog_posts
-      SET updated_at = CURRENT_TIMESTAMP
-      WHERE id = NEW.id;
-    END;
-
-    CREATE TABLE IF NOT EXISTS products (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      code TEXT NOT NULL UNIQUE,
-      slug TEXT NOT NULL UNIQUE,
-      name TEXT NOT NULL,
-      category TEXT,
-      short_description TEXT,
-      description TEXT,
-      image_url TEXT,
-      feature_tags TEXT,
-      highlights TEXT,
-      cta_primary_label TEXT,
-      cta_primary_url TEXT,
-      cta_secondary_label TEXT,
-      cta_secondary_url TEXT,
-      gallery_media TEXT DEFAULT '[]',
-      video_items TEXT DEFAULT '[]',
-      demo_media TEXT DEFAULT '[]',
-      status TEXT NOT NULL DEFAULT 'active',
-      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TRIGGER IF NOT EXISTS trg_products_updated_at
-    AFTER UPDATE ON products
-    FOR EACH ROW
-    BEGIN
-      UPDATE products
-      SET updated_at = CURRENT_TIMESTAMP
-      WHERE id = NEW.id;
-    END;
-  `);
-
-  ensureColumn('blog_posts', 'gallery_media', "TEXT DEFAULT '[]'");
-  ensureColumn('blog_posts', 'video_items', "TEXT DEFAULT '[]'");
-  ensureColumn('blog_posts', 'source_links', "TEXT DEFAULT '[]'");
-  ensureColumn('blog_posts', 'is_featured', "INTEGER NOT NULL DEFAULT 0 CHECK (is_featured IN (0,1))");
-
-  db.exec(`
-    CREATE UNIQUE INDEX IF NOT EXISTS idx_blog_posts_featured
-      ON blog_posts (is_featured)
-      WHERE is_featured = 1;
-  `);
-
-  ensureColumn('products', 'gallery_media', "TEXT DEFAULT '[]'");
-  ensureColumn('products', 'video_items', "TEXT DEFAULT '[]'");
-  ensureColumn('products', 'demo_media', "TEXT DEFAULT '[]'");
+function detectPlaceholderType(sql) {
+  const hasNamed = NAMED_PLACEHOLDER.test(sql);
+  const hasPositional = sql.includes('?');
+  NAMED_PLACEHOLDER.lastIndex = 0;
+  if (hasNamed && hasPositional) {
+    throw new Error('Không hỗ trợ trộn lẫn placeholder ? và @param trong cùng truy vấn.');
+  }
+  if (hasNamed) return 'named';
+  if (hasPositional) return 'positional';
+  return 'none';
 }
+
+function buildQuery(sql, type, args) {
+  if (type === 'named') {
+    const paramsObject = args && args.length > 0 ? args[0] || {} : {};
+    if (paramsObject && typeof paramsObject !== 'object') {
+      throw new Error('Truy vấn sử dụng @param yêu cầu truyền đối tượng tham số.');
+    }
+    const values = [];
+    const text = sql.replace(NAMED_PLACEHOLDER, (_, name) => {
+      values.push(Object.prototype.hasOwnProperty.call(paramsObject, name) ? paramsObject[name] : null);
+      return '?';
+    });
+    NAMED_PLACEHOLDER.lastIndex = 0;
+    return { text, values };
+  }
+
+  if (type === 'positional') {
+    const flatArgs = args.length === 1 && Array.isArray(args[0]) ? args[0] : args;
+    return { text: sql, values: flatArgs };
+  }
+
+  return { text: sql, values: [] };
+}
+
+function createPreparedStatement(sql, connection) {
+  const type = detectPlaceholderType(sql);
+
+  const exec = async (mode, args) => {
+    const target = connection || getPool();
+    const { text, values } = buildQuery(sql, type, args);
+    const [rows] = await target.query(text, values);
+    
+    if (mode === 'all') {
+      return Array.isArray(rows) ? rows : [];
+    }
+    if (mode === 'get') {
+      return Array.isArray(rows) ? (rows[0] || null) : null;
+    }
+    // For INSERT, UPDATE, DELETE
+    return {
+      changes: rows.affectedRows || 0,
+      insertId: rows.insertId || null,
+      rows: Array.isArray(rows) ? rows : []
+    };
+  };
+
+  return {
+    all: (...args) => exec('all', args),
+    get: (...args) => exec('get', args),
+    run: (...args) => exec('run', args)
+  };
+}
+
+async function transaction(handler) {
+  const connection = await getPool().getConnection();
+  try {
+    await connection.beginTransaction();
+    const txDb = {
+      prepare: (sql) => createPreparedStatement(sql, connection)
+    };
+    const result = await handler(txDb);
+    await connection.commit();
+    return result;
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
+}
+
+const db = {
+  prepare: (sql) => createPreparedStatement(sql),
+  transaction,
+  get pool() {
+    return getPool();
+  }
+};
 
 module.exports = {
   db,
-  initializeDatabase
+  initializeDatabase,
+  getPool
 };

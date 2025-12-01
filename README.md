@@ -205,12 +205,15 @@ COVASOL Landing Page là một trang web hiện đại, sang trọng được th
 ### Backend
 - **Node.js**: Runtime environment
 - **Express.js**: Web framework
-- **SQLite**: Database với better-sqlite3
+- **MySQL/MariaDB**: Primary database (with mysql2 driver)
 - **bcryptjs**: Password hashing
 - **express-session**: Session management
+- **express-mysql-session**: MySQL session store
 - **Helmet**: Security headers
+- **CORS**: Cross-origin resource sharing
 
 ### Development Tools
+- **Laragon**: Local development environment (Windows)
 - **Nodemon**: Auto-restart development server
 - **CleanCSS**: CSS minification
 - **UglifyJS**: JavaScript minification
@@ -220,36 +223,105 @@ COVASOL Landing Page là một trang web hiện đại, sang trọng được th
 
 ## Yêu cầu hệ thống
 
-- **Node.js**: Phiên bản 14.0+ (khuyến nghị 18+)
+- **Node.js**: Phiên bản 18.0+ (khuyến nghị 20+)
 - **npm**: Đi kèm với Node.js
-- **SQLite**: Tự động tạo database file
+- **MySQL/MariaDB**: Phiên bản 8+ (hoặc Laragon, Docker)
 - **Trình duyệt**: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
 
 ---
 
 ## Cài đặt
 
-### 1. Clone repository
+### Cách 1: Sử dụng Laragon (Khuyến nghị cho Windows)
+
+1. **Cài đặt Laragon**: Tải từ [laragon.org](https://laragon.org/download/)
+
+2. **Clone repository**:
 ```bash
 git clone https://github.com/Junn4423/LandingPage_CovaSol.git
 cd LandingPage_CovaSol
 ```
 
-### 2. Cài đặt dependencies
+3. **Khởi động Laragon**: Mở Laragon và nhấn "Start All"
+
+4. **Tạo database**:
+   - Mở phpMyAdmin (http://localhost/phpmyadmin)
+   - Tạo database mới tên: `covasol`
+   - Chọn database `covasol`
+   - Vào tab SQL, paste nội dung file `database/schema.sql` và nhấn Go
+
+5. **Cấu hình môi trường**:
+```bash
+# Copy file mẫu
+copy .env.example .env
+
+# Laragon mặc định: không cần sửa gì (root, không password)
+```
+
+6. **Cài đặt dependencies và chạy**:
+```bash
+npm install
+npm run dev
+```
+
+API Server sẽ chạy tại: `http://localhost:3001`
+
+### Cách 2: Sử dụng Docker
+
+```bash
+# Clone repository
+git clone https://github.com/Junn4423/LandingPage_CovaSol.git
+cd LandingPage_CovaSol
+
+# Copy file cấu hình môi trường
+cp .env.example .env
+
+# Chỉnh sửa .env theo nhu cầu (thay đổi SESSION_SECRET, DB_PASSWORD, etc.)
+
+# Khởi động toàn bộ stack với Docker
+docker compose up -d
+
+# API sẽ chạy tại http://localhost:3001
+# MariaDB chạy tại localhost:3306
+```
+
+### Cách 3: Cài đặt thủ công
+
+#### 1. Clone repository
+```bash
+git clone https://github.com/Junn4423/LandingPage_CovaSol.git
+cd LandingPage_CovaSol
+```
+
+#### 2. Cài đặt MySQL/MariaDB
+```sql
+-- Đăng nhập vào MySQL và tạo database
+CREATE DATABASE covasol CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- Tạo user (optional)
+CREATE USER 'covasol'@'localhost' IDENTIFIED BY 'your_password';
+GRANT ALL PRIVILEGES ON covasol.* TO 'covasol'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+#### 3. Cấu hình môi trường
+```bash
+cp .env.example .env
+# Chỉnh sửa DB_HOST, DB_USER, DB_PASSWORD, DB_NAME trong .env
+```
+
+#### 4. Cài đặt dependencies
 ```bash
 npm install
 ```
 
-### 3. Khởi tạo database
+#### 5. Khởi tạo database
 ```bash
-# Tạo cấu trúc database
 npm run db:migrate
-
-# Thêm dữ liệu mẫu
 npm run db:seed
 ```
 
-### 4. Khởi động server
+#### 6. Khởi động server
 ```bash
 # Development mode (auto-restart)
 npm run dev
@@ -258,7 +330,7 @@ npm run dev
 npm start
 ```
 
-Server sẽ chạy tại: `http://localhost:3000`
+API Server sẽ chạy tại: `http://localhost:3001`
 
 ---
 
