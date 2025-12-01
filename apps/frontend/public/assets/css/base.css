@@ -1,0 +1,122 @@
+/* ============================================================================
+   Base Styles
+   Shared resets, typography, spacing, and primitive components for the UI
+   ============================================================================ */
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: clamp(15px, calc(0.35vw + 14px), 16px);
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-primary);
+  line-height: 1.7;
+  color: var(--gray-800);
+  background-color: var(--white);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-overflow-scrolling: touch;
+  font-feature-settings: "liga", "kern";
+  text-rendering: optimizeLegibility;
+  word-spacing: 0.05em;
+  font-variant-ligatures: common-ligatures;
+  font-kerning: normal;
+  min-height: 100vh;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: var(--transition-normal);
+}
+
+ul {
+  list-style: none;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding-inline: clamp(20px, 4vw, 48px);
+}
+
+section {
+  padding: var(--section-padding) 0;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+.section-header h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  color: var(--primary-navy);
+  margin-bottom: clamp(0.75rem, 2vw, 1rem);
+}
+
+.section-header p {
+  font-size: clamp(1rem, 1.75vw, 1.25rem);
+  color: var(--gray-600);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(0.4rem, 1.5vw, 0.75rem);
+  padding: clamp(12px, 2.5vw, 14px) clamp(24px, 6vw, 36px);
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  border: none;
+  text-decoration: none;
+  min-width: clamp(140px, 18vw, 190px);
+  justify-content: center;
+}
+
+.btn-primary {
+  background: var(--gradient-secondary);
+  color: var(--white);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--white);
+  border: 2px solid var(--white);
+}
+
+.btn-secondary:hover {
+  background: var(--white);
+  color: var(--primary-dark);
+}

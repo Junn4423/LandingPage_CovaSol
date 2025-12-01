@@ -4,6 +4,8 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
+    const reactNavbar = document.querySelector('[data-react-navbar="true"]');
+    const isReactNavbar = Boolean(reactNavbar);
     
     // ============================================================================
     // LANGUAGE SWITCHER
@@ -33,25 +35,23 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Update active language in dropdown
     function updateActiveLanguage(lang) {
-        langOptions.forEach(option => {
-            option.classList.remove('active');
-            if (option.dataset.lang === lang) {
-                option.classList.add('active');
+        if (!isReactNavbar) {
+            langOptions.forEach(option => {
+                option.classList.remove('active');
+                if (option.dataset.lang === lang) {
+                    option.classList.add('active');
+                }
+            });
+            
+            const langMap = {
+                'vi': 'VI',
+                'en': 'EN', 
+                'fr': 'FR'
+            };
+            if (currentLangSpan) {
+                currentLangSpan.textContent = langMap[lang];
             }
-        });
-        
-        // Update current language display
-        const langMap = {
-            'vi': 'VI',
-            'en': 'EN', 
-            'fr': 'FR'
-        };
-        if (currentLangSpan) {
-            currentLangSpan.textContent = langMap[lang];
         }
-        
-        // Update HTML lang attribute
-        document.documentElement.lang = lang;
     }
     
     // Update page content based on language
@@ -64,7 +64,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
                     element.placeholder = translations[lang][key];
                 } else if (element.tagName === 'SELECT') {
-                    // Handle select options separately
                     return;
                 } else {
                     element.textContent = translations[lang][key];
@@ -72,10 +71,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // Update select options
         updateSelectOptions(lang);
-        
-        // Store language preference
+        document.documentElement.lang = lang;
         localStorage.setItem('covasol-language', lang);
         currentLanguage = lang;
     }
@@ -93,33 +90,52 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
+
+    function handleLanguageChange(lang) {
+        if (!lang) {
+            return;
+        }
+        updateLanguage(lang);
+        updateActiveLanguage(lang);
+    }
     
-    // Language dropdown toggle
-    if (langBtn) {
+    if (!isReactNavbar && langBtn) {
         langBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             langMenu.classList.toggle('active');
         });
     }
     
-    // Language option selection
-    langOptions.forEach(option => {
-        option.addEventListener('click', function() {
-            const selectedLang = this.dataset.lang;
-            updateLanguage(selectedLang);
-            updateActiveLanguage(selectedLang);
-            langMenu.classList.remove('active');
+    if (!isReactNavbar) {
+        langOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const selectedLang = this.dataset.lang;
+                updateLanguage(selectedLang);
+                updateActiveLanguage(selectedLang);
+                langMenu.classList.remove('active');
+            });
         });
-    });
+
+        document.addEventListener('click', function(e) {
+            if (langMenu && !langMenu.contains(e.target) && !langBtn.contains(e.target)) {
+                langMenu.classList.remove('active');
+            }
+        });
+    }
+
+    if (typeof window !== 'undefined') {
+        window.covasolLanguageBridge = {
+            getCurrentLanguage: () => currentLanguage,
+            setLanguage: handleLanguageChange
+        };
+
+        window.addEventListener('covasol:language-change', function(event) {
+            if (event && event.detail && event.detail.language) {
+                handleLanguageChange(event.detail.language);
+            }
+        });
+    }
     
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-        if (langMenu && !langMenu.contains(e.target) && !langBtn.contains(e.target)) {
-            langMenu.classList.remove('active');
-        }
-    });
-    
-    // Initialize language on page load
     initLanguage();
     
     // ============================================================================
@@ -132,79 +148,76 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('load', function() {
         setTimeout(() => {
             loadingScreen.classList.add('hidden');
-            // Remove loading screen from DOM after animation
             setTimeout(() => {
                 if (loadingScreen) {
                     loadingScreen.remove();
                 }
             }, 500);
-        }, 1000); // Show loading for at least 1 second
+        }, 1000);
     });
     
     // ============================================================================
     // NAVIGATION
     // ============================================================================
     
-    const navbar = document.querySelector('.navbar');
-    const navToggle = document.querySelector('.nav-toggle');
-    const navMenu = document.querySelector('.nav-menu');
-    const navLinks = document.querySelectorAll('.nav-link');
-    
-    // Mobile menu toggle
-    if (navToggle) {
-        navToggle.addEventListener('click', function() {
-            navToggle.classList.toggle('active');
-            navMenu.classList.toggle('active');
-            document.body.classList.toggle('nav-open');
-        });
-    }
-    
-    // Close mobile menu when clicking on links
-    navLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            navToggle.classList.remove('active');
-            navMenu.classList.remove('active');
-            document.body.classList.remove('nav-open');
-        });
-    });
-    
-    // Navbar scroll effect
-    let lastScrollTop = 0;
-    window.addEventListener('scroll', function() {
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    if (!isReactNavbar) {
+        const navbar = document.querySelector('.navbar');
+        const navToggle = document.querySelector('.nav-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+        const navLinks = document.querySelectorAll('.nav-link');
         
-        if (scrollTop > 100) {
-            navbar.style.background = 'rgba(13, 27, 42, 0.98)';
-            navbar.style.boxShadow = '0 2px 20px rgba(13, 27, 42, 0.1)';
-        } else {
-            navbar.style.background = 'rgba(13, 27, 42, 0.95)';
-            navbar.style.boxShadow = 'none';
+        if (navToggle) {
+            navToggle.addEventListener('click', function() {
+                navToggle.classList.toggle('active');
+                navMenu.classList.toggle('active');
+                document.body.classList.toggle('nav-open');
+            });
         }
         
-        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-    });
-    
-    // Active nav link highlighting
-    function setActiveNavLink() {
-        const sections = document.querySelectorAll('section[id]');
-        const scrollPos = window.scrollY + 100;
-        
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            const sectionHeight = section.offsetHeight;
-            const sectionId = section.getAttribute('id');
-            const navLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
-            
-            if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
-                navLinks.forEach(link => link.classList.remove('active'));
-                if (navLink) {
-                    navLink.classList.add('active');
-                }
-            }
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                navToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+                document.body.classList.remove('nav-open');
+            });
         });
+        
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (scrollTop > 100) {
+                navbar.style.background = 'rgba(13, 27, 42, 0.98)';
+                navbar.style.boxShadow = '0 2px 20px rgba(13, 27, 42, 0.1)';
+            } else {
+                navbar.style.background = 'rgba(13, 27, 42, 0.95)';
+                navbar.style.boxShadow = 'none';
+            }
+            
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+        
+        function setActiveNavLink() {
+            const sections = document.querySelectorAll('section[id]');
+            const scrollPos = window.scrollY + 100;
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.offsetHeight;
+                const sectionId = section.getAttribute('id');
+                const navLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
+                
+                if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
+                    navLinks.forEach(link => link.classList.remove('active'));
+                    if (navLink) {
+                        navLink.classList.add('active');
+                    }
+                }
+            });
+        }
+        
+        window.addEventListener('scroll', setActiveNavLink);
     }
-    
-    window.addEventListener('scroll', setActiveNavLink);
     
     // ============================================================================
     // SMOOTH SCROLLING
@@ -340,6 +353,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 clearFieldError(this);
             });
         });
+
+        quoteForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            if (typeof window !== 'undefined' && typeof window.sendQuote === 'function') {
+                window.sendQuote();
+            }
+        });
+
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn) {
+            submitBtn.addEventListener('click', function(event) {
+                event.preventDefault();
+                if (typeof window !== 'undefined' && typeof window.sendQuote === 'function') {
+                    window.sendQuote();
+                }
+            });
+        }
     }
     
     function validateForm(data) {
@@ -895,39 +925,40 @@ document.addEventListener('DOMContentLoaded', function() {
     // HOMEPAGE DYNAMIC CONTENT (API-DRIVEN SECTIONS)
     // ============================================================================
 
-    const apiClient = window.covasolApi;
-    const homeProductsGrid = document.getElementById('homeProductsGrid');
-    const homeProductsLoading = document.getElementById('homeProductsLoading');
-    const homeProductsEmpty = document.getElementById('homeProductsEmpty');
-    const homeBlogGrid = document.getElementById('homeBlogGrid');
-    const homeBlogLoading = document.getElementById('homeBlogLoading');
-    const homeBlogEmpty = document.getElementById('homeBlogEmpty');
+    if (!isReactNavbar) {
+        const apiClient = window.covasolApi;
+        const homeProductsGrid = document.getElementById('homeProductsGrid');
+        const homeProductsLoading = document.getElementById('homeProductsLoading');
+        const homeProductsEmpty = document.getElementById('homeProductsEmpty');
+        const homeBlogGrid = document.getElementById('homeBlogGrid');
+        const homeBlogLoading = document.getElementById('homeBlogLoading');
+        const homeBlogEmpty = document.getElementById('homeBlogEmpty');
 
-    function setVisibility(element, visible) {
-        if (!element) return;
-        element.classList.toggle('is-hidden', !visible);
-    }
-
-    function truncateText(value, limit = 140) {
-        if (!value) return '';
-        if (value.length <= limit) return value;
-        return `${value.slice(0, limit).trim()}…`;
-    }
-
-    function formatLocalizedDate(value) {
-        if (!value) return '';
-        try {
-            return new Date(value).toLocaleDateString('vi-VN', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            });
-        } catch (error) {
-            return value;
+        function setVisibility(element, visible) {
+            if (!element) return;
+            element.classList.toggle('is-hidden', !visible);
         }
-    }
 
-    function buildHomeProductCard(product, index) {
+        function truncateText(value, limit = 140) {
+            if (!value) return '';
+            if (value.length <= limit) return value;
+            return `${value.slice(0, limit).trim()}…`;
+        }
+
+        function formatLocalizedDate(value) {
+            if (!value) return '';
+            try {
+                return new Date(value).toLocaleDateString('vi-VN', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+            } catch (error) {
+                return value;
+            }
+        }
+
+        function buildHomeProductCard(product, index) {
     const detailUrl = `product-detail.html?code=${encodeURIComponent(product.code)}`;
         const card = document.createElement('article');
         card.className = 'product-card';
@@ -1022,9 +1053,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         return card;
-    }
+        }
 
-    function buildHomePostCard(post, index) {
+        function buildHomePostCard(post, index) {
     const detailUrl = `blog-detail.html?code=${encodeURIComponent(post.code)}`;
         const article = document.createElement('article');
         article.className = 'post-card';
@@ -1111,78 +1142,79 @@ document.addEventListener('DOMContentLoaded', function() {
         return article;
     }
 
-    const isActiveHomeProduct = (product) =>
-        (product?.status || 'inactive').toLowerCase() === 'active';
-    const isPublishedHomePost = (post) =>
-        (post?.status || 'draft').toLowerCase() === 'published';
+        const isActiveHomeProduct = (product) =>
+            (product?.status || 'inactive').toLowerCase() === 'active';
+        const isPublishedHomePost = (post) =>
+            (post?.status || 'draft').toLowerCase() === 'published';
 
-    async function loadHomeProducts() {
-        if (!homeProductsGrid || !apiClient) return;
-        setVisibility(homeProductsLoading, true);
-        setVisibility(homeProductsEmpty, false);
-        homeProductsGrid.innerHTML = '';
+        async function loadHomeProducts() {
+            if (!homeProductsGrid || !apiClient) return;
+            setVisibility(homeProductsLoading, true);
+            setVisibility(homeProductsEmpty, false);
+            homeProductsGrid.innerHTML = '';
 
-        try {
-            const products = await apiClient.fetchProducts({ limit: 3, offset: 0, status: 'active' });
-            const visibleProducts = (products || []).filter(isActiveHomeProduct);
-            if (!visibleProducts.length) {
+            try {
+                const products = await apiClient.fetchProducts({ limit: 3, offset: 0, status: 'active' });
+                const visibleProducts = (products || []).filter(isActiveHomeProduct);
+                if (!visibleProducts.length) {
+                    setVisibility(homeProductsEmpty, true);
+                    return;
+                }
+                visibleProducts.slice(0, 3).forEach((product, index) => {
+                    homeProductsGrid.appendChild(buildHomeProductCard(product, index));
+                });
+                if (typeof AOS !== 'undefined') {
+                    AOS.refresh();
+                }
+            } catch (error) {
                 setVisibility(homeProductsEmpty, true);
-                return;
+                const emptyText = homeProductsEmpty?.querySelector('p');
+                if (emptyText) {
+                    emptyText.textContent = error.message || translate('home-products-empty', 'Không thể tải sản phẩm.');
+                }
+            } finally {
+                setVisibility(homeProductsLoading, false);
             }
-            visibleProducts.slice(0, 3).forEach((product, index) => {
-                homeProductsGrid.appendChild(buildHomeProductCard(product, index));
-            });
-            if (typeof AOS !== 'undefined') {
-                AOS.refresh();
-            }
-        } catch (error) {
-            setVisibility(homeProductsEmpty, true);
-            const emptyText = homeProductsEmpty?.querySelector('p');
-            if (emptyText) {
-                emptyText.textContent = error.message || translate('home-products-empty', 'Không thể tải sản phẩm.');
-            }
-        } finally {
-            setVisibility(homeProductsLoading, false);
         }
-    }
 
-    async function loadHomeBlogPosts() {
-        if (!homeBlogGrid || !apiClient) return;
-        setVisibility(homeBlogLoading, true);
-        setVisibility(homeBlogEmpty, false);
-        homeBlogGrid.innerHTML = '';
+        async function loadHomeBlogPosts() {
+            if (!homeBlogGrid || !apiClient) return;
+            setVisibility(homeBlogLoading, true);
+            setVisibility(homeBlogEmpty, false);
+            homeBlogGrid.innerHTML = '';
 
-        try {
-            const posts = await apiClient.fetchBlogPosts({ limit: 3, offset: 0, status: 'published' });
-            const visiblePosts = (posts || []).filter(isPublishedHomePost);
-            if (!visiblePosts.length) {
+            try {
+                const posts = await apiClient.fetchBlogPosts({ limit: 3, offset: 0, status: 'published' });
+                const visiblePosts = (posts || []).filter(isPublishedHomePost);
+                if (!visiblePosts.length) {
+                    setVisibility(homeBlogEmpty, true);
+                    return;
+                }
+                visiblePosts.slice(0, 3).forEach((post, index) => {
+                    homeBlogGrid.appendChild(buildHomePostCard(post, index));
+                });
+                if (typeof AOS !== 'undefined') {
+                    AOS.refresh();
+                }
+            } catch (error) {
                 setVisibility(homeBlogEmpty, true);
-                return;
+                const emptyText = homeBlogEmpty?.querySelector('p');
+                if (emptyText) {
+                    emptyText.textContent = error.message || translate('home-blog-empty', 'Không thể tải bài viết.');
+                }
+            } finally {
+                setVisibility(homeBlogLoading, false);
             }
-            visiblePosts.slice(0, 3).forEach((post, index) => {
-                homeBlogGrid.appendChild(buildHomePostCard(post, index));
-            });
-            if (typeof AOS !== 'undefined') {
-                AOS.refresh();
-            }
-        } catch (error) {
-            setVisibility(homeBlogEmpty, true);
-            const emptyText = homeBlogEmpty?.querySelector('p');
-            if (emptyText) {
-                emptyText.textContent = error.message || translate('home-blog-empty', 'Không thể tải bài viết.');
-            }
-        } finally {
-            setVisibility(homeBlogLoading, false);
         }
-    }
 
-    if (homeProductsGrid || homeBlogGrid) {
-        if (apiClient) {
-            Promise.all([loadHomeProducts(), loadHomeBlogPosts()]).finally(() => {
-                updateLanguage(currentLanguage);
-            });
-        } else {
-            console.warn('Covasol API helper is not available. Homepage dynamic sections will be static.');
+        if (homeProductsGrid || homeBlogGrid) {
+            if (apiClient) {
+                Promise.all([loadHomeProducts(), loadHomeBlogPosts()]).finally(() => {
+                    updateLanguage(currentLanguage);
+                });
+            } else {
+                console.warn('Covasol API helper is not available. Homepage dynamic sections will be static.');
+            }
         }
     }
 

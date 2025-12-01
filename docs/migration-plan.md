@@ -47,6 +47,38 @@
    - Commands: `npm run dev:frontend`, `npm run build:frontend`, `npm run lint:frontend` from repo root using npm workspaces.
    - Add Playwright smoke tests for critical flows (phase 3).
 
+## Legacy UI Parity Backlog
+| Legacy Screen | Source File | Target Next.js Route | Current State | Gaps To Close |
+| --- | --- | --- | --- | --- |
+| Marketing Home (hero + sections) | `assets/css/landing/*.css` + `assets/js/script.js` | `/` (App Router server component) | Simplified hero + cards using Tailwind | Navigation, animated hero video, service grids, testimonials, CTA banner, language switcher, and legacy scroll interactions not yet ported. |
+| Blog Listing + Filters | `blog.html` + `assets/js/blog-page.js` | `/blog` | Basic list with Tailwind cards backed by API | Need featured hero, category filter chips, loading skeleton, client-side search + translations. |
+| Blog Detail Rich Reader | `blog-detail.html` + `assets/js/blog-detail.js` | `/blog/[slug]` | Text-only article rendering | Missing hero media, table of contents, author card, related posts rail, live preview styles. |
+| Products Catalog | `products.html` + `assets/js/products-page.js` | `/products` | Grid of summaries | Need animated filter pills, pricing cards, integration badges, FAQ accordion, CTA strips. |
+| Product Detail Showcase | `product-detail.html` + `assets/js/product-detail.js` | `/products/[id]` | Simple detail block | Missing sticky summary card, step timeline, feature highlights, testimonial slider, download CTA. |
+| Admin Dashboard Tabs | `admin.html` + `assets/js/admin.js` | `/admin` | Minimal stats cards | Need tabbed shell with blog/product/user/database panels, refresh banner, and quick actions per legacy UI. |
+| Live Blog Editor | `live-blog-editor.html` + `assets/js/live-editor.js` | `/admin/blog/live` (new) | Not started | Port split-pane live preview, toolbar actions (insert image/video/source), and metadata form with validation. |
+| Live Product Editor | `live-product-editor.html` | `/admin/products/live` (new) | Not started | Mirror live editing UX for product fields, checklist guidance, preview renderer hook. |
+| Database Viewer | `database-viewer.html` + `assets/js/database-viewer.js` | `/admin/database` (new) | Not started | Build Prisma-powered insights grid + export actions, reuse old table styles. |
+| Admin User Editor (modal flows) | `admin-user-editor.html` | `/admin/users` | CRUD form parity but different UI | Re-create side-by-side layouts, inline validation, password reset modal, analytics counters. |
+
+## Implementation Gameplan (Next Milestones)
+1. **Bootstrap legacy assets in Next**
+   - Copy `/assets` (css/js/img/video) into `apps/frontend/public/assets` so existing class names remain valid.
+   - Import critical CSS bundles (`variables.css`, `base.css`, `style.css`, admin variants) from `app/globals.css` to avoid layout shift.
+2. **Shared Legacy Shell Components**
+   - Build `LegacyLayout` that injects `<head>` links (fonts, FontAwesome, AOS) + wraps page with marketing nav/footer markup.
+   - Expose hooks for translations + language switcher mirroring `assets/js/translations.js` logic.
+3. **Page-by-page Refactor**
+   - Start with `/blog` and `/blog/[slug]` to exercise data hydration + interactive filters.
+   - Follow with `/products` + `/products/[id]`, then home.
+   - Finish with `/admin` derivatives (dashboard, live editors, database viewer) once marketing parity shipped.
+4. **Script-to-React Migration**
+   - Translate `assets/js/*.js` behaviors into dedicated client components (e.g., `BlogFilters`, `ReviewsCarousel`).
+   - Co-locate types with shared `packages/types` for consistent DTOs.
+5. **Testing + Accessibility**
+   - Snapshot test legacy layout wrappers with Storybook or Playwright.
+   - Re-run Lighthouse to verify we do not regress performance/SEO when legacy CSS loads.
+
 ## Backend (API) Architecture
 1. **Workspace Layout**
    - Location: `apps/backend` (Express 5 + TypeScript + Zod + Prisma for MySQL).

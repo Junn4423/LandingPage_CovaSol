@@ -1,0 +1,27 @@
+/* ============================================================================
+   Admin Base
+   Shared layout scaffolding, typography, utilities
+   ============================================================================ */
+
+/* ============================================================================
+   COVASOL Admin Styles
+   Dedicated styling for admin dashboard and editor screens.
+   ========================================================================== */
+
+.admin-app,
+.admin-editor {
+    background: var(--gray-100, #f4f6fb);
+    color: var(--gray-800, #1e293b);
+    min-height: 100vh;
+    font-family: var(--font-primary, 'Be Vietnam Pro', sans-serif);
+}
+
+.admin-app section {
+    padding: 0;
+}
+
+.admin-app__viewport {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}

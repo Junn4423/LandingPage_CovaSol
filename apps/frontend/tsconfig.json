@@ -3,16 +3,51 @@
   "compilerOptions": {
     "baseUrl": "./",
     "jsx": "preserve",
-    "types": ["next", "react"],
+    "types": [
+      "next",
+      "react"
+    ],
     "paths": {
-      "@/components/*": ["./src/components/*"],
-      "@/hooks": ["./src/hooks"],
-      "@/hooks/*": ["./src/hooks/*"],
-      "@/lib/*": ["./src/lib/*"],
-      "@/types": ["../../packages/types/src"],
-      "@/types/*": ["../../packages/types/src/*"]
-    }
+      "@/components/*": [
+        "./src/components/*"
+      ],
+      "@/hooks": [
+        "./src/hooks"
+      ],
+      "@/hooks/*": [
+        "./src/hooks/*"
+      ],
+      "@/lib/*": [
+        "./src/lib/*"
+      ],
+      "@/types": [
+        "../../packages/types/src"
+      ],
+      "@/types/*": [
+        "../../packages/types/src/*"
+      ]
+    },
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
-  "include": ["next-env.d.ts", "app", "src", "types"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "app",
+    "src",
+    "types",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

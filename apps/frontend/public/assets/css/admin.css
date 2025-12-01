@@ -1,0 +1,10 @@
+/* ============================================================================
+   COVASOL Admin Styles
+   Modular entry point that stitches together admin-specific bundles
+   ========================================================================== */
+
+@import url('./admin/base.css');
+@import url('./admin/auth.css');
+@import url('./admin/dashboard.css');
+@import url('./admin/editor.css');
+@import url('./admin/responsive.css');

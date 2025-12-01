@@ -531,6 +531,10 @@ const translations = {
     }
 };
 
+if (typeof window !== 'undefined') {
+    window.covasolTranslations = translations;
+}
+
 // Export for use in other files
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = translations;

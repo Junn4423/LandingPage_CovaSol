@@ -1,0 +1,13 @@
+/* ============================================================================
+   COVASOL Landing Page Styles
+   Modular entry point that stitches together section-specific bundles
+   ============================================================================ */
+
+@import url('./landing/layout-shell.css');
+@import url('./landing/hero.css');
+@import url('./landing/home-sections.css');
+@import url('./landing/products.css');
+@import url('./landing/blog.css');
+@import url('./landing/detail-pages.css');
+@import url('./landing/responsive.css');
+

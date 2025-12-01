@@ -1,13 +1,22 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "target": "ES2021",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
     "outDir": "dist",
-    "rootDir": "../..",
-    "baseUrl": "src",
+    "rootDir": ".",
+    "baseUrl": ".",
     "paths": {
-      "@/types/*": ["../../../packages/types/src/*"]
+      "@covasol/types": ["../../packages/types/src"],
+      "@covasol/types/*": ["../../packages/types/src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "prisma"],
   "exclude": ["node_modules", "dist"]
 }

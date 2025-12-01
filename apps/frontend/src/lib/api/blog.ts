@@ -13,7 +13,6 @@ export async function fetchBlogSummaries(): Promise<BlogPostSummary[]> {
     const response = await apiRequest<ApiSuccessResponse<BlogPostSummary[]>>({
       path: '/v1/blog',
       nextOptions: {
-        cache: 'force-cache',
         next: { revalidate: BLOG_LIST_REVALIDATE }
       }
     });
@@ -29,7 +28,6 @@ export async function fetchBlogPost(slug: string): Promise<BlogPostDetail | null
     const response = await apiRequest<ApiSuccessResponse<BlogPostDetail>>({
       path: `/v1/blog/${slug}`,
       nextOptions: {
-        cache: 'force-cache',
         next: { revalidate: BLOG_DETAIL_REVALIDATE }
       }
     });

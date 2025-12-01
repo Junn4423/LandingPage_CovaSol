@@ -13,7 +13,6 @@ export async function fetchProductSummaries(): Promise<ProductSummary[]> {
     const response = await apiRequest<ApiSuccessResponse<ProductSummary[]>>({
       path: '/v1/products',
       nextOptions: {
-        cache: 'force-cache',
         next: { revalidate: PRODUCT_LIST_REVALIDATE }
       }
     });
@@ -29,7 +28,6 @@ export async function fetchProductDetail(id: string): Promise<ProductDetail | nu
     const response = await apiRequest<ApiSuccessResponse<ProductDetail>>({
       path: `/v1/products/${id}`,
       nextOptions: {
-        cache: 'force-cache',
         next: { revalidate: PRODUCT_DETAIL_REVALIDATE }
       }
     });

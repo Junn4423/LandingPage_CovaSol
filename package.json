@@ -8,16 +8,23 @@
     "packages/*"
   ],
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js",
-  "static": "node scripts/static-server.js",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "npm run dev --workspace=@covasol/backend",
+    "dev:frontend": "npm run dev --workspace=@covasol/frontend",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "npm run build --workspace=@covasol/backend",
+    "build:frontend": "npm run build --workspace=@covasol/frontend",
+    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:backend": "npm run start --workspace=@covasol/backend",
+    "start:frontend": "npm run start --workspace=@covasol/frontend",
+    "prisma:migrate": "npm run prisma:migrate --workspace=@covasol/backend",
+    "prisma:seed": "npm run prisma:seed --workspace=@covasol/backend",
+    "prisma:studio": "npm run prisma:studio --workspace=@covasol/backend",
+    "lint": "npm run lint --workspace=@covasol/frontend",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "static": "node scripts/static-server.js",
     "db:migrate": "node src/db/migrate.js",
-    "db:seed": "node src/db/seed.js",
-    "build": "npm run minify-css && npm run minify-js",
-    "minify-css": "cleancss -o assets/css/variables.min.css assets/css/variables.css && cleancss -o assets/css/base.min.css assets/css/base.css && cleancss -o assets/css/style.min.css assets/css/style.css && cleancss -o assets/css/admin.min.css assets/css/admin.css",
-    "minify-js": "uglifyjs assets/js/script.js -o assets/js/script.min.js -c -m",
-    "validate": "html-validate index.html",
-    "lighthouse": "lighthouse http://localhost:8000 --output html --output-path ./lighthouse-report.html"
+    "db:seed": "node src/db/seed.js"
   },
   "keywords": [
     "covasol",

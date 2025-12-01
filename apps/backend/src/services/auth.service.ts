@@ -8,8 +8,9 @@ export interface LoginPayload {
   password: string;
 }
 
-export function issueTokens(user: { id: string; username: string; displayName?: string; role?: string }) {
-  const accessToken = jwt.sign(user, config.jwt.secret as jwt.Secret, {
+export function issueTokens(user: { id: number; username: string; displayName?: string; role?: string }) {
+  const payload = { id: user.id, username: user.username, displayName: user.displayName, role: user.role };
+  const accessToken = jwt.sign(payload, config.jwt.secret as jwt.Secret, {
     expiresIn: config.jwt.expiresIn
   } as jwt.SignOptions);
   const refreshToken = jwt.sign({ userId: user.id }, config.refreshToken.secret as jwt.Secret, {
@@ -38,14 +39,14 @@ export async function verifyCredentials(payload: LoginPayload) {
   };
 }
 
-export async function getUserProfile(userId: string) {
+export async function getUserProfile(userId: number) {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) {
     return null;
   }
 
   return {
-    id: user.id,
+    id: String(user.id),
     username: user.username,
     displayName: user.displayName,
     role: user.role

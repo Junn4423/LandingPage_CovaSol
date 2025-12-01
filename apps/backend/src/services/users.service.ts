@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { prisma } from '../db/prisma';
-import type { UserSummary } from '@/types/content';
+import type { UserSummary } from '@covasol/types';
 
 export interface CreateUserInput {
   username: string;
@@ -15,9 +15,9 @@ export interface UpdateUserInput {
   password?: string;
 }
 
-function toUserSummary(user: { id: string; username: string; displayName: string | null; role: string; createdAt: Date; updatedAt: Date }): UserSummary {
+function toUserSummary(user: { id: number; username: string; displayName: string; role: string; createdAt: Date; updatedAt: Date }): UserSummary {
   return {
-    id: user.id,
+    id: String(user.id),
     username: user.username,
     displayName: user.displayName,
     role: user.role,
@@ -28,7 +28,7 @@ function toUserSummary(user: { id: string; username: string; displayName: string
 
 export async function listUsers(): Promise<UserSummary[]> {
   const users = await prisma.user.findMany({ orderBy: { createdAt: 'desc' } });
-  return users.map(toUserSummary);
+  return users.map(u => toUserSummary(u as any));
 }
 
 export async function createUser(input: CreateUserInput): Promise<UserSummary> {
@@ -37,26 +37,28 @@ export async function createUser(input: CreateUserInput): Promise<UserSummary> {
     data: {
       username: input.username,
       passwordHash,
-      displayName: input.displayName,
+      displayName: input.displayName || input.username,
       role: input.role ?? 'admin'
     }
   });
-  return toUserSummary(user);
+  return toUserSummary(user as any);
 }
 
-export async function updateUser(id: string, input: UpdateUserInput): Promise<UserSummary> {
+export async function updateUser(id: number | string, input: UpdateUserInput): Promise<UserSummary> {
+  const numId = typeof id === 'string' ? parseInt(id, 10) : id;
   const passwordHash = input.password ? await bcrypt.hash(input.password, 12) : undefined;
   const user = await prisma.user.update({
-    where: { id },
+    where: { id: numId },
     data: {
       displayName: input.displayName,
       role: input.role,
       passwordHash
     }
   });
-  return toUserSummary(user);
+  return toUserSummary(user as any);
 }
 
-export async function deleteUser(id: string) {
-  await prisma.user.delete({ where: { id } });
+export async function deleteUser(id: number | string) {
+  const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+  await prisma.user.delete({ where: { id: numId } });
 }

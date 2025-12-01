@@ -5,7 +5,7 @@ import { config } from '../config';
 
 export interface AuthenticatedRequest extends Request {
   user?: {
-    id: string;
+    id: number;
     username: string;
     displayName?: string;
     role?: string;

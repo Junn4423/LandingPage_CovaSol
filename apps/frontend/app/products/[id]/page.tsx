@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { fetchProductDetail, fetchProductSummaries } from '@/lib/api/products';
 
@@ -7,7 +9,7 @@ interface ProductPageProps {
 
 export async function generateStaticParams() {
   const products = await fetchProductSummaries();
-  return products.map(product => ({ id: product.id }));
+  return products.map(product => ({ id: product.slug ?? product.id }));
 }
 
 export async function generateMetadata({ params }: ProductPageProps) {
@@ -22,57 +24,153 @@ export async function generateMetadata({ params }: ProductPageProps) {
 
   return {
     title: product.name,
-    description: product.summary
+    description: product.shortDescription || product.description
   };
 }
 
+function splitParagraphs(content: string | undefined) {
+  if (!content) return [];
+  return content.split('\n\n').map(paragraph => paragraph.trim()).filter(Boolean);
+}
+
 export default async function ProductDetailPage({ params }: ProductPageProps) {
-  const { id } = params;
-  const product = await fetchProductDetail(id);
+  const product = await fetchProductDetail(params.id);
 
   if (!product) {
     notFound();
   }
 
+  const paragraphs = splitParagraphs(product.description);
+  const highlights = product.highlights ?? [];
+  const featureTags = product.featureTags ?? [];
+  const heroImage = product.imageUrl || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80';
+
   return (
-    <section className="mx-auto max-w-5xl px-6 py-16">
-      <p className="text-sm uppercase tracking-[0.4em] text-brand-primary">Solution</p>
-      <h1 className="mt-4 text-4xl font-semibold text-slate-900">{product.name}</h1>
-      <p className="mt-4 text-lg text-slate-600">{product.summary}</p>
-      <p className="mt-6 text-base text-slate-600">{product.description}</p>
+    <div className="product-detail-page detail-preview">
+      <section className="product-preview-section">
+        <div className="container">
+          <div className="product-preview-layout">
+            <div className="product-main" data-aos="fade-up">
+              <div className="preview-content preview-surface">
+                <div className="live-preview-header">
+                  <div className="meta-badge">{product.category || 'Giải pháp công nghệ'}</div>
+                  <h1>{product.name}</h1>
+                  <p className="preview-subtitle">{product.shortDescription || 'Giải pháp đang được cập nhật mô tả chi tiết.'}</p>
+                  <div className="preview-meta">
+                    <span className="meta-date">Mã: {product.code}</span>
+                    <span className="meta-author">Trạng thái: {product.status}</span>
+                  </div>
+                </div>
 
-      {product.metrics?.length ? (
-        <div className="mt-10 grid gap-4 md:grid-cols-2">
-          {product.metrics.map(metric => (
-            <div key={metric.label} className="rounded-2xl border border-slate-200 bg-white p-5">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{metric.label}</p>
-              <p className="mt-2 text-3xl font-semibold text-slate-900">{metric.value}</p>
+                <div className="preview-hero-image">
+                  <img src={heroImage} alt={product.name} />
+                </div>
+
+                {product.shortDescription ? <p className="preview-excerpt">{product.shortDescription}</p> : null}
+
+                <div className="preview-body">
+                  {paragraphs.length ? (
+                    paragraphs.map((paragraph, index) => (
+                      <p key={index} className="preview-paragraph">
+                        {paragraph}
+                      </p>
+                    ))
+                  ) : (
+                    <p className="preview-placeholder">Nội dung chi tiết đang được cập nhật.</p>
+                  )}
+                </div>
+
+                {featureTags.length ? (
+                  <div className="preview-highlights">
+                    <h3>Tính năng chính</h3>
+                    <ul>
+                      {featureTags.map(tag => (
+                        <li key={tag}>
+                          <i className="fas fa-check" aria-hidden="true" />
+                          <span>{tag}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+
+                {highlights.length ? (
+                  <div className="preview-highlights">
+                    <h3>Lợi ích nổi bật</h3>
+                    <ul>
+                      {highlights.map(highlight => (
+                        <li key={highlight}>
+                          <i className="fas fa-star" aria-hidden="true" />
+                          <span>{highlight}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+
+                <div className="preview-footer-panel">
+                  <div className="preview-tags">
+                    <span className="preview-tag is-muted">Mã sản phẩm: {product.code}</span>
+                    <span className="preview-tag">Trạng thái: {product.status}</span>
+                  </div>
+                  <div className="product-cta-group">
+                    {product.ctaPrimaryUrl ? (
+                      <a href={product.ctaPrimaryUrl} className="btn btn-primary" target="_blank" rel="noopener noreferrer" id="productPrimaryCta">
+                        {product.ctaPrimaryLabel || 'Yêu cầu demo'}
+                      </a>
+                    ) : (
+                      <Link href="/#contact" className="btn btn-primary" id="productPrimaryCta">
+                        Liên hệ tư vấn
+                      </Link>
+                    )}
+                    {product.ctaSecondaryUrl ? (
+                      <a href={product.ctaSecondaryUrl} className="btn btn-outline" target="_blank" rel="noopener noreferrer">
+                        {product.ctaSecondaryLabel || 'Tài liệu chi tiết'}
+                      </a>
+                    ) : (
+                      <Link href="/products" className="btn btn-outline">
+                        <i className="fas fa-arrow-left" aria-hidden="true" /> Quay lại danh sách
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
-          ))}
-        </div>
-      ) : null}
 
-      {product.features?.length ? (
-        <div className="mt-12">
-          <h2 className="text-2xl font-semibold text-slate-900">Tính năng nổi bật</h2>
-          <ul className="mt-4 space-y-3">
-            {product.features.map(feature => (
-              <li key={feature} className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4">
-                <span className="mt-2 inline-flex h-2 w-2 rounded-full bg-brand-primary" />
-                <span className="text-base text-slate-600">{feature}</span>
-              </li>
-            ))}
-          </ul>
+            <aside className="product-aside" data-aos="fade-up" data-aos-delay="150">
+              <div className="aside-card">
+                <h3>Tài liệu & Liên kết</h3>
+                <ul className="aside-links">
+                  {product.ctaPrimaryUrl ? (
+                    <li>
+                      <a href={product.ctaPrimaryUrl} target="_blank" rel="noopener noreferrer">
+                        {product.ctaPrimaryLabel || 'Xem demo'}
+                      </a>
+                    </li>
+                  ) : null}
+                  {product.ctaSecondaryUrl ? (
+                    <li>
+                      <a href={product.ctaSecondaryUrl} target="_blank" rel="noopener noreferrer">
+                        {product.ctaSecondaryLabel || 'Tải brochure'}
+                      </a>
+                    </li>
+                  ) : null}
+                  <li>
+                    <a href="/#contact">Liên hệ đội ngũ triển khai</a>
+                  </li>
+                </ul>
+              </div>
+              <div className="aside-card highlight">
+                <h3>Nhận tư vấn</h3>
+                <p>Để lại thông tin liên hệ, đội ngũ COVASOL sẽ hỗ trợ trong 24 giờ.</p>
+                <Link className="btn btn-primary" href="/#contact">
+                  Đặt lịch tư vấn
+                </Link>
+              </div>
+            </aside>
+          </div>
         </div>
-      ) : null}
-
-      <div className="mt-12 rounded-3xl bg-slate-900 p-8 text-white">
-        <h2 className="text-2xl font-semibold">Khởi động {product.name}</h2>
-        <p className="mt-3 text-slate-200">Đặt lịch workshop 90 phút cùng đội ngũ tư vấn và kiến trúc sư giải pháp.</p>
-        <a href="mailto:covasol.studio@gmail.com" className="mt-6 inline-flex rounded-full bg-white px-6 py-3 font-semibold text-slate-900">
-          Liên hệ ngay
-        </a>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }

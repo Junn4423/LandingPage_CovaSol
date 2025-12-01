@@ -1,40 +1,105 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
+import { LegacyBlogGrid } from '@/components/blog/legacy-blog-grid';
+import { LegacyBlogNewsletter } from '@/components/blog/legacy-blog-newsletter';
 import { fetchBlogSummaries } from '@/lib/api/blog';
 
 export const metadata = {
-  title: 'Blog & Insight'
+  title: 'Blog | COVASOL',
+  description: 'Chia sẻ kiến thức, xu hướng và insights về phát triển phần mềm, AI, chuyển đổi số'
 };
+
+function getFeaturedPost(posts: Awaited<ReturnType<typeof fetchBlogSummaries>>) {
+  if (!posts.length) {
+    return { featuredPost: null, rest: [] as typeof posts };
+  }
+  const featured = posts.find(post => post.isFeatured) ?? posts[0];
+  const rest = posts.filter(post => post.id !== featured.id);
+  return { featuredPost: featured, rest };
+}
+
+function getHeroMedia(postImage?: string | null) {
+  if (postImage) return postImage;
+  return 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80';
+}
 
 export default async function BlogListingPage() {
   const posts = await fetchBlogSummaries();
+  const { featuredPost, rest } = getFeaturedPost(posts);
 
   return (
-    <section className="mx-auto max-w-5xl px-6 py-16">
-      <header className="mb-12 space-y-3 text-center">
-        <p className="text-sm font-semibold uppercase tracking-[0.4em] text-brand-primary">Blog</p>
-        <h1 className="text-3xl font-semibold text-slate-900">Insight từ dự án thực tế</h1>
-        <p className="text-base text-slate-500">Case study, best-practice và chia sẻ từ đội ngũ tư vấn.</p>
-      </header>
+    <div className="legacy-blog-page">
+      <section className="page-hero blog-hero">
+        <div className="hero-media" aria-hidden="true">
+          <video autoPlay muted loop playsInline preload="metadata">
+            <source src="/assets/video/Hero_section_Landing_page_3D_animation.mp4" type="video/mp4" />
+            Trình duyệt của bạn không hỗ trợ video.
+          </video>
+          <div className="hero-media-overlay" />
+        </div>
+        <div className="hero-container">
+          <div className="hero-content" data-aos="fade-up" data-aos-duration="1000">
+            <p className="page-kicker" data-key="blog-kicker">
+              Blog · Insight · Case Study
+            </p>
+            <h1 className="page-title" data-key="blog-title">
+              Blog COVASOL
+            </h1>
+            <p className="page-description" data-key="blog-description">
+              Chia sẻ kiến thức, xu hướng công nghệ và insights từ đội ngũ chuyên gia COVASOL. Cập nhật những thông tin mới nhất về phát
+              triển phần mềm, AI, và chuyển đổi số.
+            </p>
+          </div>
+        </div>
+      </section>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        {posts.length ? (
-          posts.map(post => (
-            <article key={post.id} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-              <p className="text-xs uppercase tracking-wide text-slate-500">
-                {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('vi-VN') : 'Chưa xuất bản'}
-              </p>
-              <h2 className="mt-3 text-2xl font-semibold text-slate-900">{post.title}</h2>
-              <p className="mt-3 text-slate-600">{post.excerpt}</p>
-              <div className="mt-6 flex items-center justify-between text-sm font-semibold text-brand-primary">
-                <Link href={`/blog/${post.slug}`}>Đọc tiếp →</Link>
-                <span className="text-slate-400">{post.author}</span>
+      <section className="featured-post" id="featuredPostSection">
+        <div className="container">
+          {featuredPost ? (
+            <div className="featured-content" data-aos="fade-up">
+              <div className="featured-image">
+                <img src={getHeroMedia(featuredPost.heroImage)} alt={featuredPost.title} />
+                <div className="featured-badge" data-key="featured">
+                  Nổi bật
+                </div>
               </div>
-            </article>
-          ))
-        ) : (
-          <p className="text-center text-sm text-slate-500">Hiện chưa có bài viết nào.</p>
-        )}
-      </div>
-    </section>
+              <div className="featured-text">
+                <div className="post-meta">
+                  <span className="post-category" id="featuredPostCategory">
+                    {featuredPost.category || 'Insight' }
+                  </span>
+                  <span className="post-date" id="featuredPostDate">
+                    {featuredPost.publishedAt ? new Date(featuredPost.publishedAt).toLocaleDateString('vi-VN') : 'Chưa xuất bản'}
+                  </span>
+                </div>
+                <h2 id="featuredPostTitle">{featuredPost.title}</h2>
+                <p id="featuredPostExcerpt">{featuredPost.excerpt}</p>
+                <div className="post-author">
+                  <img src="/assets/img/anh2.jpeg" alt={featuredPost.author} className="author-avatar" />
+                  <div className="author-info">
+                    <span className="author-name" id="featuredPostAuthor">
+                      {featuredPost.author}
+                    </span>
+                    <span className="author-title" data-key="tech-lead" id="featuredPostAuthorRole">
+                      Chuyên gia triển khai
+                    </span>
+                  </div>
+                </div>
+                <Link href={`/blog/${featuredPost.slug}`} className="btn btn-primary" id="featuredPostButton">
+                  Đọc toàn bộ
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="featured-empty" data-aos="fade-up">
+              <p>Hiện chưa có bài viết nổi bật.</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <LegacyBlogGrid posts={rest} />
+      <LegacyBlogNewsletter />
+    </div>
   );
 }
