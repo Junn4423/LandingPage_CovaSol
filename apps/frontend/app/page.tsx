@@ -35,7 +35,7 @@ const servicesOverview = [
     titleKey: 'service2-title',
     title: 'Thiết kế & Giao diện',
     descriptionKey: 'service2-desc',
-    description: 'Tạo trải nghiệm thị giác hiệu quả và tinh gọn',
+    description: 'Tạo trải nghiệm thương hiệu và sản phẩm tinh gọn – rõ ràng – dễ dùng',
     features: ['UI/UX Design', 'Brand Identity Design', 'Prototype & Wireframe', 'Design System Development'],
     href: '#design-services'
   },
@@ -44,7 +44,7 @@ const servicesOverview = [
     titleKey: 'service3-title',
     title: 'Chuyển đổi số',
     descriptionKey: 'service3-desc',
-    description: 'Đưa công nghệ vào vận hành thực tế',
+    description: 'Đưa công nghệ vào hoạt động thực tế, không chỉ dừng ở phần mềm',
     features: ['Business Process Automation', 'System Integration', 'Digital Workspace Setup', 'Data Analytics & Reporting'],
     href: '#digital-transformation'
   },
@@ -53,7 +53,7 @@ const servicesOverview = [
     titleKey: 'service4-title',
     title: 'Tư vấn & Bảo trì',
     descriptionKey: 'service4-desc',
-    description: 'Đồng hành bền vững cùng doanh nghiệp',
+    description: 'Đồng hành lâu dài, phát triển bền vững cùng doanh nghiệp',
     features: ['Technical Consulting', 'Software Maintenance', 'Training & Documentation'],
     href: '#consulting'
   },
@@ -62,7 +62,7 @@ const servicesOverview = [
     titleKey: 'service5-title',
     title: 'Marketing & Chiến lược',
     descriptionKey: 'service5-desc',
-    description: 'Kết hợp công nghệ và marketing tạo kết quả thực tế',
+    description: 'Hợp nhất công nghệ và marketing tạo kết quả thực tế',
     features: ['Website Optimization', 'Campaign Landing Page', 'Automation Marketing'],
     href: '#digital-marketing'
   },
@@ -126,7 +126,7 @@ const aboutPhotos = [
   {
     src: '/assets/img/anh4.jpeg',
     alt: 'Đội ngũ COVASOL đang làm việc',
-    caption: 'Đội ngũ tri ân khách hàng',
+    caption: 'Đội ngũ triển khai dự án',
     icon: 'fas fa-people-group',
     variant: 'primary'
   },
@@ -140,7 +140,7 @@ const aboutPhotos = [
   {
     src: '/assets/img/anh1.jpeg',
     alt: 'Phòng họp chiến lược của COVASOL',
-    caption: 'Không gian hợp tác',
+    caption: 'Không gian hợp chiến lược',
     icon: 'fas fa-handshake',
     variant: 'tertiary'
   }

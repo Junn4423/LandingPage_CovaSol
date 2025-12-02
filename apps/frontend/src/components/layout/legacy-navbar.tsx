@@ -13,30 +13,46 @@ interface NavLink {
   href: string;
   label: string;
   dataKey: string;
-  match?: (pathname: string) => boolean;
+  sectionId?: string; // Section ID to match for active state
+  match?: (pathname: string) => boolean; // For page-based routes like /products, /blog
   homeHash?: string;
 }
 
 const navLinks: NavLink[] = [
-  { href: '/', label: 'Trang chủ', dataKey: 'nav-home', match: pathname => pathname === '/' },
+  { href: '/', label: 'Trang chủ', dataKey: 'nav-home', sectionId: 'home' },
   {
     href: '/#services',
     label: 'Dịch vụ',
     dataKey: 'nav-services',
-    match: pathname => pathname === '/',
+    sectionId: 'services',
     homeHash: '#services'
   },
   { href: '/products', label: 'Sản phẩm', dataKey: 'nav-products', match: pathname => pathname.startsWith('/products') },
   { href: '/blog', label: 'Blog', dataKey: 'nav-blog', match: pathname => pathname.startsWith('/blog') },
-  { href: '/#about', label: 'Về chúng tôi', dataKey: 'nav-about', match: pathname => pathname === '/', homeHash: '#about' },
-  { href: '/#reviews', label: 'Đánh giá', dataKey: 'nav-reviews', match: pathname => pathname === '/', homeHash: '#reviews' },
-  { href: '/#contact', label: 'Liên hệ', dataKey: 'nav-contact', match: pathname => pathname === '/', homeHash: '#contact' }
+  { href: '/#about', label: 'Về chúng tôi', dataKey: 'nav-about', sectionId: 'about', homeHash: '#about' },
+  { href: '/#reviews', label: 'Đánh giá', dataKey: 'nav-reviews', sectionId: 'reviews', homeHash: '#reviews' },
+  { href: '/#contact', label: 'Liên hệ', dataKey: 'nav-contact', sectionId: 'contact', homeHash: '#contact' }
 ];
 
 export function LegacyNavbar() {
   const pathname = usePathname();
   const { t, options, currentOption, isDropdownOpen, toggleDropdown, selectLanguage, dropdownRef, language } = useLanguageSwitcher();
-  const { isMenuOpen, isScrolled, toggleMenu, closeMenu } = useNavbarEffects();
+  const { isMenuOpen, isScrolled, activeSection, toggleMenu, closeMenu } = useNavbarEffects();
+
+  // Determine if a nav link is active
+  const isLinkActive = (link: NavLink): boolean => {
+    // On homepage: use scroll-based activeSection for anchor links
+    if (pathname === '/') {
+      if (link.sectionId) {
+        return activeSection === link.sectionId;
+      }
+    }
+    // For page routes: use URL-based matching
+    if (link.match) {
+      return link.match(pathname);
+    }
+    return false;
+  };
 
   return (
     <nav className="navbar" aria-label="Điều hướng chính" data-react-navbar="true" style={getNavbarStyle(isScrolled)}>
@@ -54,7 +70,7 @@ export function LegacyNavbar() {
             const resolvedHref = link.homeHash && pathname === '/' ? link.homeHash : link.href;
             const isAnchorLink = resolvedHref.startsWith('#');
             const commonProps = {
-              className: clsx('nav-link', { active: link.match ? link.match(pathname) : pathname === link.href }),
+              className: clsx('nav-link', { active: isLinkActive(link) }),
               'data-key': link.dataKey,
               onClick: closeMenu
             } as const;
