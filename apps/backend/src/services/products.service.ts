@@ -2,6 +2,7 @@ import type { Product as PrismaProduct } from '@prisma/client';
 import { prisma } from '../db/prisma';
 import type { ProductDetail, ProductSummary } from '@covasol/types';
 import { generateSlug, generateCode } from '../utils/slug';
+import { notifySitemapUpdated } from './sitemap.service';
 
 type ProductRecord = PrismaProduct;
 
@@ -20,6 +21,14 @@ export interface ProductUpsertInput {
   demoMedia?: any[];
   status?: string;
   slug?: string;
+}
+
+const PRODUCT_STATUSES = new Set(['draft', 'active', 'archived']);
+
+function normalizeProductStatus(value?: string) {
+  if (!value) return 'active';
+  const normalized = value.toLowerCase();
+  return PRODUCT_STATUSES.has(normalized) ? normalized : 'active';
 }
 
 function parseStringArray(value: unknown): string[] {
@@ -47,7 +56,8 @@ function toSummary(product: ProductRecord): ProductSummary {
     category: product.category ?? '',
     shortDescription: product.shortDescription ?? '',
     imageUrl: product.imageUrl ?? undefined,
-    status: product.status
+    status: product.status,
+    updatedAt: product.updatedAt?.toISOString()
   };
 }
 
@@ -74,7 +84,7 @@ function toDetail(product: ProductRecord): ProductDetail {
 
 export async function listPublishedProducts(): Promise<ProductSummary[]> {
   const data = await prisma.product.findMany({
-    where: { status: 'active' },
+    where: { status: { in: ['active', 'ACTIVE'] } },
     orderBy: { createdAt: 'desc' }
   });
   return data.map(toSummary);
@@ -109,8 +119,9 @@ export async function getProductById(id: number | string): Promise<ProductDetail
 }
 
 export async function createProduct(input: ProductUpsertInput): Promise<ProductDetail> {
-  const slug = input.slug ? generateSlug(input.slug) : generateSlug(input.name);
+  const slug = generateSlug(input.slug ?? input.name, { entity: 'product' });
   const code = generateCode('PROD');
+  const status = normalizeProductStatus(input.status);
   
   const product = await prisma.product.create({
     data: {
@@ -127,18 +138,22 @@ export async function createProduct(input: ProductUpsertInput): Promise<ProductD
       ctaPrimaryUrl: input.ctaPrimary?.url,
       ctaSecondaryLabel: input.ctaSecondary?.label,
       ctaSecondaryUrl: input.ctaSecondary?.url,
-      galleryMedia: input.galleryMedia,
-      videoItems: input.videoItems,
-      demoMedia: input.demoMedia,
-      status: input.status ?? 'active'
+      galleryMedia: input.galleryMedia ?? [],
+      videoItems: input.videoItems ?? [],
+      demoMedia: input.demoMedia ?? [],
+      status
     }
   });
+  if (product.status === 'active') {
+    void notifySitemapUpdated('product-create');
+  }
   return toDetail(product);
 }
 
 export async function updateProduct(id: number | string, input: Partial<ProductUpsertInput>): Promise<ProductDetail> {
   const numId = typeof id === 'string' ? parseInt(id, 10) : id;
-  const slug = input.slug ? generateSlug(input.slug) : undefined;
+  const slug = input.slug ? generateSlug(input.slug, { entity: 'product' }) : undefined;
+  const status = input.status ? normalizeProductStatus(input.status) : undefined;
   
   const product = await prisma.product.update({
     where: { id: numId },
@@ -149,8 +164,8 @@ export async function updateProduct(id: number | string, input: Partial<ProductU
       shortDescription: input.shortDescription,
       description: input.description,
       imageUrl: input.imageUrl,
-      featureTags: input.featureTags ? JSON.stringify(input.featureTags) : undefined,
-      highlights: input.highlights ? JSON.stringify(input.highlights) : undefined,
+      featureTags: input.featureTags !== undefined ? JSON.stringify(input.featureTags) : undefined,
+      highlights: input.highlights !== undefined ? JSON.stringify(input.highlights) : undefined,
       ctaPrimaryLabel: input.ctaPrimary?.label,
       ctaPrimaryUrl: input.ctaPrimary?.url,
       ctaSecondaryLabel: input.ctaSecondary?.label,
@@ -158,9 +173,12 @@ export async function updateProduct(id: number | string, input: Partial<ProductU
       galleryMedia: input.galleryMedia === undefined ? undefined : input.galleryMedia,
       videoItems: input.videoItems === undefined ? undefined : input.videoItems,
       demoMedia: input.demoMedia === undefined ? undefined : input.demoMedia,
-      status: input.status
+      status
     }
   });
+  if (product.status === 'active') {
+    void notifySitemapUpdated('product-update');
+  }
   return toDetail(product);
 }
 

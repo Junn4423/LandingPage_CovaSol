@@ -16,9 +16,10 @@ const ctaSchema = z.object({
 
 const mediaSchema = z.object({
   url: z.string().url(),
-  caption: z.string().optional(),
-  type: z.string().optional()
-}).partial();
+  caption: z.string().optional().nullable(),
+  type: z.string().optional().nullable(),
+  position: z.number().int().min(0).max(500).optional().nullable()
+});
 
 const stringArray = z.array(z.string().min(2)).optional();
 

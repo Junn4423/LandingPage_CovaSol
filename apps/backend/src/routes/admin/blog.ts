@@ -10,15 +10,38 @@ import {
 } from '../../services/blog.service';
 import type { AuthenticatedRequest } from '../../middleware/require-auth';
 
+const statusEnum = z.enum(['draft', 'published', 'archived', 'DRAFT', 'PUBLISHED', 'ARCHIVED']);
+
+const mediaSchema = z.object({
+  url: z.string().url(),
+  caption: z.string().optional().nullable(),
+  type: z.string().optional().nullable(),
+  position: z.number().int().min(0).max(500).optional().nullable()
+});
+
+const sourceSchema = z.object({
+  label: z.string().min(1).optional().nullable(),
+  url: z.string().url()
+});
+
 const blogPayloadSchema = z.object({
   title: z.string().min(4),
+  subtitle: z.string().max(500).optional().nullable(),
   excerpt: z.string().min(10),
   content: z.string().min(20),
-  tags: z.array(z.string()).optional(),
-  heroImage: z.string().url().optional().nullable(),
-  status: z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']).optional(),
+  tags: z.array(z.string().min(1)).optional(),
+  keywords: z.array(z.string().min(1)).optional(),
+  imageUrl: z.string().url().optional().nullable(),
+  category: z.string().max(160).optional().nullable(),
+  authorName: z.string().max(120).optional().nullable(),
+  authorRole: z.string().max(120).optional().nullable(),
+  status: statusEnum.optional(),
+  isFeatured: z.boolean().optional(),
   publishedAt: z.string().datetime().nullable().optional(),
-  slug: z.string().optional()
+  slug: z.string().regex(/^[a-z0-9-]+$/).optional(),
+  galleryMedia: z.array(mediaSchema).optional(),
+  videoItems: z.array(mediaSchema).optional(),
+  sourceLinks: z.array(sourceSchema).optional()
 });
 
 export const adminBlogRouter = Router();

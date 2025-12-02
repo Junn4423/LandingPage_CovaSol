@@ -23,17 +23,17 @@ export async function fetchProductSummaries(): Promise<ProductSummary[]> {
   }
 }
 
-export async function fetchProductDetail(id: string): Promise<ProductDetail | null> {
+export async function fetchProductDetail(identifier: string): Promise<ProductDetail | null> {
   try {
     const response = await apiRequest<ApiSuccessResponse<ProductDetail>>({
-      path: `/v1/products/${id}`,
+      path: `/v1/products/${identifier}`,
       nextOptions: {
         next: { revalidate: PRODUCT_DETAIL_REVALIDATE }
       }
     });
     return response.data;
   } catch (error) {
-    console.error(`Không thể tải sản phẩm ${id}`, error);
-    return mockProductDetails.find(product => product.id === id) ?? null;
+    console.error(`Không thể tải sản phẩm ${identifier}`, error);
+    return mockProductDetails.find(product => product.id === identifier || product.slug === identifier) ?? null;
   }
 }

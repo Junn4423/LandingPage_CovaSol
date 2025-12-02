@@ -1,7 +1,9 @@
 'use client';
 
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { PaginationControls } from '@/components/admin/pagination-controls';
+import { MediaListEditor, type MediaFormItem } from '@/components/admin/media-list-editor';
+import { SourceLinksEditor, type SourceLinkItem } from '@/components/admin/source-links-editor';
 import {
   useAdminBlogPosts,
   useDeleteBlogPostMutation,
@@ -9,6 +11,7 @@ import {
 } from '@/hooks/admin';
 import { useClientPagination } from '@/hooks/use-pagination';
 import type { BlogPostDetail } from '@/types/content';
+import { renderBlogPreviewHtml } from '@/lib/legacy-preview';
 
 type BlogStatus = 'draft' | 'published' | 'archived' | 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
 const STATUS_OPTIONS: BlogStatus[] = ['draft', 'published', 'archived'];
@@ -16,31 +19,177 @@ const BLOG_PAGE_SIZE = 8;
 
 interface BlogFormState {
   title: string;
+  subtitle: string;
   slug: string;
+  category: string;
   excerpt: string;
   content: string;
   tagsText: string;
-  heroImage: string;
+  keywordsText: string;
+  imageUrl: string;
   status: BlogStatus;
   publishedAt: string;
   isFeatured: boolean;
   authorName: string;
   authorRole: string;
+  galleryMedia: MediaFormItem[];
+  videoItems: MediaFormItem[];
+  sourceLinks: SourceLinkItem[];
 }
+
+const IMAGE_TYPE_OPTIONS = [
+  { value: 'inline', label: 'Chèn trong nội dung' },
+  { value: 'gallery', label: 'Thư viện cuối bài' },
+  { value: 'cover', label: 'Ảnh bìa' }
+];
+
+const VIDEO_TYPE_OPTIONS = [
+  { value: 'body', label: 'Video nội dung' },
+  { value: 'demo', label: 'Video demo' },
+  { value: 'hero', label: 'Video mở đầu' },
+  { value: 'interview', label: 'Video phỏng vấn' }
+];
 
 const emptyForm: BlogFormState = {
   title: '',
+  subtitle: '',
   slug: '',
+  category: '',
   excerpt: '',
   content: '',
   tagsText: '',
-  heroImage: '',
+  keywordsText: '',
+  imageUrl: '',
   status: 'draft',
   publishedAt: '',
   isFeatured: false,
   authorName: '',
-  authorRole: ''
+  authorRole: '',
+  galleryMedia: [],
+  videoItems: [],
+  sourceLinks: []
 };
+
+const DEFAULT_IMAGE_TYPE = IMAGE_TYPE_OPTIONS[0]?.value ?? 'inline';
+const DEFAULT_VIDEO_TYPE = VIDEO_TYPE_OPTIONS[0]?.value ?? 'body';
+
+const createClientId = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+
+function parseDelimitedList(value: string) {
+  return value
+    .split(',')
+    .map(item => item.trim())
+    .filter(Boolean);
+}
+
+function formatDelimitedList(items?: (string | null | undefined)[]) {
+  if (!items || !items.length) return '';
+  return items.filter(Boolean).join(', ');
+}
+
+function createMediaItem(
+  overrides: Partial<MediaFormItem> = {},
+  fallbackType: string = DEFAULT_IMAGE_TYPE
+): MediaFormItem {
+  const position = typeof overrides.position === 'number' && overrides.position >= 0 ? overrides.position : '';
+  return {
+    id: overrides.id || createClientId(),
+    url: overrides.url ?? '',
+    caption: overrides.caption ?? '',
+    type: overrides.type ?? fallbackType,
+    position
+  };
+}
+
+function ensureMediaFormItems(input: unknown, fallbackType: string): MediaFormItem[] {
+  if (!Array.isArray(input)) return [];
+  return input
+    .map((entry, index) => {
+      if (!entry || typeof entry !== 'object') return null;
+      const media = entry as Partial<MediaFormItem> & {
+        url?: string | null;
+        caption?: string | null;
+        type?: string | null;
+        position?: number | null;
+      };
+      return createMediaItem(
+        {
+          id: media.id || `${fallbackType}-${index}-${createClientId()}`,
+          url: media.url ?? '',
+          caption: media.caption ?? '',
+          type: media.type ?? fallbackType,
+          position: typeof media.position === 'number' ? media.position : ''
+        },
+        fallbackType
+      );
+    })
+    .filter(Boolean) as MediaFormItem[];
+}
+
+function ensureSourceLinkItems(input: unknown): SourceLinkItem[] {
+  if (!Array.isArray(input)) return [];
+  return input
+    .map((entry, index) => {
+      if (!entry || typeof entry !== 'object') return null;
+      const source = entry as Partial<SourceLinkItem> & { label?: string | null; url?: string | null };
+      return {
+        id: source.id || `source-${index}-${createClientId()}`,
+        label: source.label ?? '',
+        url: source.url ?? ''
+      };
+    })
+    .filter(Boolean) as SourceLinkItem[];
+}
+
+function serializeMediaForSave(items: MediaFormItem[]) {
+  return items
+    .map(item => ({
+      url: item.url.trim(),
+      caption: item.caption?.trim() || undefined,
+      type: item.type || undefined,
+      position: typeof item.position === 'number' ? item.position : undefined
+    }))
+    .filter(item => Boolean(item.url));
+}
+
+function serializeMediaForPreview(items: MediaFormItem[]) {
+  return items.map(item => ({
+    url: item.url,
+    caption: item.caption,
+    type: item.type,
+    position: typeof item.position === 'number' ? item.position : null,
+    __clientId: item.id
+  }));
+}
+
+function serializeSourceLinks(items: SourceLinkItem[]) {
+  return items
+    .map(item => ({
+      label: item.label?.trim() || undefined,
+      url: item.url.trim()
+    }))
+    .filter(item => Boolean(item.url));
+}
+
+function estimateParagraphCount(content: string) {
+  if (!content?.trim()) return 0;
+  return content
+    .replace(/\r\n/g, '\n')
+    .split(/\n{2,}/)
+    .map(block => block.trim())
+    .filter(Boolean).length;
+}
+
+function getParagraphIndexAtCursor(textarea: HTMLTextAreaElement | null) {
+  if (!textarea) return 0;
+  const value = textarea.value.replace(/\r\n/g, '\n');
+  const cursor = textarea.selectionStart ?? value.length;
+  const before = value.slice(0, cursor);
+  return before
+    .split(/\n{2,}/)
+    .map(block => block.trim())
+    .filter(Boolean).length;
+}
 
 function toDateInputValue(timestamp?: string | null) {
   if (!timestamp) return '';
@@ -57,57 +206,120 @@ export default function AdminBlogPage() {
   const saveMutation = useSaveBlogPostMutation();
   const deleteMutation = useDeleteBlogPostMutation();
   const [selectedPost, setSelectedPost] = useState<BlogPostDetail | null>(null);
-  const [formState, setFormState] = useState<BlogFormState>(emptyForm);
+  const [formState, setFormState] = useState<BlogFormState>(() => ({ ...emptyForm }));
   const [showEditor, setShowEditor] = useState(false);
+  const contentInputRef = useRef<HTMLTextAreaElement | null>(null);
   const pagination = useClientPagination(data ?? [], { pageSize: BLOG_PAGE_SIZE });
   const visiblePosts = pagination.items;
 
   const excerptWordCount = countWords(formState.excerpt);
+  const inlinePositionHint = useMemo(() => estimateParagraphCount(formState.content), [formState.content]);
+
+  const previewData = useMemo<BlogPostDetail>(() => {
+    const parsedTags = parseDelimitedList(formState.tagsText);
+    const tags = parsedTags.length ? parsedTags : selectedPost?.tags ?? [];
+    const parsedKeywords = parseDelimitedList(formState.keywordsText);
+    const keywords = parsedKeywords.length ? parsedKeywords : selectedPost?.keywords;
+    const publishedAtIso = formState.publishedAt ? new Date(formState.publishedAt).toISOString() : selectedPost?.publishedAt;
+
+    return {
+      id: selectedPost?.id,
+      code: selectedPost?.code ?? 'BLOG-DEMO',
+      slug: formState.slug || selectedPost?.slug || 'blog-demo-slug',
+      title: formState.title || 'Bài viết chưa đặt tên',
+      subtitle: formState.subtitle || selectedPost?.subtitle,
+      excerpt: formState.excerpt || 'Đoạn mô tả xem trước sẽ hiển thị tại đây.',
+      content: formState.content || 'Nội dung bài viết đang được biên soạn...',
+      tags,
+      keywords,
+      heroImage: formState.imageUrl || selectedPost?.heroImage || selectedPost?.imageUrl || undefined,
+      imageUrl: formState.imageUrl || selectedPost?.heroImage || selectedPost?.imageUrl || undefined,
+      category: formState.category || selectedPost?.category,
+      publishedAt: publishedAtIso ?? undefined,
+      authorName: formState.authorName || selectedPost?.authorName || selectedPost?.author || undefined,
+      author: formState.authorName || selectedPost?.authorName || selectedPost?.author || undefined,
+      authorRole: formState.authorRole || selectedPost?.authorRole,
+      status: formState.status,
+      isFeatured: formState.isFeatured,
+      galleryMedia: serializeMediaForPreview(formState.galleryMedia) as any,
+      videoItems: serializeMediaForPreview(formState.videoItems) as any,
+      sourceLinks: serializeSourceLinks(formState.sourceLinks),
+      createdAt: selectedPost?.createdAt,
+      updatedAt: selectedPost?.updatedAt
+    } as BlogPostDetail;
+  }, [formState, selectedPost]);
+
+  const hasPreviewSeed = Boolean(formState.title || formState.content);
+  const previewHtml = useMemo(() => {
+    if (!hasPreviewSeed) return '';
+    try {
+      return renderBlogPreviewHtml(previewData);
+    } catch (error) {
+      console.error('Không thể render preview blog:', error);
+      return '';
+    }
+  }, [hasPreviewSeed, previewData]);
 
   useEffect(() => {
     if (!selectedPost) {
-      setFormState(emptyForm);
+      setFormState(() => ({ ...emptyForm }));
       return;
     }
+    const tagsText = formatDelimitedList(selectedPost.tags);
+    const keywordsText = formatDelimitedList(selectedPost.keywords);
     setFormState({
       title: selectedPost.title,
+      subtitle: selectedPost.subtitle ?? '',
       slug: selectedPost.slug,
+      category: selectedPost.category ?? '',
       excerpt: selectedPost.excerpt,
       content: selectedPost.content,
-      tagsText: (selectedPost.tags ?? []).join(', '),
-      heroImage: selectedPost.heroImage ?? selectedPost.imageUrl ?? '',
+      tagsText: tagsText,
+      keywordsText,
+      imageUrl: selectedPost.heroImage ?? selectedPost.imageUrl ?? '',
       status: (selectedPost.status as BlogStatus) || 'draft',
       publishedAt: toDateInputValue(selectedPost.publishedAt),
       isFeatured: selectedPost.isFeatured ?? false,
-      authorName: selectedPost.authorName ?? '',
-      authorRole: selectedPost.authorRole ?? ''
+      authorName: selectedPost.authorName ?? selectedPost.author ?? '',
+      authorRole: selectedPost.authorRole ?? '',
+      galleryMedia: ensureMediaFormItems(selectedPost.galleryMedia, DEFAULT_IMAGE_TYPE),
+      videoItems: ensureMediaFormItems(selectedPost.videoItems, DEFAULT_VIDEO_TYPE),
+      sourceLinks: ensureSourceLinkItems(selectedPost.sourceLinks)
     });
     setShowEditor(true);
   }, [selectedPost]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const tags = parseDelimitedList(formState.tagsText);
+    const keywords = parseDelimitedList(formState.keywordsText);
+    const galleryMediaPayload = serializeMediaForSave(formState.galleryMedia);
+    const videoItemsPayload = serializeMediaForSave(formState.videoItems);
+    const sourceLinksPayload = serializeSourceLinks(formState.sourceLinks);
     const payload = {
       id: selectedPost?.id,
       title: formState.title,
+      subtitle: formState.subtitle || undefined,
       slug: formState.slug || undefined,
+      category: formState.category || undefined,
       excerpt: formState.excerpt,
       content: formState.content,
-      tags: formState.tagsText
-        .split(',')
-        .map(tag => tag.trim())
-        .filter(Boolean),
-      imageUrl: formState.heroImage || null,
+      tags,
+      keywords,
+      imageUrl: formState.imageUrl || null,
       status: formState.status,
       publishedAt: formState.publishedAt ? new Date(formState.publishedAt).toISOString() : null,
       isFeatured: formState.isFeatured,
       authorName: formState.authorName || undefined,
-      authorRole: formState.authorRole || undefined
+      authorRole: formState.authorRole || undefined,
+      galleryMedia: galleryMediaPayload.length ? galleryMediaPayload : undefined,
+      videoItems: videoItemsPayload.length ? videoItemsPayload : undefined,
+      sourceLinks: sourceLinksPayload.length ? sourceLinksPayload : undefined
     };
 
     await saveMutation.mutateAsync(payload);
     setSelectedPost(null);
-    setFormState(emptyForm);
+    setFormState(() => ({ ...emptyForm }));
     setShowEditor(false);
   }
 
@@ -120,28 +332,43 @@ export default function AdminBlogPage() {
       return;
     }
     await deleteMutation.mutateAsync(post.id);
-      const isCurrentSelection = selectedPost
-        ? (selectedPost.id && post.id
-            ? selectedPost.id === post.id
-            : selectedPost.code === post.code)
-        : false;
-      if (isCurrentSelection) {
+    const isCurrentSelection = selectedPost
+      ? selectedPost.id && post.id
+        ? selectedPost.id === post.id
+        : selectedPost.code === post.code
+      : false;
+    if (isCurrentSelection) {
       setSelectedPost(null);
-      setFormState(emptyForm);
+      setFormState(() => ({ ...emptyForm }));
       setShowEditor(false);
     }
   }
 
   function handleNewPost() {
     setSelectedPost(null);
-    setFormState(emptyForm);
+    setFormState(() => ({ ...emptyForm }));
     setShowEditor(true);
   }
 
   function handleCancelEdit() {
     setSelectedPost(null);
-    setFormState(emptyForm);
+    setFormState(() => ({ ...emptyForm }));
     setShowEditor(false);
+  }
+
+  function handleQuickInsert(kind: 'image' | 'video') {
+    const position = getParagraphIndexAtCursor(contentInputRef.current);
+    if (kind === 'image') {
+      setFormState(prev => ({
+        ...prev,
+        galleryMedia: [...prev.galleryMedia, createMediaItem({ position }, DEFAULT_IMAGE_TYPE)]
+      }));
+    } else {
+      setFormState(prev => ({
+        ...prev,
+        videoItems: [...prev.videoItems, createMediaItem({ position }, DEFAULT_VIDEO_TYPE)]
+      }));
+    }
   }
 
   // Full-screen Editor View
@@ -157,7 +384,7 @@ export default function AdminBlogPage() {
               <button
                 type="button"
                 className="flex items-center gap-2 rounded-xl bg-white/20 px-4 py-2 text-sm font-semibold transition-all hover:bg-white/30"
-                onClick={() => {/* Insert image logic */}}
+                onClick={() => handleQuickInsert('image')}
               >
                 <i className="fas fa-image"></i>
                 <span>Chèn ảnh</span>
@@ -165,7 +392,7 @@ export default function AdminBlogPage() {
               <button
                 type="button"
                 className="flex items-center gap-2 rounded-xl bg-white/20 px-4 py-2 text-sm font-semibold transition-all hover:bg-white/30"
-                onClick={() => {/* Insert video logic */}}
+                onClick={() => handleQuickInsert('video')}
               >
                 <i className="fas fa-video"></i>
                 <span>Chèn video</span>
@@ -192,19 +419,33 @@ export default function AdminBlogPage() {
                 <label className="text-sm font-semibold text-[#0f172a]">Phụ đề</label>
                 <input
                   className="w-full rounded-xl border border-slate-200 px-4 py-3 transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
-                  value={formState.slug}
-                  onChange={e => setFormState(prev => ({ ...prev, slug: e.target.value }))}
-                  placeholder="Mô tả ngắn..."
+                  value={formState.subtitle}
+                  onChange={e => setFormState(prev => ({ ...prev, subtitle: e.target.value }))}
+                  placeholder="Mở rộng tiêu đề, nằm dưới heading chính"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
+                  <label className="text-sm font-semibold text-[#0f172a]">Slug URL</label>
+                  <input
+                    className="w-full rounded-xl border border-slate-200 px-4 py-3 transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
+                    value={formState.slug}
+                    onChange={e => {
+                      const raw = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+                      const normalized = raw.replace(/-+/g, '-').replace(/^-+|-+$/g, '');
+                      setFormState(prev => ({ ...prev, slug: normalized }));
+                    }}
+                    placeholder="xu-huong-ai-2025"
+                  />
+                  <p className="text-xs text-slate-500">Hệ thống tự thêm hậu tố <code className="font-mono">-blogYYYYMMDDHHmmss</code>.</p>
+                </div>
+                <div className="space-y-2">
                   <label className="text-sm font-semibold text-[#0f172a]">Danh mục</label>
                   <input
                     className="w-full rounded-xl border border-slate-200 px-4 py-3 transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
-                    value={formState.tagsText.split(',')[0] || ''}
-                    onChange={e => setFormState(prev => ({ ...prev, tagsText: e.target.value + (prev.tagsText.includes(',') ? ', ' + prev.tagsText.split(',').slice(1).join(',') : '') }))}
+                    value={formState.category}
+                    onChange={e => setFormState(prev => ({ ...prev, category: e.target.value }))}
                     placeholder="VD: Chuyển đổi số"
                   />
                 </div>
@@ -213,10 +454,23 @@ export default function AdminBlogPage() {
                   <input
                     type="url"
                     className="w-full rounded-xl border border-slate-200 px-4 py-3 transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
-                    value={formState.heroImage}
-                    onChange={e => setFormState(prev => ({ ...prev, heroImage: e.target.value }))}
+                    value={formState.imageUrl}
+                    onChange={e => setFormState(prev => ({ ...prev, imageUrl: e.target.value }))}
                     placeholder="https://"
                   />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-[#0f172a]">Ngày/Giờ xuất bản</label>
+                  <input
+                    type="datetime-local"
+                    className="w-full rounded-xl border border-slate-200 px-4 py-3 transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
+                    value={formState.publishedAt}
+                    onChange={e => setFormState(prev => ({ ...prev, publishedAt: e.target.value }))}
+                  />
+                  <p className="text-xs text-slate-500">Nếu để trống, hệ thống sẽ dùng thời gian hiện tại khi xuất bản.</p>
                 </div>
               </div>
 
@@ -238,7 +492,7 @@ export default function AdminBlogPage() {
                 <p className="text-xs text-slate-500">Giới hạn 60 từ để tối ưu SEO và hiển thị</p>
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-[#0f172a]">Tags</label>
                   <input
@@ -248,6 +502,18 @@ export default function AdminBlogPage() {
                     placeholder="VD: IoT, AI (phân cách bằng dấu phẩy)"
                   />
                 </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-[#0f172a]">Keywords (SEO)</label>
+                  <input
+                    className="w-full rounded-xl border border-slate-200 px-4 py-3 transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
+                    value={formState.keywordsText}
+                    onChange={e => setFormState(prev => ({ ...prev, keywordsText: e.target.value }))}
+                    placeholder="Xu hướng AI 2025, chuyển đổi số"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-[#0f172a]">Tác giả</label>
                   <input
@@ -293,6 +559,7 @@ export default function AdminBlogPage() {
               </div>
               <textarea
                 className="flex-1 rounded-xl border border-slate-200 px-4 py-3 font-sans text-base leading-relaxed transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
+                ref={contentInputRef}
                 value={formState.content}
                 onChange={e => setFormState(prev => ({ ...prev, content: e.target.value }))}
                 placeholder="Viết nội dung bài viết tại đây...
@@ -301,6 +568,33 @@ Mỗi đoạn văn cách nhau bởi 1 dòng trống.
 
 Đặt con trỏ vào giữa các đoạn để chèn ảnh/video."
                 required
+              />
+            </div>
+
+            <div className="space-y-6 border-t border-slate-200 pt-6">
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <MediaListEditor
+                  title="Hình ảnh & thư viện"
+                  description="Điền vị trí để chèn trực tiếp giữa các đoạn. Để trống = hiển thị trong thư viện cuối bài."
+                  items={formState.galleryMedia}
+                  onChange={items => setFormState(prev => ({ ...prev, galleryMedia: items }))}
+                  addLabel="Thêm ảnh"
+                  typeOptions={IMAGE_TYPE_OPTIONS}
+                  nextPositionHint={inlinePositionHint}
+                />
+                <MediaListEditor
+                  title="Video minh hoạ"
+                  description="Hỗ trợ link YouTube, Vimeo hoặc file mp4. Điền vị trí để chèn inline."
+                  items={formState.videoItems}
+                  onChange={items => setFormState(prev => ({ ...prev, videoItems: items }))}
+                  addLabel="Thêm video"
+                  typeOptions={VIDEO_TYPE_OPTIONS}
+                  nextPositionHint={inlinePositionHint}
+                />
+              </div>
+              <SourceLinksEditor
+                items={formState.sourceLinks}
+                onChange={items => setFormState(prev => ({ ...prev, sourceLinks: items }))}
               />
             </div>
           </form>
@@ -349,23 +643,11 @@ Mỗi đoạn văn cách nhau bởi 1 dòng trống.
             <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">Real-time</span>
           </div>
           <div className="flex-1 overflow-y-auto p-8">
-            {formState.title || formState.content ? (
-              <article className="prose prose-slate max-w-none">
-                {formState.heroImage && (
-                  <img
-                    src={formState.heroImage}
-                    alt={formState.title}
-                    className="mb-6 aspect-video w-full rounded-2xl object-cover"
-                  />
-                )}
-                <h1 className="text-3xl font-bold text-[#0d1b2a]">{formState.title || 'Tiêu đề bài viết'}</h1>
-                {formState.excerpt && (
-                  <p className="text-lg text-slate-600">{formState.excerpt}</p>
-                )}
-                <div className="mt-6 whitespace-pre-wrap text-slate-700">
-                  {formState.content || 'Nội dung bài viết sẽ hiển thị ở đây...'}
-                </div>
-              </article>
+            {hasPreviewSeed && previewHtml ? (
+              <div
+                className="legacy-preview space-y-4"
+                dangerouslySetInnerHTML={{ __html: previewHtml }}
+              />
             ) : (
               <div className="flex h-full flex-col items-center justify-center text-slate-400">
                 <i className="fas fa-pen-to-square mb-4 text-5xl"></i>

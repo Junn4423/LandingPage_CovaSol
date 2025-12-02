@@ -1,8 +1,8 @@
-// File: C:\NgocChungIT\Chung\COVA\LandingPage_CovaSol\apps\frontend\app\(site)\blog\[slug]\page.tsx
-import * as entry from '../../../../../../app/(site)/blog/[slug]/page.js'
+// File: C:\NgocChungIT\Chung\COVA\LandingPage_CovaSol\apps\frontend\app\(admin)\admin\blog\page.tsx
+import * as entry from '../../../../../../app/(admin)/admin/blog/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
-type TEntry = typeof import('../../../../../../app/(site)/blog/[slug]/page.js')
+type TEntry = typeof import('../../../../../../app/(admin)/admin/blog/page.js')
 
 // Check that the entry is a valid entry
 checkFields<Diff<{

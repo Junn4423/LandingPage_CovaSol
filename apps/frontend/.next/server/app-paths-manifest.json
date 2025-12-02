@@ -1,7 +1,8 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/(site)/products/page": "app/(site)/products/page.js",
+  "/(site)/page": "app/(site)/page.js",
   "/(site)/blog/page": "app/(site)/blog/page.js",
-  "/(site)/products/[id]/page": "app/(site)/products/[id]/page.js",
-  "/(site)/blog/[slug]/page": "app/(site)/blog/[slug]/page.js"
+  "/(site)/products/page": "app/(site)/products/page.js",
+  "/(admin)/admin/page": "app/(admin)/admin/page.js",
+  "/(admin)/admin/blog/page": "app/(admin)/admin/blog/page.js"
 }

@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '../db/prisma';
 import type { BlogPostDetail, BlogPostSummary } from '@covasol/types';
 import { generateSlug, generateCode } from '../utils/slug';
+import { notifySitemapUpdated } from './sitemap.service';
 
 type BlogWithAuthor = Prisma.BlogPostGetPayload<{ include: { author: true } }>;
 
@@ -12,6 +13,7 @@ export interface BlogUpsertInput {
   excerpt?: string;
   content: string;
   tags?: string[];
+  keywords?: string[];
   imageUrl?: string | null;
   category?: string;
   authorName?: string;
@@ -21,6 +23,29 @@ export interface BlogUpsertInput {
   authorId?: number;
   slug?: string;
   isFeatured?: boolean;
+  galleryMedia?: Prisma.JsonValue;
+  videoItems?: Prisma.JsonValue;
+  sourceLinks?: Prisma.JsonValue;
+}
+
+const BLOG_STATUSES = new Set(['draft', 'published', 'archived']);
+
+function normalizeBlogStatus(value?: string) {
+  if (!value) return 'draft';
+  const normalized = value.toLowerCase();
+  return BLOG_STATUSES.has(normalized) ? normalized : 'draft';
+}
+
+async function resetFeaturedFlag(excludeId?: number) {
+  await prisma.blogPost.updateMany({
+    data: { isFeatured: 0 },
+    where: excludeId
+      ? {
+          isFeatured: 1,
+          NOT: { id: excludeId }
+        }
+      : { isFeatured: 1 }
+  });
 }
 
 function parseStringArray(value: unknown): string[] {
@@ -49,10 +74,12 @@ function toSummary(post: BlogWithAuthor): BlogPostSummary {
     excerpt: post.excerpt ?? '',
     publishedAt: post.publishedAt?.toISOString() ?? null,
     author: post.authorName || post.author?.displayName || 'COVASOL Team',
+    authorName: post.authorName ?? post.author?.displayName ?? undefined,
     status: post.status,
     heroImage: post.imageUrl ?? null,
     category: post.category ?? undefined,
-    isFeatured: post.isFeatured === 1
+    isFeatured: post.isFeatured === 1,
+    updatedAt: post.updatedAt?.toISOString()
   };
 }
 
@@ -63,15 +90,15 @@ function toDetail(post: BlogWithAuthor): BlogPostDetail {
     tags: parseStringArray(post.tags),
     keywords: parseStringArray(post.keywords),
     authorRole: post.authorRole ?? undefined,
-    galleryMedia: post.galleryMedia as any[] ?? [],
-    videoItems: post.videoItems as any[] ?? [],
-    sourceLinks: post.sourceLinks as any[] ?? []
+    galleryMedia: (post.galleryMedia as any[]) ?? [],
+    videoItems: (post.videoItems as any[]) ?? [],
+    sourceLinks: (post.sourceLinks as any[]) ?? []
   };
 }
 
 export async function listPublishedBlogPosts(): Promise<BlogPostSummary[]> {
   const posts = await prisma.blogPost.findMany({
-    where: { status: 'published' },
+    where: { status: { in: ['published', 'PUBLISHED'] } },
     include: { author: true },
     orderBy: { publishedAt: 'desc' }
   });
@@ -104,8 +131,10 @@ export async function getBlogPostById(id: number | string): Promise<BlogPostDeta
 }
 
 export async function createBlogPost(input: BlogUpsertInput): Promise<BlogPostDetail> {
-  const slug = input.slug ? generateSlug(input.slug) : generateSlug(input.title);
+  const slug = generateSlug(input.slug ?? input.title, { entity: 'blog' });
   const code = generateCode('BLOG');
+  const status = normalizeBlogStatus(input.status);
+  const publishedAt = input.publishedAt ? new Date(input.publishedAt) : new Date();
   
   const post = await prisma.blogPost.create({
     data: {
@@ -116,23 +145,36 @@ export async function createBlogPost(input: BlogUpsertInput): Promise<BlogPostDe
       excerpt: input.excerpt ?? '',
       content: input.content,
       tags: input.tags ? JSON.stringify(input.tags) : null,
+      keywords: input.keywords ? JSON.stringify(input.keywords) : null,
       imageUrl: input.imageUrl ?? null,
       category: input.category,
       authorName: input.authorName,
       authorRole: input.authorRole,
-      status: input.status ?? 'draft',
-      publishedAt: input.publishedAt ? new Date(input.publishedAt) : new Date(),
+      status,
+      publishedAt,
       authorId: input.authorId,
+      galleryMedia: input.galleryMedia ?? [],
+      videoItems: input.videoItems ?? [],
+      sourceLinks: input.sourceLinks ?? [],
       isFeatured: input.isFeatured ? 1 : 0
     },
     include: { author: true }
   });
+
+  if (input.isFeatured) {
+    await resetFeaturedFlag(post.id);
+  }
+
+  if (post.status === 'published') {
+    void notifySitemapUpdated('blog-create');
+  }
   return toDetail(post);
 }
 
 export async function updateBlogPost(id: number | string, input: Partial<BlogUpsertInput>): Promise<BlogPostDetail> {
   const numId = typeof id === 'string' ? parseInt(id, 10) : id;
-  const slug = input.slug ? generateSlug(input.slug) : undefined;
+  const slug = input.slug ? generateSlug(input.slug, { entity: 'blog' }) : undefined;
+  const status = input.status ? normalizeBlogStatus(input.status) : undefined;
   
   const post = await prisma.blogPost.update({
     where: { id: numId },
@@ -142,17 +184,29 @@ export async function updateBlogPost(id: number | string, input: Partial<BlogUps
       subtitle: input.subtitle,
       excerpt: input.excerpt,
       content: input.content,
-      tags: input.tags ? JSON.stringify(input.tags) : undefined,
+      tags: input.tags !== undefined ? JSON.stringify(input.tags) : undefined,
+      keywords: input.keywords !== undefined ? JSON.stringify(input.keywords) : undefined,
       imageUrl: input.imageUrl,
       category: input.category,
       authorName: input.authorName,
       authorRole: input.authorRole,
-      status: input.status,
+      status,
       publishedAt: input.publishedAt === undefined ? undefined : input.publishedAt ? new Date(input.publishedAt) : null,
+      galleryMedia: input.galleryMedia === undefined ? undefined : input.galleryMedia,
+      videoItems: input.videoItems === undefined ? undefined : input.videoItems,
+      sourceLinks: input.sourceLinks === undefined ? undefined : input.sourceLinks,
       isFeatured: input.isFeatured !== undefined ? (input.isFeatured ? 1 : 0) : undefined
     },
     include: { author: true }
   });
+
+  if (input.isFeatured) {
+    await resetFeaturedFlag(post.id);
+  }
+
+  if (post.status === 'published') {
+    void notifySitemapUpdated('blog-update');
+  }
   return toDetail(post);
 }
 

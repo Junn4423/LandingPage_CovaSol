@@ -16,6 +16,7 @@ export interface BlogPostSummary {
   imageUrl?: string | null;
   category?: string;
   isFeatured?: boolean;
+  updatedAt?: string;
 }
 
 export interface BlogPostDetail extends BlogPostSummary {
@@ -42,6 +43,7 @@ export interface ProductSummary {
   shortDescription?: string;
   imageUrl?: string | null;
   status: string;
+  updatedAt?: string;
 }
 
 export interface ProductDetail extends ProductSummary {

@@ -1,4 +1,4 @@
-import type { BlogPostDetail } from '@/types/content';
+import type { BlogPostDetail, ProductDetail } from '@/types/content';
 
 type InlineItem = {
   url?: string | null;
@@ -34,6 +34,20 @@ const BLOG_VIDEO_LABELS: Record<string, string> = {
   body: 'Video nội dung',
   demo: 'Video demo',
   interview: 'Video phỏng vấn',
+  default: 'Video'
+};
+
+const PRODUCT_MEDIA_LABELS: Record<string, string> = {
+  hero: 'Ảnh tiêu đề',
+  inline: 'Ảnh chèn',
+  gallery: 'Ảnh thư viện',
+  default: 'Ảnh'
+};
+
+const PRODUCT_VIDEO_LABELS: Record<string, string> = {
+  hero: 'Video mở đầu',
+  body: 'Video nội dung',
+  demo: 'Video demo',
   default: 'Video'
 };
 
@@ -384,6 +398,108 @@ export function renderBlogPreviewHtml(data: BlogPostDetail) {
     ${heroImageHtml}
     ${excerptHtml}
     <div class="preview-body live-preview-body" data-paragraph-count="${inlineBody.paragraphCount}">${inlineBody.html}</div>
+    ${galleryHtml}
+    ${videoHtml}
+    ${footerHtml}
+  `;
+}
+
+type DemoMediaItem = { url: string; caption?: string | null };
+
+function sanitizeDemoMedia(items?: DemoMediaItem[]) {
+  if (!Array.isArray(items)) {
+    return [] as DemoMediaItem[];
+  }
+  return items
+    .map(item => ({
+      url: item?.url?.trim() ?? '',
+      caption: item?.caption?.trim() ?? ''
+    }))
+    .filter(item => Boolean(item.url));
+}
+
+function renderDemoComboSection(items?: DemoMediaItem[]) {
+  const sanitized = sanitizeDemoMedia(items);
+  if (!sanitized.length) {
+    return '';
+  }
+
+  const layers = sanitized.slice(0, 3)
+    .map((item, index) => `
+      <span class="demo-stack-layer demo-stack-layer-${index + 1}">
+        <img src="${escapeHtml(item.url)}" alt="${escapeHtml(item.caption || `Ảnh demo ${index + 1}`)}" loading="lazy" />
+      </span>
+    `)
+    .join('');
+
+  const totalLabel = String(sanitized.length).padStart(2, '0');
+
+  return `
+    <section class="product-demo-callout" data-demo-available="true">
+      <button type="button" class="demo-stack-card" data-demo-open aria-label="Xem combo ảnh demo">
+        <div class="demo-stack-layers">
+          ${layers}
+        </div>
+        <div class="demo-stack-counter">
+          <strong>${totalLabel}</strong>
+          <span>ảnh demo</span>
+        </div>
+      </button>
+    </section>
+  `;
+}
+
+export function renderProductPreviewHtml(data: ProductDetail) {
+  const safeData = data ?? ({} as ProductDetail);
+  const title = escapeHtml(safeData.name || 'Sản phẩm chưa đặt tên');
+  const category = safeData.category ? `<div class="meta-badge">${escapeHtml(safeData.category)}</div>` : '';
+  const heroImage = safeData.imageUrl
+    ? `<div class="preview-hero-image"><img src="${escapeHtml(safeData.imageUrl)}" alt="${title}" loading="lazy" /></div>`
+    : '';
+
+  const { inline: inlineMedia, remainder: galleryMedia } = splitInlineItems(safeData.galleryMedia);
+  const { inline: inlineVideos, remainder: videoItems } = splitInlineItems(safeData.videoItems);
+
+  const inlineBlocks: InlineBlock[] = [
+    ...inlineMedia.map(item => buildInlineImageBlock(item, PRODUCT_MEDIA_LABELS)),
+    ...inlineVideos.map(item => buildInlineVideoBlock(item, PRODUCT_VIDEO_LABELS))
+  ];
+
+  const inlineBody = renderBodyWithInlineEmbeds(safeData.description || 'Nội dung sản phẩm đang cập nhật', inlineBlocks);
+
+  const tagsHtml = (safeData.featureTags ?? []).length
+    ? `<div class="preview-tags">${(safeData.featureTags ?? [])
+        .map(tag => `<span class="preview-tag">${escapeHtml(tag)}</span>`)
+        .join('')}</div>`
+    : '';
+
+  const highlightsHtml = (safeData.highlights ?? []).length
+    ? `<div class="preview-highlights">
+        <h3>Điểm nổi bật</h3>
+        <ul>
+          ${(safeData.highlights ?? [])
+            .map(highlight => `<li><i class="fas fa-check-circle"></i><span>${escapeHtml(highlight)}</span></li>`)
+            .join('')}
+        </ul>
+      </div>`
+    : '';
+
+  const galleryHtml = renderMediaSection(galleryMedia, 'Thư viện hình ảnh', PRODUCT_MEDIA_LABELS);
+  const videoHtml = renderVideoSection(videoItems, 'Video demo', PRODUCT_VIDEO_LABELS);
+  const demoCallout = renderDemoComboSection(safeData.demoMedia as DemoMediaItem[] | undefined);
+
+  const footerSections = [tagsHtml, highlightsHtml].filter(Boolean).join('');
+  const footerHtml = footerSections ? `<div class="preview-footer-panel">${footerSections}</div>` : '';
+
+  return `
+    <div class="live-preview-header">
+      ${category}
+      <h1>${title}</h1>
+      ${safeData.shortDescription ? `<p class="preview-subtitle">${escapeHtml(safeData.shortDescription)}</p>` : ''}
+    </div>
+    ${heroImage}
+    <div class="preview-body" data-paragraph-count="${inlineBody.paragraphCount}">${inlineBody.html}</div>
+    ${demoCallout}
     ${galleryHtml}
     ${videoHtml}
     ${footerHtml}
