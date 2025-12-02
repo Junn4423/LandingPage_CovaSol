@@ -32,11 +32,11 @@ declare namespace __next_route_internal_types__ {
     | `/`
     | `/admin`
     | `/admin/blog`
-    | `/admin/products`
     | `/admin/users`
+    | `/admin/products`
     | `/blog`
-    | `/services`
     | `/products`
+    | `/services`
   type DynamicRoutes<T extends string = string> = 
     | `/blog/${SafeSlug<T>}`
     | `/products/${SafeSlug<T>}`
