@@ -2,18 +2,11 @@
 import Link from 'next/link';
 import { fetchProductSummaries } from '@/lib/api/products';
 import { fetchBlogSummaries } from '@/lib/api/blog';
+import { fetchReviews, fetchReviewStats } from '@/lib/api/reviews';
 import { HomeProductsGrid } from '@/components/home/home-products-grid';
 import { HomeBlogGrid } from '@/components/home/home-blog-grid';
+import { ReviewsCarousel } from '@/components/home/reviews-carousel';
 import { ContactForm } from '@/components/home/contact-form';
-
-type Review = {
-  name: string;
-  role: string;
-  avatar: string;
-  rating: number;
-  quote: string;
-  date: string;
-};
 
 const heroStats = [
   { label: 'Dự án triển khai', value: '120+' },
@@ -192,193 +185,6 @@ const whyChooseFeatures = [
   }
 ];
 
-const reviews: Review[] = [
-  {
-    name: 'Nguyễn Minh Tuấn',
-    role: 'CEO - TechStart JSC',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&h=60&fit=crop&crop=face',
-    rating: 5,
-    quote:
-      'COVASOL đã giúp chúng tôi xây dựng hệ thống ERP hoàn chỉnh. Đội ngũ rất chuyên nghiệp, giao hàng đúng hẹn và hỗ trợ tận tình sau bàn giao.',
-    date: '2 tháng trước'
-  },
-  {
-    name: 'Trần Thị Lan',
-    role: 'Giám đốc Marketing - BeautyShop',
-    avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=60&h=60&fit=crop&crop=face',
-    rating: 5,
-    quote:
-      'Website và app mobile do COVASOL phát triển đã giúp doanh thu online tăng 300%. UI/UX rất đẹp và dễ sử dụng.',
-    date: '1 tháng trước'
-  },
-  {
-    name: 'Lê Văn Hùng',
-    role: 'CTO - FinanceCore',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop&crop=face',
-    rating: 4.5,
-    quote: 'Hệ thống API và microservice rất ổn định. COVASOL hiểu rõ yêu cầu kỹ thuật và đưa ra giải pháp phù hợp.',
-    date: '3 tuần trước'
-  },
-  {
-    name: 'Phạm Thị Mai',
-    role: 'Founder - EduTech Vietnam',
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=60&h=60&fit=crop&crop=face',
-    rating: 5,
-    quote:
-      'Nền tảng học trực tuyến được xây dựng rất chuyên nghiệp. Học sinh và giáo viên đều phản hồi tích cực về giao diện và tính năng.',
-    date: '1 tháng trước'
-  },
-  {
-    name: 'Hoàng Đức Thánh',
-    role: 'Giám đốc - Logistics Plus',
-    avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=60&h=60&fit=crop&crop=face',
-    rating: 4,
-    quote:
-      'Hệ thống quản lý vận chuyển giúp tối ưu tuyến đường và giảm 25% chi phí nhiên liệu. Tính năng tracking real-time rất hữu ích.',
-    date: '6 tuần trước'
-  },
-  {
-    name: 'Nguyễn Thị Hương',
-    role: 'HR Manager - GreenTech Co.',
-    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=60&h=60&fit=crop&crop=face',
-    rating: 4.5,
-    quote: 'App HR quản lý nhân sự rất tiện lợi. Nhân viên có thể chấm công, xin phép và theo dõi lương dễ dàng.',
-    date: '2 tháng trước'
-  },
-  {
-    name: 'Võ Minh Khôi',
-    role: 'CEO - SmartHome Solutions',
-    avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=60&h=60&fit=crop&crop=face',
-    rating: 5,
-    quote:
-      'Hệ thống IoT và dashboard monitoring hoạt động cực kỳ ổn định. COVASOL có kiến thức sâu về công nghệ mới nhất.',
-    date: '3 tuần trước'
-  },
-  {
-    name: 'Đặng Thị Ngọc',
-    role: 'Marketing Director - FoodieHub',
-    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&h=60&fit=crop&crop=face',
-    rating: 3.5,
-    quote:
-      'App giao đồ ăn ra mắt đúng tiến độ. Một số tính năng cần tiếp tục hoàn thiện nhưng nhìn chung đã đáp ứng yêu cầu cốt lõi.',
-    date: '4 tháng trước'
-  },
-  {
-    name: 'Trịnh Vân Nam',
-    role: 'Owner - RetailChain VN',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&h=60&fit=crop&crop=face',
-    rating: 5,
-    quote:
-      'Hệ thống POS và quản lý chuỗi cửa hàng hoạt động mượt mà. Báo cáo thống kê chi tiết giúp ra quyết định chính xác.',
-    date: '5 tuần trước'
-  },
-  {
-    name: 'Lữ Thị Đinh',
-    role: 'CFO - InvestSmart',
-    avatar: 'https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=60&h=60&fit=crop&crop=face',
-    rating: 4,
-    quote:
-      'Nền tảng fintech được phát triển với tính bảo mật cao. API tích hợp ngân hàng hoạt động ổn định và tuân thủ quy định.',
-    date: '7 tuần trước'
-  },
-  {
-    name: 'Bùi Hoàng Long',
-    role: 'CTO - HealthCare Tech',
-    avatar: 'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=60&h=60&fit=crop&crop=face',
-    rating: 4.5,
-    quote:
-      'Hệ thống quản lý bệnh viện giúp số hoá quy trình khám chữa bệnh. Bác sĩ và bệnh nhân đều hài lòng.',
-    date: '6 tuần trước'
-  },
-  {
-    name: 'Cao Thị Minh',
-    role: 'Operations Manager - LogiFlow',
-    avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=60&h=60&fit=crop&crop=face',
-    rating: 4,
-    quote:
-      'Automation workflow tiết kiệm 40% thời gian xử lý đơn hàng. Tích hợp với các hệ thống có sẵn rất mượt.',
-    date: '3 tháng trước'
-  },
-  {
-    name: 'Đinh Văn Tài',
-    role: 'Founder - AgriTech Vietnam',
-    avatar: 'https://images.unsplash.com/photo-1463453091185-61582044d556?w=60&h=60&fit=crop&crop=face',
-    rating: 5,
-    quote:
-      'Nền tảng nông nghiệp thông minh kết nối nông dân với người tiêu dùng rất hiệu quả. Giao diện dễ dùng cho mọi lứa tuổi.',
-    date: '1 tháng trước'
-  },
-  {
-    name: 'Võ Thị Thu',
-    role: 'Brand Manager - FashionHub',
-    avatar: 'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=60&h=60&fit=crop&crop=face',
-    rating: 3.5,
-    quote:
-      'Website thương mại điện tử có thiết kế đẹp mắt. Một số chức năng checkout cần tối ưu thêm để tăng conversion rate.',
-    date: '5 tháng trước'
-  },
-  {
-    name: 'Phan Minh Đức',
-    role: 'IT Manager - AutoService',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&h=60&fit=crop&crop=face',
-    rating: 4.5,
-    quote:
-      'Hệ thống quản lý garage ô tô với booking online rất tiện lợi. Khách hàng có thể đặt lịch và theo dõi tiến độ sửa chữa.',
-    date: '4 tuần trước'
-  },
-  {
-    name: 'Đỗ Thị Linh',
-    role: 'Director - RealEstate Pro',
-    avatar: 'https://images.unsplash.com/photo-1567532900872-f4e906cbf06a?w=60&h=60&fit=crop&crop=face',
-    rating: 4,
-    quote:
-      'Nền tảng bất động sản có tính năng tìm kiếm thông minh và bản đồ tương tác. Giúp tăng 50% leads chất lượng.',
-    date: '2 tháng trước'
-  },
-  {
-    name: 'Hà Quang Minh',
-    role: 'CEO - TravelSmart',
-    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=60&h=60&fit=crop&crop=face',
-    rating: 5,
-    quote:
-      'App du lịch với AI recommendation rất ấn tượng. Khách hàng có thể lên kế hoạch và đặt trọn bộ chuyến đi chỉ trong vài click.',
-    date: '6 tuần trước'
-  },
-  {
-    name: 'Ngô Thị Vân',
-    role: 'Product Manager - SportsTech',
-    avatar: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=60&h=60&fit=crop&crop=face',
-    rating: 3.5,
-    quote:
-      'App thể thao với tracking workout khá tốt. Performance tracking chính xác nhưng UI cần cải thiện để thân thiện hơn.',
-    date: '7 tháng trước'
-  },
-  {
-    name: 'Lương Văn Khang',
-    role: 'Technical Lead - CloudFirst',
-    avatar: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=60&h=60&fit=crop&crop=face',
-    rating: 4.5,
-    quote:
-      'Migration từ on-premise lên cloud do COVASOL thực hiện rất chuyên nghiệp. Zero downtime và hiệu năng tăng đáng kể.',
-    date: '1 tháng trước'
-  },
-  {
-    name: 'Trương Thị Hạnh',
-    role: 'COO - MediaStreaming',
-    avatar: 'https://images.unsplash.com/photo-1554151228-14d9def656e4?w=60&h=60&fit=crop&crop=face',
-    rating: 4,
-    quote:
-      'Nền tảng streaming video có khả năng scale tốt. Xử lý hàng nghìn user cùng lúc mà không bị lag hay buffering.',
-    date: '8 tuần trước'
-  }
-];
-
-const ratingBreakdown = [
-  { label: '5 sao', percent: 60 },
-  { label: '4 sao', percent: 25 },
-  { label: '3 sao', percent: 15 }
-];
-
 const contactDetails = [
   { icon: 'fas fa-globe', label: 'Website', value: 'covasol.top', href: 'https://covasol.top' },
   { icon: 'fas fa-envelope', label: 'Email', value: 'covasol.studio@gmail.com', href: 'mailto:covasol.studio@gmail.com' },
@@ -393,21 +199,13 @@ const contactSocials = [
   { icon: 'fab fa-github', label: 'GitHub', href: '#' }
 ];
 
-const getStarClass = (rating: number, position: number) => {
-  if (rating >= position) {
-    return 'fas fa-star';
-  }
-  if (rating >= position - 0.5) {
-    return 'fas fa-star-half-alt';
-  }
-  return 'far fa-star';
-};
-
 export default async function HomePage() {
   // Fetch data on server side
-  const [products, blogPosts] = await Promise.all([
+  const [products, blogPosts, reviews, reviewStats] = await Promise.all([
     fetchProductSummaries(),
-    fetchBlogSummaries()
+    fetchBlogSummaries(),
+    fetchReviews(),
+    fetchReviewStats()
   ]);
 
   return (
@@ -623,70 +421,7 @@ export default async function HomePage() {
             <h2 data-key="reviews-title">Khách hàng nói gì về chúng tôi</h2>
             <p data-key="reviews-subtitle">Những phản hồi từ các doanh nghiệp đã tin tưởng COVASOL.</p>
           </div>
-          <div className="reviews-carousel-wrapper">
-            <div className="reviews-carousel">
-              <div className="reviews-track">
-                {reviews.map((review, index) => (
-                  <div className="review-card" data-aos="fade-up" data-aos-delay={100 + (index % 6) * 50} key={review.name}>
-                    <div className="review-header">
-                      <div className="reviewer-info">
-                        <div className="reviewer-avatar">
-                          <img src={review.avatar} alt={review.name} loading="lazy" />
-                        </div>
-                        <div className="reviewer-details">
-                          <h4>{review.name}</h4>
-                          <span>{review.role}</span>
-                        </div>
-                      </div>
-                      <div className="review-rating">
-                        <div className="stars">
-                          {[1, 2, 3, 4, 5].map(position => (
-                            <i className={getStarClass(review.rating, position)} key={position} />
-                          ))}
-                        </div>
-                        <span className="rating-number">{review.rating.toFixed(1)}</span>
-                      </div>
-                    </div>
-                    <p className="review-text">{review.quote}</p>
-                    <div className="review-date">{review.date}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <button className="carousel-nav carousel-prev" aria-label="Previous reviews">
-              <i className="fas fa-chevron-left" />
-            </button>
-            <button className="carousel-nav carousel-next" aria-label="Next reviews">
-              <i className="fas fa-chevron-right" />
-            </button>
-            <div className="carousel-indicators" />
-          </div>
-          <div className="reviews-summary" data-aos="fade-up" data-aos-delay="400">
-            <div className="summary-stats">
-              <div className="overall-rating">
-                <span className="rating-number">4.4</span>
-                <div className="stars">
-                  <i className="fas fa-star" />
-                  <i className="fas fa-star" />
-                  <i className="fas fa-star" />
-                  <i className="fas fa-star" />
-                  <i className="fas fa-star-half-alt" />
-                </div>
-                <span className="total-reviews">20 đánh giá</span>
-              </div>
-              <div className="rating-breakdown">
-                {ratingBreakdown.map(item => (
-                  <div className="rating-bar" key={item.label}>
-                    <span>{item.label}</span>
-                    <div className="bar">
-                      <div className="fill" style={{ width: `${item.percent}%` }} />
-                    </div>
-                    <span>{item.percent}%</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <ReviewsCarousel reviews={reviews} stats={reviewStats} />
         </div>
       </section>
 

@@ -92,7 +92,28 @@ CREATE TABLE IF NOT EXISTS products (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================================================
--- Bảng 4: sessions - Lưu trữ session đăng nhập
+-- Bảng 4: customer_reviews - Đánh giá từ khách hàng
+-- =====================================================
+CREATE TABLE IF NOT EXISTS customer_reviews (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL COMMENT 'Tên khách hàng',
+    role VARCHAR(255) NOT NULL COMMENT 'Chức vụ/Vai trò',
+    company VARCHAR(255) DEFAULT NULL COMMENT 'Tên công ty',
+    rating FLOAT NOT NULL DEFAULT 5 COMMENT 'Đánh giá 1-5 sao',
+    quote TEXT NOT NULL COMMENT 'Nội dung đánh giá',
+    bg_color VARCHAR(20) NOT NULL DEFAULT '#3B82F6' COMMENT 'Màu nền avatar',
+    status VARCHAR(40) NOT NULL DEFAULT 'published' COMMENT 'Trạng thái: draft, published',
+    is_featured TINYINT NOT NULL DEFAULT 0 COMMENT 'Đánh giá nổi bật: 0 hoặc 1',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    INDEX idx_status (status),
+    INDEX idx_is_featured (is_featured),
+    INDEX idx_created_at (created_at DESC)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =====================================================
+-- Bảng 5: sessions - Lưu trữ session đăng nhập
 -- =====================================================
 CREATE TABLE IF NOT EXISTS sessions (
     session_id VARCHAR(128) NOT NULL PRIMARY KEY,

@@ -91,6 +91,28 @@ model Product {
 }
 
 // =====================================================
+// Bảng customer_reviews - Đánh giá từ khách hàng
+// =====================================================
+model CustomerReview {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(255) @map("name")
+  role        String   @db.VarChar(255) @map("role")
+  company     String?  @db.VarChar(255) @map("company")
+  rating      Float    @default(5) @db.Float
+  quote       String   @db.Text
+  bgColor     String   @default("#3B82F6") @map("bg_color") @db.VarChar(20)
+  status      String   @default("published") @db.VarChar(40)
+  isFeatured  Int      @default(0) @map("is_featured") @db.TinyInt
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([status], map: "idx_review_status")
+  @@index([isFeatured], map: "idx_review_featured")
+  @@index([createdAt(sort: Desc)], map: "idx_review_created")
+  @@map("customer_reviews")
+}
+
+// =====================================================
 // Bảng sessions - Lưu trữ session đăng nhập
 // =====================================================
 model Session {
