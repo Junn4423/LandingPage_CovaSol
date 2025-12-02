@@ -2,11 +2,9 @@ import { apiRequest } from '@/lib/api-client';
 import type { ApiSuccessResponse, AdminOverviewStats } from '@/types/api';
 import type {
   BlogPostDetail,
-  BlogStatus,
   ProductDetail,
-  ProductMetric,
-  ProductStatus,
-  UserSummary
+  UserSummary,
+  CustomerReviewDetail
 } from '@/types/content';
 
 export interface LoginPayload {
@@ -16,27 +14,56 @@ export interface LoginPayload {
 
 export interface BlogMutationInput {
   title: string;
+  subtitle?: string;
   excerpt: string;
   content: string;
   tags?: string[];
-  heroImage?: string | null;
-  status?: BlogStatus;
+  keywords?: string[];
+  imageUrl?: string | null;
+  category?: string;
+  authorName?: string;
+  authorRole?: string;
+  status?: string;
   publishedAt?: string | null;
   slug?: string;
+  isFeatured?: boolean;
+  galleryMedia?: any[];
+  videoItems?: any[];
+  sourceLinks?: any[];
 }
 
 export interface ProductMutationInput {
   name: string;
-  headline: string;
-  summary: string;
+  category?: string;
+  shortDescription?: string;
   description: string;
-  category: string;
-  thumbnail?: string | null;
-  features?: string[];
-  metrics?: ProductMetric[];
-  status?: ProductStatus;
-  publishedAt?: string | null;
+  imageUrl?: string | null;
+  featureTags?: string[];
+  highlights?: string[];
+  ctaPrimary?: { label?: string; url?: string };
+  ctaSecondary?: { label?: string; url?: string };
+  status?: string;
+  galleryMedia?: any[];
+  videoItems?: any[];
+  demoMedia?: any[];
   slug?: string;
+}
+
+export interface ReviewMutationInput {
+  name: string;
+  role: string;
+  company?: string;
+  rating?: number;
+  quote: string;
+  bgColor?: string;
+  status?: string;
+  isFeatured?: boolean;
+}
+
+export interface ReviewStatsResponse {
+  totalReviews: number;
+  averageRating: number;
+  ratingBreakdown: { label: string; count: number; percent: number }[];
 }
 
 export interface CreateUserInput {
@@ -83,7 +110,7 @@ export async function fetchAdminOverview() {
 }
 
 export async function fetchAdminBlogPosts() {
-  const res = await apiRequest<ApiSuccessResponse<BlogPostDetail[]>>({
+  const res = await apiRequest<{ data: BlogPostDetail[]; pagination: any }>({
     path: '/v1/admin/blog'
   });
   return res.data;
@@ -115,7 +142,7 @@ export async function deleteAdminBlogPost(id: string) {
 }
 
 export async function fetchAdminProducts() {
-  const res = await apiRequest<ApiSuccessResponse<ProductDetail[]>>({
+  const res = await apiRequest<{ data: ProductDetail[]; pagination: any }>({
     path: '/v1/admin/products'
   });
   return res.data;
@@ -174,6 +201,45 @@ export async function updateAdminUser(id: string, input: UpdateUserInput) {
 export async function deleteAdminUser(id: string) {
   await apiRequest<void>({
     path: `/v1/users/${id}`,
+    method: 'DELETE'
+  });
+}
+
+export async function fetchAdminReviews() {
+  const res = await apiRequest<ApiSuccessResponse<CustomerReviewDetail[]>>({
+    path: '/v1/admin/reviews'
+  });
+  return res.data;
+}
+
+export async function fetchAdminReviewStats() {
+  const res = await apiRequest<ApiSuccessResponse<ReviewStatsResponse>>({
+    path: '/v1/admin/reviews/stats'
+  });
+  return res.data;
+}
+
+export async function createAdminReview(input: ReviewMutationInput) {
+  const res = await apiRequest<ApiSuccessResponse<CustomerReviewDetail>>({
+    path: '/v1/admin/reviews',
+    method: 'POST',
+    body: input
+  });
+  return res.data;
+}
+
+export async function updateAdminReview(id: string, input: Partial<ReviewMutationInput>) {
+  const res = await apiRequest<ApiSuccessResponse<CustomerReviewDetail>>({
+    path: `/v1/admin/reviews/${id}`,
+    method: 'PUT',
+    body: input
+  });
+  return res.data;
+}
+
+export async function deleteAdminReview(id: string) {
+  await apiRequest<void>({
+    path: `/v1/admin/reviews/${id}`,
     method: 'DELETE'
   });
 }

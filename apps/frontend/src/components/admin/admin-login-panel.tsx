@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, useState } from 'react';
+import Image from 'next/image';
 import { useLoginMutation } from '@/hooks/admin';
 import { ApiError } from '@/lib/api-client';
 
@@ -23,44 +24,64 @@ export function AdminLoginPanel() {
   }
 
   return (
-    <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-xl">
-      <div className="mb-6 text-center">
-        <p className="text-sm font-semibold uppercase tracking-wide text-brand-primary">COVASOL Admin</p>
-        <h1 className="mt-2 text-2xl font-semibold text-slate-900">Đăng nhập</h1>
-        <p className="mt-1 text-sm text-slate-500">Nhập thông tin tài khoản admin để tiếp tục.</p>
+    <div className="w-full max-w-md rounded-3xl bg-white p-10 shadow-2xl" style={{ boxShadow: '0 24px 48px rgba(15, 23, 42, 0.16)' }}>
+      {/* Brand Header */}
+      <div className="mb-8 flex flex-col items-center text-center">
+        <Image
+          src="/assets/img/logo.png"
+          alt="COVASOL Logo"
+          width={72}
+          height={72}
+          className="mb-4 rounded-2xl bg-slate-50 p-2"
+        />
+        <h1 className="text-2xl font-bold text-[#0d1b2a]">Đăng nhập quản trị</h1>
+        <p className="mt-2 text-sm text-slate-500">Khu vực dành cho đội ngũ COVASOL.</p>
       </div>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="text-sm font-medium text-slate-700">Tên đăng nhập</label>
+
+      {/* Login Form */}
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-[#0f172a]">Tên đăng nhập</label>
           <input
-            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-brand-primary focus:outline-none"
+            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm transition-all duration-200 focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
             value={username}
             onChange={event => setUsername(event.target.value)}
             required
             autoComplete="username"
+            placeholder="Nhập tên đăng nhập"
           />
         </div>
-        <div>
-          <label className="text-sm font-medium text-slate-700">Mật khẩu</label>
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-[#0f172a]">Mật khẩu</label>
           <input
             type="password"
-            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-brand-primary focus:outline-none"
+            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm transition-all duration-200 focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
             value={password}
             onChange={event => setPassword(event.target.value)}
             required
             autoComplete="current-password"
+            placeholder="Nhập mật khẩu"
           />
         </div>
-        {error ? <p className="text-sm text-red-600">{error}</p> : null}
+
+        {error ? (
+          <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p>
+        ) : null}
+
         <button
           type="submit"
-          className="w-full rounded-xl bg-brand-primary px-4 py-2 text-sm font-semibold text-white hover:bg-brand-primary/90 disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl disabled:opacity-50"
+          style={{ background: 'linear-gradient(135deg, #124e66, #1c6e8c)' }}
           disabled={isPending}
         >
-          {isPending ? 'Đang đăng nhập...' : 'Đăng nhập'}
+          <i className="fas fa-shield-alt"></i>
+          <span>{isPending ? 'Đang đăng nhập...' : 'Đăng nhập'}</span>
         </button>
       </form>
-      <p className="mt-4 text-center text-xs text-slate-400">Liên hệ CTO để cấp tài khoản admin mới.</p>
+
+      <p className="mt-6 text-center text-xs text-slate-400">
+        Liên hệ CTO để được cấp tài khoản admin mới.
+      </p>
     </div>
   );
 }

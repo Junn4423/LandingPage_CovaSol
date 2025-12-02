@@ -13,10 +13,11 @@ export interface ProductUpsertInput {
   imageUrl?: string | null;
   featureTags?: string[];
   highlights?: string[];
-  ctaPrimaryLabel?: string;
-  ctaPrimaryUrl?: string;
-  ctaSecondaryLabel?: string;
-  ctaSecondaryUrl?: string;
+  ctaPrimary?: { label?: string; url?: string };
+  ctaSecondary?: { label?: string; url?: string };
+  galleryMedia?: any[];
+  videoItems?: any[];
+  demoMedia?: any[];
   status?: string;
   slug?: string;
 }
@@ -51,18 +52,23 @@ function toSummary(product: ProductRecord): ProductSummary {
 }
 
 function toDetail(product: ProductRecord): ProductDetail {
+  const primaryCta = product.ctaPrimaryLabel || product.ctaPrimaryUrl
+    ? { label: product.ctaPrimaryLabel ?? undefined, url: product.ctaPrimaryUrl ?? undefined }
+    : undefined;
+  const secondaryCta = product.ctaSecondaryLabel || product.ctaSecondaryUrl
+    ? { label: product.ctaSecondaryLabel ?? undefined, url: product.ctaSecondaryUrl ?? undefined }
+    : undefined;
+
   return {
     ...toSummary(product),
     description: product.description ?? '',
     featureTags: parseStringArray(product.featureTags),
     highlights: parseStringArray(product.highlights),
-    ctaPrimaryLabel: product.ctaPrimaryLabel ?? undefined,
-    ctaPrimaryUrl: product.ctaPrimaryUrl ?? undefined,
-    ctaSecondaryLabel: product.ctaSecondaryLabel ?? undefined,
-    ctaSecondaryUrl: product.ctaSecondaryUrl ?? undefined,
-    galleryMedia: product.galleryMedia as any[] ?? [],
-    videoItems: product.videoItems as any[] ?? [],
-    demoMedia: product.demoMedia as any[] ?? []
+    ctaPrimary: primaryCta,
+    ctaSecondary: secondaryCta,
+    galleryMedia: (product.galleryMedia as any[]) ?? [],
+    videoItems: (product.videoItems as any[]) ?? [],
+    demoMedia: (product.demoMedia as any[]) ?? []
   };
 }
 
@@ -117,10 +123,13 @@ export async function createProduct(input: ProductUpsertInput): Promise<ProductD
       imageUrl: input.imageUrl,
       featureTags: input.featureTags ? JSON.stringify(input.featureTags) : null,
       highlights: input.highlights ? JSON.stringify(input.highlights) : null,
-      ctaPrimaryLabel: input.ctaPrimaryLabel,
-      ctaPrimaryUrl: input.ctaPrimaryUrl,
-      ctaSecondaryLabel: input.ctaSecondaryLabel,
-      ctaSecondaryUrl: input.ctaSecondaryUrl,
+      ctaPrimaryLabel: input.ctaPrimary?.label,
+      ctaPrimaryUrl: input.ctaPrimary?.url,
+      ctaSecondaryLabel: input.ctaSecondary?.label,
+      ctaSecondaryUrl: input.ctaSecondary?.url,
+      galleryMedia: input.galleryMedia,
+      videoItems: input.videoItems,
+      demoMedia: input.demoMedia,
       status: input.status ?? 'active'
     }
   });
@@ -142,10 +151,13 @@ export async function updateProduct(id: number | string, input: Partial<ProductU
       imageUrl: input.imageUrl,
       featureTags: input.featureTags ? JSON.stringify(input.featureTags) : undefined,
       highlights: input.highlights ? JSON.stringify(input.highlights) : undefined,
-      ctaPrimaryLabel: input.ctaPrimaryLabel,
-      ctaPrimaryUrl: input.ctaPrimaryUrl,
-      ctaSecondaryLabel: input.ctaSecondaryLabel,
-      ctaSecondaryUrl: input.ctaSecondaryUrl,
+      ctaPrimaryLabel: input.ctaPrimary?.label,
+      ctaPrimaryUrl: input.ctaPrimary?.url,
+      ctaSecondaryLabel: input.ctaSecondary?.label,
+      ctaSecondaryUrl: input.ctaSecondary?.url,
+      galleryMedia: input.galleryMedia === undefined ? undefined : input.galleryMedia,
+      videoItems: input.videoItems === undefined ? undefined : input.videoItems,
+      demoMedia: input.demoMedia === undefined ? undefined : input.demoMedia,
       status: input.status
     }
   });

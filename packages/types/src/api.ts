@@ -20,5 +20,6 @@ export interface AdminOverviewStats {
   blogs: number;
   products: number;
   users: number;
+  reviews: number;
   lastUpdated: string;
 }

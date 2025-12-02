@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-page-custom-font */
 import type { Metadata } from 'next';
 import './globals.css';
-import { SiteLayout } from '@/components/layout/site-layout';
 import { AppProviders } from '@/components/providers/app-providers';
 
 export const metadata: Metadata = {
@@ -45,7 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <AppProviders>
-          <SiteLayout>{children}</SiteLayout>
+          {children}
         </AppProviders>
       </body>
     </html>

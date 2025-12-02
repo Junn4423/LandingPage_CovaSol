@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, useEffect, useState } from 'react';
+import { PaginationControls } from '@/components/admin/pagination-controls';
 import {
   useAdminSession,
   useAdminUsers,
@@ -8,6 +9,7 @@ import {
   useDeleteUserMutation,
   useUpdateUserMutation
 } from '@/hooks/admin';
+import { useClientPagination } from '@/hooks/use-pagination';
 import type { UserSummary } from '@/types/content';
 
 interface CreateUserFormState {
@@ -36,6 +38,8 @@ const editFormDefault: EditUserFormState = {
   password: ''
 };
 
+const USER_PAGE_SIZE = 10;
+
 export default function AdminUsersPage() {
   const { data: users, isLoading, error } = useAdminUsers();
   const { data: currentUser } = useAdminSession();
@@ -46,6 +50,9 @@ export default function AdminUsersPage() {
   const [selectedUser, setSelectedUser] = useState<UserSummary | null>(null);
   const [createForm, setCreateForm] = useState<CreateUserFormState>(createFormDefault);
   const [editForm, setEditForm] = useState<EditUserFormState>(editFormDefault);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const pagination = useClientPagination(users ?? [], { pageSize: USER_PAGE_SIZE });
+  const visibleUsers = pagination.items;
 
   useEffect(() => {
     if (!selectedUser) {
@@ -68,6 +75,7 @@ export default function AdminUsersPage() {
       role: createForm.role || undefined
     });
     setCreateForm(createFormDefault);
+    setShowCreateModal(false);
   }
 
   async function handleUpdate(event: FormEvent<HTMLFormElement>) {
@@ -97,166 +105,278 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <header>
-        <h1 className="text-2xl font-semibold text-slate-900">User Management</h1>
-        <p className="text-sm text-slate-500">Đồng bộ danh sách admin và phân quyền.</p>
-      </header>
-
-      <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-        <div className="mb-4 flex items-center justify-between">
-          <p className="text-sm font-semibold text-slate-700">Danh sách người dùng ({users?.length ?? 0})</p>
-          {isLoading ? <p className="text-xs text-slate-500">Đang tải...</p> : null}
+    <div className="flex h-full min-h-0 flex-col gap-6">
+      {/* Panel Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-[#0d1b2a]">Quản lý người dùng</h2>
+          <p className="mt-1 text-slate-500">Phân quyền và quản lý tài khoản quản trị.</p>
         </div>
-        {error ? <p className="text-sm text-red-600">Không thể tải danh sách người dùng.</p> : null}
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[640px] text-left text-sm">
-            <thead className="text-xs uppercase tracking-wide text-slate-500">
+        <div className="flex items-center gap-3">
+          <span className="rounded-full bg-[#124e66]/10 px-4 py-2 text-sm font-semibold text-[#1c6e8c]">
+            {pagination.totalItems} người dùng
+          </span>
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-lg transition-all hover:-translate-y-0.5"
+            style={{ background: 'linear-gradient(135deg, #124e66, #1c6e8c)' }}
+          >
+            <i className="fas fa-user-plus"></i>
+            <span>Thêm người dùng</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Error State */}
+      {error ? (
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
+          <p className="text-sm text-red-600">Không thể tải danh sách người dùng.</p>
+        </div>
+      ) : null}
+
+      {/* Table */}
+      <div className="flex flex-1 min-h-0 flex-col overflow-hidden rounded-2xl bg-white shadow-lg" style={{ boxShadow: '0 16px 32px rgba(15, 23, 42, 0.08)' }}>
+        <div className="flex-1 min-h-0 overflow-auto">
+          <table className="w-full min-w-[700px]">
+            <thead className="bg-[#124e66]/[0.08]">
               <tr>
-                <th className="px-3 py-2">Tên đăng nhập</th>
-                <th className="px-3 py-2">Tên hiển thị</th>
-                <th className="px-3 py-2">Vai trò</th>
-                <th className="px-3 py-2">Cập nhật</th>
-                <th className="px-3 py-2 text-right">Hành động</th>
+                <th className="px-5 py-4 text-left text-sm font-bold text-[#0d1b2a]">ID</th>
+                <th className="px-5 py-4 text-left text-sm font-bold text-[#0d1b2a]">Tên đăng nhập</th>
+                <th className="px-5 py-4 text-left text-sm font-bold text-[#0d1b2a]">Tên hiển thị</th>
+                <th className="px-5 py-4 text-left text-sm font-bold text-[#0d1b2a]">Vai trò</th>
+                <th className="px-5 py-4 text-left text-sm font-bold text-[#0d1b2a]">Thao tác</th>
               </tr>
             </thead>
             <tbody>
-              {(users ?? []).map(user => (
-                <tr key={user.id} className="border-t border-slate-100">
-                  <td className="px-3 py-2 font-semibold text-slate-900">{user.username}</td>
-                  <td className="px-3 py-2 text-sm text-slate-600">{user.displayName || '—'}</td>
-                  <td className="px-3 py-2 text-sm text-slate-600">{user.role}</td>
-                  <td className="px-3 py-2 text-xs text-slate-500">{new Date(user.updatedAt).toLocaleString('vi-VN')}</td>
-                  <td className="px-3 py-2 text-right">
-                    <div className="flex justify-end gap-2">
-                      <button
-                        className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-700 hover:bg-white"
-                        onClick={() => setSelectedUser(user)}
-                      >
-                        Sửa
-                      </button>
-                      <button
-                        className="rounded-full border border-red-200 px-3 py-1 text-xs text-red-600 hover:bg-red-50 disabled:opacity-50"
-                        onClick={() => handleDelete(user)}
-                        disabled={deleteMutation.isPending || (currentUser ? currentUser.id === user.id : false)}
-                      >
-                        Xoá
-                      </button>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={5} className="px-5 py-10 text-center text-slate-500">
+                    <div className="flex items-center justify-center gap-3">
+                      <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#1c6e8c] border-t-transparent"></div>
+                      <span>Đang tải danh sách...</span>
                     </div>
                   </td>
                 </tr>
-              ))}
+              ) : pagination.totalItems === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-5 py-10 text-center text-slate-500">
+                    Chưa có người dùng nào. Nhấn "Thêm người dùng" để bắt đầu.
+                  </td>
+                </tr>
+              ) : (
+                visibleUsers.map((user, index) => (
+                  <tr key={user.id} className="border-t border-slate-100 transition-colors hover:bg-[#124e66]/[0.02]">
+                    <td className="px-5 py-4 text-sm text-slate-600">{pagination.startIndex + index}</td>
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#124e66]/10 text-sm font-bold text-[#124e66]">
+                          {user.username.charAt(0).toUpperCase()}
+                        </div>
+                        <span className="font-semibold text-[#0d1b2a]">{user.username}</span>
+                      </div>
+                    </td>
+                    <td className="px-5 py-4 text-sm text-slate-600">{user.displayName || '—'}</td>
+                    <td className="px-5 py-4">
+                      <span className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${
+                        user.role === 'SUPER_ADMIN'
+                          ? 'bg-purple-100 text-purple-700'
+                          : 'bg-blue-100 text-blue-700'
+                      }`}>
+                        {user.role}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setSelectedUser(user)}
+                          className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition-all hover:-translate-y-0.5 hover:bg-slate-50"
+                        >
+                          <i className="fas fa-edit"></i>
+                          Sửa
+                        </button>
+                        <button
+                          onClick={() => handleDelete(user)}
+                          disabled={deleteMutation.isPending || (currentUser ? currentUser.id === user.id : false)}
+                          className="flex items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 transition-all hover:-translate-y-0.5 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          <i className="fas fa-trash"></i>
+                          Xoá
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
-      </section>
+        <PaginationControls
+          start={pagination.startIndex}
+          end={pagination.endIndex}
+          total={pagination.totalItems}
+          page={pagination.page}
+          totalPages={pagination.totalPages}
+          onPrev={pagination.goToPrev}
+          onNext={pagination.goToNext}
+          isLoading={isLoading}
+          className="border-t border-slate-100 bg-white px-5 py-3"
+        />
+      </div>
 
-      <section className="grid gap-6 md:grid-cols-2">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900">Tạo tài khoản mới</h2>
-          <p className="text-xs text-slate-500">API `/v1/users` với JWT session.</p>
-          <form onSubmit={handleCreate} className="mt-4 space-y-3">
-            <label className="text-sm font-medium text-slate-700">
-              Tên đăng nhập
-              <input
-                className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
-                value={createForm.username}
-                onChange={event => setCreateForm(prev => ({ ...prev, username: event.target.value }))}
-                required
-              />
-            </label>
-            <label className="text-sm font-medium text-slate-700">
-              Mật khẩu
-              <input
-                type="password"
-                className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
-                value={createForm.password}
-                onChange={event => setCreateForm(prev => ({ ...prev, password: event.target.value }))}
-                required
-              />
-            </label>
-            <label className="text-sm font-medium text-slate-700">
-              Tên hiển thị
-              <input
-                className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
-                value={createForm.displayName}
-                onChange={event => setCreateForm(prev => ({ ...prev, displayName: event.target.value }))}
-              />
-            </label>
-            <label className="text-sm font-medium text-slate-700">
-              Vai trò
-              <input
-                className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
-                value={createForm.role}
-                onChange={event => setCreateForm(prev => ({ ...prev, role: event.target.value }))}
-                placeholder="ADMIN"
-              />
-            </label>
-            <button
-              type="submit"
-              className="w-full rounded-full bg-brand-primary px-5 py-2 text-sm font-semibold text-white disabled:opacity-50"
-              disabled={createMutation.isPending}
-            >
-              {createMutation.isPending ? 'Đang tạo...' : 'Tạo tài khoản'}
-            </button>
-            {createMutation.isError ? <p className="text-sm text-red-600">Không thể tạo người dùng.</p> : null}
-          </form>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900">Cập nhật thông tin</h2>
-          <p className="text-xs text-slate-500">Chọn người dùng bên trái để chỉnh sửa.</p>
-          <form onSubmit={handleUpdate} className="mt-4 space-y-3">
-            <label className="text-sm font-medium text-slate-700">
-              Tên hiển thị
-              <input
-                className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
-                value={editForm.displayName}
-                onChange={event => setEditForm(prev => ({ ...prev, displayName: event.target.value }))}
-                disabled={!selectedUser}
-              />
-            </label>
-            <label className="text-sm font-medium text-slate-700">
-              Vai trò
-              <input
-                className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
-                value={editForm.role}
-                onChange={event => setEditForm(prev => ({ ...prev, role: event.target.value }))}
-                disabled={!selectedUser}
-              />
-            </label>
-            <label className="text-sm font-medium text-slate-700">
-              Đặt lại mật khẩu (tuỳ chọn)
-              <input
-                type="password"
-                className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
-                value={editForm.password}
-                onChange={event => setEditForm(prev => ({ ...prev, password: event.target.value }))}
-                disabled={!selectedUser}
-              />
-            </label>
-            <div className="flex items-center gap-3">
+      {/* Edit User Modal */}
+      {selectedUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0d1b2a]/40 p-4">
+          <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl">
+            <div className="flex items-center justify-between bg-[#124e66]/[0.08] px-6 py-4">
+              <h3 className="text-lg font-bold text-[#0d1b2a]">Cập nhật người dùng</h3>
               <button
-                type="submit"
-                className="rounded-full bg-brand-primary px-5 py-2 text-sm font-semibold text-white disabled:opacity-50"
-                disabled={!selectedUser || updateMutation.isPending}
+                onClick={() => setSelectedUser(null)}
+                className="text-slate-500 hover:text-slate-700"
               >
-                {updateMutation.isPending ? 'Đang lưu...' : 'Lưu thay đổi'}
+                <i className="fas fa-times text-lg"></i>
               </button>
-              {selectedUser ? (
+            </div>
+            <form onSubmit={handleUpdate} className="space-y-4 p-6">
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-[#0f172a]">Tên đăng nhập</label>
+                <input
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-500"
+                  value={selectedUser.username}
+                  disabled
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-[#0f172a]">Tên hiển thị</label>
+                <input
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
+                  value={editForm.displayName}
+                  onChange={e => setEditForm(prev => ({ ...prev, displayName: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-[#0f172a]">Vai trò</label>
+                <select
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
+                  value={editForm.role}
+                  onChange={e => setEditForm(prev => ({ ...prev, role: e.target.value }))}
+                >
+                  <option value="ADMIN">ADMIN</option>
+                  <option value="SUPER_ADMIN">SUPER_ADMIN</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-[#0f172a]">Đặt lại mật khẩu (tuỳ chọn)</label>
+                <input
+                  type="password"
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
+                  value={editForm.password}
+                  onChange={e => setEditForm(prev => ({ ...prev, password: e.target.value }))}
+                  placeholder="Bỏ trống nếu không đổi"
+                />
+              </div>
+              {updateMutation.isError && (
+                <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">Không thể cập nhật người dùng.</p>
+              )}
+              <div className="flex justify-end gap-3 pt-2">
                 <button
                   type="button"
-                  className="text-xs font-semibold text-brand-primary"
                   onClick={() => setSelectedUser(null)}
+                  className="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition-all hover:-translate-y-0.5 hover:bg-slate-50"
                 >
-                  Huỷ chọn
+                  Hủy
                 </button>
-              ) : null}
-            </div>
-            {updateMutation.isError ? <p className="text-sm text-red-600">Không thể cập nhật người dùng.</p> : null}
-          </form>
+                <button
+                  type="submit"
+                  disabled={updateMutation.isPending}
+                  className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-lg transition-all hover:-translate-y-0.5 disabled:opacity-50"
+                  style={{ background: 'linear-gradient(135deg, #124e66, #1c6e8c)' }}
+                >
+                  {updateMutation.isPending ? 'Đang lưu...' : 'Cập nhật'}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-      </section>
+      )}
+
+      {/* Create User Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0d1b2a]/40 p-4">
+          <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl">
+            <div className="flex items-center justify-between bg-[#124e66]/[0.08] px-6 py-4">
+              <h3 className="text-lg font-bold text-[#0d1b2a]">Tạo tài khoản mới</h3>
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="text-slate-500 hover:text-slate-700"
+              >
+                <i className="fas fa-times text-lg"></i>
+              </button>
+            </div>
+            <form onSubmit={handleCreate} className="space-y-4 p-6">
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-[#0f172a]">Tên đăng nhập</label>
+                <input
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
+                  value={createForm.username}
+                  onChange={e => setCreateForm(prev => ({ ...prev, username: e.target.value }))}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-[#0f172a]">Mật khẩu</label>
+                <input
+                  type="password"
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
+                  value={createForm.password}
+                  onChange={e => setCreateForm(prev => ({ ...prev, password: e.target.value }))}
+                  required
+                  placeholder="Tối thiểu 8 ký tự"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-[#0f172a]">Tên hiển thị</label>
+                <input
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
+                  value={createForm.displayName}
+                  onChange={e => setCreateForm(prev => ({ ...prev, displayName: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-[#0f172a]">Vai trò</label>
+                <select
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
+                  value={createForm.role}
+                  onChange={e => setCreateForm(prev => ({ ...prev, role: e.target.value }))}
+                >
+                  <option value="ADMIN">ADMIN</option>
+                  <option value="SUPER_ADMIN">SUPER_ADMIN</option>
+                </select>
+              </div>
+              {createMutation.isError && (
+                <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">Không thể tạo người dùng.</p>
+              )}
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowCreateModal(false)}
+                  className="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition-all hover:-translate-y-0.5 hover:bg-slate-50"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  disabled={createMutation.isPending}
+                  className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-lg transition-all hover:-translate-y-0.5 disabled:opacity-50"
+                  style={{ background: 'linear-gradient(135deg, #124e66, #1c6e8c)' }}
+                >
+                  <i className="fas fa-user-plus"></i>
+                  <span>{createMutation.isPending ? 'Đang tạo...' : 'Tạo tài khoản'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

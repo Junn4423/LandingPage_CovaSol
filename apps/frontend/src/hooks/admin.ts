@@ -4,33 +4,42 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createAdminBlogPost,
   createAdminProduct,
+  createAdminReview,
   createAdminUser,
   deleteAdminBlogPost,
   deleteAdminProduct,
+  deleteAdminReview,
   deleteAdminUser,
   fetchAdminBlogPosts,
   fetchAdminOverview,
   fetchAdminProducts,
+  fetchAdminReviewStats,
+  fetchAdminReviews,
   fetchAdminUsers,
   fetchCurrentUser,
   login,
   logout,
   updateAdminBlogPost,
   updateAdminProduct,
+  updateAdminReview,
   updateAdminUser,
   type BlogMutationInput,
   type CreateUserInput,
   type ProductMutationInput,
+  type ReviewMutationInput,
+  type ReviewStatsResponse,
   type UpdateUserInput
 } from '@/lib/admin-api';
-import type { BlogPostDetail, ProductDetail, UserSummary } from '@/types/content';
+import type { BlogPostDetail, CustomerReviewDetail, ProductDetail, UserSummary } from '@/types/content';
 
 const ADMIN_QUERY_KEYS = {
   session: ['admin', 'session'] as const,
   overview: ['admin', 'overview'] as const,
   blogList: ['admin', 'blog', 'list'] as const,
   productList: ['admin', 'products', 'list'] as const,
-  userList: ['admin', 'users', 'list'] as const
+  userList: ['admin', 'users', 'list'] as const,
+  reviewList: ['admin', 'reviews', 'list'] as const,
+  reviewStats: ['admin', 'reviews', 'stats'] as const
 };
 
 export function useAdminSession() {
@@ -61,6 +70,8 @@ export function useLogoutMutation() {
       queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.productList });
       queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.userList });
       queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.overview });
+      queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.reviewList });
+      queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.reviewStats });
     }
   });
 }
@@ -88,11 +99,11 @@ export function useSaveBlogPostMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (payload: SaveBlogPostInput) => {
-      if (payload.id) {
-        const { id, ...rest } = payload;
+      const { id, ...rest } = payload;
+      if (id) {
         return updateAdminBlogPost(id, rest);
       }
-      return createAdminBlogPost(payload);
+      return createAdminBlogPost(rest);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.blogList });
@@ -127,11 +138,11 @@ export function useSaveProductMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (payload: SaveProductInput) => {
-      if (payload.id) {
-        const { id, ...rest } = payload;
+      const { id, ...rest } = payload;
+      if (id) {
         return updateAdminProduct(id, rest);
       }
-      return createAdminProduct(payload);
+      return createAdminProduct(rest);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.productList });
@@ -189,6 +200,54 @@ export function useDeleteUserMutation() {
     mutationFn: deleteAdminUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.userList });
+      queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.overview });
+    }
+  });
+}
+
+export function useAdminReviews() {
+  return useQuery<CustomerReviewDetail[]>({
+    queryKey: ADMIN_QUERY_KEYS.reviewList,
+    queryFn: fetchAdminReviews
+  });
+}
+
+export function useAdminReviewStats() {
+  return useQuery<ReviewStatsResponse>({
+    queryKey: ADMIN_QUERY_KEYS.reviewStats,
+    queryFn: fetchAdminReviewStats,
+    staleTime: 60_000
+  });
+}
+
+export interface SaveReviewInput extends ReviewMutationInput {
+  id?: string;
+}
+
+export function useSaveReviewMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...input }: SaveReviewInput) => {
+      if (id) {
+        return updateAdminReview(id, input);
+      }
+      return createAdminReview(input);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.reviewList });
+      queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.reviewStats });
+      queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.overview });
+    }
+  });
+}
+
+export function useDeleteReviewMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteAdminReview,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.reviewList });
+      queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.reviewStats });
       queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.overview });
     }
   });

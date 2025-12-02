@@ -1,35 +1,41 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { PropsWithChildren } from 'react';
 import { usePathname } from 'next/navigation';
 import { AdminLoginPanel } from '@/components/admin/admin-login-panel';
 import { ApiError } from '@/lib/api-client';
-import { useAdminSession, useLogoutMutation } from '@/hooks/admin';
+import { useAdminSession, useLogoutMutation, useAdminOverview } from '@/hooks/admin';
 
 const adminNav = [
-  { href: '/admin', label: 'Dashboard' },
-  { href: '/admin/blog', label: 'Blog Editor' },
-  { href: '/admin/products', label: 'Product Editor' },
-  { href: '/admin/users', label: 'User Management' }
+  { href: '/admin', label: 'Dashboard', icon: 'fas fa-gauge' },
+  { href: '/admin/blog', label: 'Blog', icon: 'fas fa-newspaper' },
+  { href: '/admin/products', label: 'Sản phẩm', icon: 'fas fa-cubes' },
+  { href: '/admin/reviews', label: 'Đánh giá', icon: 'fas fa-star' },
+  { href: '/admin/users', label: 'Người dùng', icon: 'fas fa-users' }
 ];
 
 export function AdminShell({ children }: PropsWithChildren) {
   const pathname = usePathname();
   const { data: user, isLoading, error } = useAdminSession();
   const logoutMutation = useLogoutMutation();
+  const { refetch, isFetching } = useAdminOverview();
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
-        <p className="text-sm text-slate-500">Đang tải thông tin admin...</p>
+      <div className="flex min-h-screen items-center justify-center" style={{ background: 'linear-gradient(180deg, rgba(232, 240, 247, 0.65), rgba(255, 255, 255, 0.9))' }}>
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#124e66] border-t-transparent"></div>
+          <p className="text-sm text-slate-500">Đang tải thông tin admin...</p>
+        </div>
       </div>
     );
   }
 
   if (error instanceof ApiError && error.status === 401) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+      <div className="flex min-h-screen items-center justify-center px-4" style={{ background: 'linear-gradient(180deg, rgba(232, 240, 247, 0.65), rgba(255, 255, 255, 0.9))' }}>
         <AdminLoginPanel />
       </div>
     );
@@ -37,52 +43,97 @@ export function AdminShell({ children }: PropsWithChildren) {
 
   if (error) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4 text-center">
+      <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center" style={{ background: 'linear-gradient(180deg, rgba(232, 240, 247, 0.65), rgba(255, 255, 255, 0.9))' }}>
         <p className="text-sm font-semibold text-red-600">Không thể tải thông tin admin.</p>
         <p className="mt-2 text-xs text-slate-500">{(error as Error).message}</p>
       </div>
     );
   }
 
+  const isActive = (href: string) => {
+    if (href === '/admin') return pathname === '/admin';
+    return pathname?.startsWith(href);
+  };
+
   return (
-    <div className="flex min-h-screen bg-slate-50">
-      <aside className="hidden w-64 flex-col border-r border-slate-200 bg-white px-4 py-6 md:flex">
-        <p className="text-lg font-semibold text-slate-900">COVASOL Admin</p>
-        <nav className="mt-8 flex flex-col gap-2 text-sm font-medium text-slate-600">
+    <div className="grid h-screen grid-cols-[280px_1fr] overflow-hidden">
+      {/* Sidebar */}
+      <aside className="flex h-full min-h-0 flex-col gap-8 overflow-y-auto p-6 text-white/90" style={{ background: 'linear-gradient(160deg, #0d1b2a, #124e66)' }}>
+        {/* Brand */}
+        <div className="flex items-center gap-3">
+          <Image
+            src="/assets/img/logo.png"
+            alt="COVASOL Logo"
+            width={44}
+            height={44}
+            className="rounded-xl bg-white/10 p-1.5"
+          />
+          <div>
+            <span className="block text-xs uppercase tracking-widest opacity-70">COVASOL</span>
+            <strong className="text-base font-semibold">Quản trị</strong>
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex flex-col gap-2">
           {adminNav.map(item => (
             <Link
               key={item.href}
               href={item.href}
-              className={`rounded-lg px-3 py-2 ${
-                item.href === '/admin'
-                  ? pathname === '/admin'
-                    ? 'bg-slate-900 text-white'
-                    : 'hover:bg-slate-100'
-                  : pathname?.startsWith(item.href)
-                    ? 'bg-slate-900 text-white'
-                    : 'hover:bg-slate-100'
+              className={`flex items-center gap-3 rounded-xl px-4 py-3 font-semibold transition-all duration-200 ${
+                isActive(item.href)
+                  ? 'bg-white/20 -translate-y-0.5'
+                  : 'bg-white/[0.08] hover:bg-white/[0.18] hover:-translate-y-0.5'
               }`}
             >
-              {item.label}
+              <i className={`${item.icon} w-5 text-center`}></i>
+              <span>{item.label}</span>
             </Link>
           ))}
         </nav>
-      </aside>
-      <div className="flex-1 px-4 py-6">
-        <div className="mb-6 flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3">
-          <div>
-            <p className="text-xs uppercase tracking-wide text-slate-400">Đang đăng nhập</p>
-            <p className="text-sm font-semibold text-slate-900">{user?.displayName || user?.username || 'Admin'}</p>
-          </div>
+
+        {/* Meta Actions */}
+        <div className="mt-auto flex flex-col gap-2">
           <button
-            className="rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-            onClick={() => logoutMutation.mutate()}
-            disabled={logoutMutation.isPending}
+            onClick={() => refetch()}
+            disabled={isFetching}
+            className="flex w-full items-center gap-3 rounded-xl bg-white/10 px-4 py-3 font-semibold transition-all duration-200 hover:bg-white/20 hover:-translate-y-0.5 disabled:opacity-50"
           >
-            {logoutMutation.isPending ? 'Đang đăng xuất...' : 'Đăng xuất'}
+            <i className={`fas fa-sync-alt w-5 text-center ${isFetching ? 'animate-spin' : ''}`}></i>
+            <span>{isFetching ? 'Đang đồng bộ...' : 'Làm mới dữ liệu'}</span>
           </button>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">{children}</div>
+      </aside>
+
+      {/* Main Content */}
+      <div className="flex h-full min-h-0 flex-col gap-8 overflow-hidden p-8" style={{ background: 'linear-gradient(180deg, rgba(232, 240, 247, 0.65), rgba(255, 255, 255, 0.9))' }}>
+        {/* Header */}
+        <header className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium uppercase tracking-wider text-[#1c6e8c]">Bảng điều khiển</p>
+            <h1 className="text-2xl font-bold text-[#0d1b2a]">Quản trị nội bộ</h1>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="font-semibold text-slate-600">{user?.displayName || user?.username || 'Admin'}</span>
+            <button
+              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:-translate-y-0.5"
+              onClick={() => logoutMutation.mutate()}
+              disabled={logoutMutation.isPending}
+            >
+              <i className="fas fa-sign-out-alt"></i>
+              <span>{logoutMutation.isPending ? 'Đang đăng xuất...' : 'Đăng xuất'}</span>
+            </button>
+          </div>
+        </header>
+
+        {/* Info Banner */}
+        <div className="flex items-center gap-4 rounded-2xl bg-[#124e66]/[0.08] px-5 py-4 text-[#124e66]">
+          <i className="fas fa-circle-info text-lg"></i>
+          <p>Bảng điều khiển đang trong quá trình tối ưu và bảo trì định kỳ.</p>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 min-h-0">{children}</div>
       </div>
     </div>
   );
