@@ -4,6 +4,7 @@ import { fetchProductSummaries } from '@/lib/api/products';
 import { fetchBlogSummaries } from '@/lib/api/blog';
 import { HomeProductsGrid } from '@/components/home/home-products-grid';
 import { HomeBlogGrid } from '@/components/home/home-blog-grid';
+import { ContactForm } from '@/components/home/contact-form';
 
 type Review = {
   name: string;
@@ -392,16 +393,6 @@ const contactSocials = [
   { icon: 'fab fa-github', label: 'GitHub', href: '#' }
 ];
 
-const contactServices = [
-  { value: '', textKey: 'contact-form-service', text: '-- Chọn dịch vụ quan tâm * --' },
-  { value: 'web-app-development', textKey: 'service-option-web', text: 'Phát triển Website/App' },
-  { value: 'automation', textKey: 'service-option-mobile', text: 'Ứng dụng di động' },
-  { value: 'ui-ux-design', textKey: 'service-option-uiux', text: 'Thiết kế giao diện UI/UX' },
-  { value: 'consulting-maintenance', textKey: 'service-option-ecommerce', text: 'Thương mại điện tử' },
-  { value: 'digital-transformation', textKey: 'service-option-digital', text: 'Chuyển đổi số' },
-  { value: 'other', textKey: 'service-option-other', text: 'Khác' }
-];
-
 const getStarClass = (rating: number, position: number) => {
   if (rating >= position) {
     return 'fas fa-star';
@@ -732,42 +723,7 @@ export default async function HomePage() {
                 ))}
               </div>
             </div>
-            <div className="contact-form" data-aos="slide-left" data-aos-duration="1200" data-aos-delay="200">
-              <form id="quoteForm">
-                <div className="form-group">
-                  <input type="text" id="name" name="name" placeholder="Họ và tên *" data-key="contact-form-name" required />
-                </div>
-                <div className="form-group">
-                  <input type="email" id="email" name="email" placeholder="Email *" data-key="contact-form-email" required />
-                </div>
-                <div className="form-group">
-                  <input type="tel" id="phone" name="phone" placeholder="Số điện thoại *" data-key="contact-form-phone" required />
-                </div>
-                <div className="form-group">
-                  <select id="service" name="service" required>
-                    {contactServices.map(option => (
-                      <option value={option.value} data-key={option.textKey} key={option.textKey}>
-                        {option.text}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="form-group">
-                  <textarea
-                    id="message"
-                    name="message"
-                    rows={4}
-                    placeholder="Mô tả chi tiết yêu cầu của bạn... *"
-                    data-key="contact-form-message"
-                    required
-                  />
-                </div>
-                <button type="submit" className="btn btn-primary" id="submitBtn">
-                  <span data-key="contact-form-submit">Gửi yêu cầu báo giá</span>
-                  <i className="fas fa-paper-plane" />
-                </button>
-              </form>
-            </div>
+            <ContactForm />
           </div>
         </div>
       </section>
