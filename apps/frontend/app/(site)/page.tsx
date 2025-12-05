@@ -8,6 +8,9 @@ import { HomeProductsGrid } from '@/components/home/home-products-grid';
 import { HomeBlogGrid } from '@/components/home/home-blog-grid';
 import { ReviewsCarousel } from '@/components/home/reviews-carousel';
 import { ContactForm } from '@/components/home/contact-form';
+import { HeroVideo } from '@/components/home/hero-video';
+
+const HERO_VIDEO_SRC = '/assets/video/Hero_section_Landing_page_3D_animation.mp4';
 
 const heroStats = [
   { label: 'Dự án triển khai', value: '120+' },
@@ -213,10 +216,7 @@ export default async function HomePage() {
     <>
       <section id="home" className="hero">
         <div className="hero-media" aria-hidden="true">
-          <video autoPlay muted loop playsInline preload="metadata">
-            <source src="/assets/video/Hero_section_Landing_page_3D_animation.mp4" type="video/mp4" />
-            Trình duyệt của bạn không hỗ trợ video.
-          </video>
+          <HeroVideo src={HERO_VIDEO_SRC} />
           <div className="hero-media-overlay" />
         </div>
         <div className="hero-container">
