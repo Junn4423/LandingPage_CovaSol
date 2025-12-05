@@ -24,9 +24,10 @@ interface FloatingChatbotProps {
   isOpen: boolean;
   onToggle: () => void;
   onClose: () => void;
+  hidden?: boolean;
 }
 
-export function FloatingChatbot({ isOpen, onToggle, onClose }: FloatingChatbotProps) {
+export function FloatingChatbot({ isOpen, onToggle, onClose, hidden = false }: FloatingChatbotProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 1,
@@ -124,6 +125,11 @@ Hiện tại hệ thống AI đang bảo trì. Tin nhắn của bạn đã đư�
     });
   };
 
+  // Ẩn hoàn toàn khi hidden=true
+  if (hidden && !isOpen) {
+    return null;
+  }
+
   return (
     <div className={clsx('chatbot-fab', { open: isOpen })}>
       {/* Chatbot Window */}
@@ -181,7 +187,7 @@ Hiện tại hệ thống AI đang bảo trì. Tin nhắn của bạn đã đư�
             <textarea
               ref={textareaRef}
               className="chatbot-input__textarea"
-              placeholder="Nhập tin nhắn... (Shift+Enter để xuống dòng)"
+              placeholder="Nhập tin nhắn..."
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}

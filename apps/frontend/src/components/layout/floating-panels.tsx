@@ -35,6 +35,9 @@ export function FloatingPanels() {
     setActivePanel('none');
   };
 
+  // Ẩn chatbot button khi contact menu đang mở
+  const hideChatbot = activePanel === 'contact';
+
   return (
     <FloatingContext.Provider value={{ activePanel, setActivePanel }}>
       <FloatingContactFab 
@@ -46,6 +49,7 @@ export function FloatingPanels() {
         isOpen={activePanel === 'chatbot'}
         onToggle={handleChatbotToggle}
         onClose={handleClose}
+        hidden={hideChatbot}
       />
     </FloatingContext.Provider>
   );

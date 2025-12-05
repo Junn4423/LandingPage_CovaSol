@@ -128,7 +128,7 @@ const translations = {
         'contact-fab-label': 'Liên hệ',
         'contact-fab-zalo': 'Zalo',
         'contact-fab-phone': 'Gọi ngay',
-        'contact-fab-mail': 'Gửi Gmail',
+        'contact-fab-mail': 'Email',
         'contact-fab-facebook': 'Facebook',
         
         // Service Options

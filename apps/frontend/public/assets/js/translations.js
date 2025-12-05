@@ -128,7 +128,7 @@ const translations = {
         'contact-fab-label': 'Liên hệ',
         'contact-fab-zalo': 'Zalo',
         'contact-fab-phone': 'Gọi ngay',
-        'contact-fab-mail': 'Gửi Gmail',
+        'contact-fab-mail': 'Email',
         'contact-fab-facebook': 'Facebook',
         
         // Service Options
@@ -379,7 +379,7 @@ const translations = {
         'contact-fab-label': 'Contact',
         'contact-fab-zalo': 'Zalo Chat',
         'contact-fab-phone': 'Call now',
-        'contact-fab-mail': 'Send Email',
+        'contact-fab-mail': 'Email',
         'contact-fab-facebook': 'Facebook',
         
         // Service Options
