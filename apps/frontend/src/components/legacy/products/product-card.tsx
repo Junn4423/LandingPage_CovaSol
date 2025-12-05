@@ -30,12 +30,11 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, index }: ProductCardProps) {
-  const delay = ((index % 6) + 1) * 100;
   const fallbackImage = '/assets/img/anh1.jpeg';
   const imageSrc = normalizeImageUrl(product.imageUrl, { fallback: fallbackImage });
 
   return (
-    <article className={clsx('product-card', { featured: product.featured })} data-aos="zoom-in" data-aos-delay={String(delay)}>
+    <article className={clsx('product-card', { featured: product.featured })} data-aos="fade-up">
       <div className="product-image">
         <img src={imageSrc} alt={product.name} loading="lazy" />
         {product.badge ? (

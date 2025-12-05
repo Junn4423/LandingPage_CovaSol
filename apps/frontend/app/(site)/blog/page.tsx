@@ -38,7 +38,7 @@ export default async function BlogListingPage() {
           <div className="hero-media-overlay" />
         </div>
         <div className="hero-container">
-          <div className="hero-content" data-aos="fade-up" data-aos-duration="1000">
+          <div className="hero-content" data-aos="fade-up">
             <p className="page-kicker" data-key="blog-kicker">
               Blog · Insight · Case Study
             </p>

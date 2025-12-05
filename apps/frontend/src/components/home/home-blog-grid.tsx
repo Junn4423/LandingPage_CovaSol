@@ -55,7 +55,6 @@ function BlogPostCard({ post, index }: BlogPostCardProps) {
     <article
       className="post-card"
       data-aos="fade-up"
-      data-aos-delay={`${(index % 6) * 100}`}
       tabIndex={0}
     >
       <div className="post-image">

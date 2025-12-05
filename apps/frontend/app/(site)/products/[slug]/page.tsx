@@ -101,7 +101,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               </div>
             </div>
 
-            <aside className="product-aside" data-aos="fade-up" data-aos-delay="150">
+            <aside className="product-aside" data-aos="fade-up">
               <div className="aside-card">
                 <h3>Tài liệu & Liên kết</h3>
                 <ul className="aside-links">

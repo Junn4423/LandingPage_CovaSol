@@ -61,7 +61,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               </div>
             </div>
 
-            <aside className="article-side" data-aos="fade-up" data-aos-delay="150">
+            <aside className="article-side" data-aos="fade-up">
               <div className="aside-card">
                 <h3>Bài viết gần đây</h3>
                 <ul className="aside-list" id="relatedPosts">

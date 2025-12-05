@@ -23,7 +23,7 @@ export function LoadingScreen() {
       }
       isCompleted = true;
       setIsHidden(true);
-      hideTimer = setTimeout(() => setShouldRender(false), 600);
+      hideTimer = setTimeout(() => setShouldRender(false), 300);
     };
 
     if (document.readyState === 'complete') {
@@ -34,7 +34,7 @@ export function LoadingScreen() {
     }
 
     // Fallback in case the load event never fires (e.g. request error)
-    fallbackTimer = setTimeout(() => finishLoading(), 4000);
+    fallbackTimer = setTimeout(() => finishLoading(), 1500);
 
     return () => {
       if (loadListener) window.removeEventListener('load', loadListener);

@@ -125,7 +125,6 @@ export function LegacyBlogGrid({ posts }: LegacyBlogGridProps) {
                     className="post-card"
                     data-category={slugifyCategory(post.category)}
                     data-aos="fade-up"
-                    data-aos-delay={100 * (index % 3)}
                   >
                     <div className="post-image">
                       <img src={getDisplayImage(post)} alt={post.title} loading="lazy" />

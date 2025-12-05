@@ -17,7 +17,7 @@ export function ProductsHero({ videoSrc, title, description, titleKey, descripti
         <div className="hero-media-overlay" />
       </div>
       <div className="hero-container">
-        <div className="hero-content" data-aos="fade-up" data-aos-duration="1000">
+        <div className="hero-content" data-aos="fade-up">
           <h1 className="page-title" data-key={titleKey}>
             {title}
           </h1>

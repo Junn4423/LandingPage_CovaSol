@@ -8,10 +8,10 @@ export function AOSProvider({ children }: { children: React.ReactNode }) {
     const initAOS = async () => {
       const AOS = (await import('aos')).default;
       AOS.init({
-        duration: 1000,
-        easing: 'ease-in-out-cubic',
-        once: false,
-        offset: 120,
+        duration: 400,
+        easing: 'ease-out',
+        once: true,
+        offset: 50,
         delay: 0,
         anchorPlacement: 'top-bottom'
       });

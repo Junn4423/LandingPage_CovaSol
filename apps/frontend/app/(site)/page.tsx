@@ -264,7 +264,7 @@ export default async function HomePage() {
             <p data-key="home-products-subtitle">Các sản phẩm cập nhật trực tiếp từ hệ thống quản trị.</p>
           </div>
           <HomeProductsGrid products={products} />
-          <div className="section-actions" data-aos="fade-up" data-aos-delay="100">
+          <div className="section-actions" data-aos="fade-up">
             <Link className="btn btn-outline" href="/products">
               <span data-key="home-products-button">Xem tất cả sản phẩm</span>
               <i className="fas fa-arrow-right" />
@@ -280,7 +280,7 @@ export default async function HomePage() {
             <p data-key="home-blog-subtitle">Tin tức và chia sẻ từ đội ngũ chuyên gia COVASOL.</p>
           </div>
           <HomeBlogGrid posts={blogPosts} />
-          <div className="section-actions" data-aos="fade-up" data-aos-delay="100">
+          <div className="section-actions" data-aos="fade-up">
             <Link className="btn btn-outline" href="/blog">
               <span data-key="home-blog-button">Đọc thêm trên Blog</span>
               <i className="fas fa-arrow-right" />
@@ -297,7 +297,7 @@ export default async function HomePage() {
           </div>
           <div className="services-grid">
             {servicesOverview.map((service, index) => (
-              <div className="service-card" data-aos="zoom-in" data-aos-delay={(index + 1) * 100} key={service.title}>
+              <div className="service-card" data-aos="zoom-in" key={service.title}>
                 <div className="service-icon">
                   <i className={service.icon} />
                 </div>
@@ -327,7 +327,7 @@ export default async function HomePage() {
           </div>
           <div className="service-detail-grid">
             {detailedServices.map((detail, index) => (
-              <div className="detail-card" data-aos="fade-up" data-aos-delay={(index + 1) * 100} key={detail.title}>
+              <div className="detail-card" data-aos="fade-up" key={detail.title}>
                 <div className="detail-icon">
                   <i className={detail.icon} />
                 </div>
@@ -410,7 +410,7 @@ export default async function HomePage() {
           </div>
           <div className="features-grid">
             {whyChooseFeatures.map((feature, index) => (
-              <div className="feature-item" data-aos="flip-left" data-aos-delay={(index + 1) * 100} key={feature.title}>
+              <div className="feature-item" data-aos="fade-up" key={feature.title}>
                 <div className="feature-icon">
                   <i className={feature.icon} />
                 </div>
@@ -435,7 +435,7 @@ export default async function HomePage() {
       <section id="contact" className="contact">
         <div className="container">
           <div className="contact-content">
-            <div className="contact-info" data-aos="slide-right" data-aos-duration="1200">
+            <div className="contact-info" data-aos="fade-up">
               <h2 data-key="contact-title">Liên hệ với chúng tôi</h2>
               <p data-key="contact-subtitle">
                 Hãy để COVASOL đồng hành cùng doanh nghiệp của bạn trên hành trình chuyển đổi số.

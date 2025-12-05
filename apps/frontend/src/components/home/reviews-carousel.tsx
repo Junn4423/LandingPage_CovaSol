@@ -109,7 +109,6 @@ export function ReviewsCarousel({ reviews, stats }: ReviewsCarouselProps) {
               <div
                 className="review-card"
                 data-aos="fade-up"
-                data-aos-delay={100 + (index % 6) * 50}
                 key={review.id}
               >
                 <div className="review-header">
@@ -176,7 +175,7 @@ export function ReviewsCarousel({ reviews, stats }: ReviewsCarouselProps) {
           ))}
         </div>
       </div>
-      <div className="reviews-summary" data-aos="fade-up" data-aos-delay="400">
+      <div className="reviews-summary" data-aos="fade-up">
         <div className="summary-stats">
           <div className="overall-rating">
             <span className="rating-number">{stats.averageRating.toFixed(1)}</span>

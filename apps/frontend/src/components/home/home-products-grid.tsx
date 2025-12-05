@@ -41,8 +41,7 @@ function ProductCard({ product, index }: ProductCardProps) {
   return (
     <article
       className="product-card"
-      data-aos="zoom-in"
-      data-aos-delay={`${(index % 6) * 100}`}
+      data-aos="fade-up"
       tabIndex={0}
     >
       <div className="product-image">

@@ -103,7 +103,7 @@ export function ContactForm() {
   };
 
   return (
-    <div className="contact-form" data-aos="slide-left" data-aos-duration="1200" data-aos-delay="200">
+    <div className="contact-form" data-aos="fade-up">
       <form id="quoteForm" onSubmit={handleSubmit}>
         <div className="form-group">
           <input

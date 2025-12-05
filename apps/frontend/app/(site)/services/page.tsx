@@ -172,7 +172,7 @@ export default function ServicesPage() {
           </div>
           <div className="services-grid">
             {servicesOverview.map((service, index) => (
-              <div className="service-card" data-aos="zoom-in" data-aos-delay={(index + 1) * 80} key={service.title}>
+              <div className="service-card" data-aos="fade-up" key={service.title}>
                 <div className="service-icon">
                   <i className={service.icon} aria-hidden="true" />
                 </div>
@@ -201,7 +201,7 @@ export default function ServicesPage() {
           </div>
           <div className="service-detail-grid">
             {detailedServices.map(detail => (
-              <div className="detail-card" key={detail.title} data-aos="fade-up" data-aos-delay="120">
+              <div className="detail-card" key={detail.title} data-aos="fade-up">
                 <div className="detail-icon">
                   <i className={detail.icon} aria-hidden="true" />
                 </div>
@@ -224,7 +224,7 @@ export default function ServicesPage() {
           </div>
           <div className="service-detail-grid">
             {deliverySteps.map((step, index) => (
-              <div className="detail-card" key={step.title} data-aos="fade-up" data-aos-delay={(index + 1) * 100}>
+              <div className="detail-card" key={step.title} data-aos="fade-up">
                 <div className="detail-icon">
                   <span style={{ color: '#fff', fontWeight: 700 }}>0{index + 1}</span>
                 </div>
