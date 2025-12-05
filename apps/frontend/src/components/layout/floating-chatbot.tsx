@@ -40,10 +40,20 @@ export function FloatingChatbot({ isOpen, onToggle, onClose, hidden = false }: F
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Scroll to bottom when new message
+  // Scroll to bottom when new message or when chat opens
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Scroll to bottom when chat window opens
+  useEffect(() => {
+    if (isOpen) {
+      // Small delay to ensure DOM is rendered
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
+      }, 100);
+    }
+  }, [isOpen]);
 
   // Auto-resize textarea
   useEffect(() => {

@@ -18,6 +18,56 @@ main {
 }
 
 /* ============================================
+   Scroll To Top Button
+   ============================================ */
+.scroll-top-fab {
+  position: fixed;
+  bottom: 36px;
+  right: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #124E66 0%, #1C6E8C 100%);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(18, 78, 102, 0.4);
+  transition: all 0.3s ease;
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+}
+
+.scroll-top-fab.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.scroll-top-fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(18, 78, 102, 0.5);
+}
+
+.scroll-top-fab i {
+  font-size: 1.25rem;
+}
+
+/* Mobile responsive for scroll button */
+@media (max-width: 768px) {
+  .scroll-top-fab {
+    right: 20px;
+    bottom: 30px;
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* ============================================
    Floating Chatbot
    ============================================ */
 .chatbot-fab {
@@ -66,10 +116,10 @@ main {
   position: absolute;
   bottom: 70px;
   right: 0;
-  width: 380px;
+  width: 340px;
   max-width: calc(100vw - 40px);
-  height: 520px;
-  max-height: calc(100vh - 180px);
+  height: 450px;
+  max-height: calc(100vh - 200px);
   background: white;
   border-radius: 16px;
   box-shadow: 0 10px 50px rgba(0, 0, 0, 0.2);

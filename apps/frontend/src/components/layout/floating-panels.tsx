@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, createContext, useContext } from 'react';
+import { useState, useEffect, useRef, createContext, useContext } from 'react';
 import { FloatingContactFab } from './floating-contact';
 import { FloatingChatbot } from './floating-chatbot';
 
@@ -22,6 +22,25 @@ export function useFloatingPanel() {
 
 export function FloatingPanels() {
   const [activePanel, setActivePanel] = useState<FloatingPanel>('none');
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Click outside để đóng panels
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (activePanel === 'none') return;
+      
+      const target = event.target as HTMLElement;
+      
+      // Kiểm tra nếu click vào bên trong container thì không đóng
+      if (containerRef.current?.contains(target)) return;
+      
+      // Đóng panel
+      setActivePanel('none');
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [activePanel]);
 
   const handleContactToggle = () => {
     setActivePanel(prev => prev === 'contact' ? 'none' : 'contact');
@@ -40,17 +59,19 @@ export function FloatingPanels() {
 
   return (
     <FloatingContext.Provider value={{ activePanel, setActivePanel }}>
-      <FloatingContactFab 
-        isOpen={activePanel === 'contact'}
-        onToggle={handleContactToggle}
-        onClose={handleClose}
-      />
-      <FloatingChatbot 
-        isOpen={activePanel === 'chatbot'}
-        onToggle={handleChatbotToggle}
-        onClose={handleClose}
-        hidden={hideChatbot}
-      />
+      <div ref={containerRef} className="floating-panels-container">
+        <FloatingContactFab 
+          isOpen={activePanel === 'contact'}
+          onToggle={handleContactToggle}
+          onClose={handleClose}
+        />
+        <FloatingChatbot 
+          isOpen={activePanel === 'chatbot'}
+          onToggle={handleChatbotToggle}
+          onClose={handleClose}
+          hidden={hideChatbot}
+        />
+      </div>
     </FloatingContext.Provider>
   );
 }
