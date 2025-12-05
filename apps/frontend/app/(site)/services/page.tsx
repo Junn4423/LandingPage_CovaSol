@@ -132,7 +132,7 @@ export default function ServicesPage() {
       <section className="page-hero service-hero" aria-labelledby="serviceHeroHeading">
         <div className="hero-media" aria-hidden="true">
           <video autoPlay loop muted playsInline poster="/assets/img/anh4.jpeg">
-            <source src="/assets/video/Hero_section_Landing_page_3D_animation.mp4" type="video/mp4" />
+            <source src="/assets/video/Hero_section_Landing_page_3D_animation.webm" type="video/mp4" />
           </video>
           <div className="hero-media-overlay" />
         </div>

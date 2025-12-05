@@ -10,7 +10,7 @@ import { ReviewsCarousel } from '@/components/home/reviews-carousel';
 import { ContactForm } from '@/components/home/contact-form';
 import { HeroVideo } from '@/components/home/hero-video';
 
-const HERO_VIDEO_SRC = '/assets/video/Hero_section_Landing_page_3D_animation.mp4';
+const HERO_VIDEO_SRC = '/assets/video/Hero_section_Landing_page_3D_animation.webm';
 
 const heroStats = [
   { label: 'Dự án triển khai', value: '120+' },

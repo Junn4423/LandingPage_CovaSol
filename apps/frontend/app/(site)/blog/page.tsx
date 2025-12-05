@@ -32,7 +32,7 @@ export default async function BlogListingPage() {
       <section className="page-hero blog-hero">
         <div className="hero-media" aria-hidden="true">
           <video autoPlay muted loop playsInline preload="metadata">
-            <source src="/assets/video/Hero_section_Landing_page_3D_animation.mp4" type="video/mp4" />
+            <source src="/assets/video/Hero_section_Landing_page_3D_animation.webm" type="video/mp4" />
             Trình duyệt của bạn không hỗ trợ video.
           </video>
           <div className="hero-media-overlay" />

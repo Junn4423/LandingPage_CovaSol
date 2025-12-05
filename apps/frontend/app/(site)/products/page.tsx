@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: 'Khám phá danh mục sản phẩm thông minh và giải pháp SaaS do COVASOL phát triển.'
 };
 
-const HERO_VIDEO = '/assets/video/Hero_section_Landing_page_3D_animation.mp4';
+const HERO_VIDEO = '/assets/video/Hero_section_Landing_page_3D_animation.webm';
 const EMPTY_MESSAGE = 'Chưa có sản phẩm nào được công bố.';
 
 const HERO_COPY = {
