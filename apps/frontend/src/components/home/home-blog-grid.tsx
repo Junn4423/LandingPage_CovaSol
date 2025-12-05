@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import type { BlogPostSummary } from '@/types/content';
 import type { Route } from 'next';
+import { normalizeImageUrl } from '@/lib/image-url';
 
 interface HomeBlogGridProps {
   posts: BlogPostSummary[];
@@ -47,6 +48,8 @@ function formatLocalizedDate(value?: string | null): string {
 
 function BlogPostCard({ post, index }: BlogPostCardProps) {
   const detailUrl = `/blog/${post.slug}` as Route;
+  const fallbackImage = 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80';
+  const imageSrc = normalizeImageUrl(post.heroImage, { fallback: fallbackImage });
 
   return (
     <article
@@ -59,7 +62,7 @@ function BlogPostCard({ post, index }: BlogPostCardProps) {
         <Link href={detailUrl}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={post.heroImage || 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80'}
+            src={imageSrc}
             alt={post.title || 'COVASOL Blog'}
             loading="lazy"
           />

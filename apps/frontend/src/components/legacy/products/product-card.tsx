@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import clsx from 'clsx';
 import Link from 'next/link';
+import { normalizeImageUrl } from '@/lib/image-url';
 
 export interface LegacyProductCard {
   id: string;
@@ -30,11 +31,13 @@ interface ProductCardProps {
 
 export function ProductCard({ product, index }: ProductCardProps) {
   const delay = ((index % 6) + 1) * 100;
+  const fallbackImage = '/assets/img/anh1.jpeg';
+  const imageSrc = normalizeImageUrl(product.imageUrl, { fallback: fallbackImage });
 
   return (
     <article className={clsx('product-card', { featured: product.featured })} data-aos="zoom-in" data-aos-delay={String(delay)}>
       <div className="product-image">
-        <img src={product.imageUrl} alt={product.name} loading="lazy" />
+        <img src={imageSrc} alt={product.name} loading="lazy" />
         {product.badge ? (
           <div className={clsx('product-badge', { new: product.badge.variant === 'new' })}>{product.badge.label}</div>
         ) : null}

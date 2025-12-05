@@ -4,6 +4,9 @@ import { FormEvent, useState } from 'react';
 import Image from 'next/image';
 import { useLoginMutation } from '@/hooks/admin';
 import { ApiError } from '@/lib/api-client';
+import { normalizeImageUrl } from '@/lib/image-url';
+
+const ADMIN_LOGO = normalizeImageUrl('/assets/img/logo.png', { fallback: '/assets/img/logo.png' });
 
 export function AdminLoginPanel() {
   const { mutateAsync, isPending } = useLoginMutation();
@@ -28,7 +31,7 @@ export function AdminLoginPanel() {
       {/* Brand Header */}
       <div className="mb-8 flex flex-col items-center text-center">
         <Image
-          src="/assets/img/logo.png"
+          src={ADMIN_LOGO}
           alt="COVASOL Logo"
           width={72}
           height={72}

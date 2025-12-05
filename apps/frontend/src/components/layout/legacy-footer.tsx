@@ -1,4 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
+import { normalizeImageUrl } from '@/lib/image-url';
+
+const LOGO_SRC = normalizeImageUrl('/assets/img/logo.png', { fallback: '/assets/img/logo.png' });
+
 export function LegacyFooter() {
   const year = new Date().getFullYear();
 
@@ -7,7 +11,7 @@ export function LegacyFooter() {
       <div className="container">
         <div className="footer-content">
           <div className="footer-logo">
-            <img src="/assets/img/logo.png" alt="COVASOL Logo" />
+            <img src={LOGO_SRC} alt="COVASOL Logo" />
             <span>COVASOL</span>
           </div>
           <div className="footer-text">

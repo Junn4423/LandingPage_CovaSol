@@ -9,7 +9,12 @@ export const metadata: Metadata = {
     default: 'COVASOL Technology Solutions'
   },
   description: 'Core Value. Smart Solutions. Dịch vụ tư vấn và triển khai giải pháp chuyển đổi số toàn diện.',
-  metadataBase: new URL('https://covasol.top')
+  metadataBase: new URL('https://covasol.top'),
+  icons: {
+    icon: '/favicon.png',
+    shortcut: '/favicon.png',
+    apple: '/favicon.png'
+  }
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -29,6 +34,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           referrerPolicy="no-referrer"
         />
         <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+        <link rel="icon" type="image/png" href="/favicon.png" sizes="32x32" />
+        <link rel="icon" type="image/png" href="/favicon.png" sizes="192x192" />
         {/* Legacy CSS from public assets */}
         <link rel="stylesheet" href="/assets/css/variables.css" />
         <link rel="stylesheet" href="/assets/css/base.css" />

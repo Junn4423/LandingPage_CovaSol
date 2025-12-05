@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { fetchProductSummaries } from '@/lib/api/products';
 import { fetchBlogSummaries } from '@/lib/api/blog';
 import { fetchReviews, fetchReviewStats } from '@/lib/api/reviews';
+import { normalizeImageUrl } from '@/lib/image-url';
 import { HomeProductsGrid } from '@/components/home/home-products-grid';
 import { HomeBlogGrid } from '@/components/home/home-blog-grid';
 import { ReviewsCarousel } from '@/components/home/reviews-carousel';
@@ -367,27 +368,33 @@ export default async function HomePage() {
               <div className="about-gallery">
                 {aboutPhotos
                   .filter(photo => photo.variant === 'primary')
-                  .map(photo => (
-                    <figure className="about-photo about-photo--primary" key={photo.src}>
-                      <img src={photo.src} alt={photo.alt} loading="lazy" />
+                  .map(photo => {
+                    const imageSrc = normalizeImageUrl(photo.src, { fallback: photo.src });
+                    return (
+                      <figure className="about-photo about-photo--primary" key={photo.src}>
+                        <img src={imageSrc} alt={photo.alt} loading="lazy" />
                       <figcaption className="about-photo-caption">
                         <i className={photo.icon} />
                         <span>{photo.caption}</span>
                       </figcaption>
-                    </figure>
-                  ))}
+                      </figure>
+                    );
+                  })}
                 <div className="about-gallery-stack">
                   {aboutPhotos
                     .filter(photo => photo.variant !== 'primary')
-                    .map(photo => (
-                      <figure className={`about-photo about-photo--${photo.variant}`} key={photo.src}>
-                        <img src={photo.src} alt={photo.alt} loading="lazy" />
+                    .map(photo => {
+                      const imageSrc = normalizeImageUrl(photo.src, { fallback: photo.src });
+                      return (
+                        <figure className={`about-photo about-photo--${photo.variant}`} key={photo.src}>
+                          <img src={imageSrc} alt={photo.alt} loading="lazy" />
                         <figcaption className="about-photo-caption">
                           <i className={photo.icon} />
                           <span>{photo.caption}</span>
                         </figcaption>
-                      </figure>
-                    ))}
+                        </figure>
+                      );
+                    })}
                 </div>
               </div>
             </div>

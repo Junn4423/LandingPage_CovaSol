@@ -6,6 +6,7 @@ import { PropsWithChildren } from 'react';
 import { usePathname } from 'next/navigation';
 import { AdminLoginPanel } from '@/components/admin/admin-login-panel';
 import { ApiError } from '@/lib/api-client';
+import { normalizeImageUrl } from '@/lib/image-url';
 import { useAdminSession, useLogoutMutation, useAdminOverview } from '@/hooks/admin';
 
 const adminNav = [
@@ -15,6 +16,8 @@ const adminNav = [
   { href: '/admin/reviews', label: 'Đánh giá', icon: 'fas fa-star' },
   { href: '/admin/users', label: 'Người dùng', icon: 'fas fa-users' }
 ];
+
+const ADMIN_LOGO = normalizeImageUrl('/assets/img/logo.png', { fallback: '/assets/img/logo.png' });
 
 export function AdminShell({ children }: PropsWithChildren) {
   const pathname = usePathname();
@@ -62,7 +65,7 @@ export function AdminShell({ children }: PropsWithChildren) {
         {/* Brand */}
         <div className="flex items-center gap-3">
           <Image
-            src="/assets/img/logo.png"
+            src={ADMIN_LOGO}
             alt="COVASOL Logo"
             width={44}
             height={44}

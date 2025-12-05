@@ -5,6 +5,9 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import type { BlogPostSummary } from '@/types/content';
+import { normalizeImageUrl } from '@/lib/image-url';
+
+const DEFAULT_POST_IMAGE = '/assets/img/anh1.jpeg';
 
 const CATEGORY_PRESETS = [
   { key: 'all', label: 'Tất cả bài viết', dataKey: 'all-posts' },
@@ -27,8 +30,7 @@ function slugifyCategory(category?: string | null) {
 }
 
 function getDisplayImage(post: BlogPostSummary) {
-  if (post.heroImage) return post.heroImage;
-  return '/assets/img/anh1.jpeg';
+  return normalizeImageUrl(post.heroImage, { fallback: DEFAULT_POST_IMAGE });
 }
 
 function formatDate(timestamp?: string | null) {

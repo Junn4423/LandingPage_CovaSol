@@ -4,6 +4,8 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { PaginationControls } from '@/components/admin/pagination-controls';
 import { MediaListEditor, type MediaFormItem } from '@/components/admin/media-list-editor';
 import { SourceLinksEditor, type SourceLinkItem } from '@/components/admin/source-links-editor';
+import { QuickMediaDialog } from '@/components/admin/quick-media-dialog';
+import { QuickSourceDialog } from '@/components/admin/quick-source-dialog';
 import {
   useAdminBlogPosts,
   useDeleteBlogPostMutation,
@@ -36,6 +38,11 @@ interface BlogFormState {
   videoItems: MediaFormItem[];
   sourceLinks: SourceLinkItem[];
 }
+
+type FlashMessage = {
+  type: 'success' | 'error' | 'info';
+  message: string;
+};
 
 const IMAGE_TYPE_OPTIONS = [
   { value: 'inline', label: 'Chèn trong nội dung' },
@@ -208,9 +215,16 @@ export default function AdminBlogPage() {
   const [selectedPost, setSelectedPost] = useState<BlogPostDetail | null>(null);
   const [formState, setFormState] = useState<BlogFormState>(() => ({ ...emptyForm }));
   const [showEditor, setShowEditor] = useState(false);
+  const [mediaDialog, setMediaDialog] = useState<{ type: 'image' | 'video' } | null>(null);
+  const [sourceDialogOpen, setSourceDialogOpen] = useState(false);
+  const [flash, setFlash] = useState<FlashMessage | null>(null);
+  const [formSnapshot, setFormSnapshot] = useState(() => JSON.stringify(emptyForm));
+  const [cursorParagraph, setCursorParagraph] = useState(0);
   const contentInputRef = useRef<HTMLTextAreaElement | null>(null);
   const pagination = useClientPagination(data ?? [], { pageSize: BLOG_PAGE_SIZE });
   const visiblePosts = pagination.items;
+  const serializedForm = useMemo(() => JSON.stringify(formState), [formState]);
+  const isDirty = serializedForm !== formSnapshot;
 
   const excerptWordCount = countWords(formState.excerpt);
   const inlinePositionHint = useMemo(() => estimateParagraphCount(formState.content), [formState.content]);
@@ -260,14 +274,112 @@ export default function AdminBlogPage() {
     }
   }, [hasPreviewSeed, previewData]);
 
+  const updateCursorInfo = () => {
+    setCursorParagraph(getParagraphIndexAtCursor(contentInputRef.current));
+  };
+
+  function showFlash(message: string, type: FlashMessage['type'] = 'info') {
+    setFlash({ message, type });
+  }
+
+  function handleMediaDialogSubmit(payload: { url: string; caption: string }) {
+    if (!mediaDialog) return;
+    const position = getParagraphIndexAtCursor(contentInputRef.current);
+    if (mediaDialog.type === 'image') {
+      setFormState(prev => ({
+        ...prev,
+        galleryMedia: [
+          ...prev.galleryMedia,
+          createMediaItem(
+            {
+              url: payload.url,
+              caption: payload.caption,
+              type: 'inline',
+              position
+            },
+            DEFAULT_IMAGE_TYPE
+          )
+        ]
+      }));
+      showFlash(`Đã chèn ảnh sau đoạn ${position}`, 'success');
+    } else {
+      setFormState(prev => ({
+        ...prev,
+        videoItems: [
+          ...prev.videoItems,
+          createMediaItem(
+            {
+              url: payload.url,
+              caption: payload.caption,
+              type: DEFAULT_VIDEO_TYPE,
+              position
+            },
+            DEFAULT_VIDEO_TYPE
+          )
+        ]
+      }));
+      showFlash(`Đã chèn video sau đoạn ${position}`, 'success');
+    }
+    setMediaDialog(null);
+    updateCursorInfo();
+  }
+
+  function handleSourceDialogSubmit(payload: { label: string; url: string }) {
+    setFormState(prev => ({
+      ...prev,
+      sourceLinks: [
+        ...prev.sourceLinks,
+        {
+          id: createClientId(),
+          label: payload.label,
+          url: payload.url
+        }
+      ]
+    }));
+    setSourceDialogOpen(false);
+    showFlash('Đã thêm nguồn tham khảo', 'success');
+  }
+
+  function confirmDiscardChanges() {
+    if (!showEditor || !isDirty) {
+      return true;
+    }
+    return window.confirm('Bạn có thay đổi chưa lưu. Tiếp tục và bỏ qua các thay đổi?');
+  }
+
+  function handleSelectPost(post: BlogPostDetail) {
+    if (!confirmDiscardChanges()) {
+      return;
+    }
+    setSelectedPost(post);
+  }
+
+  useEffect(() => {
+    if (!flash) return;
+    const timer = window.setTimeout(() => setFlash(null), 3200);
+    return () => window.clearTimeout(timer);
+  }, [flash]);
+
+  useEffect(() => {
+    const handler = (event: BeforeUnloadEvent) => {
+      if (!isDirty) return;
+      event.preventDefault();
+      event.returnValue = 'Bạn có thay đổi chưa lưu.';
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [isDirty]);
+
   useEffect(() => {
     if (!selectedPost) {
       setFormState(() => ({ ...emptyForm }));
+      setFormSnapshot(JSON.stringify(emptyForm));
+      setCursorParagraph(0);
       return;
     }
     const tagsText = formatDelimitedList(selectedPost.tags);
     const keywordsText = formatDelimitedList(selectedPost.keywords);
-    setFormState({
+    const nextState: BlogFormState = {
       title: selectedPost.title,
       subtitle: selectedPost.subtitle ?? '',
       slug: selectedPost.slug,
@@ -285,7 +397,10 @@ export default function AdminBlogPage() {
       galleryMedia: ensureMediaFormItems(selectedPost.galleryMedia, DEFAULT_IMAGE_TYPE),
       videoItems: ensureMediaFormItems(selectedPost.videoItems, DEFAULT_VIDEO_TYPE),
       sourceLinks: ensureSourceLinkItems(selectedPost.sourceLinks)
-    });
+    };
+    setFormState(nextState);
+    setFormSnapshot(JSON.stringify(nextState));
+    setCursorParagraph(estimateParagraphCount(nextState.content));
     setShowEditor(true);
   }, [selectedPost]);
 
@@ -317,10 +432,16 @@ export default function AdminBlogPage() {
       sourceLinks: sourceLinksPayload.length ? sourceLinksPayload : undefined
     };
 
-    await saveMutation.mutateAsync(payload);
-    setSelectedPost(null);
-    setFormState(() => ({ ...emptyForm }));
-    setShowEditor(false);
+    try {
+      await saveMutation.mutateAsync(payload);
+      showFlash(selectedPost ? 'Đã cập nhật bài viết' : 'Đã tạo bài viết mới', 'success');
+      setSelectedPost(null);
+      setFormState(() => ({ ...emptyForm }));
+      setFormSnapshot(JSON.stringify(emptyForm));
+      setShowEditor(false);
+    } catch (error) {
+      showFlash((error as Error)?.message || 'Không thể lưu bài viết', 'error');
+    }
   }
 
   async function handleDelete(post: BlogPostDetail) {
@@ -331,50 +452,57 @@ export default function AdminBlogPage() {
       alert('Không thể xác định ID bài viết để xoá.');
       return;
     }
-    await deleteMutation.mutateAsync(post.id);
-    const isCurrentSelection = selectedPost
-      ? selectedPost.id && post.id
-        ? selectedPost.id === post.id
-        : selectedPost.code === post.code
-      : false;
-    if (isCurrentSelection) {
-      setSelectedPost(null);
-      setFormState(() => ({ ...emptyForm }));
-      setShowEditor(false);
+    try {
+      await deleteMutation.mutateAsync(post.id);
+      showFlash('Đã xoá bài viết', 'success');
+      const isCurrentSelection = selectedPost
+        ? selectedPost.id && post.id
+          ? selectedPost.id === post.id
+          : selectedPost.code === post.code
+        : false;
+      if (isCurrentSelection) {
+        setSelectedPost(null);
+        setFormState(() => ({ ...emptyForm }));
+        setFormSnapshot(JSON.stringify(emptyForm));
+        setShowEditor(false);
+      }
+    } catch (error) {
+      showFlash((error as Error)?.message || 'Không thể xoá bài viết', 'error');
     }
   }
 
   function handleNewPost() {
+    if (!confirmDiscardChanges()) {
+      return;
+    }
     setSelectedPost(null);
     setFormState(() => ({ ...emptyForm }));
+    setFormSnapshot(JSON.stringify(emptyForm));
     setShowEditor(true);
   }
 
   function handleCancelEdit() {
+    if (!confirmDiscardChanges()) {
+      return;
+    }
     setSelectedPost(null);
     setFormState(() => ({ ...emptyForm }));
+    setFormSnapshot(JSON.stringify(emptyForm));
     setShowEditor(false);
-  }
-
-  function handleQuickInsert(kind: 'image' | 'video') {
-    const position = getParagraphIndexAtCursor(contentInputRef.current);
-    if (kind === 'image') {
-      setFormState(prev => ({
-        ...prev,
-        galleryMedia: [...prev.galleryMedia, createMediaItem({ position }, DEFAULT_IMAGE_TYPE)]
-      }));
-    } else {
-      setFormState(prev => ({
-        ...prev,
-        videoItems: [...prev.videoItems, createMediaItem({ position }, DEFAULT_VIDEO_TYPE)]
-      }));
-    }
   }
 
   // Full-screen Editor View
   if (showEditor) {
+    const flashTone =
+      flash?.type === 'success'
+        ? 'bg-emerald-600'
+        : flash?.type === 'error'
+        ? 'bg-red-600'
+        : 'bg-slate-900';
+
     return (
-      <div className="grid h-[calc(100vh-200px)] min-h-[600px] grid-cols-2 gap-px overflow-hidden rounded-2xl bg-slate-200" style={{ boxShadow: '0 16px 32px rgba(15, 23, 42, 0.08)' }}>
+      <>
+        <div className="grid h-[calc(100vh-200px)] min-h-[600px] grid-cols-2 gap-px overflow-hidden rounded-2xl bg-slate-200" style={{ boxShadow: '0 16px 32px rgba(15, 23, 42, 0.08)' }}>
         {/* Left: Editor Input */}
         <div className="flex flex-col overflow-hidden bg-white">
           {/* Toolbar */}
@@ -384,7 +512,7 @@ export default function AdminBlogPage() {
               <button
                 type="button"
                 className="flex items-center gap-2 rounded-xl bg-white/20 px-4 py-2 text-sm font-semibold transition-all hover:bg-white/30"
-                onClick={() => handleQuickInsert('image')}
+                onClick={() => setMediaDialog({ type: 'image' })}
               >
                 <i className="fas fa-image"></i>
                 <span>Chèn ảnh</span>
@@ -392,10 +520,18 @@ export default function AdminBlogPage() {
               <button
                 type="button"
                 className="flex items-center gap-2 rounded-xl bg-white/20 px-4 py-2 text-sm font-semibold transition-all hover:bg-white/30"
-                onClick={() => handleQuickInsert('video')}
+                onClick={() => setMediaDialog({ type: 'video' })}
               >
                 <i className="fas fa-video"></i>
                 <span>Chèn video</span>
+              </button>
+              <button
+                type="button"
+                className="flex items-center gap-2 rounded-xl bg-white/20 px-4 py-2 text-sm font-semibold transition-all hover:bg-white/30"
+                onClick={() => setSourceDialogOpen(true)}
+              >
+                <i className="fas fa-link"></i>
+                <span>Thêm nguồn</span>
               </button>
             </div>
           </div>
@@ -561,7 +697,15 @@ export default function AdminBlogPage() {
                 className="flex-1 rounded-xl border border-slate-200 px-4 py-3 font-sans text-base leading-relaxed transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
                 ref={contentInputRef}
                 value={formState.content}
-                onChange={e => setFormState(prev => ({ ...prev, content: e.target.value }))}
+                onChange={e => {
+                  const value = e.target.value;
+                  setFormState(prev => ({ ...prev, content: value }));
+                  updateCursorInfo();
+                }}
+                onClick={updateCursorInfo}
+                onKeyUp={updateCursorInfo}
+                onMouseUp={updateCursorInfo}
+                onSelect={updateCursorInfo}
                 placeholder="Viết nội dung bài viết tại đây...
 
 Mỗi đoạn văn cách nhau bởi 1 dòng trống.
@@ -649,22 +793,49 @@ Mỗi đoạn văn cách nhau bởi 1 dòng trống.
                 dangerouslySetInnerHTML={{ __html: previewHtml }}
               />
             ) : (
-              <div className="flex h-full flex-col items-center justify-center text-slate-400">
-                <i className="fas fa-pen-to-square mb-4 text-5xl"></i>
-                <p>Bắt đầu nhập nội dung để xem preview</p>
+              <div className="flex h-full flex-col items-center justify-center text-center text-slate-400">
+                <i className="fas fa-file-alt mb-4 text-4xl"></i>
+                <p className="text-lg font-medium">Bắt đầu nhập nội dung để xem preview</p>
               </div>
             )}
           </div>
         </div>
       </div>
+        <QuickMediaDialog
+          open={Boolean(mediaDialog)}
+          type={mediaDialog?.type ?? 'image'}
+          positionHint={cursorParagraph}
+          onClose={() => setMediaDialog(null)}
+          onSubmit={handleMediaDialogSubmit}
+        />
+        <QuickSourceDialog
+          open={sourceDialogOpen}
+          onClose={() => setSourceDialogOpen(false)}
+          onSubmit={handleSourceDialogSubmit}
+        />
+        {flash && (
+          <div className={`fixed right-10 top-10 z-50 rounded-2xl px-5 py-3 text-sm font-semibold text-white shadow-2xl ${flashTone}`}>
+            {flash.message}
+          </div>
+        )}
+      </>
     );
   }
 
   // Blog List View
+  const flashOverlay = flash ? (
+    <div className={`fixed right-10 top-10 z-50 rounded-2xl px-5 py-3 text-sm font-semibold text-white shadow-2xl ${
+      flash.type === 'success' ? 'bg-emerald-600' : flash.type === 'error' ? 'bg-red-600' : 'bg-slate-900'
+    }`}>
+      {flash.message}
+    </div>
+  ) : null;
+
   return (
-    <div className="flex h-full min-h-0 flex-col gap-6">
-      {/* Panel Header */}
-      <div className="flex items-center justify-between">
+    <>
+      <div className="flex h-full min-h-0 flex-col gap-6">
+        {/* Panel Header */}
+        <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-[#0d1b2a]">Quản lý blog</h2>
           <p className="mt-1 text-slate-500">Theo dõi, chỉnh sửa và tổ chức bài viết.</p>
@@ -682,17 +853,17 @@ Mỗi đoạn văn cách nhau bởi 1 dòng trống.
             <span>Soạn bài viết</span>
           </button>
         </div>
-      </div>
-
-      {/* Error State */}
-      {error ? (
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
-          <p className="text-sm text-red-600">Không thể tải danh sách bài viết.</p>
         </div>
-      ) : null}
 
-      {/* Table */}
-      <div className="flex flex-1 min-h-0 flex-col overflow-hidden rounded-2xl bg-white shadow-lg" style={{ boxShadow: '0 16px 32px rgba(15, 23, 42, 0.08)' }}>
+        {/* Error State */}
+        {error ? (
+          <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
+            <p className="text-sm text-red-600">Không thể tải danh sách bài viết.</p>
+          </div>
+        ) : null}
+
+        {/* Table */}
+        <div className="flex flex-1 min-h-0 flex-col overflow-hidden rounded-2xl bg-white shadow-lg" style={{ boxShadow: '0 16px 32px rgba(15, 23, 42, 0.08)' }}>
         <div className="flex-1 min-h-0 overflow-auto">
           <table className="w-full min-w-[800px]">
             <thead className="bg-[#124e66]/[0.08]">
@@ -719,7 +890,7 @@ Mỗi đoạn văn cách nhau bởi 1 dòng trống.
               ) : pagination.totalItems === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-5 py-10 text-center text-slate-500">
-                    Chưa có bài viết nào. Nhấn "Soạn bài viết" để bắt đầu.
+                    Chưa có bài viết nào. Nhấn &quot;Soạn bài viết&quot; để bắt đầu.
                   </td>
                 </tr>
               ) : (
@@ -755,7 +926,7 @@ Mỗi đoạn văn cách nhau bởi 1 dòng trống.
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => setSelectedPost(post)}
+                          onClick={() => handleSelectPost(post)}
                           className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition-all hover:-translate-y-0.5 hover:bg-slate-50"
                         >
                           <i className="fas fa-edit"></i>
@@ -788,7 +959,9 @@ Mỗi đoạn văn cách nhau bởi 1 dòng trống.
           isLoading={isLoading}
           className="border-t border-slate-100 bg-white px-5 py-3"
         />
+        </div>
       </div>
-    </div>
+      {flashOverlay}
+    </>
   );
 }

@@ -8,6 +8,7 @@ import { usePathname } from 'next/navigation';
 
 import { useLanguageSwitcher } from '@/hooks/use-language-switcher';
 import { useNavbarEffects } from '@/hooks/use-navbar-effects';
+import { normalizeImageUrl } from '@/lib/image-url';
 
 interface NavLink {
   href: string;
@@ -34,6 +35,8 @@ const navLinks: NavLink[] = [
   { href: '/#contact', label: 'Liên hệ', dataKey: 'nav-contact', sectionId: 'contact', homeHash: '#contact' }
 ];
 
+const BRAND_LOGO = normalizeImageUrl('/assets/img/logo.png', { fallback: '/assets/img/logo.png' });
+
 export function LegacyNavbar() {
   const pathname = usePathname();
   const { t, options, currentOption, isDropdownOpen, toggleDropdown, selectLanguage, dropdownRef, language } = useLanguageSwitcher();
@@ -59,7 +62,7 @@ export function LegacyNavbar() {
       <div className="nav-container">
         <div className="nav-logo">
           <Link href="/">
-            <img src="/assets/img/logo.png" alt="COVASOL Logo" />
+            <img src={BRAND_LOGO} alt="COVASOL Logo" />
           </Link>
           <Link href="/" aria-label="Trang chủ COVASOL">
             <span>COVASOL</span>
@@ -117,7 +120,7 @@ export function LegacyNavbar() {
                     type="button"
                     onClick={() => selectLanguage(option.code)}
                   >
-                    <img src={option.flagUrl} alt={option.label} />
+                    <img src={normalizeImageUrl(option.flagUrl, { fallback: option.flagUrl })} alt={option.label} />
                     <span>{option.label}</span>
                   </button>
                 ))}

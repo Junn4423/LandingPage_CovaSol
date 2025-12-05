@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
+import { normalizeImageUrl } from '@/lib/image-url';
+
+const LOGO_SRC = normalizeImageUrl('/assets/img/logo.png', { fallback: '/assets/img/logo.png' });
 
 /* eslint-disable @next/next/no-img-element */
 export function LoadingScreen() {
@@ -47,7 +50,7 @@ export function LoadingScreen() {
   return (
     <div id="loading" className={clsx('loading-screen', { hidden: isHidden })} aria-hidden="true">
       <div className="loading-content">
-        <img src="/assets/img/logo.png" alt="COVASOL Logo" className="loading-logo" />
+        <img src={LOGO_SRC} alt="COVASOL Logo" className="loading-logo" />
         <div className="loading-spinner" />
       </div>
     </div>

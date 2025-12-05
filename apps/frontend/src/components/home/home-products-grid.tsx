@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import type { ProductSummary } from '@/types/content';
 import type { Route } from 'next';
+import { normalizeImageUrl } from '@/lib/image-url';
 
 interface HomeProductsGridProps {
   products: ProductSummary[];
@@ -34,6 +35,8 @@ interface ProductCardProps {
 
 function ProductCard({ product, index }: ProductCardProps) {
   const detailUrl = `/products/${product.slug || product.id}` as Route;
+  const fallbackImage = 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80';
+  const imageSrc = normalizeImageUrl(product.imageUrl, { fallback: fallbackImage });
 
   return (
     <article
@@ -46,7 +49,7 @@ function ProductCard({ product, index }: ProductCardProps) {
         <Link href={detailUrl}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={product.imageUrl || 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80'}
+            src={imageSrc}
             alt={product.name || 'COVASOL Product'}
             loading="lazy"
           />

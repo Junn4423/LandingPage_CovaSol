@@ -3,6 +3,9 @@
 
 import { useState } from 'react';
 import clsx from 'clsx';
+import { normalizeImageUrl } from '@/lib/image-url';
+
+const ZALO_ICON = normalizeImageUrl('/assets/img/icons/Zalo.png', { fallback: '/assets/img/icons/Zalo.png' });
 
 export function FloatingContactFab() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,7 +19,7 @@ export function FloatingContactFab() {
       <div className={clsx('contact-fab__actions', { open: isOpen })} id="contactFabActions">
         <a href="https://zalo.me/0707038113" className="contact-fab__action" target="_blank" rel="noopener noreferrer">
           <span className="contact-fab__icon contact-fab__icon--zalo">
-            <img src="/assets/img/icons/Zalo.png" alt="Zalo" />
+            <img src={ZALO_ICON} alt="Zalo" />
           </span>
           <span className="contact-fab__label" data-key="contact-fab-zalo">
             Zalo

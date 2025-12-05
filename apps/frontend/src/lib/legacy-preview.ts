@@ -1,4 +1,5 @@
 import type { BlogPostDetail, ProductDetail } from '@/types/content';
+import { normalizeImageUrl } from '@/lib/image-url';
 
 type InlineItem = {
   url?: string | null;
@@ -72,6 +73,10 @@ function formatDate(value?: string | null) {
     console.warn('Unable to format date for preview:', error);
     return 'Chưa xác định';
   }
+}
+
+function sanitizeImageUrl(value?: string | null, fallback?: string) {
+  return escapeHtml(normalizeImageUrl(value, { fallback: fallback ?? '' }));
 }
 
 function getPositionNumber(value: number | string | null | undefined) {
@@ -165,7 +170,7 @@ function buildInlineImageBlock(item: InlineItem, labels: Record<string, string>)
   const badge = labels[item.type ?? ''] || labels.default || 'Ảnh';
   const caption = item.caption ? `<figcaption class="preview-caption"><em>${escapeHtml(item.caption)}</em></figcaption>` : '';
   const altText = escapeHtml(item.caption || badge);
-  const safeUrl = escapeHtml(item.url);
+  const safeUrl = sanitizeImageUrl(item.url);
   const inlineId = escapeHtml(item.__clientId || item.__inlineSource || item.url || '');
   const inlineSource = escapeHtml(item.__inlineSource || 'media');
   return {
@@ -247,7 +252,7 @@ function renderMediaSection(items: InlineItem[], title: string, labels: Record<s
     .map(item => {
       const badge = labels[item.type ?? ''] || labels.default || 'Ảnh';
       const caption = item.caption ? `<figcaption class="preview-caption"><em>${escapeHtml(item.caption)}</em></figcaption>` : '';
-      const safeUrl = escapeHtml(item.url);
+      const safeUrl = sanitizeImageUrl(item.url);
       const altText = escapeHtml(item.caption || badge);
       return `
         <figure class="preview-media-card" data-type="${item.type || 'media'}">
@@ -354,7 +359,7 @@ export function renderBlogPreviewHtml(data: BlogPostDetail) {
   const metaHtml = metaItems.length ? `<div class="preview-meta">${metaItems.join('')}</div>` : '';
   const heroImageUrl = safeData.heroImage || (safeData as any).imageUrl || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80';
   const heroImageHtml = heroImageUrl
-    ? `<div class="preview-hero-image"><img src="${escapeHtml(heroImageUrl)}" alt="${safeTitle}" loading="lazy" /></div>`
+    ? `<div class="preview-hero-image"><img src="${sanitizeImageUrl(heroImageUrl)}" alt="${safeTitle}" loading="lazy" /></div>`
     : '';
 
   const excerptHtml = safeData.excerpt ? `<p class="preview-excerpt">${escapeHtml(safeData.excerpt)}</p>` : '';
@@ -427,7 +432,7 @@ function renderDemoComboSection(items?: DemoMediaItem[]) {
   const layers = sanitized.slice(0, 3)
     .map((item, index) => `
       <span class="demo-stack-layer demo-stack-layer-${index + 1}">
-        <img src="${escapeHtml(item.url)}" alt="${escapeHtml(item.caption || `Ảnh demo ${index + 1}`)}" loading="lazy" />
+        <img src="${sanitizeImageUrl(item.url)}" alt="${escapeHtml(item.caption || `Ảnh demo ${index + 1}`)}" loading="lazy" />
       </span>
     `)
     .join('');
@@ -454,7 +459,7 @@ export function renderProductPreviewHtml(data: ProductDetail) {
   const title = escapeHtml(safeData.name || 'Sản phẩm chưa đặt tên');
   const category = safeData.category ? `<div class="meta-badge">${escapeHtml(safeData.category)}</div>` : '';
   const heroImage = safeData.imageUrl
-    ? `<div class="preview-hero-image"><img src="${escapeHtml(safeData.imageUrl)}" alt="${title}" loading="lazy" /></div>`
+    ? `<div class="preview-hero-image"><img src="${sanitizeImageUrl(safeData.imageUrl)}" alt="${title}" loading="lazy" /></div>`
     : '';
 
   const { inline: inlineMedia, remainder: galleryMedia } = splitInlineItems(safeData.galleryMedia);

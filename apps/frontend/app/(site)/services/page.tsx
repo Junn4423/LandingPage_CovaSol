@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { LegacyContactSection } from '@/components/legacy/contact-section';
+import { normalizeImageUrl } from '@/lib/image-url';
 import { detailedServices, servicesOverview } from '@/lib/services-data';
 
 export const metadata: Metadata = {
@@ -263,15 +264,18 @@ export default function ServicesPage() {
             </div>
             <div className="about-image" data-aos="fade-left">
               <div className="about-gallery">
-                {serviceGallery.map(photo => (
-                  <figure className={`about-photo ${photo.modifier}`} key={photo.src}>
-                    <Image src={photo.src} alt={photo.alt} width={640} height={360} loading="lazy" sizes="(max-width: 768px) 100vw, 50vw" />
+                {serviceGallery.map(photo => {
+                  const imageSrc = normalizeImageUrl(photo.src, { fallback: photo.src });
+                  return (
+                    <figure className={`about-photo ${photo.modifier}`} key={photo.src}>
+                      <Image src={imageSrc} alt={photo.alt} width={640} height={360} loading="lazy" sizes="(max-width: 768px) 100vw, 50vw" />
                     <figcaption className="about-photo-caption">
                       <i className="fas fa-location-arrow" aria-hidden="true" />
                       {photo.caption}
                     </figcaption>
-                  </figure>
-                ))}
+                    </figure>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -305,10 +309,12 @@ export default function ServicesPage() {
             <p>Chọn mô hình phù hợp hoặc kết hợp để tạo ra lộ trình riêng cho doanh nghiệp của bạn.</p>
           </div>
           <div className="products-grid">
-            {servicePackages.map(pkg => (
-              <article className={`product-card${pkg.featured ? ' featured' : ''}`} key={pkg.id} data-aos="fade-up">
-                <div className="product-image">
-                  <Image src={pkg.image} alt={pkg.name} width={640} height={360} sizes="(max-width: 768px) 100vw, 400px" />
+                {servicePackages.map(pkg => {
+                  const imageSrc = normalizeImageUrl(pkg.image, { fallback: pkg.image });
+                  return (
+                    <article className={`product-card${pkg.featured ? ' featured' : ''}`} key={pkg.id} data-aos="fade-up">
+                      <div className="product-image">
+                        <Image src={imageSrc} alt={pkg.name} width={640} height={360} sizes="(max-width: 768px) 100vw, 400px" />
                   {pkg.badge && <div className="product-badge">{pkg.badge}</div>}
                 </div>
                 <div className="product-content">
@@ -331,8 +337,9 @@ export default function ServicesPage() {
                     </a>
                   </div>
                 </div>
-              </article>
-            ))}
+                    </article>
+                  );
+                })}
           </div>
         </div>
       </section>
