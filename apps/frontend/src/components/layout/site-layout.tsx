@@ -5,6 +5,7 @@ import { LegacyFooter } from './legacy-footer';
 import { FloatingContactFab } from './floating-contact';
 import { BackToTopButton } from './back-to-top';
 import { LoadingScreen } from './loading-screen';
+import { GlobalImageLightbox } from '@/components/common/global-image-lightbox';
 
 export function SiteLayout({ children }: PropsWithChildren) {
   return (
@@ -15,6 +16,7 @@ export function SiteLayout({ children }: PropsWithChildren) {
       <LegacyFooter />
       <FloatingContactFab />
       <BackToTopButton />
+      <GlobalImageLightbox />
 
       <Script src="https://unpkg.com/aos@2.3.1/dist/aos.js" strategy="afterInteractive" />
       <Script src="/assets/js/translations.js" strategy="afterInteractive" />
