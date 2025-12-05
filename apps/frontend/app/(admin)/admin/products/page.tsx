@@ -752,20 +752,12 @@ Mỗi đoạn văn cách nhau bởi 1 dòng trống.
   }
 
   // Product List View
-  const flashOverlay = flash ? (
-    <div className={`fixed right-10 top-10 z-50 rounded-2xl px-5 py-3 text-sm font-semibold text-white shadow-2xl ${
-      flash.type === 'success' ? 'bg-emerald-600' : flash.type === 'error' ? 'bg-red-600' : 'bg-slate-900'
-    }`}>
-      {flash.message}
-    </div>
-  ) : null;
-
   return (
     <>
       <div className="flex h-full min-h-0 flex-col gap-6">
         {/* Panel Header */}
         <div className="flex items-center justify-between">
-        <div>
+          <div>
           <h2 className="text-2xl font-bold text-[#0d1b2a]">Quản lý sản phẩm</h2>
           <p className="mt-1 text-slate-500">Xây dựng thông tin sản phẩm một cách nhất quán.</p>
         </div>
