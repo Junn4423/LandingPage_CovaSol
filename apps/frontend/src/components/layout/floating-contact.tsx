@@ -58,7 +58,6 @@ export function FloatingContactFab() {
         onClick={toggleFab}
       >
         <i className={clsx('fas', isOpen ? 'fa-times' : 'fa-headset')} aria-hidden="true" />
-        <span data-key="contact-fab-label">{isOpen ? 'Đóng' : 'Liên hệ'}</span>
       </button>
     </div>
   );

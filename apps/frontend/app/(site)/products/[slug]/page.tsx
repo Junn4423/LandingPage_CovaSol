@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { fetchProductDetail, fetchProductSummaries } from '@/lib/api/products';
 import { renderProductPreviewHtml } from '@/lib/legacy-preview';
+import { ProductGalleryHandler } from '@/components/products/product-gallery-handler';
 
 interface ProductPageProps {
   params: { slug: string };
@@ -72,8 +73,18 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const previewHtml = renderProductPreviewHtml(product);
   const ctaButtons = buildCtaButtons(product);
 
+  // Prepare gallery images for modal
+  const demoMedia = (product.demoMedia || [])
+    .filter((item: any) => item?.url)
+    .map((item: any) => ({ url: item.url, caption: item.caption || null }));
+  
+  const galleryMedia = (product.galleryMedia || [])
+    .filter((item: any) => item?.url)
+    .map((item: any) => ({ url: item.url, caption: item.caption || null }));
+
   return (
     <div className="product-detail-page detail-preview">
+      <ProductGalleryHandler demoMedia={demoMedia} galleryMedia={galleryMedia} />
       <section className="product-preview-section">
         <div className="container">
           <div className="product-preview-layout">
