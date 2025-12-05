@@ -1,19 +1,18 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useState } from 'react';
 import clsx from 'clsx';
 import { normalizeImageUrl } from '@/lib/image-url';
 
 const ZALO_ICON = normalizeImageUrl('/assets/img/icons/Zalo.png', { fallback: '/assets/img/icons/Zalo.png' });
 
-export function FloatingContactFab() {
-  const [isOpen, setIsOpen] = useState(false);
+interface FloatingContactFabProps {
+  isOpen: boolean;
+  onToggle: () => void;
+  onClose: () => void;
+}
 
-  const toggleFab = () => {
-    setIsOpen(!isOpen);
-  };
-
+export function FloatingContactFab({ isOpen, onToggle }: FloatingContactFabProps) {
   return (
     <div className={clsx('contact-fab', { open: isOpen })} aria-live="polite">
       <div className={clsx('contact-fab__actions', { open: isOpen })} id="contactFabActions">
@@ -55,7 +54,7 @@ export function FloatingContactFab() {
         className={clsx('contact-fab__toggle', { open: isOpen })}
         aria-expanded={isOpen} 
         aria-controls="contactFabActions"
-        onClick={toggleFab}
+        onClick={onToggle}
       >
         <i className={clsx('fas', isOpen ? 'fa-times' : 'fa-headset')} aria-hidden="true" />
       </button>

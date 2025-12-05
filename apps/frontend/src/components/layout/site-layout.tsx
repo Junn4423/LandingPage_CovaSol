@@ -2,7 +2,7 @@ import { PropsWithChildren } from 'react';
 import Script from 'next/script';
 import { LegacyNavbar } from './legacy-navbar';
 import { LegacyFooter } from './legacy-footer';
-import { FloatingContactFab } from './floating-contact';
+import { FloatingPanels } from './floating-panels';
 import { BackToTopButton } from './back-to-top';
 import { LoadingScreen } from './loading-screen';
 import { GlobalImageLightbox } from '@/components/common/global-image-lightbox';
@@ -14,7 +14,7 @@ export function SiteLayout({ children }: PropsWithChildren) {
       <LegacyNavbar />
       <main>{children}</main>
       <LegacyFooter />
-      <FloatingContactFab />
+      <FloatingPanels />
       <BackToTopButton />
       <GlobalImageLightbox />
 
