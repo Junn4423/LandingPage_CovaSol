@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
+import { fetchVisitOverview } from '@/lib/api/analytics';
 import { normalizeImageUrl } from '@/lib/image-url';
 
 const LOGO_SRC = normalizeImageUrl('/assets/img/logo.png', { fallback: '/assets/img/logo.png' });
@@ -30,8 +31,9 @@ const socialLinks = [
   { icon: 'fab fa-github', label: 'GitHub', href: 'https://github.com/CovaSol' }
 ];
 
-export function LegacyFooter() {
+export async function LegacyFooter() {
   const year = new Date().getFullYear();
+  const visitOverview = await fetchVisitOverview();
 
   return (
     <footer className="footer">
@@ -93,9 +95,21 @@ export function LegacyFooter() {
 
         <div className="footer-bottom">
           <span>&copy; {year} COVASOL. All rights reserved.</span>
-          <div className="footer-legal">
-            <Link href="/terms">Điều khoản sử dụng</Link>
-            <Link href="/privacy">Chính sách bảo mật</Link>
+          <div className="footer-meta">
+            <div className="footer-stats" aria-label="Thống kê lượt truy cập">
+              <i className="fas fa-chart-line" aria-hidden="true" />
+              {visitOverview ? (
+                <span>
+                  {visitOverview.totalVisits.toLocaleString('vi-VN')} lượt truy cập
+                </span>
+              ) : (
+                <span>Đang cập nhật lượt truy cập</span>
+              )}
+            </div>
+            <div className="footer-legal">
+              <Link href="/terms">Điều khoản sử dụng</Link>
+              <Link href="/privacy">Chính sách bảo mật</Link>
+            </div>
           </div>
         </div>
       </div>

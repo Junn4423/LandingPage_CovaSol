@@ -113,6 +113,41 @@ model CustomerReview {
 }
 
 // =====================================================
+// Bảng visit_stats - Thống kê lượt truy cập theo IP
+// =====================================================
+model VisitStat {
+  id            Int      @id @default(autoincrement())
+  ipAddress     String   @db.VarChar(45) @map("ip_address")
+  userAgent     String?  @db.VarChar(255) @map("user_agent")
+  visitCount    Int      @default(1) @map("visit_count")
+  lastVisitedAt DateTime @map("last_visited_at")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@unique([ipAddress], map: "ux_visit_ip")
+  @@index([ipAddress], map: "idx_visit_ip")
+  @@index([lastVisitedAt(sort: Desc)], map: "idx_visit_last")
+  @@map("visit_stats")
+}
+
+// =====================================================
+// Bảng cookie_consents - Lưu chấp thuận cookie
+// =====================================================
+model CookieConsent {
+  id            Int      @id @default(autoincrement())
+  ipAddress     String   @db.VarChar(45) @map("ip_address")
+  userAgent     String?  @db.VarChar(255) @map("user_agent")
+  consented     Boolean  @default(true) @map("consented")
+  preferences   Json?    @map("preferences")
+  consentedAt   DateTime @default(now()) @map("consented_at")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@index([ipAddress], map: "idx_cookie_ip")
+  @@index([consentedAt(sort: Desc)], map: "idx_cookie_time")
+  @@map("cookie_consents")
+}
+
+// =====================================================
 // Bảng sessions - Lưu trữ session đăng nhập
 // =====================================================
 model Session {

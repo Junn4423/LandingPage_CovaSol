@@ -74,7 +74,7 @@ async function main() {
       category: 'AI',
       shortDescription: 'Trợ lý AI đa kênh - Trả lời khách hàng tự động qua web, Zalo OA và Facebook Messenger.',
       description: 'Nền tảng trợ lý ảo được thiết kế chuyên biệt cho doanh nghiệp Việt với khả năng hiểu ngôn ngữ tự nhiên và tích hợp hệ thống sẵn có. Bộ workflow builder trực quan giúp đội CSKH tự điều chỉnh kịch bản chỉ trong vài phút.',
-      imageUrl: '/images/products/virtual-assistant.png',
+      imageUrl: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80',
       featureTags: JSON.stringify(['AI', 'Chatbot', 'Multi-channel']),
       highlights: JSON.stringify([
         'Kết nối đa kênh (Web Widget, Facebook, Zalo OA, Hotline)',
@@ -92,7 +92,7 @@ async function main() {
       category: 'MES',
       shortDescription: 'Giải pháp điều hành sản xuất - Tối ưu dây chuyền với dashboard thời gian thực.',
       description: 'Hệ thống MES tập trung giúp giám sát hiệu suất từng chuyền và đồng bộ dữ liệu với ERP hiện hữu. Giải pháp hỗ trợ cả mô hình on-premise lẫn cloud để phù hợp yêu cầu bảo mật.',
-      imageUrl: '/images/products/mes.png',
+      imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80',
       featureTags: JSON.stringify(['MES', 'Manufacturing', 'IoT']),
       highlights: JSON.stringify([
         'Giám sát OEE và downtime realtime',
@@ -110,7 +110,7 @@ async function main() {
       category: 'IoT',
       shortDescription: 'Hệ thống giám sát IoT - Theo dõi thiết bị và cảm biến với dashboard realtime.',
       description: 'Nền tảng IoT cho phép thu thập dữ liệu từ hàng nghìn thiết bị, xử lý realtime và đưa ra cảnh báo thông minh. Tích hợp AI để dự đoán bảo trì và tối ưu vận hành.',
-      imageUrl: '/images/products/iot.png',
+      imageUrl: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80',
       featureTags: JSON.stringify(['IoT', 'Monitoring', 'Predictive']),
       highlights: JSON.stringify([
         'Thu thập dữ liệu từ nhiều loại cảm biến',

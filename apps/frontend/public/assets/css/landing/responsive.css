@@ -639,12 +639,14 @@
     font-size: 1.1rem;
   }
 
-  .contact-fab {
-    bottom: 90px;
-    right: 20px;
+  .floating-panels-container {
+    right: clamp(12px, 4vw, 18px);
+    bottom: clamp(64px, 16vh, 110px);
+    gap: 10px;
   }
 
-  .contact-fab__toggle {
+  .contact-fab__toggle,
+  .chatbot-fab__toggle {
     width: 52px;
     height: 52px;
     padding: 0;
@@ -652,16 +654,20 @@
     border-radius: 50%;
   }
 
-  .contact-fab__toggle span {
-    display: none;
+  .contact-fab__actions {
+    max-width: min(92vw, 280px);
   }
 
   .contact-fab__action {
-    padding: 6px;
+    padding: 6px 10px;
+    width: 100%;
+    min-width: 0;
+    max-width: 280px;
   }
 
   .contact-fab__label {
-    display: none;
+    display: inline-block;
+    font-size: 0.9rem;
   }
   
   /* Loading Screen Small Mobile */

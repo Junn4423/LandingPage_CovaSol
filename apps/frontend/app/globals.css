@@ -4,6 +4,9 @@
 
 :root {
   color-scheme: light;
+  --fab-gap: 12px;
+  --fab-right: clamp(14px, 4vw, 30px);
+  --fab-bottom: clamp(76px, 14vh, 140px);
 }
 
 body {
@@ -70,15 +73,78 @@ main {
 /* ============================================
    Floating Chatbot
    ============================================ */
-.chatbot-fab {
+.cookie-consent {
   position: fixed;
-  bottom: 164px;
-  right: 30px;
+  inset: auto 16px 16px 16px;
+  z-index: 1100;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.cookie-consent__content {
+  pointer-events: auto;
+  width: min(960px, 100%);
+  background: #0b1428;
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 16px 20px;
+  box-shadow: 0 14px 45px rgba(0, 0, 0, 0.35);
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cookie-consent__content p {
+  margin: 6px 0 0;
+  color: #cbd5e1;
+  font-size: 0.95rem;
+}
+
+.cookie-consent__actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 720px) {
+  .cookie-consent__content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cookie-consent__actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+.floating-panels-container {
+  position: fixed;
+  right: var(--fab-right);
+  bottom: var(--fab-bottom);
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: var(--fab-gap);
+  z-index: 1002;
+  pointer-events: none;
+}
+
+.floating-panels-container > * {
+  pointer-events: auto;
+}
+
+.chatbot-fab {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 12px;
-  z-index: 1002;
+  gap: var(--fab-gap);
+  width: fit-content;
 }
 
 .chatbot-fab__toggle {
@@ -114,12 +180,12 @@ main {
 /* Chatbot Window */
 .chatbot-window {
   position: absolute;
-  bottom: 70px;
+  bottom: calc(100% + var(--fab-gap));
   right: 0;
   width: 340px;
-  max-width: calc(100vw - 40px);
+  max-width: min(92vw, 360px);
   height: 450px;
-  max-height: calc(100vh - 200px);
+  max-height: min(520px, calc(100vh - 160px));
   background: white;
   border-radius: 16px;
   box-shadow: 0 10px 50px rgba(0, 0, 0, 0.2);
@@ -355,15 +421,23 @@ main {
 
 /* Mobile responsive */
 @media (max-width: 768px) {
+  .floating-panels-container {
+    right: clamp(12px, 4vw, 18px);
+    bottom: clamp(68px, 16vh, 120px);
+    gap: 10px;
+  }
+
   .chatbot-fab {
-    right: 20px;
-    bottom: 158px;
+    width: 100%;
+    max-width: 360px;
   }
   
   .chatbot-window {
-    width: calc(100vw - 40px);
-    height: calc(100vh - 200px);
-    right: -10px;
+    position: fixed;
+    right: clamp(12px, 4vw, 18px);
+    bottom: 86px;
+    width: min(94vw, 360px);
+    height: min(70vh, 520px);
   }
   
   .chatbot-fab__toggle {

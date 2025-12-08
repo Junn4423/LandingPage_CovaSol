@@ -21,5 +21,8 @@ export interface AdminOverviewStats {
   products: number;
   users: number;
   reviews: number;
+  uniqueVisitors: number;
+  totalVisits: number;
+  lastVisitAt: string | null;
   lastUpdated: string;
 }

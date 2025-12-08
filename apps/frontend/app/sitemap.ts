@@ -18,7 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [blogs, products] = await Promise.all([fetchBlogSummaries(), fetchProductSummaries()]);
   const now = new Date();
 
-  const entries: MetadataRoute.Sitemap = [
+  const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: `${baseUrl}/`,
       lastModified: now,
@@ -41,9 +41,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${baseUrl}/services`,
       lastModified: now,
       changeFrequency: 'monthly',
-      priority: 0.5
+      priority: 0.6
+    },
+    {
+      url: `${baseUrl}/privacy`,
+      lastModified: now,
+      changeFrequency: 'yearly',
+      priority: 0.4
+    },
+    {
+      url: `${baseUrl}/terms`,
+      lastModified: now,
+      changeFrequency: 'yearly',
+      priority: 0.4
     }
   ];
+
+  const entries: MetadataRoute.Sitemap = [...staticRoutes];
 
   blogs.forEach(post => {
     if (!post.slug) {

@@ -82,8 +82,8 @@
 .nav-container {
   opacity: 0;
   transform: translateY(-20px);
-  animation: navSlideIn 0.6s ease forwards;
-  animation-delay: 1.5s;
+  animation: navSlideIn 0.2s ease forwards;
+  /* animation-delay: 1.5s; */
 }
 
 @keyframes navSlideIn {
@@ -389,7 +389,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .footer-brand {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   gap: 12px;
   max-width: 320px;
 }
@@ -485,6 +485,29 @@ h1, h2, h3, h4, h5, h6 {
   color: rgba(255, 255, 255, 0.75);
 }
 
+.footer-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.footer-stats {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.95rem;
+}
+
+.footer-stats i {
+  color: #74c0fc;
+}
+
 .footer-legal {
   display: flex;
   gap: 16px;
@@ -539,15 +562,29 @@ h1, h2, h3, h4, h5, h6 {
    CONTACT FLOATING BUTTON
    ============================================================================ */
 
-.contact-fab {
+.floating-panels-container {
   position: fixed;
-  bottom: 100px;
-  right: 30px;
+  right: var(--fab-right, 30px);
+  bottom: var(--fab-bottom, 100px);
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 12px;
-  z-index: 1000;
+  justify-content: flex-end;
+  gap: var(--fab-gap, 12px);
+  z-index: 1002;
+  pointer-events: none;
+}
+
+.floating-panels-container > * {
+  pointer-events: auto;
+}
+
+.contact-fab {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--fab-gap, 12px);
 }
 
 .contact-fab__toggle {
@@ -586,6 +623,8 @@ h1, h2, h3, h4, h5, h6 {
   transform: translateY(10px);
   transition: var(--transition-normal);
   pointer-events: none;
+  width: 100%;
+  max-width: min(320px, 86vw);
 }
 
 .contact-fab.open .contact-fab__actions {
@@ -609,7 +648,9 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: var(--shadow-lg);
   transition: var(--transition-fast);
   height: 52px;
-  width: 160px;
+  width: 100%;
+  min-width: 180px;
+  max-width: 320px;
   justify-content: flex-start;
 }
 
