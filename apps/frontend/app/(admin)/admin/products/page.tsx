@@ -776,7 +776,7 @@ Mỗi đoạn văn cách nhau bởi 1 dòng trống.
         </div>
         </div>
 
-        {/* Error State */}/}
+        {/* Error State */}
         {error ? (
           <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
             <p className="text-sm text-red-600">Không thể tải danh sách sản phẩm.</p>

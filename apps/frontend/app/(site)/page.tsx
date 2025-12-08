@@ -190,17 +190,17 @@ const whyChooseFeatures = [
 ];
 
 const contactDetails = [
-  { icon: 'fas fa-globe', label: 'Website', value: 'covasol.top', href: 'https://covasol.top' },
+  { icon: 'fas fa-globe', label: 'Website', value: 'covasol.com.vn', href: 'https://covasol.com.vn' },
   { icon: 'fas fa-envelope', label: 'Email', value: 'covasol.studio@gmail.com', href: 'mailto:covasol.studio@gmail.com' },
-  { icon: 'fas fa-phone', label: 'Hotline', value: '+84 123 456 789', href: 'tel:+84123456789' },
+  { icon: 'fas fa-phone', label: 'Hotline', value: '0559526824', href: 'tel:0559526824' },
   { icon: 'fas fa-map-marker-alt', label: 'Địa chỉ', value: 'Hồ Chí Minh, Việt Nam' }
 ];
 
 const contactSocials = [
-  { icon: 'fab fa-facebook-f', label: 'Facebook', href: '#' },
-  { icon: 'fab fa-linkedin-in', label: 'LinkedIn', href: '#' },
+  { icon: 'fab fa-facebook-f', label: 'Facebook', href: 'https://www.facebook.com/covasol.studio' },
+  { icon: 'fab fa-linkedin-in', label: 'LinkedIn', href: 'https://www.linkedin.com/company/covasol' },
   { icon: 'fab fa-twitter', label: 'Twitter', href: '#' },
-  { icon: 'fab fa-github', label: 'GitHub', href: '#' }
+  { icon: 'fab fa-github', label: 'GitHub', href: 'https://github.com/CovaSol' }
 ];
 
 export default async function HomePage() {

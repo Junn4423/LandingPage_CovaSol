@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
+import { FeaturedImage } from '@/components/blog/featured-image';
 import { LegacyBlogGrid } from '@/components/blog/legacy-blog-grid';
 import { LegacyBlogNewsletter } from '@/components/blog/legacy-blog-newsletter';
 import { fetchBlogSummaries } from '@/lib/api/blog';
@@ -58,7 +59,7 @@ export default async function BlogListingPage() {
           {featuredPost ? (
             <div className="featured-content" data-aos="fade-up">
               <div className="featured-image">
-                <img src={getHeroMedia(featuredPost.heroImage)} alt={featuredPost.title} />
+                <FeaturedImage src={getHeroMedia(featuredPost.heroImage)} alt={featuredPost.title} />
                 <div className="featured-badge" data-key="featured">
                   Nổi bật
                 </div>

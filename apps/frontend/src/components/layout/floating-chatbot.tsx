@@ -15,7 +15,7 @@ const DEFAULT_BOT_MESSAGE = `Xin chào! 👋 Tôi là AI Chatbot của COVA.
 Hệ thống chatbot AI hiện đang trong giai đoạn **bảo trì và nâng cấp** để phục vụ bạn tốt hơn.
 
 Vui lòng quay lại sau hoặc liên hệ qua các kênh:
-• Zalo: 0707.038.113
+• Zalo: 0559526824
 • Email: covasol.studio@gmail.com
 
 Cảm ơn bạn đã kiên nhẫn chờ đợi! 🙏`;

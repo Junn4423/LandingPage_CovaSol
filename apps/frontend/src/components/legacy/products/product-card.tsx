@@ -30,13 +30,22 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, index }: ProductCardProps) {
-  const fallbackImage = '/assets/img/anh1.jpeg';
-  const imageSrc = normalizeImageUrl(product.imageUrl, { fallback: fallbackImage });
+  const placeholderImage = '/assets/logo_whvxwb/logo_whvxwb_c_scale,w_438.png';
+  const imageSrc = normalizeImageUrl(product.imageUrl, { fallback: placeholderImage });
 
   return (
     <article className={clsx('product-card', { featured: product.featured })} data-aos="fade-up">
       <div className="product-image">
-        <img src={imageSrc} alt={product.name} loading="lazy" />
+        <img
+          src={imageSrc}
+          alt={product.name}
+          loading="lazy"
+          onError={event => {
+            if (event.currentTarget.src !== placeholderImage) {
+              event.currentTarget.src = placeholderImage;
+            }
+          }}
+        />
         {product.badge ? (
           <div className={clsx('product-badge', { new: product.badge.variant === 'new' })}>{product.badge.label}</div>
         ) : null}

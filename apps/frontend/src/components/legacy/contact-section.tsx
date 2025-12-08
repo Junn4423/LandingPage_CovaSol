@@ -12,14 +12,14 @@ interface SocialLink {
 }
 
 const contactItems: ContactItem[] = [
-  { icon: 'fas fa-phone', label: 'Hotline', value: '0707 038 113', href: 'tel:0707038113' },
+  { icon: 'fas fa-phone', label: 'Hotline', value: '0559526824', href: 'tel:0559526824' },
   { icon: 'fas fa-envelope', label: 'Email', value: 'covasol.studio@gmail.com', href: 'mailto:covasol.studio@gmail.com' },
-  { icon: 'fas fa-location-dot', label: 'Studio', value: 'TP. Hồ Chí Minh & Hà Nội', href: 'https://maps.app.goo.gl/6YtYf7x1r7vGk9jK6' },
+  { icon: 'fas fa-location-dot', label: 'Studio', value: 'TP. Hồ Chí Minh', href: 'https://maps.app.goo.gl/6YtYf7x1r7vGk9jK6' },
   { icon: 'fas fa-clock', label: 'Giờ làm việc', value: '09:00 - 21:00 (T2 - CN)' }
 ];
 
 const socialLinks: SocialLink[] = [
-  { icon: 'fab fa-facebook-f', label: 'Facebook', href: 'https://www.facebook.com/junloun4423' },
+  { icon: 'fab fa-facebook-f', label: 'Facebook', href: 'https://www.facebook.com/covasol.studio' },
   { icon: 'fab fa-linkedin-in', label: 'LinkedIn', href: 'https://www.linkedin.com/company/covasol' },
   { icon: 'fab fa-github', label: 'GitHub', href: 'https://github.com/CovaSol' }
 ];

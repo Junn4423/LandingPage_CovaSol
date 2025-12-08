@@ -48,7 +48,7 @@ const FALLBACK_PRODUCTS: LegacyProductCard[] = [
     tags: ['AI-Powered', 'Real-time', 'Cloud'],
     featured: true,
     badge: { label: 'Nổi bật' },
-    primaryCta: { label: 'Chi tiết giải pháp', href: '/products/covaflow' },
+    primaryCta: { label: 'Chi tiết', href: '/products/covaflow' },
     secondaryCta: { label: 'Liên hệ tư vấn', href: '/#contact' }
   },
   {
@@ -149,7 +149,7 @@ function mapSummariesToCards(products: ProductSummary[]): LegacyProductCard[] {
       tags: createTags(product),
       featured: index === 0,
       badge: isNew ? { label: 'Mới', variant: 'new' } : index === 0 ? { label: 'Nổi bật' } : undefined,
-      primaryCta: { label: 'Chi tiết giải pháp', href: detailHref },
+      primaryCta: { label: 'Chi tiết', href: detailHref },
       secondaryCta: { label: 'Đặt lịch demo', href: '/#contact' }
     } satisfies LegacyProductCard;
   });

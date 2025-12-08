@@ -129,12 +129,6 @@ export function AdminShell({ children }: PropsWithChildren) {
           </div>
         </header>
 
-        {/* Info Banner */}
-        <div className="flex items-center gap-4 rounded-2xl bg-[#124e66]/[0.08] px-5 py-4 text-[#124e66]">
-          <i className="fas fa-circle-info text-lg"></i>
-          <p>Bảng điều khiển đang trong quá trình tối ưu và bảo trì định kỳ.</p>
-        </div>
-
         {/* Content */}
         <div className="flex-1 min-h-0">{children}</div>
       </div>

@@ -355,8 +355,8 @@ export default function ServicesPage() {
               <Link href="/#contact" className="btn btn-primary">
                 Đặt lịch discovery
               </Link>
-              <a href="tel:0707038113" className="btn btn-outline">
-                Gọi nhanh 0707 038 113
+              <a href="tel:0559526824" className="btn btn-outline">
+                Gọi nhanh 0559526824
               </a>
             </div>
           </div>

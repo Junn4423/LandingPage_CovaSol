@@ -22,6 +22,20 @@ const nextConfig = {
         destination: `${process.env.API_BASE_URL || 'http://localhost:4000'}/:path*`
       }
     ];
+  },
+  async redirects() {
+    return [
+      {
+        source: '/services',
+        destination: '/#services',
+        permanent: true
+      },
+      {
+        source: '/services/',
+        destination: '/#services',
+        permanent: true
+      }
+    ];
   }
 };
 

@@ -8,6 +8,7 @@ import type { BlogPostSummary } from '@/types/content';
 import { normalizeImageUrl } from '@/lib/image-url';
 
 const DEFAULT_POST_IMAGE = '/assets/img/anh1.jpeg';
+const PLACEHOLDER_LOGO = '/assets/logo_whvxwb/logo_whvxwb_c_scale,w_438.png';
 
 const CATEGORY_PRESETS = [
   { key: 'all', label: 'Tất cả bài viết', dataKey: 'all-posts' },
@@ -42,7 +43,6 @@ function formatDate(timestamp?: string | null) {
   }
 }
 
-const DEFAULT_VISIBLE_COUNT = 6;
 const LOAD_STEP = 6;
 
 export interface LegacyBlogGridProps {
@@ -51,7 +51,8 @@ export interface LegacyBlogGridProps {
 
 export function LegacyBlogGrid({ posts }: LegacyBlogGridProps) {
   const [activeCategory, setActiveCategory] = useState('all');
-  const [visibleCount, setVisibleCount] = useState(DEFAULT_VISIBLE_COUNT);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [page, setPage] = useState(1);
 
   const derivedFilters = useMemo(() => {
     const extras = new Map<string, string>();
@@ -68,43 +69,81 @@ export function LegacyBlogGrid({ posts }: LegacyBlogGridProps) {
   const filters = useMemo(() => {
     const presetFilters = CATEGORY_PRESETS.map(item => ({ ...item, isPreset: true }));
     const extraFilters = derivedFilters.map(item => ({ key: item.key, label: item.label, dataKey: 'custom', isPreset: false }));
-    return [...presetFilters, ...extraFilters, { key: 'other', label: 'Chuyên mục khác', dataKey: 'other', isPreset: true }];
+    const merged = [...presetFilters, ...extraFilters, { key: 'other', label: 'Chuyên mục khác', dataKey: 'other', isPreset: true }];
+    const seen = new Set<string>();
+    return merged.filter(filter => {
+      if (seen.has(filter.key)) return false;
+      seen.add(filter.key);
+      return true;
+    });
   }, [derivedFilters]);
 
   const filteredPosts = useMemo(() => {
-    if (activeCategory === 'all') return posts;
-    return posts.filter(post => {
-      const key = slugifyCategory(post.category);
-      if (!key) return activeCategory === 'other';
-      return key === activeCategory || (!CATEGORY_PRESETS.some(preset => preset.key === key) && activeCategory === 'other');
-    });
-  }, [activeCategory, posts]);
+    const term = searchTerm.trim().toLowerCase();
+    const byCategory = activeCategory === 'all'
+      ? posts
+      : posts.filter(post => {
+          const key = slugifyCategory(post.category);
+          if (!key) return activeCategory === 'other';
+          return key === activeCategory || (!CATEGORY_PRESETS.some(preset => preset.key === key) && activeCategory === 'other');
+        });
 
-  const visiblePosts = useMemo(() => filteredPosts.slice(0, visibleCount), [filteredPosts, visibleCount]);
-  const canLoadMore = filteredPosts.length > visibleCount;
+    if (!term) return byCategory;
+
+    return byCategory.filter(post => {
+      const haystack = [post.title, post.excerpt, post.category, post.author, post.subtitle]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      return haystack.includes(term);
+    });
+  }, [activeCategory, posts, searchTerm]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredPosts.length / LOAD_STEP));
+  const currentPage = Math.min(page, totalPages);
+
+  const visiblePosts = useMemo(() => {
+    const start = (currentPage - 1) * LOAD_STEP;
+    return filteredPosts.slice(start, start + LOAD_STEP);
+  }, [currentPage, filteredPosts]);
+
   const isEmpty = filteredPosts.length === 0;
 
   useEffect(() => {
-    setVisibleCount(DEFAULT_VISIBLE_COUNT);
-  }, [activeCategory, posts]);
+    setPage(1);
+  }, [activeCategory, posts, searchTerm]);
 
   return (
     <>
       <section className="blog-categories">
         <div className="container">
-          <div className="categories-filter" data-aos="fade-up">
-            {filters.map(filter => (
-              <button
-                key={filter.key}
-                type="button"
-                className={`category-btn ${activeCategory === filter.key ? 'active' : ''}`}
-                data-category={filter.key}
-                data-key={filter.dataKey}
-                onClick={() => setActiveCategory(filter.key)}
+          <div className="blog-filter-bar" data-aos="fade-up">
+            <div className="blog-search">
+              <input
+                type="search"
+                placeholder="Tìm kiếm bài viết..."
+                value={searchTerm}
+                onChange={event => setSearchTerm(event.target.value)}
+                aria-label="Tìm kiếm bài viết"
+              />
+            </div>
+            <div className="blog-category-select">
+              <label className="sr-only" htmlFor="blogCategorySelect">
+                Chọn chuyên mục
+              </label>
+              <select
+                id="blogCategorySelect"
+                value={activeCategory}
+                onChange={event => setActiveCategory(event.target.value)}
+                aria-label="Lọc chuyên mục"
               >
-                {filter.label}
-              </button>
-            ))}
+                {filters.map(filter => (
+                  <option key={filter.key} value={filter.key} data-key={filter.dataKey}>
+                    {filter.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       </section>
@@ -127,7 +166,16 @@ export function LegacyBlogGrid({ posts }: LegacyBlogGridProps) {
                     data-aos="fade-up"
                   >
                     <div className="post-image">
-                      <img src={getDisplayImage(post)} alt={post.title} loading="lazy" />
+                      <img
+                        src={getDisplayImage(post)}
+                        alt={post.title}
+                        loading="lazy"
+                        onError={event => {
+                          if (event.currentTarget.src !== PLACEHOLDER_LOGO) {
+                            event.currentTarget.src = PLACEHOLDER_LOGO;
+                          }
+                        }}
+                      />
                     </div>
                     <div className="post-content">
                       <div className="post-meta">
@@ -149,20 +197,29 @@ export function LegacyBlogGrid({ posts }: LegacyBlogGridProps) {
               </div>
 
               <div className="load-more-section" data-aos="fade-up">
-                {canLoadMore ? (
-                  <button
-                    type="button"
-                    className="btn btn-outline btn-large"
-                    data-key="load-more"
-                    onClick={() => setVisibleCount(count => count + LOAD_STEP)}
-                  >
-                    Tải thêm bài viết
-                  </button>
-                ) : (
-                  <p className="load-more-end" role="status">
-                    Bạn đã xem hết danh sách bài viết.
-                  </p>
-                )}
+                {filteredPosts.length > LOAD_STEP ? (
+                  <div className="pagination">
+                    <button
+                      type="button"
+                      className="btn btn-outline"
+                      onClick={() => setPage(p => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                    >
+                      Trang trước
+                    </button>
+                    <span className="pagination-status">
+                      Trang {currentPage} / {totalPages}
+                    </span>
+                    <button
+                      type="button"
+                      className="btn btn-outline"
+                      onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                    >
+                      Trang tiếp
+                    </button>
+                  </div>
+                ) : null}
               </div>
             </>
           )}

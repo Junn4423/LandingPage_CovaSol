@@ -85,14 +85,14 @@ export function ContactForm() {
       });
 
       // Show success message
-      alert('🎉 Cảm ơn bạn đã liên hệ!\n\nChúng tôi đã nhận được yêu cầu báo giá của bạn và sẽ phản hồi trong thời gian sớm nhất (thường trong vòng 24h).\n\nNếu cần hỗ trợ gấp, vui lòng liên hệ hotline: 0707 038 113');
+      alert('🎉 Cảm ơn bạn đã liên hệ!\n\nChúng tôi đã nhận được yêu cầu báo giá của bạn và sẽ phản hồi trong thời gian sớm nhất (thường trong vòng 24h).\n\nNếu cần hỗ trợ gấp, vui lòng liên hệ hotline: 0559526824');
       
       // Reset form state after a delay
       setTimeout(() => setFormState('idle'), 3000);
     } catch (error) {
       console.error('Form submission error:', error);
       setFormState('error');
-      alert('❌ Có lỗi xảy ra khi gửi yêu cầu.\n\nVui lòng thử lại hoặc liên hệ trực tiếp qua:\n📞 Hotline: 0707 038 113\n📧 Email: covasol.studio@gmail.com');
+      alert('❌ Có lỗi xảy ra khi gửi yêu cầu.\n\nVui lòng thử lại hoặc liên hệ trực tiếp qua:\n📞 Hotline: 0559526824\n📧 Email: covasol.studio@gmail.com');
       setTimeout(() => setFormState('idle'), 3000);
     }
   };
