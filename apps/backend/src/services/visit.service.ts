@@ -16,6 +16,11 @@ export interface VisitOverview {
   lastVisitedAt: string | null;
 }
 
+export interface VisitLogList {
+  items: VisitLog[];
+  total: number;
+}
+
 function extractClientIp(req: Request): string {
   const forwarded = (req.headers['x-forwarded-for'] as string | undefined)?.split(',')[0]?.trim();
   return forwarded || req.ip || req.socket.remoteAddress || 'unknown';
@@ -76,5 +81,27 @@ export async function getVisitOverview(): Promise<VisitOverview> {
     uniqueVisitors: aggregate._count._all,
     totalVisits: aggregate._sum.visitCount ?? 0,
     lastVisitedAt: aggregate._max.lastVisitedAt ? aggregate._max.lastVisitedAt.toISOString() : null,
+  };
+}
+
+export async function listRecentVisits(limit = 50): Promise<VisitLogList> {
+  const [rows, total] = await Promise.all([
+    prisma.visitStat.findMany({
+      orderBy: { lastVisitedAt: 'desc' },
+      take: limit,
+    }),
+    prisma.visitStat.count(),
+  ]);
+
+  return {
+    items: rows.map(row => ({
+      id: row.id,
+      ipAddress: row.ipAddress,
+      userAgent: row.userAgent,
+      visitCount: row.visitCount,
+      lastVisitedAt: row.lastVisitedAt.toISOString(),
+      createdAt: row.createdAt.toISOString(),
+    })),
+    total,
   };
 }

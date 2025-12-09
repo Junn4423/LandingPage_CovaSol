@@ -8,7 +8,11 @@ export default function AdminDashboardPage() {
     { label: 'Bài viết', value: data?.blogs ?? 0, icon: 'fas fa-newspaper', color: '#1c6e8c' },
     { label: 'Sản phẩm', value: data?.products ?? 0, icon: 'fas fa-cubes', color: '#2e8b57' },
     { label: 'Đánh giá', value: data?.reviews ?? 0, icon: 'fas fa-star', color: '#f59e0b' },
-    { label: 'Người dùng', value: data?.users ?? 0, icon: 'fas fa-users', color: '#8b5cf6' }
+    { label: 'Người dùng', value: data?.users ?? 0, icon: 'fas fa-users', color: '#8b5cf6' },
+    { label: 'Lượt truy cập', value: data?.totalVisits ?? 0, icon: 'fas fa-chart-column', color: '#0d1b2a' },
+    { label: 'Khách duy nhất', value: data?.uniqueVisitors ?? 0, icon: 'fas fa-street-view', color: '#124e66' },
+    { label: 'Opt-in cookie', value: data?.consentsOptIn ?? 0, icon: 'fas fa-cookie-bite', color: '#16a34a' },
+    { label: 'Opt-out', value: data?.consentsOptOut ?? 0, icon: 'fas fa-ban', color: '#dc2626' }
   ];
 
   return (

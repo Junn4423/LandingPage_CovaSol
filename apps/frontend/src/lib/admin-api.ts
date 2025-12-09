@@ -1,5 +1,10 @@
 import { apiRequest } from '@/lib/api-client';
-import type { ApiSuccessResponse, AdminOverviewStats } from '@/types/api';
+import type {
+  ApiSuccessResponse,
+  AdminOverviewStats,
+  AdminConsentResponse,
+  VisitLogResponse
+} from '@/types/api';
 import type {
   BlogPostDetail,
   ProductDetail,
@@ -105,6 +110,26 @@ export async function fetchCurrentUser() {
 export async function fetchAdminOverview() {
   const res = await apiRequest<ApiSuccessResponse<AdminOverviewStats>>({
     path: '/v1/admin/analytics/overview'
+  });
+  return res.data;
+}
+
+export async function fetchAdminVisitLogs(limit?: number) {
+  const query = typeof limit === 'number' ? `?limit=${limit}` : '';
+  const res = await apiRequest<ApiSuccessResponse<VisitLogResponse>>({
+    path: `/v1/admin/analytics/visits${query}`
+  });
+  return res.data;
+}
+
+export async function fetchAdminCookieConsents(params?: { page?: number; pageSize?: number }) {
+  const query = new URLSearchParams();
+  if (params?.page) query.set('page', String(params.page));
+  if (params?.pageSize) query.set('pageSize', String(params.pageSize));
+  const suffix = query.toString() ? `?${query.toString()}` : '';
+
+  const res = await apiRequest<ApiSuccessResponse<AdminConsentResponse>>({
+    path: `/v1/admin/analytics/consents${suffix}`
   });
   return res.data;
 }

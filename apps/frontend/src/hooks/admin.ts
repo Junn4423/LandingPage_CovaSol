@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -11,11 +11,13 @@ import {
   deleteAdminReview,
   deleteAdminUser,
   fetchAdminBlogPosts,
+  fetchAdminCookieConsents,
   fetchAdminOverview,
   fetchAdminProducts,
   fetchAdminReviewStats,
   fetchAdminReviews,
   fetchAdminUsers,
+  fetchAdminVisitLogs,
   fetchCurrentUser,
   login,
   logout,
@@ -30,11 +32,14 @@ import {
   type ReviewStatsResponse,
   type UpdateUserInput
 } from '@/lib/admin-api';
+import type { AdminConsentResponse, AdminOverviewStats, VisitLogResponse } from '@/types/api';
 import type { BlogPostDetail, CustomerReviewDetail, ProductDetail, UserSummary } from '@/types/content';
 
 const ADMIN_QUERY_KEYS = {
   session: ['admin', 'session'] as const,
   overview: ['admin', 'overview'] as const,
+  visits: ['admin', 'visits'] as const,
+  consents: ['admin', 'consents'] as const,
   blogList: ['admin', 'blog', 'list'] as const,
   productList: ['admin', 'products', 'list'] as const,
   userList: ['admin', 'users', 'list'] as const,
@@ -72,14 +77,32 @@ export function useLogoutMutation() {
       queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.overview });
       queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.reviewList });
       queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.reviewStats });
+      queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.visits });
+      queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.consents });
     }
   });
 }
 
 export function useAdminOverview() {
-  return useQuery({
+  return useQuery<AdminOverviewStats>({
     queryKey: ADMIN_QUERY_KEYS.overview,
     queryFn: fetchAdminOverview,
+    staleTime: 30_000
+  });
+}
+
+export function useAdminVisitLogs(limit?: number) {
+  return useQuery<VisitLogResponse>({
+    queryKey: [...ADMIN_QUERY_KEYS.visits, limit],
+    queryFn: () => fetchAdminVisitLogs(limit),
+    staleTime: 30_000
+  });
+}
+
+export function useAdminCookieConsents(params?: { page?: number; pageSize?: number }) {
+  return useQuery<AdminConsentResponse>({
+    queryKey: [...ADMIN_QUERY_KEYS.consents, params?.page ?? 1, params?.pageSize ?? 20],
+    queryFn: () => fetchAdminCookieConsents(params),
     staleTime: 30_000
   });
 }

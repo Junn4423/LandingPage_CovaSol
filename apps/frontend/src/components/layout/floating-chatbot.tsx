@@ -10,14 +10,11 @@ interface ChatMessage {
   timestamp: Date;
 }
 
-const DEFAULT_BOT_MESSAGE = `Xin chào! 👋 Tôi là AI Chatbot của COVA.
-
-Hệ thống chatbot AI hiện đang trong giai đoạn **bảo trì và nâng cấp** để phục vụ bạn tốt hơn.
-
-Vui lòng quay lại sau hoặc liên hệ qua các kênh:
+const DEFAULT_BOT_MESSAGE = `Xin chào! 👋 Tôi là AI Chatbot COVA.
+Hiện tôi đang trong giai đoạn **bảo trì**.
+Vui lòng liên hệ qua:
 • Zalo: 0559526824
-• Email: covasol.studio@gmail.com
-
+• Mail: covasol.studio@gmail.com
 Cảm ơn bạn đã kiên nhẫn chờ đợi! 🙏`;
 
 interface FloatingChatbotProps {
@@ -90,7 +87,7 @@ export function FloatingChatbot({ isOpen, onToggle, onClose, hidden = false }: F
         type: 'bot',
         content: `Cảm ơn bạn đã nhắn tin! 💬
 
-Hiện tại hệ thống AI đang bảo trì. Tin nhắn của bạn đã được ghi nhận.
+Hiện tại hệ thống AI đang bảo trì.
 
 Đội ngũ COVA sẽ phản hồi sớm nhất qua email hoặc Zalo. Xin cảm ơn! 🙏`,
         timestamp: new Date()

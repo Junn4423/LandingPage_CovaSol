@@ -11,6 +11,7 @@ import { useAdminSession, useLogoutMutation, useAdminOverview } from '@/hooks/ad
 
 const adminNav = [
   { href: '/admin', label: 'Dashboard', icon: 'fas fa-gauge' },
+  { href: '/admin/analytics', label: 'Analytics', icon: 'fas fa-chart-line' },
   { href: '/admin/blog', label: 'Blog', icon: 'fas fa-newspaper' },
   { href: '/admin/products', label: 'Sản phẩm', icon: 'fas fa-cubes' },
   { href: '/admin/reviews', label: 'Đánh giá', icon: 'fas fa-star' },
