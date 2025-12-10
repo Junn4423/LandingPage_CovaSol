@@ -75,6 +75,16 @@ body.detail-preview {
 .detail-preview .meta-author {
     color: #64748b;
     font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.detail-preview .meta-author-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 .detail-preview .preview-hero-image {

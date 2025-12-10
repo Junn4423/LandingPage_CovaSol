@@ -128,7 +128,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                 <h3>Nhận tư vấn</h3>
                 <p>Để lại thông tin liên hệ, đội ngũ COVASOL sẽ hỗ trợ trong 24 giờ.</p>
                 <Link className="btn btn-primary" href="/#contact">
-                  Đặt lịch tư vấn
+                  Liên Hệ
                 </Link>
               </div>
             </aside>

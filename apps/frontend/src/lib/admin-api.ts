@@ -85,12 +85,14 @@ export interface CreateUserInput {
   password: string;
   displayName?: string;
   role?: string;
+  avatar?: string;
 }
 
 export interface UpdateUserInput {
   displayName?: string;
   role?: string;
   password?: string;
+  avatar?: string | null;
 }
 
 export async function login(payload: LoginPayload) {
@@ -333,6 +335,80 @@ export async function fetchAlbumImages(options?: {
 export async function deleteAlbumImage(publicId: string) {
   await apiRequest<void>({
     path: `/v1/admin/uploads/images/${encodeURIComponent(publicId)}`,
+    method: 'DELETE'
+  });
+}
+
+// =====================================================
+// Blog Edit Request APIs
+// =====================================================
+
+export interface EditRequestSummary {
+  id: number;
+  blogPostId: number;
+  blogPostTitle: string;
+  requesterId: number;
+  requesterName: string;
+  status: string;
+  createdAt: string;
+  reviewedAt: string | null;
+  reviewNote: string | null;
+}
+
+export interface EditRequestDetail extends EditRequestSummary {
+  proposedData: Record<string, unknown>;
+  reviewNote: string | null;
+}
+
+export async function fetchMyPostsEditRequests() {
+  const res = await apiRequest<ApiSuccessResponse<EditRequestSummary[]>>({
+    path: '/v1/admin/blog/edit-requests/my-posts'
+  });
+  return res.data;
+}
+
+export async function fetchMyEditRequests() {
+  const res = await apiRequest<ApiSuccessResponse<EditRequestSummary[]>>({
+    path: '/v1/admin/blog/edit-requests/my-requests'
+  });
+  return res.data;
+}
+
+export async function fetchEditRequestsForPost(postId: string | number) {
+  const res = await apiRequest<ApiSuccessResponse<EditRequestSummary[]>>({
+    path: `/v1/admin/blog/${postId}/edit-requests`
+  });
+  return res.data;
+}
+
+export async function fetchEditRequestDetail(requestId: number) {
+  const res = await apiRequest<ApiSuccessResponse<EditRequestDetail>>({
+    path: `/v1/admin/blog/edit-requests/${requestId}`
+  });
+  return res.data;
+}
+
+export async function approveEditRequest(requestId: number, reviewNote?: string) {
+  const res = await apiRequest<ApiSuccessResponse<EditRequestDetail>>({
+    path: `/v1/admin/blog/edit-requests/${requestId}/approve`,
+    method: 'POST',
+    body: { reviewNote }
+  });
+  return res.data;
+}
+
+export async function rejectEditRequest(requestId: number, reviewNote?: string) {
+  const res = await apiRequest<ApiSuccessResponse<EditRequestDetail>>({
+    path: `/v1/admin/blog/edit-requests/${requestId}/reject`,
+    method: 'POST',
+    body: { reviewNote }
+  });
+  return res.data;
+}
+
+export async function deleteEditRequest(requestId: number) {
+  await apiRequest<void>({
+    path: `/v1/admin/blog/edit-requests/${requestId}`,
     method: 'DELETE'
   });
 }

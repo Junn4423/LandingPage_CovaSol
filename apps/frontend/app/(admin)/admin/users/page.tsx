@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useState } from 'react';
 import { PaginationControls } from '@/components/admin/pagination-controls';
+import { ImageSelector } from '@/components/admin/image-selector';
 import {
   useAdminSession,
   useAdminUsers,
@@ -17,25 +18,29 @@ interface CreateUserFormState {
   password: string;
   displayName: string;
   role: string;
+  avatar: string;
 }
 
 interface EditUserFormState {
   displayName: string;
   role: string;
   password: string;
+  avatar: string;
 }
 
 const createFormDefault: CreateUserFormState = {
   username: '',
   password: '',
   displayName: '',
-  role: 'ADMIN'
+  role: 'ADMIN',
+  avatar: ''
 };
 
 const editFormDefault: EditUserFormState = {
   displayName: '',
   role: 'ADMIN',
-  password: ''
+  password: '',
+  avatar: ''
 };
 
 const USER_PAGE_SIZE = 10;
@@ -47,6 +52,7 @@ export default function AdminUsersPage() {
   const updateMutation = useUpdateUserMutation();
   const deleteMutation = useDeleteUserMutation();
 
+  const isSuperAdmin = currentUser?.role === 'SUPER_ADMIN';
   const [selectedUser, setSelectedUser] = useState<UserSummary | null>(null);
   const [createForm, setCreateForm] = useState<CreateUserFormState>(createFormDefault);
   const [editForm, setEditForm] = useState<EditUserFormState>(editFormDefault);
@@ -62,7 +68,8 @@ export default function AdminUsersPage() {
     setEditForm({
       displayName: selectedUser.displayName ?? '',
       role: selectedUser.role,
-      password: ''
+      password: '',
+      avatar: selectedUser.avatar ?? ''
     });
   }, [selectedUser]);
 
@@ -72,7 +79,8 @@ export default function AdminUsersPage() {
       username: createForm.username,
       password: createForm.password,
       displayName: createForm.displayName || undefined,
-      role: createForm.role || undefined
+      role: createForm.role || undefined,
+      avatar: createForm.avatar || undefined
     });
     setCreateForm(createFormDefault);
     setShowCreateModal(false);
@@ -81,11 +89,13 @@ export default function AdminUsersPage() {
   async function handleUpdate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!selectedUser) return;
+    const avatarValue = editForm.avatar?.trim() ? editForm.avatar.trim() : null;
     await updateMutation.mutateAsync({
       id: selectedUser.id,
       displayName: editForm.displayName || undefined,
-      role: editForm.role || undefined,
-      password: editForm.password || undefined
+      role: isSuperAdmin ? (editForm.role || undefined) : undefined,
+      password: editForm.password || undefined,
+      avatar: avatarValue
     });
     setSelectedUser(null);
   }
@@ -110,20 +120,26 @@ export default function AdminUsersPage() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-[#0d1b2a]">Quản lý người dùng</h2>
-          <p className="mt-1 text-slate-500">Phân quyền và quản lý tài khoản quản trị.</p>
+          <p className="mt-1 text-slate-500">
+            {isSuperAdmin 
+              ? 'Phân quyền và quản lý tài khoản quản trị.' 
+              : 'Chỉnh sửa thông tin cá nhân của bạn.'}
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <span className="rounded-full bg-[#124e66]/10 px-4 py-2 text-sm font-semibold text-[#1c6e8c]">
             {pagination.totalItems} người dùng
           </span>
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-lg transition-all hover:-translate-y-0.5"
-            style={{ background: 'linear-gradient(135deg, #124e66, #1c6e8c)' }}
-          >
-            <i className="fas fa-user-plus"></i>
-            <span>Thêm người dùng</span>
-          </button>
+          {isSuperAdmin && (
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-lg transition-all hover:-translate-y-0.5"
+              style={{ background: 'linear-gradient(135deg, #124e66, #1c6e8c)' }}
+            >
+              <i className="fas fa-user-plus"></i>
+              <span>Thêm người dùng</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -141,6 +157,7 @@ export default function AdminUsersPage() {
             <thead className="bg-[#124e66]/[0.08]">
               <tr>
                 <th className="px-5 py-4 text-left text-sm font-bold text-[#0d1b2a]">ID</th>
+                <th className="px-5 py-4 text-left text-sm font-bold text-[#0d1b2a]">Avatar</th>
                 <th className="px-5 py-4 text-left text-sm font-bold text-[#0d1b2a]">Tên đăng nhập</th>
                 <th className="px-5 py-4 text-left text-sm font-bold text-[#0d1b2a]">Tên hiển thị</th>
                 <th className="px-5 py-4 text-left text-sm font-bold text-[#0d1b2a]">Vai trò</th>
@@ -150,7 +167,7 @@ export default function AdminUsersPage() {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={5} className="px-5 py-10 text-center text-slate-500">
+                  <td colSpan={6} className="px-5 py-10 text-center text-slate-500">
                     <div className="flex items-center justify-center gap-3">
                       <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#1c6e8c] border-t-transparent"></div>
                       <span>Đang tải danh sách...</span>
@@ -159,8 +176,10 @@ export default function AdminUsersPage() {
                 </tr>
               ) : pagination.totalItems === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-5 py-10 text-center text-slate-500">
-                    Chưa có người dùng nào. Nhấn &quot;Thêm người dùng&quot; để bắt đầu.
+                  <td colSpan={6} className="px-5 py-10 text-center text-slate-500">
+                    {isSuperAdmin 
+                      ? 'Chưa có người dùng nào. Nhấn "Thêm người dùng" để bắt đầu.'
+                      : 'Không có dữ liệu.'}
                   </td>
                 </tr>
               ) : (
@@ -168,12 +187,20 @@ export default function AdminUsersPage() {
                   <tr key={user.id} className="border-t border-slate-100 transition-colors hover:bg-[#124e66]/[0.02]">
                     <td className="px-5 py-4 text-sm text-slate-600">{pagination.startIndex + index}</td>
                     <td className="px-5 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#124e66]/10 text-sm font-bold text-[#124e66]">
+                      {user.avatar ? (
+                        <img 
+                          src={user.avatar} 
+                          alt={user.displayName || user.username}
+                          className="h-10 w-10 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#124e66]/10 text-sm font-bold text-[#124e66]">
                           {user.username.charAt(0).toUpperCase()}
                         </div>
-                        <span className="font-semibold text-[#0d1b2a]">{user.username}</span>
-                      </div>
+                      )}
+                    </td>
+                    <td className="px-5 py-4">
+                      <span className="font-semibold text-[#0d1b2a]">{user.username}</span>
                     </td>
                     <td className="px-5 py-4 text-sm text-slate-600">{user.displayName || '—'}</td>
                     <td className="px-5 py-4">
@@ -194,14 +221,16 @@ export default function AdminUsersPage() {
                           <i className="fas fa-edit"></i>
                           Sửa
                         </button>
-                        <button
-                          onClick={() => handleDelete(user)}
-                          disabled={deleteMutation.isPending || (currentUser ? currentUser.id === user.id : false)}
-                          className="flex items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 transition-all hover:-translate-y-0.5 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          <i className="fas fa-trash"></i>
-                          Xoá
-                        </button>
+                        {isSuperAdmin && (
+                          <button
+                            onClick={() => handleDelete(user)}
+                            disabled={deleteMutation.isPending || (currentUser ? currentUser.id === user.id : false)}
+                            className="flex items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 transition-all hover:-translate-y-0.5 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            <i className="fas fa-trash"></i>
+                            Xoá
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -237,6 +266,40 @@ export default function AdminUsersPage() {
               </button>
             </div>
             <form onSubmit={handleUpdate} className="space-y-4 p-6">
+              {/* Avatar Upload */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-[#0f172a]">Avatar</label>
+                <div className="flex items-start gap-4">
+                  {editForm.avatar ? (
+                    <img
+                      src={editForm.avatar}
+                      alt="Avatar"
+                      className="h-16 w-16 flex-shrink-0 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full bg-[#124e66]/10 text-xl font-bold text-[#124e66]">
+                      {selectedUser.username.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <div className="flex flex-1 flex-col gap-2">
+                    <ImageSelector
+                      value={editForm.avatar}
+                      onChange={(url) => setEditForm(prev => ({ ...prev, avatar: url }))}
+                      placeholder="Nhập URL avatar hoặc chọn ảnh..."
+                      folder="users/avatars"
+                    />
+                    {editForm.avatar && (
+                      <button
+                        type="button"
+                        onClick={() => setEditForm(prev => ({ ...prev, avatar: '' }))}
+                        className="self-start text-xs text-red-500 hover:underline"
+                      >
+                        Xoá avatar
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-[#0f172a]">Tên đăng nhập</label>
                 <input
@@ -253,17 +316,19 @@ export default function AdminUsersPage() {
                   onChange={e => setEditForm(prev => ({ ...prev, displayName: e.target.value }))}
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-[#0f172a]">Vai trò</label>
-                <select
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
-                  value={editForm.role}
-                  onChange={e => setEditForm(prev => ({ ...prev, role: e.target.value }))}
-                >
-                  <option value="ADMIN">ADMIN</option>
-                  <option value="SUPER_ADMIN">SUPER_ADMIN</option>
-                </select>
-              </div>
+              {isSuperAdmin && (
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-[#0f172a]">Vai trò</label>
+                  <select
+                    className="w-full rounded-xl border border-slate-200 px-4 py-3 transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
+                    value={editForm.role}
+                    onChange={e => setEditForm(prev => ({ ...prev, role: e.target.value }))}
+                  >
+                    <option value="ADMIN">ADMIN</option>
+                    <option value="SUPER_ADMIN">SUPER_ADMIN</option>
+                  </select>
+                </div>
+              )}
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-[#0f172a]">Đặt lại mật khẩu (tuỳ chọn)</label>
                 <input
@@ -351,6 +416,35 @@ export default function AdminUsersPage() {
                   <option value="ADMIN">ADMIN</option>
                   <option value="SUPER_ADMIN">SUPER_ADMIN</option>
                 </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-[#0f172a]">Avatar</label>
+                <div className="flex items-center gap-4">
+                  {createForm.avatar && (
+                    <div className="relative">
+                      <img
+                        src={createForm.avatar}
+                        alt="Avatar preview"
+                        className="h-16 w-16 rounded-full object-cover border-2 border-slate-200"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setCreateForm(prev => ({ ...prev, avatar: '' }))}
+                        className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white hover:bg-red-600"
+                      >
+                        <i className="fas fa-times text-xs"></i>
+                      </button>
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <ImageSelector
+                      value={createForm.avatar}
+                      onChange={(url) => setCreateForm(prev => ({ ...prev, avatar: url }))}
+                      placeholder="Nhập URL avatar hoặc chọn ảnh..."
+                      folder="users/avatars"
+                    />
+                  </div>
+                </div>
               </div>
               {createMutation.isError && (
                 <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">Không thể tạo người dùng.</p>

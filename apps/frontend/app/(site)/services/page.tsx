@@ -146,7 +146,7 @@ export default function ServicesPage() {
             </p>
             <div className="hero-buttons">
               <Link href="/#contact" className="btn btn-primary">
-                Đặt lịch tư vấn
+                Liên Hệ
               </Link>
               <a href="#capabilities" className="btn btn-secondary">
                 Xem năng lực

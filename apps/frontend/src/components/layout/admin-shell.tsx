@@ -8,12 +8,13 @@ import { usePathname } from 'next/navigation';
 import { AdminLoginPanel } from '@/components/admin/admin-login-panel';
 import { ApiError } from '@/lib/api-client';
 import { normalizeImageUrl } from '@/lib/image-url';
-import { useAdminSession, useLogoutMutation, useAdminOverview } from '@/hooks/admin';
+import { useAdminSession, useLogoutMutation, useAdminOverview, useMyPostsEditRequests } from '@/hooks/admin';
 
 const adminNav: { href: Route; label: string; icon: string }[] = [
   { href: '/admin', label: 'Dashboard', icon: 'fas fa-gauge' },
   { href: '/admin/analytics', label: 'Analytics', icon: 'fas fa-chart-line' },
   { href: '/admin/blog', label: 'Blog', icon: 'fas fa-newspaper' },
+  { href: '/admin/edit-requests', label: 'Duyệt chỉnh sửa', icon: 'fas fa-clipboard-check' },
   { href: '/admin/products', label: 'Sản phẩm', icon: 'fas fa-cubes' },
   { href: '/admin/album', label: 'Album ảnh', icon: 'fas fa-images' },
   { href: '/admin/reviews', label: 'Đánh giá', icon: 'fas fa-star' },
@@ -27,6 +28,10 @@ export function AdminShell({ children }: PropsWithChildren) {
   const { data: user, isLoading, error } = useAdminSession();
   const logoutMutation = useLogoutMutation();
   const { refetch, isFetching } = useAdminOverview();
+  const { data: editRequests = [] } = useMyPostsEditRequests();
+  
+  // Count pending edit requests
+  const pendingEditCount = editRequests.filter(r => r.status === 'pending').length;
 
   if (isLoading) {
     return (
@@ -93,7 +98,12 @@ export function AdminShell({ children }: PropsWithChildren) {
               }`}
             >
               <i className={`${item.icon} w-5 text-center`}></i>
-              <span>{item.label}</span>
+              <span className="flex-1">{item.label}</span>
+              {item.href === '/admin/edit-requests' && pendingEditCount > 0 && (
+                <span className="rounded-full bg-amber-500 px-2 py-0.5 text-xs font-bold text-white">
+                  {pendingEditCount}
+                </span>
+              )}
             </Link>
           ))}
         </nav>

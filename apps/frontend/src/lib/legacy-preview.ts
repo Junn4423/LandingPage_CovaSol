@@ -353,7 +353,10 @@ export function renderBlogPreviewHtml(data: BlogPostDetail) {
 
   if (safeData.author) {
     const authorRole = safeData.authorRole ? ` · ${escapeHtml(safeData.authorRole)}` : '';
-    metaItems.push(`<span class="meta-author">${escapeHtml(safeData.author)}${authorRole}</span>`);
+    const authorAvatar = safeData.authorAvatar 
+      ? `<img src="${sanitizeImageUrl(safeData.authorAvatar)}" alt="${escapeHtml(safeData.author)}" class="meta-author-avatar" />`
+      : '';
+    metaItems.push(`<span class="meta-author">${authorAvatar}${escapeHtml(safeData.author)}${authorRole}</span>`);
   }
 
   const metaHtml = metaItems.length ? `<div class="preview-meta">${metaItems.join('')}</div>` : '';

@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { ApiError } from '@/lib/api-client';
 import { PaginationControls } from '@/components/admin/pagination-controls';
 import { MediaListEditor, type MediaFormItem } from '@/components/admin/media-list-editor';
 import { SourceLinksEditor, type SourceLinkItem } from '@/components/admin/source-links-editor';
@@ -10,6 +11,7 @@ import { ImageSelector } from '@/components/admin/image-selector';
 import { AlbumPickerModal } from '@/components/admin/album-picker-modal';
 import {
   useAdminBlogPosts,
+  useAdminSession,
   useDeleteBlogPostMutation,
   useSaveBlogPostMutation,
   useUploadMediaMutation
@@ -84,6 +86,53 @@ const DEFAULT_IMAGE_TYPE = IMAGE_TYPE_OPTIONS[0]?.value ?? 'inline';
 const DEFAULT_VIDEO_TYPE = VIDEO_TYPE_OPTIONS[0]?.value ?? 'body';
 
 const createClientId = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+
+// Vietnamese diacritics mapping for slug generation
+const VIETNAMESE_DIACRITICS: Record<string, string> = {
+  'à': 'a', 'á': 'a', 'ả': 'a', 'ã': 'a', 'ạ': 'a',
+  'ă': 'a', 'ằ': 'a', 'ắ': 'a', 'ẳ': 'a', 'ẵ': 'a', 'ặ': 'a',
+  'â': 'a', 'ầ': 'a', 'ấ': 'a', 'ẩ': 'a', 'ẫ': 'a', 'ậ': 'a',
+  'è': 'e', 'é': 'e', 'ẻ': 'e', 'ẽ': 'e', 'ẹ': 'e',
+  'ê': 'e', 'ề': 'e', 'ế': 'e', 'ể': 'e', 'ễ': 'e', 'ệ': 'e',
+  'ì': 'i', 'í': 'i', 'ỉ': 'i', 'ĩ': 'i', 'ị': 'i',
+  'ò': 'o', 'ó': 'o', 'ỏ': 'o', 'õ': 'o', 'ọ': 'o',
+  'ô': 'o', 'ồ': 'o', 'ố': 'o', 'ổ': 'o', 'ỗ': 'o', 'ộ': 'o',
+  'ơ': 'o', 'ờ': 'o', 'ớ': 'o', 'ở': 'o', 'ỡ': 'o', 'ợ': 'o',
+  'ù': 'u', 'ú': 'u', 'ủ': 'u', 'ũ': 'u', 'ụ': 'u',
+  'ư': 'u', 'ừ': 'u', 'ứ': 'u', 'ử': 'u', 'ữ': 'u', 'ự': 'u',
+  'ỳ': 'y', 'ý': 'y', 'ỷ': 'y', 'ỹ': 'y', 'ỵ': 'y',
+  'đ': 'd',
+  'À': 'a', 'Á': 'a', 'Ả': 'a', 'Ã': 'a', 'Ạ': 'a',
+  'Ă': 'a', 'Ằ': 'a', 'Ắ': 'a', 'Ẳ': 'a', 'Ẵ': 'a', 'Ặ': 'a',
+  'Â': 'a', 'Ầ': 'a', 'Ấ': 'a', 'Ẩ': 'a', 'Ẫ': 'a', 'Ậ': 'a',
+  'È': 'e', 'É': 'e', 'Ẻ': 'e', 'Ẽ': 'e', 'Ẹ': 'e',
+  'Ê': 'e', 'Ề': 'e', 'Ế': 'e', 'Ể': 'e', 'Ễ': 'e', 'Ệ': 'e',
+  'Ì': 'i', 'Í': 'i', 'Ỉ': 'i', 'Ĩ': 'i', 'Ị': 'i',
+  'Ò': 'o', 'Ó': 'o', 'Ỏ': 'o', 'Õ': 'o', 'Ọ': 'o',
+  'Ô': 'o', 'Ồ': 'o', 'Ố': 'o', 'Ổ': 'o', 'Ỗ': 'o', 'Ộ': 'o',
+  'Ơ': 'o', 'Ờ': 'o', 'Ớ': 'o', 'Ở': 'o', 'Ỡ': 'o', 'Ợ': 'o',
+  'Ù': 'u', 'Ú': 'u', 'Ủ': 'u', 'Ũ': 'u', 'Ụ': 'u',
+  'Ư': 'u', 'Ừ': 'u', 'Ứ': 'u', 'Ử': 'u', 'Ữ': 'u', 'Ự': 'u',
+  'Ỳ': 'y', 'Ý': 'y', 'Ỷ': 'y', 'Ỹ': 'y', 'Ỵ': 'y',
+  'Đ': 'd'
+};
+
+function removeVietnameseDiacritics(str: string): string {
+  return str.split('').map(char => VIETNAMESE_DIACRITICS[char] || char).join('');
+}
+
+function normalizeSlugFromTitle(title: string) {
+  const base = removeVietnameseDiacritics(title)
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80);
+  const now = new Date();
+  const suffix = `blog${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
+  return base ? `${base}-${suffix}` : suffix;
+}
 
 function parseDelimitedList(value: string) {
   return value
@@ -224,7 +273,49 @@ async function pickImageFile(): Promise<File | null> {
   });
 }
 
+function extractValidationMessages(details: unknown): string | null {
+  if (!details || typeof details !== 'object') return null;
+  const anyDetails = details as any;
+
+  // Zod flatten shape: { fieldErrors: { title: ['...'] }, formErrors: ['...'] }
+  const fieldErrors = anyDetails.fieldErrors;
+  const formErrors = anyDetails.formErrors;
+
+  const messages: string[] = [];
+
+  if (formErrors && Array.isArray(formErrors)) {
+    messages.push(...formErrors.filter((msg: unknown) => typeof msg === 'string'));
+  }
+
+  if (fieldErrors && typeof fieldErrors === 'object') {
+    Object.entries(fieldErrors).forEach(([field, errs]) => {
+      if (Array.isArray(errs)) {
+        errs.forEach(err => {
+          if (typeof err === 'string') {
+            messages.push(`${field}: ${err}`);
+          }
+        });
+      }
+    });
+  }
+
+  if (Array.isArray(anyDetails.errors)) {
+    anyDetails.errors.forEach((err: any) => {
+      if (typeof err === 'string') messages.push(err);
+      if (err?.message) messages.push(String(err.message));
+    });
+  }
+
+  if (!messages.length) return null;
+  return messages.join('\n');
+}
+
 function toErrorMessage(error: unknown, fallback = 'Đã có lỗi xảy ra, vui lòng thử lại.') {
+  if (error instanceof ApiError) {
+    const validation = extractValidationMessages(error.details);
+    if (validation) return validation;
+    if (error.message) return error.message;
+  }
   if (error instanceof Error && error.message) return error.message;
   if (typeof error === 'string' && error.trim()) return error;
   return fallback;
@@ -232,6 +323,7 @@ function toErrorMessage(error: unknown, fallback = 'Đã có lỗi xảy ra, vui
 
 export default function AdminBlogPage() {
   const { data, isLoading, error } = useAdminBlogPosts();
+  const { data: currentUser } = useAdminSession();
   const saveMutation = useSaveBlogPostMutation();
   const deleteMutation = useDeleteBlogPostMutation();
   const uploadMutation = useUploadMediaMutation();
@@ -246,12 +338,17 @@ export default function AdminBlogPage() {
   const [albumPickerIndex, setAlbumPickerIndex] = useState<number | null>(null);
   const [isInlineInsertMode, setIsInlineInsertMode] = useState(false);
   const [isImageMenuOpen, setIsImageMenuOpen] = useState(false);
+  const [showAuthorWarning, setShowAuthorWarning] = useState(false);
+  const [initialAuthorName, setInitialAuthorName] = useState('');
   const imageMenuRef = useRef<HTMLDivElement | null>(null);
   const contentInputRef = useRef<HTMLTextAreaElement | null>(null);
   const pagination = useClientPagination(data ?? [], { pageSize: BLOG_PAGE_SIZE });
   const visiblePosts = pagination.items;
   const serializedForm = useMemo(() => JSON.stringify(formState), [formState]);
   const isDirty = serializedForm !== formSnapshot;
+  
+  // Get current user's display name for placeholder
+  const currentUserDisplayName = currentUser?.displayName || currentUser?.username || '';
 
   const excerptWordCount = countWords(formState.excerpt);
   const inlinePositionHint = useMemo(() => estimateParagraphCount(formState.content), [formState.content]);
@@ -498,25 +595,101 @@ export default function AdminBlogPage() {
     return () => window.clearTimeout(timer);
   }, [flash]);
 
+  // Auto-save draft on tab close or page unload
   useEffect(() => {
+    const autoSaveDraft = async () => {
+      if (!isDirty || !showEditor) return;
+      
+      // Only auto-save if there's meaningful content
+      if (!formState.title.trim() && !formState.content.trim()) return;
+      
+      const tags = parseDelimitedList(formState.tagsText);
+      const keywords = parseDelimitedList(formState.keywordsText);
+      const galleryMediaPayload = serializeMediaForSave(formState.galleryMedia);
+      const videoItemsPayload = serializeMediaForSave(formState.videoItems);
+      const sourceLinksPayload = serializeSourceLinks(formState.sourceLinks);
+      
+      const payload = {
+        id: selectedPost?.id,
+        title: formState.title || 'Bản nháp chưa đặt tên',
+        subtitle: formState.subtitle || undefined,
+        slug: formState.slug || undefined,
+        category: formState.category || undefined,
+        excerpt: formState.excerpt || 'Chưa có mô tả',
+        content: formState.content || '',
+        tags,
+        keywords,
+        imageUrl: formState.imageUrl || null,
+        status: 'draft', // Always save as draft when auto-saving
+        publishedAt: formState.publishedAt ? new Date(formState.publishedAt).toISOString() : null,
+        isFeatured: formState.isFeatured,
+        authorName: formState.authorName || undefined,
+        authorRole: formState.authorRole || undefined,
+        galleryMedia: galleryMediaPayload.length ? galleryMediaPayload : undefined,
+        videoItems: videoItemsPayload.length ? videoItemsPayload : undefined,
+        sourceLinks: sourceLinksPayload.length ? sourceLinksPayload : undefined
+      };
+
+      try {
+        // Use sendBeacon for reliable delivery during page unload
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+        const url = selectedPost?.id 
+          ? `${apiUrl}/v1/admin/blog/${selectedPost.id}` 
+          : `${apiUrl}/v1/admin/blog`;
+        
+        navigator.sendBeacon(
+          url,
+          new Blob([JSON.stringify(payload)], { type: 'application/json' })
+        );
+      } catch (error) {
+        console.error('Auto-save draft failed:', error);
+      }
+    };
+
     const handler = (event: BeforeUnloadEvent) => {
       if (!isDirty) return;
+      
+      // Attempt to auto-save as draft
+      autoSaveDraft();
+      
       event.preventDefault();
-      event.returnValue = 'Bạn có thay đổi chưa lưu.';
+      event.returnValue = 'Đang lưu bản nháp...';
     };
+    
+    // Also handle visibility change for when tab becomes hidden
+    const visibilityHandler = () => {
+      if (document.visibilityState === 'hidden' && isDirty && showEditor) {
+        autoSaveDraft();
+      }
+    };
+    
     window.addEventListener('beforeunload', handler);
-    return () => window.removeEventListener('beforeunload', handler);
-  }, [isDirty]);
+    document.addEventListener('visibilitychange', visibilityHandler);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handler);
+      document.removeEventListener('visibilitychange', visibilityHandler);
+    };
+  }, [isDirty, showEditor, formState, selectedPost]);
 
   useEffect(() => {
     if (!selectedPost) {
-      setFormState(() => ({ ...emptyForm }));
-      setFormSnapshot(JSON.stringify(emptyForm));
+      // When creating new post, pre-fill author name from current user
+      const defaultAuthorName = currentUser?.displayName || currentUser?.username || '';
+      const newFormState: BlogFormState = { 
+        ...emptyForm, 
+        authorName: defaultAuthorName 
+      };
+      setFormState(() => newFormState);
+      setFormSnapshot(JSON.stringify(newFormState));
+      setInitialAuthorName(defaultAuthorName);
+      setShowAuthorWarning(false);
       setCursorParagraph(0);
       return;
     }
     const tagsText = formatDelimitedList(selectedPost.tags);
     const keywordsText = formatDelimitedList(selectedPost.keywords);
+    const authorName = selectedPost.authorName ?? selectedPost.author ?? '';
     const nextState: BlogFormState = {
       title: selectedPost.title,
       subtitle: selectedPost.subtitle ?? '',
@@ -530,7 +703,7 @@ export default function AdminBlogPage() {
       status: (selectedPost.status as BlogStatus) || 'draft',
       publishedAt: toDateInputValue(selectedPost.publishedAt),
       isFeatured: selectedPost.isFeatured ?? false,
-      authorName: selectedPost.authorName ?? selectedPost.author ?? '',
+      authorName: authorName,
       authorRole: selectedPost.authorRole ?? '',
       galleryMedia: ensureMediaFormItems(selectedPost.galleryMedia, DEFAULT_IMAGE_TYPE),
       videoItems: ensureMediaFormItems(selectedPost.videoItems, DEFAULT_VIDEO_TYPE),
@@ -538,9 +711,23 @@ export default function AdminBlogPage() {
     };
     setFormState(nextState);
     setFormSnapshot(JSON.stringify(nextState));
+    setInitialAuthorName(authorName);
+    setShowAuthorWarning(false);
     setCursorParagraph(estimateParagraphCount(nextState.content));
     setShowEditor(true);
-  }, [selectedPost]);
+  }, [selectedPost, currentUser]);
+
+  // Auto-generate slug from title for new posts, lock editing
+  useEffect(() => {
+    if (!showEditor) return;
+    // Do not change slug for existing posts to avoid breaking links
+    if (selectedPost?.id) return;
+    setFormState(prev => {
+      const nextSlug = normalizeSlugFromTitle(prev.title || 'blog');
+      if (prev.slug === nextSlug) return prev;
+      return { ...prev, slug: nextSlug };
+    });
+  }, [showEditor, selectedPost, formState.title]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -571,8 +758,15 @@ export default function AdminBlogPage() {
     };
 
     try {
-      await saveMutation.mutateAsync(payload);
-      showFlash(selectedPost ? 'Đã cập nhật bài viết' : 'Đã tạo bài viết mới', 'success');
+      const result = await saveMutation.mutateAsync(payload);
+      
+      // Check if the response indicates an edit request was created instead
+      if (result && 'editRequest' in (result as any)) {
+        showFlash('Yêu cầu sửa bài đã được gửi đến tác giả để duyệt', 'info');
+      } else {
+        showFlash(selectedPost ? 'Đã cập nhật bài viết' : 'Đã tạo bài viết mới', 'success');
+      }
+      
       setSelectedPost(null);
       setFormState(() => ({ ...emptyForm }));
       setFormSnapshot(JSON.stringify(emptyForm));
@@ -581,6 +775,20 @@ export default function AdminBlogPage() {
       showFlash((error as Error)?.message || 'Không thể lưu bài viết', 'error');
     }
   }
+
+  // Check if current user can directly edit or needs to request approval
+  const canDirectEdit = useMemo(() => {
+    if (!selectedPost || !currentUser) return true; // New post
+    const isOwner = selectedPost.authorId && String(selectedPost.authorId) === String(currentUser.id);
+    const isSuperAdmin = currentUser.role === 'super-admin';
+    return isOwner || isSuperAdmin;
+  }, [selectedPost, currentUser]);
+
+  const isEditingOthersPost = useMemo(() => {
+    if (!selectedPost || !currentUser) return false;
+    const isOwner = selectedPost.authorId && String(selectedPost.authorId) === String(currentUser.id);
+    return !isOwner && currentUser.role !== 'super-admin';
+  }, [selectedPost, currentUser]);
 
   async function handleDelete(post: BlogPostDetail) {
     if (!window.confirm(`Xoá bài viết "${post.title}"?`)) {
@@ -745,14 +953,12 @@ export default function AdminBlogPage() {
                   <input
                     className="w-full rounded-xl border border-slate-200 px-4 py-3 transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
                     value={formState.slug}
-                    onChange={e => {
-                      const raw = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-');
-                      const normalized = raw.replace(/-+/g, '-').replace(/^-+|-+$/g, '');
-                      setFormState(prev => ({ ...prev, slug: normalized }));
-                    }}
-                    placeholder="xu-huong-ai-2025"
+                    readOnly
+                    aria-readonly
+                    tabIndex={-1}
+                    placeholder="Tự động từ tiêu đề"
                   />
-                  <p className="text-xs text-slate-500">Hệ thống tự thêm hậu tố <code className="font-mono">-blogYYYYMMDDHHmmss</code>.</p>
+                  <p className="text-xs text-slate-500">Hệ thống tự tạo slug từ tiêu đề và thêm hậu tố <code className="font-mono">-blogYYYYMMDDHHmmss</code>. Nhân viên không cần nhập.</p>
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-[#0f172a]">Danh mục</label>
@@ -831,11 +1037,40 @@ export default function AdminBlogPage() {
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-[#0f172a]">Tác giả</label>
                   <input
-                    className="w-full rounded-xl border border-slate-200 px-4 py-3 transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
+                    className={`w-full rounded-xl border px-4 py-3 transition-all focus:outline-none focus:ring-2 ${
+                      showAuthorWarning 
+                        ? 'border-amber-400 focus:border-amber-500 focus:ring-amber-200' 
+                        : 'border-slate-200 focus:border-[#1c6e8c] focus:ring-[#1c6e8c]/20'
+                    }`}
                     value={formState.authorName}
-                    onChange={e => setFormState(prev => ({ ...prev, authorName: e.target.value }))}
-                    placeholder="Tên tác giả"
+                    onChange={e => {
+                      const newValue = e.target.value;
+                      setFormState(prev => ({ ...prev, authorName: newValue }));
+                      // Show warning if author name is changed and different from current user
+                      if (!selectedPost && newValue.trim() && newValue.trim() !== currentUserDisplayName) {
+                        setShowAuthorWarning(true);
+                      } else if (selectedPost && newValue.trim() !== initialAuthorName && newValue.trim() !== currentUserDisplayName) {
+                        setShowAuthorWarning(true);
+                      } else {
+                        setShowAuthorWarning(false);
+                      }
+                    }}
+                    onFocus={() => {
+                      // Auto-fill with current user name if empty
+                      if (!formState.authorName && currentUserDisplayName) {
+                        setFormState(prev => ({ ...prev, authorName: currentUserDisplayName }));
+                      }
+                    }}
+                    placeholder={currentUserDisplayName ? `Mặc định: ${currentUserDisplayName}` : 'Nhập tên tác giả...'}
                   />
+                  {showAuthorWarning && (
+                    <div className="flex items-start gap-2 rounded-lg bg-amber-50 p-2.5 text-xs text-amber-700">
+                      <i className="fas fa-exclamation-triangle mt-0.5"></i>
+                      <span>
+                        <strong>Lưu ý:</strong> Nếu tên tác giả không trùng với tài khoản nào trong hệ thống, bài viết này sẽ không thuộc quyền chỉnh sửa của bất kỳ ai (ai cũng có thể sửa).
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-[#0f172a]">Chức danh</label>
@@ -934,10 +1169,17 @@ Mỗi đoạn văn cách nhau bởi 1 dòng trống.
               <span>Quay lại</span>
             </button>
             <div className="flex items-center gap-3">
+              {isEditingOthersPost && (
+                <span className="flex items-center gap-2 rounded-full bg-amber-100 px-3 py-1.5 text-xs font-medium text-amber-700">
+                  <i className="fas fa-exclamation-triangle"></i>
+                  Đang sửa bài của người khác
+                </span>
+              )}
               <select
                 className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium"
                 value={formState.status}
                 onChange={e => setFormState(prev => ({ ...prev, status: e.target.value as BlogStatus }))}
+                disabled={isEditingOthersPost}
               >
                 {STATUS_OPTIONS.map(option => (
                   <option key={option} value={option}>{option}</option>
@@ -948,10 +1190,18 @@ Mỗi đoạn văn cách nhau bởi 1 dòng trống.
                 form="blogForm"
                 disabled={saveMutation.isPending}
                 className="flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-bold text-white shadow-lg transition-all hover:-translate-y-0.5 disabled:opacity-50"
-                style={{ background: 'linear-gradient(135deg, #2e8b57, #3aa76d)' }}
+                style={{ background: isEditingOthersPost ? 'linear-gradient(135deg, #d97706, #f59e0b)' : 'linear-gradient(135deg, #2e8b57, #3aa76d)' }}
               >
-                <i className="fas fa-save"></i>
-                <span>{saveMutation.isPending ? 'Đang lưu...' : selectedPost ? 'Cập nhật' : 'Lưu bài viết'}</span>
+                <i className={isEditingOthersPost ? "fas fa-paper-plane" : "fas fa-save"}></i>
+                <span>
+                  {saveMutation.isPending 
+                    ? 'Đang xử lý...' 
+                    : isEditingOthersPost 
+                      ? 'Gửi yêu cầu duyệt' 
+                      : selectedPost 
+                        ? 'Cập nhật' 
+                        : 'Lưu bài viết'}
+                </span>
               </button>
             </div>
           </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { ApiError } from '@/lib/api-client';
 import { PaginationControls } from '@/components/admin/pagination-controls';
 import { MediaListEditor, type MediaFormItem } from '@/components/admin/media-list-editor';
 import { QuickMediaDialog } from '@/components/admin/quick-media-dialog';
@@ -136,7 +137,45 @@ async function pickImageFile(): Promise<File | null> {
   });
 }
 
+function extractValidationMessages(details: unknown): string | null {
+  if (!details || typeof details !== 'object') return null;
+  const anyDetails = details as any;
+
+  const fieldErrors = anyDetails.fieldErrors;
+  const formErrors = anyDetails.formErrors;
+  const messages: string[] = [];
+
+  if (formErrors && Array.isArray(formErrors)) {
+    messages.push(...formErrors.filter((msg: unknown) => typeof msg === 'string'));
+  }
+
+  if (fieldErrors && typeof fieldErrors === 'object') {
+    Object.entries(fieldErrors).forEach(([field, errs]) => {
+      if (Array.isArray(errs)) {
+        errs.forEach(err => {
+          if (typeof err === 'string') messages.push(`${field}: ${err}`);
+        });
+      }
+    });
+  }
+
+  if (Array.isArray(anyDetails.errors)) {
+    anyDetails.errors.forEach((err: any) => {
+      if (typeof err === 'string') messages.push(err);
+      if (err?.message) messages.push(String(err.message));
+    });
+  }
+
+  if (!messages.length) return null;
+  return messages.join('\n');
+}
+
 function toErrorMessage(error: unknown, fallback = 'Đã có lỗi xảy ra, vui lòng thử lại.') {
+  if (error instanceof ApiError) {
+    const validation = extractValidationMessages(error.details);
+    if (validation) return validation;
+    if (error.message) return error.message;
+  }
   if (error instanceof Error && error.message) return error.message;
   if (typeof error === 'string' && error.trim()) return error;
   return fallback;

@@ -15,7 +15,8 @@ const FOLDER_OPTIONS = [
   { value: 'blog/inline', label: 'Blog - Trong bài' },
   { value: 'products/hero', label: 'Sản phẩm - Ảnh đại diện' },
   { value: 'products/gallery', label: 'Sản phẩm - Thư viện' },
-  { value: 'products/inline', label: 'Sản phẩm - Trong bài' }
+  { value: 'products/inline', label: 'Sản phẩm - Trong bài' },
+  { value: 'users/avatars', label: 'Người dùng - Avatar' }
 ];
 
 export function AlbumPickerModal({ onClose, onSelect }: AlbumPickerModalProps) {

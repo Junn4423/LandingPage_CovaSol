@@ -79,8 +79,6 @@ export default function AdminDashboardPage() {
           </div>
         ))}
       </div>
-
-      {/* Database Section */}
       <div className="rounded-2xl bg-white p-6 shadow-lg" style={{ boxShadow: '0 16px 32px rgba(15, 23, 42, 0.08)' }}>
         <div className="mb-6">
           <h3 className="text-xl font-bold text-[#0d1b2a]">Sao lưu và đồng bộ</h3>

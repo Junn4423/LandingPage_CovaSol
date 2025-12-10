@@ -76,7 +76,11 @@ export default async function BlogListingPage() {
                 <h2 id="featuredPostTitle">{featuredPost.title}</h2>
                 <p id="featuredPostExcerpt">{featuredPost.excerpt}</p>
                 <div className="post-author">
-                  <img src="/assets/img/anh2.jpeg" alt={featuredPost.author} className="author-avatar" />
+                  <img 
+                    src={featuredPost.authorAvatar || '/assets/img/anh2.jpeg'} 
+                    alt={featuredPost.author} 
+                    className="author-avatar" 
+                  />
                   <div className="author-info">
                     <span className="author-name" id="featuredPostAuthor">
                       {featuredPost.author}

@@ -12,6 +12,8 @@ export interface BlogPostSummary {
   excerpt: string;
   publishedAt?: string | null;
   authorName?: string | null;
+  authorAvatar?: string | null;
+  authorId?: number | null;
   author?: string;
   status: string;
   heroImage?: string | null;
@@ -66,6 +68,7 @@ export interface UserSummary {
   id: string;
   username: string;
   displayName?: string | null;
+  avatar?: string | null;
   role: string;
   createdAt: string;
   updatedAt: string;

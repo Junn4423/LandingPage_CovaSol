@@ -18,6 +18,7 @@ export interface BlogUpsertInput {
   category?: string | null;
   authorName?: string | null;
   authorRole?: string | null;
+  authorAvatar?: string | null;
   status?: string;
   publishedAt?: Date | string | null;
   authorId?: number;
@@ -75,6 +76,8 @@ function toSummary(post: BlogWithAuthor): BlogPostSummary {
     publishedAt: post.publishedAt?.toISOString() ?? null,
     author: post.authorName || post.author?.displayName || 'COVASOL Team',
     authorName: post.authorName ?? post.author?.displayName ?? undefined,
+    authorAvatar: post.authorAvatar ?? post.author?.avatar ?? undefined,
+    authorId: post.authorId ?? null,
     status: post.status,
     heroImage: post.imageUrl ?? null,
     category: post.category ?? undefined,
@@ -154,6 +157,7 @@ export async function createBlogPost(input: BlogUpsertInput): Promise<BlogPostDe
       category: input.category ?? undefined,
       authorName: input.authorName ?? undefined,
       authorRole: input.authorRole ?? undefined,
+      authorAvatar: input.authorAvatar ?? undefined,
       status,
       publishedAt,
       authorId: input.authorId,
@@ -199,6 +203,7 @@ export async function updateBlogPost(id: number | string, input: Partial<BlogUps
       category: input.category ?? undefined,
       authorName: input.authorName ?? undefined,
       authorRole: input.authorRole ?? undefined,
+      authorAvatar: input.authorAvatar ?? undefined,
       status,
       publishedAt,
       galleryMedia: input.galleryMedia === undefined ? undefined : input.galleryMedia ?? Prisma.JsonNull,

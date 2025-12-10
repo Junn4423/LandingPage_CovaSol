@@ -28,13 +28,21 @@ import {
   updateAdminProduct,
   updateAdminReview,
   updateAdminUser,
+  fetchMyPostsEditRequests,
+  fetchMyEditRequests,
+  fetchEditRequestDetail,
+  approveEditRequest as approveEditRequestApi,
+  rejectEditRequest as rejectEditRequestApi,
+  deleteEditRequest as deleteEditRequestApi,
   type BlogMutationInput,
   type CreateUserInput,
   type ProductMutationInput,
   type ReviewMutationInput,
   type ReviewStatsResponse,
   type UploadMediaResponse,
-  type UpdateUserInput
+  type UpdateUserInput,
+  type EditRequestSummary,
+  type EditRequestDetail
 } from '@/lib/admin-api';
 import type { AdminConsentResponse, AdminOverviewStats, VisitLogResponse } from '@/types/api';
 import type { BlogPostDetail, CustomerReviewDetail, ProductDetail, UserSummary } from '@/types/content';
@@ -301,6 +309,73 @@ export function useDeleteAlbumImageMutation() {
     mutationFn: deleteAlbumImage,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'album'] });
+    }
+  });
+}
+
+// =====================================================
+// Blog Edit Request Hooks
+// =====================================================
+
+const EDIT_REQUEST_QUERY_KEYS = {
+  myPostsRequests: ['admin', 'edit-requests', 'my-posts'] as const,
+  myRequests: ['admin', 'edit-requests', 'my-requests'] as const,
+  detail: (id: number) => ['admin', 'edit-requests', id] as const
+};
+
+export function useMyPostsEditRequests() {
+  return useQuery<EditRequestSummary[]>({
+    queryKey: EDIT_REQUEST_QUERY_KEYS.myPostsRequests,
+    queryFn: fetchMyPostsEditRequests,
+    staleTime: 30_000
+  });
+}
+
+export function useMyEditRequests() {
+  return useQuery<EditRequestSummary[]>({
+    queryKey: EDIT_REQUEST_QUERY_KEYS.myRequests,
+    queryFn: fetchMyEditRequests,
+    staleTime: 30_000
+  });
+}
+
+export function useEditRequestDetail(requestId: number) {
+  return useQuery<EditRequestDetail>({
+    queryKey: EDIT_REQUEST_QUERY_KEYS.detail(requestId),
+    queryFn: () => fetchEditRequestDetail(requestId),
+    enabled: requestId > 0
+  });
+}
+
+export function useApproveEditRequestMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ requestId, reviewNote }: { requestId: number; reviewNote?: string }) => 
+      approveEditRequestApi(requestId, reviewNote),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: EDIT_REQUEST_QUERY_KEYS.myPostsRequests });
+      queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.blogList });
+    }
+  });
+}
+
+export function useRejectEditRequestMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ requestId, reviewNote }: { requestId: number; reviewNote?: string }) => 
+      rejectEditRequestApi(requestId, reviewNote),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: EDIT_REQUEST_QUERY_KEYS.myPostsRequests });
+    }
+  });
+}
+
+export function useDeleteEditRequestMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteEditRequestApi,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: EDIT_REQUEST_QUERY_KEYS.myRequests });
     }
   });
 }

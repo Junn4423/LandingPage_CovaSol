@@ -82,7 +82,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 <h3>Kết nối với COVASOL</h3>
                 <p>Liên hệ đội ngũ của chúng tôi để được tư vấn giải pháp phù hợp nhất.</p>
                 <Link className="btn btn-primary" href="/#contact">
-                  Đặt lịch tư vấn
+                  Liên Hệ
                 </Link>
               </div>
             </aside>

@@ -79,7 +79,7 @@ const FALLBACK_PRODUCTS: LegacyProductCard[] = [
     description: 'Nền tảng tích hợp dữ liệu giữa các ứng dụng để hệ sinh thái công nghệ của bạn luôn đồng bộ.',
     imageUrl: FALLBACK_IMAGES[3],
     tags: ['Integration', 'Sync'],
-    primaryCta: { label: 'Đặt lịch tư vấn', href: '/#contact' },
+    primaryCta: { label: 'Liên Hệ', href: '/#contact' },
     secondaryCta: { label: 'Tìm hiểu thêm', href: '/products/covasync' }
   },
   {
