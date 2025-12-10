@@ -1,9 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import { useAdminOverview } from '@/hooks/admin';
 
 export default function AdminDashboardPage() {
   const { data, isLoading, error, refetch, isFetching } = useAdminOverview();
+  const [isExporting, setIsExporting] = useState(false);
   const stats = [
     { label: 'Bài viết', value: data?.blogs ?? 0, icon: 'fas fa-newspaper', color: '#1c6e8c' },
     { label: 'Sản phẩm', value: data?.products ?? 0, icon: 'fas fa-cubes', color: '#2e8b57' },
@@ -14,6 +16,49 @@ export default function AdminDashboardPage() {
     { label: 'Opt-in cookie', value: data?.consentsOptIn ?? 0, icon: 'fas fa-cookie-bite', color: '#16a34a' },
     { label: 'Opt-out', value: data?.consentsOptOut ?? 0, icon: 'fas fa-ban', color: '#dc2626' }
   ];
+
+  const overviewRows = [
+    { label: 'Bài viết', value: data?.blogs },
+    { label: 'Sản phẩm', value: data?.products },
+    { label: 'Đánh giá', value: data?.reviews },
+    { label: 'Người dùng', value: data?.users },
+    { label: 'Tổng lượt truy cập', value: data?.totalVisits },
+    { label: 'Khách duy nhất', value: data?.uniqueVisitors },
+    { label: 'Consent tổng', value: data?.consentsTotal },
+    { label: 'Opt-in', value: data?.consentsOptIn },
+    { label: 'Opt-out', value: data?.consentsOptOut },
+    { label: 'Tỉ lệ đồng ý', value: data?.consentRate ? `${(data.consentRate * 100).toFixed(1)}%` : '—' },
+    { label: 'Lần truy cập gần nhất', value: data?.lastVisitAt ? new Date(data.lastVisitAt).toLocaleString('vi-VN') : '—' },
+    { label: 'Lần cập nhật gần nhất', value: data?.lastUpdated ? new Date(data.lastUpdated).toLocaleString('vi-VN') : '—' }
+  ];
+
+  const formatNumber = (val?: number | null) =>
+    typeof val === 'number' ? val.toLocaleString('vi-VN') : '—';
+
+  const handleExportExcel = async () => {
+    try {
+      setIsExporting(true);
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || '';
+      const exportUrl = process.env.NEXT_PUBLIC_EXCEL_EXPORT_URL || `${apiBase}/database/export`;
+
+      const res = await fetch(exportUrl, { credentials: 'include' });
+      if (!res.ok) throw new Error('Không thể tải file Excel');
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'covasol.xlsx';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      alert((err as Error)?.message || 'Xuất file Excel thất bại');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -78,41 +123,6 @@ export default function AdminDashboardPage() {
             </div>
           </div>
         ))}
-      </div>
-      <div className="rounded-2xl bg-white p-6 shadow-lg" style={{ boxShadow: '0 16px 32px rgba(15, 23, 42, 0.08)' }}>
-        <div className="mb-6">
-          <h3 className="text-xl font-bold text-[#0d1b2a]">Sao lưu và đồng bộ</h3>
-          <p className="mt-1 text-sm text-slate-500">Nhập xuất dữ liệu hệ thống.</p>
-        </div>
-        <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
-            <h4 className="font-semibold text-[#0d1b2a]">Xuất database</h4>
-            <p className="mt-1 text-sm text-slate-500">Tạo file Excel tổng hợp toàn bộ dữ liệu.</p>
-            <button className="mt-4 flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:-translate-y-0.5" style={{ background: 'linear-gradient(135deg, #124e66, #1c6e8c)' }}>
-              <i className="fas fa-file-export"></i>
-              <span>Xuất file Excel</span>
-            </button>
-          </div>
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
-            <h4 className="font-semibold text-[#0d1b2a]">Tải template</h4>
-            <p className="mt-1 text-sm text-slate-500">Sử dụng mẫu dữ liệu chuẩn hóa.</p>
-            <button className="mt-4 flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:-translate-y-0.5">
-              <i className="fas fa-file-download"></i>
-              <span>Tải template</span>
-            </button>
-          </div>
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
-            <h4 className="font-semibold text-[#0d1b2a]">Import database</h4>
-            <p className="mt-1 text-sm text-slate-500">Tải file Excel để đồng bộ dữ liệu.</p>
-            <div className="mt-4 rounded-xl border border-dashed border-slate-300 bg-white p-3 text-center transition-all hover:border-[#1c6e8c] hover:bg-[#1c6e8c]/5">
-              <label className="flex cursor-pointer items-center justify-center gap-2 text-sm font-semibold text-[#1c6e8c]">
-                <i className="fas fa-upload"></i>
-                <span>Chọn file Excel</span>
-                <input type="file" className="hidden" accept=".xlsx,.xls" />
-              </label>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
