@@ -497,7 +497,7 @@ Dự án này sử dụng giấy phép **UNLICENSED** - chỉ dành cho mục đ
 
 **COVASOL Technology Solutions**
 
-- **Website**: [https://covasol.top](https://covasol.top)
+- **Website**: [https://covasol.com.vn](https://covasol.com.vn)
 - **Email**: [covasol.studio@gmail.com](mailto:covasol.studio@gmail.com)
 - **GitHub**: [https://github.com/Junn4423](https://github.com/Junn4423)
 

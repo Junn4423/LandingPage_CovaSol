@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     default: 'COVASOL Technology Solutions'
   },
   description: 'Core Value. Smart Solutions. Dịch vụ tư vấn và triển khai giải pháp chuyển đổi số toàn diện.',
-  metadataBase: new URL('https://covasol.top'),
+  metadataBase: new URL('https://covasol.com.vn'),
   icons: {
     icon: '/favicon.png',
     shortcut: '/favicon.png',
