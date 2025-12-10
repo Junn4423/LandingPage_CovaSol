@@ -1,6 +1,7 @@
 import Link from 'next/link';
+import type { Route } from 'next';
 
-const navItems = [
+const navItems: { href: Route; label: string }[] = [
   { href: '/products', label: 'Sản phẩm' },
   { href: '/blog', label: 'Blog' },
   { href: '/#solutions', label: 'Giải pháp' },

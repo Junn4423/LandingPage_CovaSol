@@ -8,6 +8,8 @@ const getEnv = (key: string, fallback?: string) => {
   return value;
 };
 
+const getOptionalEnv = (key: string, fallback?: string) => process.env[key] ?? fallback;
+
 export const config = {
   env: process.env.NODE_ENV ?? 'development',
   isProduction: process.env.NODE_ENV === 'production',
@@ -37,5 +39,12 @@ export const config = {
     secret: getEnv('REFRESH_TOKEN_SECRET', 'refresh-secret-key'),
     expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN ?? '7d'
   },
-  databaseUrl: getEnv('DATABASE_URL', 'mysql://root:root@localhost:3306/covasol')
+  databaseUrl: getEnv('DATABASE_URL', 'mysql://root:root@localhost:3306/covasol'),
+  cloudinary: {
+    url: getOptionalEnv('CLOUDINARY_URL'),
+    cloudName: getOptionalEnv('CLOUDINARY_CLOUD_NAME'),
+    apiKey: getOptionalEnv('CLOUDINARY_API_KEY'),
+    apiSecret: getOptionalEnv('CLOUDINARY_API_SECRET'),
+    folder: getOptionalEnv('CLOUDINARY_FOLDER', 'landing_page_assets')
+  }
 };

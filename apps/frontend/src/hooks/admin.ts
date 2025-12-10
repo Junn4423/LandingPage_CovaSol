@@ -10,6 +10,7 @@ import {
   deleteAdminProduct,
   deleteAdminReview,
   deleteAdminUser,
+  deleteAlbumImage,
   fetchAdminBlogPosts,
   fetchAdminCookieConsents,
   fetchAdminOverview,
@@ -18,9 +19,11 @@ import {
   fetchAdminReviews,
   fetchAdminUsers,
   fetchAdminVisitLogs,
+  fetchAlbumImages,
   fetchCurrentUser,
   login,
   logout,
+  uploadAdminMedia,
   updateAdminBlogPost,
   updateAdminProduct,
   updateAdminReview,
@@ -30,6 +33,7 @@ import {
   type ProductMutationInput,
   type ReviewMutationInput,
   type ReviewStatsResponse,
+  type UploadMediaResponse,
   type UpdateUserInput
 } from '@/lib/admin-api';
 import type { AdminConsentResponse, AdminOverviewStats, VisitLogResponse } from '@/types/api';
@@ -46,6 +50,12 @@ const ADMIN_QUERY_KEYS = {
   reviewList: ['admin', 'reviews', 'list'] as const,
   reviewStats: ['admin', 'reviews', 'stats'] as const
 };
+
+export function useUploadMediaMutation() {
+  return useMutation<UploadMediaResponse, unknown, { file: File; folder?: string }>({
+    mutationFn: ({ file, folder }) => uploadAdminMedia(file, folder)
+  });
+}
 
 export function useAdminSession() {
   return useQuery({
@@ -272,6 +282,25 @@ export function useDeleteReviewMutation() {
       queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.reviewList });
       queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.reviewStats });
       queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.overview });
+    }
+  });
+}
+
+// Album / Cloudinary Image Management
+export function useAlbumImages(options?: { folder?: string; maxResults?: number }) {
+  return useQuery({
+    queryKey: ['admin', 'album', options?.folder ?? 'all', options?.maxResults ?? 100] as const,
+    queryFn: () => fetchAlbumImages(options),
+    staleTime: 30_000
+  });
+}
+
+export function useDeleteAlbumImageMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteAlbumImage,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'album'] });
     }
   });
 }

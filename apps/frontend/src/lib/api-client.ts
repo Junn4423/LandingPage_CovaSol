@@ -49,13 +49,24 @@ export async function apiRequest<TResponse, TBody = unknown>(options: ApiRequest
   const timeout = setTimeout(() => controller.abort(), options.timeoutMs ?? DEFAULT_TIMEOUT);
   const url = buildUrl(options.path);
 
+  const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
+
+  const headers = new Headers(options.headers);
+
+  if (!isFormData && !headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
+  }
+
+  const body = isFormData
+    ? (options.body as BodyInit)
+    : options.body
+    ? (JSON.stringify(options.body) as BodyInit)
+    : undefined;
+
   const init: NextRequestInit = {
     method: options.method ?? 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers
-    },
-    body: options.body ? JSON.stringify(options.body) : undefined,
+    headers,
+    body,
     signal: controller.signal,
     credentials: options.withAuth === false ? 'omit' : 'include',
     ...options.nextOptions

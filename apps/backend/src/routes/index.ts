@@ -9,6 +9,7 @@ import { adminBlogRouter } from './admin/blog';
 import { adminProductRouter } from './admin/products';
 import { adminAnalyticsRouter } from './admin/analytics';
 import { adminReviewRouter } from './admin/reviews';
+import { adminUploadRouter } from './admin/uploads';
 import { requireAuth } from '../middleware/require-auth';
 
 export const router = Router();
@@ -23,3 +24,4 @@ router.use('/admin/blog', requireAuth, adminBlogRouter);
 router.use('/admin/products', requireAuth, adminProductRouter);
 router.use('/admin/analytics', requireAuth, adminAnalyticsRouter);
 router.use('/admin/reviews', requireAuth, adminReviewRouter);
+router.use('/admin/uploads', requireAuth, adminUploadRouter);

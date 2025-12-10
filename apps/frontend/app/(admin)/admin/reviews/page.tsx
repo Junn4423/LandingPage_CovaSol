@@ -165,7 +165,7 @@ export default function AdminReviewsPage() {
               </div>
             ) : pagination.totalItems === 0 ? (
               <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center text-slate-500">
-                Chưa có đánh giá nào. Nhấn "Thêm đánh giá mới" để khởi tạo đầu tiên.
+                Chưa có đánh giá nào. Nhấn &quot;Thêm đánh giá mới&quot; để khởi tạo đầu tiên.
               </div>
             ) : (
               <div className="flex h-full flex-col gap-4 overflow-y-auto pr-1">

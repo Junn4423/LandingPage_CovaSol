@@ -160,7 +160,7 @@ export default function AdminUsersPage() {
               ) : pagination.totalItems === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-5 py-10 text-center text-slate-500">
-                    Chưa có người dùng nào. Nhấn "Thêm người dùng" để bắt đầu.
+                    Chưa có người dùng nào. Nhấn &quot;Thêm người dùng&quot; để bắt đầu.
                   </td>
                 </tr>
               ) : (

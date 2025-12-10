@@ -50,7 +50,7 @@ usersRouter.put('/:id', async (req: AuthenticatedRequest, res) => {
     return res.status(StatusCodes.BAD_REQUEST).json(parsed.error.flatten());
   }
 
-  if (req.params.id === req.user!.id && parsed.data.role && parsed.data.role !== req.user!.role) {
+  if (req.params.id === String(req.user!.id) && parsed.data.role && parsed.data.role !== req.user!.role) {
     return res.status(StatusCodes.BAD_REQUEST).json({ message: 'Không thể tự thay đổi vai trò.' });
   }
 
@@ -59,7 +59,7 @@ usersRouter.put('/:id', async (req: AuthenticatedRequest, res) => {
 });
 
 usersRouter.delete('/:id', async (req: AuthenticatedRequest, res) => {
-  if (req.params.id === req.user!.id) {
+  if (req.params.id === String(req.user!.id)) {
     return res.status(StatusCodes.BAD_REQUEST).json({ message: 'Không thể tự xoá tài khoản.' });
   }
   await deleteUser(req.params.id);

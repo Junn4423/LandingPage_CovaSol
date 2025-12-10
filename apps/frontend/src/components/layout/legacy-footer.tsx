@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
+import type { Route } from 'next';
 import { fetchVisitOverview } from '@/lib/api/analytics';
 import { normalizeImageUrl } from '@/lib/image-url';
 
@@ -61,7 +62,7 @@ export async function LegacyFooter() {
             <ul>
               {productLinks.map(item => (
                 <li key={item.label}>
-                  <Link href={item.href}>{item.label}</Link>
+                  <Link href={item.href as Route}>{item.label}</Link>
                 </li>
               ))}
             </ul>
@@ -72,7 +73,7 @@ export async function LegacyFooter() {
             <ul>
               {supportLinks.map(item => (
                 <li key={item.label}>
-                  <Link href={item.href}>{item.label}</Link>
+                  <Link href={item.href as Route}>{item.label}</Link>
                 </li>
               ))}
             </ul>

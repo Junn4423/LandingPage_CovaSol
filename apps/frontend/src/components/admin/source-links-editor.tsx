@@ -52,7 +52,7 @@ export function SourceLinksEditor({ items, onChange }: SourceLinksEditorProps) {
 
       {items.length === 0 ? (
         <div className="rounded-xl border border-dashed border-slate-300 bg-white p-4 text-center text-sm text-slate-500">
-          Chưa có nguồn tham khảo. Nhấn "Thêm nguồn" để bổ sung.
+          Chưa có nguồn tham khảo. Nhấn &quot;Thêm nguồn&quot; để bổ sung.
         </div>
       ) : (
         <div className="space-y-3">

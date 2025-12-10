@@ -1,6 +1,6 @@
 import type { Product as PrismaProduct } from '@prisma/client';
 import { prisma } from '../db/prisma';
-import type { ProductDetail, ProductSummary } from '@covasol/types';
+import type { ProductDetail, ProductSummary } from '../types/covasol';
 import { generateSlug, generateCode } from '../utils/slug';
 import { notifySitemapUpdated } from './sitemap.service';
 
@@ -8,8 +8,8 @@ type ProductRecord = PrismaProduct;
 
 export interface ProductUpsertInput {
   name: string;
-  category?: string;
-  shortDescription?: string;
+  category?: string | null;
+  shortDescription?: string | null;
   description?: string;
   imageUrl?: string | null;
   featureTags?: string[];
@@ -128,8 +128,8 @@ export async function createProduct(input: ProductUpsertInput): Promise<ProductD
       code,
       slug,
       name: input.name,
-      category: input.category,
-      shortDescription: input.shortDescription,
+      category: input.category ?? undefined,
+      shortDescription: input.shortDescription ?? undefined,
       description: input.description,
       imageUrl: input.imageUrl,
       featureTags: input.featureTags ? JSON.stringify(input.featureTags) : null,
@@ -160,8 +160,8 @@ export async function updateProduct(id: number | string, input: Partial<ProductU
     data: {
       slug,
       name: input.name,
-      category: input.category,
-      shortDescription: input.shortDescription,
+      category: input.category ?? undefined,
+      shortDescription: input.shortDescription ?? undefined,
       description: input.description,
       imageUrl: input.imageUrl,
       featureTags: input.featureTags !== undefined ? JSON.stringify(input.featureTags) : undefined,

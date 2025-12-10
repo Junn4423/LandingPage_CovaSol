@@ -1,5 +1,5 @@
 import { prisma } from '../db/prisma';
-import type { AdminOverviewStats } from '@covasol/types';
+import type { AdminOverviewStats } from '../types/covasol';
 import { getCookieConsentStats } from './cookie-consent.service';
 import { getVisitOverview } from './visit.service';
 

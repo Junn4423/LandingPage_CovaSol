@@ -64,8 +64,17 @@ adminBlogRouter.post('/', async (req: AuthenticatedRequest, res) => {
   if (!parsed.success) {
     return res.status(StatusCodes.BAD_REQUEST).json(parsed.error.flatten());
   }
+  const cleanPayload = {
+    ...parsed.data,
+    subtitle: parsed.data.subtitle ?? undefined,
+    imageUrl: parsed.data.imageUrl ?? undefined,
+    category: parsed.data.category ?? undefined,
+    authorName: parsed.data.authorName ?? undefined,
+    authorRole: parsed.data.authorRole ?? undefined,
+    publishedAt: parsed.data.publishedAt ?? undefined
+  };
 
-  const post = await createBlogPost({ ...parsed.data, authorId: req.user!.id });
+  const post = await createBlogPost({ ...cleanPayload, authorId: req.user!.id });
   res.status(StatusCodes.CREATED).json({ data: post });
 });
 
@@ -75,7 +84,17 @@ adminBlogRouter.put('/:id', async (req, res) => {
     return res.status(StatusCodes.BAD_REQUEST).json(parsed.error.flatten());
   }
 
-  const post = await updateBlogPost(req.params.id, parsed.data);
+  const cleanPayload = {
+    ...parsed.data,
+    subtitle: parsed.data.subtitle ?? undefined,
+    imageUrl: parsed.data.imageUrl ?? undefined,
+    category: parsed.data.category ?? undefined,
+    authorName: parsed.data.authorName ?? undefined,
+    authorRole: parsed.data.authorRole ?? undefined,
+    publishedAt: parsed.data.publishedAt ?? undefined
+  };
+
+  const post = await updateBlogPost(req.params.id, cleanPayload);
   res.json({ data: post });
 });
 

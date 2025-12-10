@@ -21,7 +21,7 @@ export interface ReviewUpsertInput {
   id?: number;
   name: string;
   role: string;
-  company?: string;
+  company?: string | null;
   rating?: number;
   quote: string;
   bgColor?: string;

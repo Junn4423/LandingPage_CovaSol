@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from '../db/prisma';
-import type { BlogPostDetail, BlogPostSummary } from '@covasol/types';
+import type { BlogPostDetail, BlogPostSummary } from '../types/covasol';
 import { generateSlug, generateCode } from '../utils/slug';
 import { notifySitemapUpdated } from './sitemap.service';
 
@@ -9,23 +9,23 @@ type BlogWithAuthor = Prisma.BlogPostGetPayload<{ include: { author: true } }>;
 export interface BlogUpsertInput {
   id?: number;
   title: string;
-  subtitle?: string;
+  subtitle?: string | null;
   excerpt?: string;
   content: string;
   tags?: string[];
   keywords?: string[];
   imageUrl?: string | null;
-  category?: string;
-  authorName?: string;
-  authorRole?: string;
+  category?: string | null;
+  authorName?: string | null;
+  authorRole?: string | null;
   status?: string;
   publishedAt?: Date | string | null;
   authorId?: number;
   slug?: string;
   isFeatured?: boolean;
-  galleryMedia?: Prisma.JsonValue;
-  videoItems?: Prisma.JsonValue;
-  sourceLinks?: Prisma.JsonValue;
+  galleryMedia?: Prisma.InputJsonValue | null;
+  videoItems?: Prisma.InputJsonValue | null;
+  sourceLinks?: Prisma.InputJsonValue | null;
 }
 
 const BLOG_STATUSES = new Set(['draft', 'published', 'archived']);
@@ -134,28 +134,32 @@ export async function createBlogPost(input: BlogUpsertInput): Promise<BlogPostDe
   const slug = generateSlug(input.slug ?? input.title, { entity: 'blog' });
   const code = generateCode('BLOG');
   const status = normalizeBlogStatus(input.status);
-  const publishedAt = input.publishedAt ? new Date(input.publishedAt) : new Date();
+  const publishedAt = input.publishedAt === null
+    ? new Date()
+    : input.publishedAt
+    ? new Date(input.publishedAt)
+    : new Date();
   
   const post = await prisma.blogPost.create({
     data: {
       code,
       slug,
       title: input.title,
-      subtitle: input.subtitle,
+      subtitle: input.subtitle ?? undefined,
       excerpt: input.excerpt ?? '',
       content: input.content,
       tags: input.tags ? JSON.stringify(input.tags) : null,
       keywords: input.keywords ? JSON.stringify(input.keywords) : null,
       imageUrl: input.imageUrl ?? null,
-      category: input.category,
-      authorName: input.authorName,
-      authorRole: input.authorRole,
+      category: input.category ?? undefined,
+      authorName: input.authorName ?? undefined,
+      authorRole: input.authorRole ?? undefined,
       status,
       publishedAt,
       authorId: input.authorId,
-      galleryMedia: input.galleryMedia ?? [],
-      videoItems: input.videoItems ?? [],
-      sourceLinks: input.sourceLinks ?? [],
+      galleryMedia: input.galleryMedia ?? Prisma.JsonNull,
+      videoItems: input.videoItems ?? Prisma.JsonNull,
+      sourceLinks: input.sourceLinks ?? Prisma.JsonNull,
       isFeatured: input.isFeatured ? 1 : 0
     },
     include: { author: true }
@@ -175,26 +179,31 @@ export async function updateBlogPost(id: number | string, input: Partial<BlogUps
   const numId = typeof id === 'string' ? parseInt(id, 10) : id;
   const slug = input.slug ? generateSlug(input.slug, { entity: 'blog' }) : undefined;
   const status = input.status ? normalizeBlogStatus(input.status) : undefined;
+  const publishedAt = input.publishedAt === null
+    ? undefined
+    : input.publishedAt
+    ? new Date(input.publishedAt)
+    : undefined;
   
   const post = await prisma.blogPost.update({
     where: { id: numId },
     data: {
       slug,
       title: input.title,
-      subtitle: input.subtitle,
+      subtitle: input.subtitle ?? undefined,
       excerpt: input.excerpt,
       content: input.content,
       tags: input.tags !== undefined ? JSON.stringify(input.tags) : undefined,
       keywords: input.keywords !== undefined ? JSON.stringify(input.keywords) : undefined,
-      imageUrl: input.imageUrl,
-      category: input.category,
-      authorName: input.authorName,
-      authorRole: input.authorRole,
+      imageUrl: input.imageUrl ?? undefined,
+      category: input.category ?? undefined,
+      authorName: input.authorName ?? undefined,
+      authorRole: input.authorRole ?? undefined,
       status,
-      publishedAt: input.publishedAt === undefined ? undefined : input.publishedAt ? new Date(input.publishedAt) : null,
-      galleryMedia: input.galleryMedia === undefined ? undefined : input.galleryMedia,
-      videoItems: input.videoItems === undefined ? undefined : input.videoItems,
-      sourceLinks: input.sourceLinks === undefined ? undefined : input.sourceLinks,
+      publishedAt,
+      galleryMedia: input.galleryMedia === undefined ? undefined : input.galleryMedia ?? Prisma.JsonNull,
+      videoItems: input.videoItems === undefined ? undefined : input.videoItems ?? Prisma.JsonNull,
+      sourceLinks: input.sourceLinks === undefined ? undefined : input.sourceLinks ?? Prisma.JsonNull,
       isFeatured: input.isFeatured !== undefined ? (input.isFeatured ? 1 : 0) : undefined
     },
     include: { author: true }

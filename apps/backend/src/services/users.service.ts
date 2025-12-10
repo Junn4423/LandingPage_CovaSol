@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { prisma } from '../db/prisma';
-import type { UserSummary } from '@covasol/types';
+import type { UserSummary } from '../types/covasol';
 
 export interface CreateUserInput {
   username: string;

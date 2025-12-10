@@ -71,8 +71,15 @@ adminProductRouter.post('/', async (req, res) => {
     return res.status(StatusCodes.BAD_REQUEST).json(parsed.error.flatten());
   }
 
-  const product = await createProduct({
+  const cleanPayload = {
     ...parsed.data,
+    category: parsed.data.category ?? undefined,
+    shortDescription: parsed.data.shortDescription ?? undefined,
+    imageUrl: parsed.data.imageUrl ?? undefined
+  };
+
+  const product = await createProduct({
+    ...cleanPayload,
     ctaPrimary: normalizeCta(parsed.data.ctaPrimary),
     ctaSecondary: normalizeCta(parsed.data.ctaSecondary)
   });
@@ -85,8 +92,15 @@ adminProductRouter.put('/:id', async (req, res) => {
     return res.status(StatusCodes.BAD_REQUEST).json(parsed.error.flatten());
   }
 
-  const product = await updateProduct(req.params.id, {
+  const cleanPayload = {
     ...parsed.data,
+    category: parsed.data.category ?? undefined,
+    shortDescription: parsed.data.shortDescription ?? undefined,
+    imageUrl: parsed.data.imageUrl ?? undefined
+  };
+
+  const product = await updateProduct(req.params.id, {
+    ...cleanPayload,
     ctaPrimary: normalizeCta(parsed.data.ctaPrimary),
     ctaSecondary: normalizeCta(parsed.data.ctaSecondary)
   });

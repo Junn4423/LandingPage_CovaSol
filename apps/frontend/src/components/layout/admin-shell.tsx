@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import type { Route } from 'next';
 import { PropsWithChildren } from 'react';
 import { usePathname } from 'next/navigation';
 import { AdminLoginPanel } from '@/components/admin/admin-login-panel';
@@ -9,11 +10,12 @@ import { ApiError } from '@/lib/api-client';
 import { normalizeImageUrl } from '@/lib/image-url';
 import { useAdminSession, useLogoutMutation, useAdminOverview } from '@/hooks/admin';
 
-const adminNav = [
+const adminNav: { href: Route; label: string; icon: string }[] = [
   { href: '/admin', label: 'Dashboard', icon: 'fas fa-gauge' },
   { href: '/admin/analytics', label: 'Analytics', icon: 'fas fa-chart-line' },
   { href: '/admin/blog', label: 'Blog', icon: 'fas fa-newspaper' },
   { href: '/admin/products', label: 'Sản phẩm', icon: 'fas fa-cubes' },
+  { href: '/admin/album', label: 'Album ảnh', icon: 'fas fa-images' },
   { href: '/admin/reviews', label: 'Đánh giá', icon: 'fas fa-star' },
   { href: '/admin/users', label: 'Người dùng', icon: 'fas fa-users' }
 ];

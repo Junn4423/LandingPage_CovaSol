@@ -12,6 +12,15 @@ import type {
   CustomerReviewDetail
 } from '@/types/content';
 
+export interface UploadMediaResponse {
+  url: string;
+  publicId: string;
+  width?: number;
+  height?: number;
+  bytes?: number;
+  format?: string;
+}
+
 export interface LoginPayload {
   username: string;
   password: string;
@@ -230,6 +239,22 @@ export async function deleteAdminUser(id: string) {
   });
 }
 
+export async function uploadAdminMedia(file: File, folder?: string) {
+  const form = new FormData();
+  form.append('file', file);
+  if (folder) {
+    form.append('folder', folder);
+  }
+
+  const res = await apiRequest<UploadMediaResponse | ApiSuccessResponse<UploadMediaResponse>>({
+    path: '/v1/admin/uploads/images',
+    method: 'POST',
+    body: form
+  });
+  // Backend returns the media payload directly (not wrapped). Support both shapes.
+  return (res as ApiSuccessResponse<UploadMediaResponse>).data ?? (res as UploadMediaResponse);
+}
+
 export async function fetchAdminReviews() {
   const res = await apiRequest<ApiSuccessResponse<CustomerReviewDetail[]>>({
     path: '/v1/admin/reviews'
@@ -265,6 +290,49 @@ export async function updateAdminReview(id: string, input: Partial<ReviewMutatio
 export async function deleteAdminReview(id: string) {
   await apiRequest<void>({
     path: `/v1/admin/reviews/${id}`,
+    method: 'DELETE'
+  });
+}
+
+// Album / Cloudinary Image Management
+export interface CloudinaryImage {
+  publicId: string;
+  url: string;
+  secureUrl: string;
+  width: number;
+  height: number;
+  bytes: number;
+  format: string;
+  createdAt: string;
+  folder: string;
+}
+
+export interface AlbumListResponse {
+  images: CloudinaryImage[];
+  nextCursor?: string;
+  totalCount?: number;
+}
+
+export async function fetchAlbumImages(options?: {
+  folder?: string;
+  maxResults?: number;
+  nextCursor?: string;
+}) {
+  const params = new URLSearchParams();
+  if (options?.folder) params.append('folder', options.folder);
+  if (options?.maxResults) params.append('maxResults', options.maxResults.toString());
+  if (options?.nextCursor) params.append('nextCursor', options.nextCursor);
+  
+  const queryString = params.toString();
+  const res = await apiRequest<ApiSuccessResponse<AlbumListResponse>>({
+    path: `/v1/admin/uploads/album${queryString ? `?${queryString}` : ''}`
+  });
+  return res.data;
+}
+
+export async function deleteAlbumImage(publicId: string) {
+  await apiRequest<void>({
+    path: `/v1/admin/uploads/images/${encodeURIComponent(publicId)}`,
     method: 'DELETE'
   });
 }

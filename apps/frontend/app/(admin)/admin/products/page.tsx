@@ -4,10 +4,13 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { PaginationControls } from '@/components/admin/pagination-controls';
 import { MediaListEditor, type MediaFormItem } from '@/components/admin/media-list-editor';
 import { QuickMediaDialog } from '@/components/admin/quick-media-dialog';
+import { ImageSelector } from '@/components/admin/image-selector';
+import { AlbumPickerModal } from '@/components/admin/album-picker-modal';
 import {
   useAdminProducts,
   useDeleteProductMutation,
-  useSaveProductMutation
+  useSaveProductMutation,
+  useUploadMediaMutation
 } from '@/hooks/admin';
 import { useClientPagination } from '@/hooks/use-pagination';
 import type { ProductDetail } from '@/types/content';
@@ -123,6 +126,29 @@ function parseMultilineList(value: string) {
     .filter(Boolean);
 }
 
+async function pickImageFile(): Promise<File | null> {
+  return new Promise(resolve => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = () => resolve(input.files?.[0] ?? null);
+    input.click();
+  });
+}
+
+function toErrorMessage(error: unknown, fallback = 'Đã có lỗi xảy ra, vui lòng thử lại.') {
+  if (error instanceof Error && error.message) return error.message;
+  if (typeof error === 'string' && error.trim()) return error;
+  return fallback;
+}
+
+function ensureUploadedUrl(uploaded: { url?: string } | undefined, context: string) {
+  if (!uploaded?.url) {
+    throw new Error(`Upload không trả về URL (${context}).`);
+  }
+  return uploaded.url;
+}
+
 interface DemoImage {
   url: string;
   caption: string;
@@ -170,6 +196,7 @@ export default function AdminProductsPage() {
   const { data, isLoading, error } = useAdminProducts();
   const saveMutation = useSaveProductMutation();
   const deleteMutation = useDeleteProductMutation();
+  const uploadMutation = useUploadMediaMutation();
   const [selectedProduct, setSelectedProduct] = useState<ProductDetail | null>(null);
   const [formState, setFormState] = useState<ProductFormState>(emptyForm);
   const [showEditor, setShowEditor] = useState(false);
@@ -177,6 +204,13 @@ export default function AdminProductsPage() {
   const [flash, setFlash] = useState<FlashMessage | null>(null);
   const [formSnapshot, setFormSnapshot] = useState(() => JSON.stringify(emptyForm));
   const [cursorParagraph, setCursorParagraph] = useState(0);
+  const [albumPickerIndex, setAlbumPickerIndex] = useState<number | null>(null);
+  const [isInlineInsertMode, setIsInlineInsertMode] = useState(false);
+  const [isDemoImageMode, setIsDemoImageMode] = useState(false);
+  const [isImageMenuOpen, setIsImageMenuOpen] = useState(false);
+  const [isDemoMenuOpen, setIsDemoMenuOpen] = useState(false);
+  const imageMenuRef = useRef<HTMLDivElement | null>(null);
+  const demoMenuRef = useRef<HTMLDivElement | null>(null);
   const contentInputRef = useRef<HTMLTextAreaElement | null>(null);
   const pagination = useClientPagination(data ?? [], { pageSize: PRODUCT_PAGE_SIZE });
   const visibleProducts = pagination.items;
@@ -231,12 +265,161 @@ export default function AdminProductsPage() {
     return () => window.removeEventListener('beforeunload', handler);
   }, [isDirty]);
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (imageMenuRef.current && !imageMenuRef.current.contains(event.target as Node)) {
+        setIsImageMenuOpen(false);
+      }
+      if (demoMenuRef.current && !demoMenuRef.current.contains(event.target as Node)) {
+        setIsDemoMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const updateCursorInfo = () => {
     setCursorParagraph(getParagraphIndexAtCursor(contentInputRef.current));
   };
 
   function showFlash(message: string, type: FlashMessage['type'] = 'info') {
     setFlash({ message, type });
+  }
+
+  async function handleUploadHeroImage() {
+    const file = await pickImageFile();
+    if (!file) return;
+    try {
+      const uploaded = await uploadMutation.mutateAsync({ file, folder: 'products/hero' });
+      setFormState(prev => ({ ...prev, imageUrl: ensureUploadedUrl(uploaded, 'hero') }));
+      showFlash('Đã upload ảnh đại diện lên Cloudinary', 'success');
+    } catch (err) {
+      showFlash(toErrorMessage(err), 'error');
+    }
+  }
+
+  async function handleUploadGalleryItem(index: number) {
+    const file = await pickImageFile();
+    if (!file) return;
+    try {
+      const uploaded = await uploadMutation.mutateAsync({ file, folder: 'products/gallery' });
+      setFormState(prev => {
+        const next = [...prev.galleryMedia];
+        next[index] = { ...next[index], url: ensureUploadedUrl(uploaded, 'gallery') };
+        return { ...prev, galleryMedia: next };
+      });
+      showFlash('Đã upload ảnh vào thư viện', 'success');
+    } catch (err) {
+      showFlash(toErrorMessage(err), 'error');
+    }
+  }
+
+  function handleSelectFromAlbum(index: number) {
+    setAlbumPickerIndex(index);
+  }
+
+  function handleAlbumImageSelected(url: string) {
+    if (isInlineInsertMode) {
+      const position = cursorParagraph;
+      setFormState(prev => ({
+        ...prev,
+        galleryMedia: [
+          ...prev.galleryMedia,
+          createMediaItem({ url, type: DEFAULT_IMAGE_TYPE, position }, DEFAULT_IMAGE_TYPE)
+        ]
+      }));
+      showFlash(`Đã chèn ảnh từ Album sau đoạn ${position}`, 'success');
+      setIsInlineInsertMode(false);
+      setIsImageMenuOpen(false);
+    } else if (isDemoImageMode) {
+      setFormState(prev => ({
+        ...prev,
+        demoImages: [...prev.demoImages, { url, caption: '' }]
+      }));
+      showFlash('Đã thêm ảnh demo từ Album', 'success');
+      setIsDemoImageMode(false);
+      setIsDemoMenuOpen(false);
+    } else if (albumPickerIndex !== null) {
+      setFormState(prev => {
+        const next = [...prev.galleryMedia];
+        next[albumPickerIndex] = { ...next[albumPickerIndex], url };
+        return { ...prev, galleryMedia: next };
+      });
+      showFlash('Đã chọn ảnh từ Album', 'success');
+    }
+    setAlbumPickerIndex(null);
+  }
+
+  async function handleInsertImageViaUpload() {
+    const file = await pickImageFile();
+    if (!file) return;
+    try {
+      const uploaded = await uploadMutation.mutateAsync({ file, folder: 'products/inline' });
+      const position = cursorParagraph;
+      setFormState(prev => ({
+        ...prev,
+        galleryMedia: [
+          ...prev.galleryMedia,
+          createMediaItem({ url: ensureUploadedUrl(uploaded, 'inline'), type: DEFAULT_IMAGE_TYPE, position }, DEFAULT_IMAGE_TYPE)
+        ]
+      }));
+      showFlash(`Đã upload và chèn ảnh sau đoạn ${position}`, 'success');
+    } catch (err) {
+      showFlash(toErrorMessage(err), 'error');
+    }
+  }
+
+  function handleInsertImageViaUrl() {
+    const url = window.prompt('Nhập URL ảnh:');
+    if (!url || !url.trim()) return;
+    const position = cursorParagraph;
+    setFormState(prev => ({
+      ...prev,
+      galleryMedia: [
+        ...prev.galleryMedia,
+        createMediaItem({ url: url.trim(), type: DEFAULT_IMAGE_TYPE, position }, DEFAULT_IMAGE_TYPE)
+      ]
+    }));
+    showFlash(`Đã chèn ảnh sau đoạn ${position}`, 'success');
+  }
+
+  function handleInsertImageFromAlbum() {
+    setIsInlineInsertMode(true);
+  }
+
+  async function handleAddDemoImageViaUpload() {
+    const file = await pickImageFile();
+    if (!file) return;
+    try {
+      const uploaded = await uploadMutation.mutateAsync({ file, folder: 'products/demo' });
+      setFormState(prev => ({
+        ...prev,
+        demoImages: [...prev.demoImages, { url: ensureUploadedUrl(uploaded, 'demo'), caption: '' }]
+      }));
+      showFlash('Đã upload ảnh demo', 'success');
+    } catch (err) {
+      showFlash(toErrorMessage(err), 'error');
+    }
+  }
+
+  function handleAddDemoImageViaUrl() {
+    const url = window.prompt('Nhập URL ảnh demo:');
+    if (!url || !url.trim()) return;
+    setFormState(prev => ({
+      ...prev,
+      demoImages: [...prev.demoImages, { url: url.trim(), caption: '' }]
+    }));
+    showFlash('Đã thêm ảnh demo', 'success');
+  }
+
+  function handleAddDemoImageFromAlbum() {
+    setIsDemoImageMode(true);
+  }
+
+  async function handleInlineUpload(file: File) {
+    const uploaded = await uploadMutation.mutateAsync({ file, folder: 'products/inline' });
+    showFlash('Đã upload ảnh và chèn URL', 'success');
+    return ensureUploadedUrl(uploaded, 'inline');
   }
 
   function handleMediaDialogSubmit(payload: { url: string; caption: string }) {
@@ -458,14 +641,54 @@ export default function AdminProductsPage() {
             <div className="flex items-center justify-between px-6 py-4 text-white" style={{ background: 'linear-gradient(135deg, #124e66, #1c6e8c)' }}>
               <h2 className="text-lg font-semibold">{selectedProduct ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm mới'}</h2>
               <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  className="flex items-center gap-2 rounded-xl bg-white/20 px-4 py-2 text-sm font-semibold transition-all hover:bg-white/30"
-                  onClick={() => setMediaDialog({ type: 'image' })}
-                >
-                  <i className="fas fa-image"></i>
-                  <span>Chèn ảnh</span>
-                </button>
+                <div className="relative" ref={imageMenuRef}>
+                  <button
+                    type="button"
+                    onClick={() => setIsImageMenuOpen(open => !open)}
+                    className="flex items-center gap-2 rounded-xl bg-white/20 px-4 py-2 text-sm font-semibold transition-all hover:bg-white/30"
+                  >
+                    <i className="fas fa-image"></i>
+                    <span>Chèn ảnh</span>
+                    <i className="fas fa-caret-down ml-1"></i>
+                  </button>
+                  {isImageMenuOpen && (
+                    <div className="absolute left-0 top-full z-50 mt-1 w-48 overflow-hidden rounded-lg bg-white shadow-lg">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleInsertImageViaUrl();
+                          setIsImageMenuOpen(false);
+                        }}
+                        className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-slate-100"
+                      >
+                        <i className="fas fa-link w-4"></i>
+                        <span>Nhập URL</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          await handleInsertImageViaUpload();
+                          setIsImageMenuOpen(false);
+                        }}
+                        className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-slate-100"
+                      >
+                        <i className="fas fa-upload w-4"></i>
+                        <span>Tải ảnh lên</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleInsertImageFromAlbum();
+                          setIsImageMenuOpen(false);
+                        }}
+                        className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-slate-100"
+                      >
+                        <i className="fas fa-images w-4"></i>
+                        <span>Chọn từ thư viện</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
                 <button
                   type="button"
                   className="flex items-center gap-2 rounded-xl bg-white/20 px-4 py-2 text-sm font-semibold transition-all hover:bg-white/30"
@@ -514,13 +737,13 @@ export default function AdminProductsPage() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-[#0f172a]">URL ảnh đại diện</label>
-                  <input
-                    type="url"
-                    className="w-full rounded-xl border border-slate-200 px-4 py-3 transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
+                  <ImageSelector
                     value={formState.imageUrl}
-                    onChange={e => setFormState(prev => ({ ...prev, imageUrl: e.target.value }))}
-                    placeholder="https://"
+                    onChange={url => setFormState(prev => ({ ...prev, imageUrl: url }))}
+                    placeholder="https://..."
+                    folder="products/hero"
                   />
+                  <p className="text-xs text-slate-500">Có thể dán URL, tải ảnh lên hoặc chọn từ Album.</p>
                 </div>
               </div>
 
@@ -577,7 +800,7 @@ export default function AdminProductsPage() {
                 <div className="space-y-3">
                   {formState.demoImages.length === 0 ? (
                     <div className="rounded-xl border border-dashed border-slate-300 bg-white p-4 text-center text-sm text-slate-500">
-                      Chưa có ảnh demo. Nhấn "Thêm ảnh demo" để bắt đầu.
+                      Chưa có ảnh demo. Nhấn &quot;Thêm ảnh demo&quot; để bắt đầu.
                     </div>
                   ) : (
                     formState.demoImages.map((img, index) => (
@@ -614,15 +837,55 @@ export default function AdminProductsPage() {
                     ))
                   )}
                 </div>
-                <button
-                  type="button"
-                  onClick={addDemoImage}
-                  disabled={formState.demoImages.length >= 9}
-                  className="flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-all hover:-translate-y-0.5 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <i className="fas fa-plus"></i>
-                  <span>Thêm ảnh demo</span>
-                </button>
+                <div className="relative" ref={demoMenuRef}>
+                  <button
+                    type="button"
+                    onClick={() => setIsDemoMenuOpen(open => !open)}
+                    disabled={formState.demoImages.length >= 9}
+                    className="flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-all hover:-translate-y-0.5 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <i className="fas fa-plus"></i>
+                    <span>Thêm ảnh demo</span>
+                    <i className="fas fa-caret-down ml-1"></i>
+                  </button>
+                  {isDemoMenuOpen && formState.demoImages.length < 9 && (
+                    <div className="absolute left-0 top-full z-50 mt-1 w-48 overflow-hidden rounded-lg bg-white shadow-lg">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleAddDemoImageViaUrl();
+                          setIsDemoMenuOpen(false);
+                        }}
+                        className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-slate-100"
+                      >
+                        <i className="fas fa-link w-4"></i>
+                        <span>Nhập URL</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          await handleAddDemoImageViaUpload();
+                          setIsDemoMenuOpen(false);
+                        }}
+                        className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-slate-100"
+                      >
+                        <i className="fas fa-upload w-4"></i>
+                        <span>Tải ảnh lên</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                        handleAddDemoImageFromAlbum();
+                        setIsDemoMenuOpen(false);
+                        }}
+                        className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-slate-100"
+                      >
+                        <i className="fas fa-images w-4"></i>
+                        <span>Chọn từ thư viện</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -667,6 +930,8 @@ Mỗi đoạn văn cách nhau bởi 1 dòng trống.
                     addLabel="Thêm ảnh"
                     typeOptions={PRODUCT_IMAGE_TYPE_OPTIONS}
                     nextPositionHint={inlinePositionHint}
+                    onUploadClick={handleUploadGalleryItem}
+                    onSelectFromAlbum={handleSelectFromAlbum}
                   />
                   <MediaListEditor
                     title="Video minh hoạ"
@@ -745,7 +1010,23 @@ Mỗi đoạn văn cách nhau bởi 1 dòng trống.
           positionHint={cursorParagraph}
           onClose={() => setMediaDialog(null)}
           onSubmit={handleMediaDialogSubmit}
+          onUploadFile={mediaDialog?.type === 'image' ? handleInlineUpload : undefined}
+          isUploading={uploadMutation.isPending}
         />
+        {(albumPickerIndex !== null || isInlineInsertMode || isDemoImageMode) && (
+          <AlbumPickerModal
+            onClose={() => {
+              setAlbumPickerIndex(null);
+              setIsInlineInsertMode(false);
+              setIsDemoImageMode(false);
+            }}
+            onSelect={url => {
+              handleAlbumImageSelected(url);
+              setIsImageMenuOpen(false);
+              setIsDemoMenuOpen(false);
+            }}
+          />
+        )}
         {flashOverlay}
       </>
     );

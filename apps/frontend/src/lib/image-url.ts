@@ -17,6 +17,36 @@ export interface NormalizeImageUrlOptions {
   driveExport?: DriveExportMode;
 }
 
+function applyCloudinaryOptimizations(parsed: URL): string {
+  const hostname = parsed.hostname.toLowerCase();
+  if (!hostname.endsWith('cloudinary.com') && !hostname.includes('res.cloudinary.com')) {
+    return parsed.href;
+  }
+
+  const segments = parsed.pathname.split('/').filter(Boolean);
+  const uploadIndex = segments.findIndex(segment => segment === 'upload');
+  if (uploadIndex === -1) {
+    return parsed.href;
+  }
+
+  const nextSegment = segments[uploadIndex + 1];
+  const hasVersion = nextSegment ? /^v\d+/.test(nextSegment) : false;
+  const hasTransformAlready = nextSegment?.includes('f_auto') || nextSegment?.includes('q_auto');
+
+  if (hasTransformAlready) {
+    return parsed.href;
+  }
+
+  if (nextSegment && !hasVersion) {
+    segments[uploadIndex + 1] = `f_auto,q_auto,${nextSegment}`;
+  } else {
+    segments.splice(uploadIndex + 1, 0, 'f_auto,q_auto');
+  }
+
+  parsed.pathname = `/${segments.join('/')}`;
+  return parsed.toString();
+}
+
 export function buildGoogleDrivePreviewUrl(fileId: string, mode: DriveExportMode = 'view') {
   return `https://drive.google.com/uc?export=${mode}&id=${fileId}`;
 }
@@ -104,7 +134,7 @@ export function normalizeImageUrl(value?: string | null, options: NormalizeImage
     }
   }
 
-  return parsed.href || trimmed;
+  return applyCloudinaryOptimizations(parsed) || trimmed;
 }
 
 function safeParseUrl(value: string) {

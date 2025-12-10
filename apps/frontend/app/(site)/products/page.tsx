@@ -137,11 +137,12 @@ function mapSummariesToCards(products: ProductSummary[]): LegacyProductCard[] {
 
   return products.map((product, index) => {
     const placeholder = FALLBACK_IMAGES[index % FALLBACK_IMAGES.length];
-    const detailHref = product.slug ? `/products/${product.slug}` : `/products/${product.id}`;
+    const fallbackId = product.id ?? product.slug ?? `product-${index}`;
+    const detailHref = product.slug ? `/products/${product.slug}` : `/products/${fallbackId}`;
     const isNew = product.status?.toLowerCase?.() === 'new';
 
     return {
-      id: product.id,
+      id: fallbackId,
       name: product.name,
       category: product.category || 'Giải pháp công nghệ',
       description: product.shortDescription || 'Đang cập nhật mô tả chi tiết.',

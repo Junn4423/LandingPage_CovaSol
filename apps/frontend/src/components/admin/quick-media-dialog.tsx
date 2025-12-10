@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import clsx from "clsx";
 
 export interface QuickMediaDialogProps {
@@ -11,6 +11,8 @@ export interface QuickMediaDialogProps {
   positionHint?: number;
   onClose: () => void;
   onSubmit: (payload: { url: string; caption: string }) => void;
+  onUploadFile?: (file: File) => Promise<string>;
+  isUploading?: boolean;
 }
 
 const LABELS = {
@@ -35,16 +37,21 @@ export function QuickMediaDialog({
   description,
   positionHint,
   onClose,
-  onSubmit
+  onSubmit,
+  onUploadFile,
+  isUploading
 }: QuickMediaDialogProps) {
   const [url, setUrl] = useState("");
   const [caption, setCaption] = useState("");
+  const [localUploading, setLocalUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const meta = LABELS[type];
 
   useEffect(() => {
     if (!open) return;
     setUrl("");
     setCaption("");
+    setLocalUploading(false);
   }, [open, type]);
 
   function handleSubmit() {
@@ -55,6 +62,27 @@ export function QuickMediaDialog({
     setUrl("");
     setCaption("");
   }
+
+  async function handlePickFile(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file || !onUploadFile) return;
+
+    try {
+      setLocalUploading(true);
+      const uploadedUrl = await onUploadFile(file);
+      if (uploadedUrl) {
+        setUrl(uploadedUrl);
+      }
+    } catch (error) {
+      console.error("Upload ảnh thất bại", error);
+      alert("Không thể upload ảnh. Vui lòng thử lại hoặc kiểm tra kết nối.");
+    } finally {
+      setLocalUploading(false);
+    }
+  }
+
+  const uploadBusy = localUploading || Boolean(isUploading);
 
   if (!open) {
     return null;
@@ -93,6 +121,29 @@ export function QuickMediaDialog({
               onChange={event => setUrl(event.target.value)}
               autoFocus
             />
+            {type === "image" && onUploadFile ? (
+              <div className="flex items-center gap-3">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handlePickFile}
+                />
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-[#1c6e8c] shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadBusy}
+                >
+                  <i className="fas fa-upload" aria-hidden="true" />
+                  {uploadBusy ? "Đang tải..." : "Tải ảnh từ máy"}
+                </button>
+                <p className="text-[11px] text-slate-500">
+                  Ảnh sẽ được upload lên Cloudinary và tự chèn URL.
+                </p>
+              </div>
+            ) : null}
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-700">Chú thích (tuỳ chọn)</label>
@@ -124,12 +175,12 @@ export function QuickMediaDialog({
               type="button"
               className={clsx(
                 "rounded-xl px-5 py-2 text-sm font-semibold text-white shadow-lg transition",
-                url.trim() ? "bg-[#1c6e8c] hover:bg-[#15506a]" : "bg-slate-300 cursor-not-allowed"
+                url.trim() && !uploadBusy ? "bg-[#1c6e8c] hover:bg-[#15506a]" : "bg-slate-300 cursor-not-allowed"
               )}
               onClick={handleSubmit}
-              disabled={!url.trim()}
+              disabled={!url.trim() || uploadBusy}
             >
-              Chèn
+              {uploadBusy ? "Đang tải" : "Chèn"}
             </button>
           </div>
         </div>

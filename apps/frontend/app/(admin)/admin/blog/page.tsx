@@ -6,10 +6,13 @@ import { MediaListEditor, type MediaFormItem } from '@/components/admin/media-li
 import { SourceLinksEditor, type SourceLinkItem } from '@/components/admin/source-links-editor';
 import { QuickMediaDialog } from '@/components/admin/quick-media-dialog';
 import { QuickSourceDialog } from '@/components/admin/quick-source-dialog';
+import { ImageSelector } from '@/components/admin/image-selector';
+import { AlbumPickerModal } from '@/components/admin/album-picker-modal';
 import {
   useAdminBlogPosts,
   useDeleteBlogPostMutation,
-  useSaveBlogPostMutation
+  useSaveBlogPostMutation,
+  useUploadMediaMutation
 } from '@/hooks/admin';
 import { useClientPagination } from '@/hooks/use-pagination';
 import type { BlogPostDetail } from '@/types/content';
@@ -208,10 +211,30 @@ function countWords(text: string): number {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
+async function pickImageFile(): Promise<File | null> {
+  return new Promise(resolve => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = () => {
+      const file = input.files?.[0];
+      resolve(file ?? null);
+    };
+    input.click();
+  });
+}
+
+function toErrorMessage(error: unknown, fallback = 'Đã có lỗi xảy ra, vui lòng thử lại.') {
+  if (error instanceof Error && error.message) return error.message;
+  if (typeof error === 'string' && error.trim()) return error;
+  return fallback;
+}
+
 export default function AdminBlogPage() {
   const { data, isLoading, error } = useAdminBlogPosts();
   const saveMutation = useSaveBlogPostMutation();
   const deleteMutation = useDeleteBlogPostMutation();
+  const uploadMutation = useUploadMediaMutation();
   const [selectedPost, setSelectedPost] = useState<BlogPostDetail | null>(null);
   const [formState, setFormState] = useState<BlogFormState>(() => ({ ...emptyForm }));
   const [showEditor, setShowEditor] = useState(false);
@@ -220,6 +243,10 @@ export default function AdminBlogPage() {
   const [flash, setFlash] = useState<FlashMessage | null>(null);
   const [formSnapshot, setFormSnapshot] = useState(() => JSON.stringify(emptyForm));
   const [cursorParagraph, setCursorParagraph] = useState(0);
+  const [albumPickerIndex, setAlbumPickerIndex] = useState<number | null>(null);
+  const [isInlineInsertMode, setIsInlineInsertMode] = useState(false);
+  const [isImageMenuOpen, setIsImageMenuOpen] = useState(false);
+  const imageMenuRef = useRef<HTMLDivElement | null>(null);
   const contentInputRef = useRef<HTMLTextAreaElement | null>(null);
   const pagination = useClientPagination(data ?? [], { pageSize: BLOG_PAGE_SIZE });
   const visiblePosts = pagination.items;
@@ -274,12 +301,123 @@ export default function AdminBlogPage() {
     }
   }, [hasPreviewSeed, previewData]);
 
+  // Close image dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (imageMenuRef.current && !imageMenuRef.current.contains(event.target as Node)) {
+        setIsImageMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const updateCursorInfo = () => {
     setCursorParagraph(getParagraphIndexAtCursor(contentInputRef.current));
   };
 
   function showFlash(message: string, type: FlashMessage['type'] = 'info') {
     setFlash({ message, type });
+  }
+
+  async function handleUploadHeroImage() {
+    const file = await pickImageFile();
+    if (!file) return;
+    try {
+      const uploaded = await uploadMutation.mutateAsync({ file, folder: 'blog/hero' });
+      setFormState(prev => ({ ...prev, imageUrl: uploaded.url }));
+      showFlash('Đã upload ảnh bìa lên Cloudinary', 'success');
+    } catch (err) {
+      showFlash(toErrorMessage(err), 'error');
+    }
+  }
+
+  async function handleUploadGalleryItem(index: number) {
+    const file = await pickImageFile();
+    if (!file) return;
+    try {
+      const uploaded = await uploadMutation.mutateAsync({ file, folder: 'blog/gallery' });
+      setFormState(prev => {
+        const next = [...prev.galleryMedia];
+        next[index] = { ...next[index], url: uploaded.url };
+        return { ...prev, galleryMedia: next };
+      });
+      showFlash('Đã upload ảnh vào thư viện', 'success');
+    } catch (err) {
+      showFlash(toErrorMessage(err), 'error');
+    }
+  }
+
+  function handleSelectFromAlbum(index: number) {
+    setAlbumPickerIndex(index);
+  }
+
+  function handleAlbumImageSelected(url: string) {
+    if (isInlineInsertMode) {
+      const position = cursorParagraph;
+      setFormState(prev => ({
+        ...prev,
+        galleryMedia: [
+          ...prev.galleryMedia,
+          createMediaItem({ url, type: 'inline', position }, DEFAULT_IMAGE_TYPE)
+        ]
+      }));
+      showFlash(`Đã chèn ảnh từ Album sau đoạn ${position}`, 'success');
+      setIsInlineInsertMode(false);
+      setIsImageMenuOpen(false);
+    } else if (albumPickerIndex !== null) {
+      setFormState(prev => {
+        const next = [...prev.galleryMedia];
+        next[albumPickerIndex] = { ...next[albumPickerIndex], url };
+        return { ...prev, galleryMedia: next };
+      });
+      showFlash('Đã chọn ảnh từ Album', 'success');
+    }
+    setAlbumPickerIndex(null);
+  }
+
+  async function handleInsertImageViaUpload() {
+    const file = await pickImageFile();
+    if (!file) return;
+    try {
+      const uploaded = await uploadMutation.mutateAsync({ file, folder: 'blog/inline' });
+      const position = cursorParagraph;
+      setFormState(prev => ({
+        ...prev,
+        galleryMedia: [
+          ...prev.galleryMedia,
+          createMediaItem({ url: uploaded.url, type: 'inline', position }, DEFAULT_IMAGE_TYPE)
+        ]
+      }));
+      showFlash(`Đã upload và chèn ảnh sau đoạn ${position}`, 'success');
+    } catch (err) {
+      showFlash(toErrorMessage(err), 'error');
+    }
+  }
+
+  function handleInsertImageViaUrl() {
+    const url = window.prompt('Nhập URL ảnh:');
+    if (!url || !url.trim()) return;
+    const position = cursorParagraph;
+    setFormState(prev => ({
+      ...prev,
+      galleryMedia: [
+        ...prev.galleryMedia,
+        createMediaItem({ url: url.trim(), type: 'inline', position }, DEFAULT_IMAGE_TYPE)
+      ]
+    }));
+    showFlash(`Đã chèn ảnh sau đoạn ${position}`, 'success');
+  }
+
+  function handleInsertImageFromAlbum() {
+    setIsInlineInsertMode(true);
+    // The AlbumPickerModal will be shown and handleAlbumImageSelected will handle it
+  }
+
+  async function handleInlineUpload(file: File) {
+    const uploaded = await uploadMutation.mutateAsync({ file, folder: 'blog/inline' });
+    showFlash('Đã upload ảnh và chèn URL', 'success');
+    return uploaded.url;
   }
 
   function handleMediaDialogSubmit(payload: { url: string; caption: string }) {
@@ -509,14 +647,54 @@ export default function AdminBlogPage() {
           <div className="flex items-center justify-between px-6 py-4 text-white" style={{ background: 'linear-gradient(135deg, #124e66, #1c6e8c)' }}>
             <h2 className="text-lg font-semibold">{selectedPost ? 'Chỉnh sửa bài viết' : 'Soạn bài viết mới'}</h2>
             <div className="flex items-center gap-2">
-              <button
-                type="button"
-                className="flex items-center gap-2 rounded-xl bg-white/20 px-4 py-2 text-sm font-semibold transition-all hover:bg-white/30"
-                onClick={() => setMediaDialog({ type: 'image' })}
-              >
-                <i className="fas fa-image"></i>
-                <span>Chèn ảnh</span>
-              </button>
+              <div className="relative" ref={imageMenuRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsImageMenuOpen(open => !open)}
+                  className="flex items-center gap-2 rounded-xl bg-white/20 px-4 py-2 text-sm font-semibold transition-all hover:bg-white/30"
+                >
+                  <i className="fas fa-image"></i>
+                  <span>Chèn ảnh</span>
+                  <i className="fas fa-caret-down ml-1"></i>
+                </button>
+                {isImageMenuOpen && (
+                  <div className="absolute left-0 top-full z-50 mt-1 w-48 overflow-hidden rounded-lg bg-white shadow-lg">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleInsertImageViaUrl();
+                        setIsImageMenuOpen(false);
+                      }}
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-slate-100"
+                    >
+                      <i className="fas fa-link w-4"></i>
+                      <span>Nhập URL</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        await handleInsertImageViaUpload();
+                        setIsImageMenuOpen(false);
+                      }}
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-slate-100"
+                    >
+                      <i className="fas fa-upload w-4"></i>
+                      <span>Tải ảnh lên</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleInsertImageFromAlbum();
+                        setIsImageMenuOpen(false);
+                      }}
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-slate-100"
+                    >
+                      <i className="fas fa-images w-4"></i>
+                      <span>Chọn từ thư viện</span>
+                    </button>
+                  </div>
+                )}
+              </div>
               <button
                 type="button"
                 className="flex items-center gap-2 rounded-xl bg-white/20 px-4 py-2 text-sm font-semibold transition-all hover:bg-white/30"
@@ -587,13 +765,13 @@ export default function AdminBlogPage() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-[#0f172a]">URL ảnh bìa</label>
-                  <input
-                    type="url"
-                    className="w-full rounded-xl border border-slate-200 px-4 py-3 transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
+                  <ImageSelector
                     value={formState.imageUrl}
-                    onChange={e => setFormState(prev => ({ ...prev, imageUrl: e.target.value }))}
-                    placeholder="https://"
+                    onChange={url => setFormState(prev => ({ ...prev, imageUrl: url }))}
+                    placeholder="https://..."
+                    folder="blog/hero"
                   />
+                  <p className="text-xs text-slate-500">Có thể dán URL, tải ảnh lên hoặc chọn từ Album.</p>
                 </div>
               </div>
 
@@ -725,6 +903,8 @@ Mỗi đoạn văn cách nhau bởi 1 dòng trống.
                   addLabel="Thêm ảnh"
                   typeOptions={IMAGE_TYPE_OPTIONS}
                   nextPositionHint={inlinePositionHint}
+                  onUploadClick={handleUploadGalleryItem}
+                  onSelectFromAlbum={handleSelectFromAlbum}
                 />
                 <MediaListEditor
                   title="Video minh hoạ"
@@ -807,12 +987,23 @@ Mỗi đoạn văn cách nhau bởi 1 dòng trống.
           positionHint={cursorParagraph}
           onClose={() => setMediaDialog(null)}
           onSubmit={handleMediaDialogSubmit}
+          onUploadFile={mediaDialog?.type === 'image' ? handleInlineUpload : undefined}
+          isUploading={uploadMutation.isPending}
         />
         <QuickSourceDialog
           open={sourceDialogOpen}
           onClose={() => setSourceDialogOpen(false)}
           onSubmit={handleSourceDialogSubmit}
         />
+        {(albumPickerIndex !== null || isInlineInsertMode) && (
+          <AlbumPickerModal
+            onClose={() => {
+              setAlbumPickerIndex(null);
+              setIsInlineInsertMode(false);
+            }}
+            onSelect={handleAlbumImageSelected}
+          />
+        )}
         {flash && (
           <div className={`fixed right-10 top-10 z-50 rounded-2xl px-5 py-3 text-sm font-semibold text-white shadow-2xl ${flashTone}`}>
             {flash.message}
