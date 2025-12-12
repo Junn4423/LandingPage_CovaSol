@@ -1,15 +1,21 @@
 ﻿/* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { fetchProductSummaries } from '@/lib/api/products';
 import { fetchBlogSummaries } from '@/lib/api/blog';
 import { fetchReviews, fetchReviewStats } from '@/lib/api/reviews';
 import { normalizeImageUrl } from '@/lib/image-url';
 import { HomeProductsGrid } from '@/components/home/home-products-grid';
 import { HomeBlogGrid } from '@/components/home/home-blog-grid';
-import { ReviewsCarousel } from '@/components/home/reviews-carousel';
 import { ContactForm } from '@/components/home/contact-form';
 import { HeroVideo } from '@/components/home/hero-video';
 import { Metadata } from 'next';
+
+// Lazy load non-critical components
+const ReviewsCarousel = dynamic(() => import('@/components/home/reviews-carousel').then(mod => ({ default: mod.ReviewsCarousel })), {
+  loading: () => <div className="reviews-loading">Đang tải...</div>,
+  ssr: true
+});
 
 const HERO_VIDEO_SRC = '/assets/video/Hero_section_Landing_page_3D_animation.webm';
 

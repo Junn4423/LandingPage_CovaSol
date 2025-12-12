@@ -1,7 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import clsx from 'clsx';
+import Image from 'next/image';
 import { normalizeImageUrl } from '@/lib/image-url';
 
 const ZALO_ICON = normalizeImageUrl('/assets/img/icons/Zalo.png', { fallback: '/assets/img/icons/Zalo.png' });
@@ -32,7 +32,7 @@ export function FloatingContactFab({ isOpen, onToggle }: FloatingContactFabProps
       <div className={clsx('contact-fab__actions', { open: isOpen })} id="contactFabActions">
         <a href="https://zalo.me/0559526824" className="contact-fab__action" target="_blank" rel="noopener noreferrer">
           <span className="contact-fab__icon contact-fab__icon--zalo">
-            <img src={ZALO_ICON} alt="Zalo" />
+            <Image src={ZALO_ICON} alt="Zalo" width={24} height={24} />
           </span>
           <span className="contact-fab__label" data-key="contact-fab-zalo">
             Zalo
@@ -68,6 +68,7 @@ export function FloatingContactFab({ isOpen, onToggle }: FloatingContactFabProps
         className={clsx('contact-fab__toggle', { open: isOpen })}
         aria-expanded={isOpen} 
         aria-controls="contactFabActions"
+        aria-label={isOpen ? 'Đóng menu liên hệ' : 'Mở menu liên hệ'}
         onClick={onToggle}
       >
         <i className={clsx('fas', isOpen ? 'fa-times' : 'fa-headset')} aria-hidden="true" />

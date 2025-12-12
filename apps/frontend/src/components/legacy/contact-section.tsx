@@ -86,7 +86,8 @@ export function LegacyContactSection({
               <input type="tel" id="phone" name="phone" data-key="contact-form-phone" placeholder="Số điện thoại *" required />
             </div>
             <div className="form-group">
-              <select id="service" name="service" required>
+              <label htmlFor="service" className="visually-hidden">Dịch vụ quan tâm</label>
+              <select id="service" name="service" required aria-label="Chọn dịch vụ quan tâm">
                 <option value="" data-key="contact-form-service">
                   -- Chọn dịch vụ quan tâm * --
                 </option>

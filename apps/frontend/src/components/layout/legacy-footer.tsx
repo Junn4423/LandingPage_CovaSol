@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Route } from 'next';
 import { fetchVisitOverview } from '@/lib/api/analytics';
 import { normalizeImageUrl } from '@/lib/image-url';
@@ -42,7 +43,7 @@ export async function LegacyFooter() {
         <div className="footer-grid">
           <div className="footer-brand">
             <div className="footer-logo">
-              <img src={LOGO_SRC} alt="COVASOL Logo" />
+              <Image src={LOGO_SRC} alt="COVASOL Logo" width={40} height={40} />
               <span>COVASOL</span>
             </div>
             <p className="footer-description">

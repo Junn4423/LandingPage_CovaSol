@@ -4,6 +4,7 @@
 import type { CSSProperties } from 'react';
 import clsx from 'clsx';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 import { useLanguageSwitcher } from '@/hooks/use-language-switcher';
@@ -62,7 +63,7 @@ export function LegacyNavbar() {
       <div className="nav-container">
         <div className="nav-logo">
           <Link href="/">
-            <img src={BRAND_LOGO} alt="COVASOL Logo" />
+            <Image src={BRAND_LOGO} alt="COVASOL Logo" width={40} height={40} priority />
           </Link>
           <Link href="/" aria-label="Trang chủ COVASOL">
             <span>COVASOL</span>
@@ -120,7 +121,7 @@ export function LegacyNavbar() {
                     type="button"
                     onClick={() => selectLanguage(option.code)}
                   >
-                    <img src={normalizeImageUrl(option.flagUrl, { fallback: option.flagUrl })} alt={option.label} />
+                    <Image src={normalizeImageUrl(option.flagUrl, { fallback: option.flagUrl })} alt={option.label} width={24} height={16} />
                     <span>{option.label}</span>
                   </button>
                 ))}

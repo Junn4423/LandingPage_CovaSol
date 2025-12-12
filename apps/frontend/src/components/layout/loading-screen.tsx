@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
+import Image from 'next/image';
 import { normalizeImageUrl } from '@/lib/image-url';
 
 const LOGO_SRC = normalizeImageUrl('/assets/img/logo.png', { fallback: '/assets/img/logo.png' });
@@ -50,7 +51,7 @@ export function LoadingScreen() {
   return (
     <div id="loading" className={clsx('loading-screen', { hidden: isHidden })} aria-hidden="true">
       <div className="loading-content">
-        <img src={LOGO_SRC} alt="COVASOL Logo" className="loading-logo" />
+        <Image src={LOGO_SRC} alt="COVASOL Logo" className="loading-logo" width={120} height={40} priority />
         <div className="loading-spinner" />
       </div>
     </div>

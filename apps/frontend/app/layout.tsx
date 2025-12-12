@@ -30,17 +30,40 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;500;600;700;800&family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
-        />
+        <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+        {/* Critical CSS - Load immediately */}
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
           crossOrigin="anonymous"
           referrerPolicy="no-referrer"
         />
-        <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+        {/* Fonts - Can be deferred */}
+        <link
+          rel="preload"
+          as="style"
+          href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;500;600;700;800&family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;500;600;700;800&family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
+          media="print"
+          // @ts-ignore
+          onLoad="this.media='all'"
+        />
+        <noscript>
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;500;600;700;800&family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
+          />
+        </noscript>
+        {/* AOS - Non-critical, can be deferred */}
+        <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" media="print" 
+          // @ts-ignore
+          onLoad="this.media='all'" />
+        <noscript>
+          <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+        </noscript>
         {/* Legacy CSS from public assets */}
         <link rel="stylesheet" href="/assets/css/variables.css" />
         <link rel="stylesheet" href="/assets/css/base.css" />

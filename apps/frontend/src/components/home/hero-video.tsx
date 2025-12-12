@@ -29,9 +29,10 @@ export function HeroVideo({ src, className = '' }: HeroVideoProps) {
       muted
       loop
       playsInline
-      preload="auto"
+      preload="metadata"
+      poster="/assets/img/hero-poster.jpg"
     >
-      <source src={src} type="video/mp4" />
+      <source src={src} type="video/webm" />
       Trình duyệt của bạn không hỗ trợ video.
     </video>
   );
