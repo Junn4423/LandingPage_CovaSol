@@ -11,9 +11,17 @@ export const metadata: Metadata = {
   description: 'Core Value. Smart Solutions. Dịch vụ tư vấn và triển khai giải pháp chuyển đổi số toàn diện.',
   metadataBase: new URL('https://covasol.com.vn'),
   icons: {
-    icon: '/favicon.png',
-    shortcut: '/favicon.png',
-    apple: '/favicon.png'
+    icon: [
+      { url: '/assets/favicon/favicon.ico', sizes: 'any' },
+      { url: '/assets/favicon/favicon.svg', type: 'image/svg+xml' },
+      { url: '/assets/favicon/favicon-96x96.png', sizes: '96x96', type: 'image/png' }
+    ],
+    shortcut: '/assets/favicon/favicon.ico',
+    apple: { url: '/assets/favicon/apple-touch-icon.png', sizes: '180x180' }
+  },
+  manifest: '/assets/favicon/site.webmanifest',
+  appleWebApp: {
+    title: 'CovaSol'
   }
 };
 
@@ -34,8 +42,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           referrerPolicy="no-referrer"
         />
         <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
-        <link rel="icon" type="image/png" href="/favicon.png" sizes="32x32" />
-        <link rel="icon" type="image/png" href="/favicon.png" sizes="192x192" />
+        {/* Full favicon set */}
+        <link rel="icon" type="image/png" href="/assets/favicon/favicon-96x96.png" sizes="96x96" />
+        <link rel="icon" type="image/svg+xml" href="/assets/favicon/favicon.svg" />
+        <link rel="shortcut icon" href="/assets/favicon/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png" />
+        <meta name="apple-mobile-web-app-title" content="CovaSol" />
+        <link rel="manifest" href="/assets/favicon/site.webmanifest" />
         {/* Legacy CSS from public assets */}
         <link rel="stylesheet" href="/assets/css/variables.css" />
         <link rel="stylesheet" href="/assets/css/base.css" />

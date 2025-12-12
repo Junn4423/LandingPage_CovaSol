@@ -193,6 +193,13 @@
    background: linear-gradient(180deg, #f4f7fb 0%, #ffffff 100%);
 }
 
+.article-preview-section .container,
+.product-preview-section .container {
+   max-width: var(--content-max, 1200px);
+   margin-inline: auto;
+   padding-inline: var(--gutter, clamp(20px, 4vw, 48px));
+}
+
 .live-preview-header {
    margin-bottom: 1.5rem;
 }
@@ -208,7 +215,7 @@
 .preview-content {
    max-width: 900px;
    width: min(100%, 900px);
-   padding: clamp(1.5rem, 4vw, 3rem);
+   padding: clamp(2rem, 5vw, 3.5rem);
    border-radius: 1.5rem;
    background: #ffffff;
    box-shadow: 0 30px 60px rgba(13, 27, 42, 0.08);
@@ -327,21 +334,28 @@
 .preview-body {
    font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
    margin: 2rem 0;
-   line-height: 1.8;
+   line-height: 1.85;
    color: #334155;
    font-size: clamp(1rem, 2vw, 1.05rem);
+   text-align: justify;
+   text-justify: inter-word;
+   hyphens: auto;
 }
 
 .live-preview-body {
    margin: 2rem 0;
+   text-align: justify;
+   text-justify: inter-word;
 }
 
 .preview-body .preview-paragraph {
    font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
    font-size: clamp(1rem, 2vw, 1.05rem);
-   line-height: 1.8;
+   line-height: 1.85;
    color: #334155;
    margin-bottom: 1.5rem;
+   text-align: justify;
+   text-justify: inter-word;
 }
 
 .preview-tags {
@@ -645,13 +659,19 @@
 .product-preview-layout {
    display: grid;
    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
-   gap: 3rem;
+   gap: clamp(2rem, 5vw, 3.5rem);
+   align-items: start;
 }
 
 .product-main {
    display: flex;
    flex-direction: column;
    gap: 2rem;
+}
+
+.product-main .preview-content {
+   text-align: justify;
+   text-justify: inter-word;
 }
 
 .product-cta-group {
@@ -750,13 +770,19 @@
 .article-layout {
    display: grid;
    grid-template-columns: minmax(0, 2.1fr) minmax(0, 1fr);
-   gap: 3rem;
+   gap: clamp(2rem, 5vw, 3.5rem);
+   align-items: start;
 }
 
 .article-main {
    display: flex;
    flex-direction: column;
    gap: 2rem;
+}
+
+.article-main .preview-content {
+   text-align: justify;
+   text-justify: inter-word;
 }
 
 .article-cover img {

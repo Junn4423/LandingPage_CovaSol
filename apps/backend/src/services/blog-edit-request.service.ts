@@ -111,6 +111,22 @@ export async function getPendingRequestsForPost(blogPostId: number): Promise<Edi
 }
 
 /**
+ * Get all pending edit requests (for super-admin overview)
+ */
+export async function getAllPendingRequests(): Promise<EditRequestSummary[]> {
+  const requests = await prisma.blogEditRequest.findMany({
+    where: { status: 'pending' },
+    include: {
+      blogPost: { select: { title: true } },
+      requester: { select: { displayName: true } }
+    },
+    orderBy: { createdAt: 'desc' }
+  });
+
+  return requests.map(toSummary);
+}
+
+/**
  * Get all pending edit requests made by a specific user
  */
 export async function getPendingRequestsByUser(requesterId: number): Promise<EditRequestSummary[]> {

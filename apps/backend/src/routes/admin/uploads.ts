@@ -2,11 +2,15 @@ import { Router, type Request } from 'express';
 import multer from 'multer';
 import { StatusCodes } from 'http-status-codes';
 import { uploadImageFromBuffer, listCloudinaryImages, deleteCloudinaryImage } from '../../services/upload.service';
+import { logger } from '../../logger';
+
+const MAX_UPLOAD_SIZE = 200 * 1024 * 1024; // 200MB
 
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB
+    // Allow large uploads; compression handled by Cloudinary transformations
+    fileSize: MAX_UPLOAD_SIZE
   }
 });
 
@@ -16,6 +20,13 @@ type UploadRequest = Request & { file?: Express.Multer.File };
 
 adminUploadRouter.post('/images', upload.single('file'), async (req: UploadRequest, res) => {
   try {
+    logger.info({
+      path: req.originalUrl,
+      contentLength: req.headers['content-length'],
+      mime: req.file?.mimetype,
+      size: req.file?.size
+    }, 'upload: incoming request');
+
     if (!req.file) {
       return res
         .status(StatusCodes.BAD_REQUEST)
@@ -42,6 +53,11 @@ adminUploadRouter.post('/images', upload.single('file'), async (req: UploadReque
   } catch (error: any) {
     const status = typeof error?.status === 'number' ? error.status : StatusCodes.INTERNAL_SERVER_ERROR;
     const message = error?.message || 'Upload thất bại, vui lòng thử lại.';
+    if (error?.code === 'LIMIT_FILE_SIZE') {
+      logger.warn({ size: req.file?.size, limit: MAX_UPLOAD_SIZE }, 'upload: file size exceeds limit');
+    } else {
+      logger.error({ err: error, path: req.originalUrl }, 'upload: failed');
+    }
     return res.status(status).json({ message });
   }
 });

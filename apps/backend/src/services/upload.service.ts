@@ -84,6 +84,17 @@ export async function uploadImageFromBuffer(
       {
         folder,
         resource_type: 'image',
+        // Always compress and convert automatically to keep the final asset light (<1MB goal)
+        transformation: [
+          {
+            fetch_format: 'auto',
+            quality: 'auto:good',
+            flags: 'lossy',
+            width: 2400,
+            height: 2400,
+            crop: 'limit'
+          }
+        ],
         use_filename: Boolean(options?.filename),
         filename_override: options?.filename,
         unique_filename: !options?.filename,

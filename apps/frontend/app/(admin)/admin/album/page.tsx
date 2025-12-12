@@ -2,6 +2,8 @@
 
 import { useState, useCallback, useRef, useMemo } from 'react';
 import { useAlbumImages, useDeleteAlbumImageMutation, useUploadMediaMutation } from '@/hooks/admin';
+import { ApiError } from '@/lib/api-client';
+import { compressImageFile, DEFAULT_MAX_UPLOAD_BYTES } from '@/lib/image-optimizer';
 import { useQueryClient } from '@tanstack/react-query';
 
 type FlashMessage = { type: 'success' | 'error' | 'info'; message: string };
@@ -122,10 +124,22 @@ export default function AdminAlbumPage() {
     }
 
     try {
-      showFlash(`Đang tải lên ${validFiles.length} ảnh...`, 'info');
-      
+      showFlash(`Đang xử lý và tải lên ${validFiles.length} ảnh...`, 'info');
+
+      const optimizedFiles = await Promise.all(
+        validFiles.map(async file => {
+          const result = await compressImageFile(file, {
+            maxBytes: DEFAULT_MAX_UPLOAD_BYTES,
+            maxDimension: 1920
+          });
+          return result;
+        })
+      );
+
+      const compressedCount = optimizedFiles.filter(item => item.wasCompressed).length;
+
       await Promise.all(
-        validFiles.map(file => 
+        optimizedFiles.map(({ file }) => 
           uploadMutation.mutateAsync({ 
             file, 
             folder: uploadFolder || 'album' 
@@ -135,9 +149,16 @@ export default function AdminAlbumPage() {
       
       // Refresh album list
       queryClient.invalidateQueries({ queryKey: ['admin', 'album'] });
-      showFlash(`Đã tải lên ${validFiles.length} ảnh thành công`, 'success');
+      if (compressedCount > 0) {
+        showFlash(`Đã nén ${compressedCount}/${optimizedFiles.length} ảnh trước khi tải lên`, 'info');
+      }
+      showFlash(`Đã tải lên ${optimizedFiles.length} ảnh thành công`, 'success');
     } catch (err: any) {
-      showFlash(err?.message || 'Tải ảnh lên thất bại', 'error');
+      if (err instanceof ApiError && err.status === 413) {
+        showFlash('Ảnh vẫn vượt quá giới hạn kích thước. Vui lòng chọn ảnh nhỏ hơn hoặc giảm độ phân giải.', 'error');
+      } else {
+        showFlash(err?.message || 'Tải ảnh lên thất bại', 'error');
+      }
     }
 
     // Reset input

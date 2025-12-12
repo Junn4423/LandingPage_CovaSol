@@ -16,7 +16,8 @@ import {
   approveEditRequest,
   rejectEditRequest,
   deleteEditRequest,
-  getRequestsByUser
+  getRequestsByUser,
+  getAllPendingRequests
 } from '../../services/blog-edit-request.service';
 import { isAuthorNameRegistered } from '../../services/users.service';
 import type { AuthenticatedRequest } from '../../middleware/require-auth';
@@ -158,7 +159,11 @@ adminBlogRouter.put('/:id', async (req: AuthenticatedRequest, res) => {
 
 // Get all pending edit requests for posts authored by current user
 adminBlogRouter.get('/edit-requests/my-posts', async (req: AuthenticatedRequest, res) => {
-  const requests = await getPendingRequestsForAuthor(req.user!.id);
+  const currentUser = req.user!;
+  const isSuperAdmin = currentUser.role === 'super-admin';
+  const requests = isSuperAdmin
+    ? await getAllPendingRequests()
+    : await getPendingRequestsForAuthor(currentUser.id);
   res.json({ data: requests });
 });
 

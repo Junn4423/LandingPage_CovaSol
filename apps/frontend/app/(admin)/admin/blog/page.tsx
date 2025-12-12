@@ -779,15 +779,17 @@ export default function AdminBlogPage() {
   // Check if current user can directly edit or needs to request approval
   const canDirectEdit = useMemo(() => {
     if (!selectedPost || !currentUser) return true; // New post
+    const normalizedRole = currentUser.role?.toLowerCase?.().replace(/_/g, '-');
     const isOwner = selectedPost.authorId && String(selectedPost.authorId) === String(currentUser.id);
-    const isSuperAdmin = currentUser.role === 'super-admin';
+    const isSuperAdmin = normalizedRole === 'super-admin';
     return isOwner || isSuperAdmin;
   }, [selectedPost, currentUser]);
 
   const isEditingOthersPost = useMemo(() => {
     if (!selectedPost || !currentUser) return false;
+    const normalizedRole = currentUser.role?.toLowerCase?.().replace(/_/g, '-');
     const isOwner = selectedPost.authorId && String(selectedPost.authorId) === String(currentUser.id);
-    return !isOwner && currentUser.role !== 'super-admin';
+    return !isOwner && normalizedRole !== 'super-admin';
   }, [selectedPost, currentUser]);
 
   async function handleDelete(post: BlogPostDetail) {

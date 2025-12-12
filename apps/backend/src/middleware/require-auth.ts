@@ -12,6 +12,11 @@ export interface AuthenticatedRequest extends Request {
   };
 }
 
+function normalizeRole(role?: string) {
+  if (!role) return role;
+  return role.toLowerCase().replace(/_/g, '-');
+}
+
 export function requireAuth(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   const token = req.cookies.cova_token || req.headers.authorization?.replace('Bearer ', '');
 
@@ -21,7 +26,7 @@ export function requireAuth(req: AuthenticatedRequest, res: Response, next: Next
 
   try {
     const payload = jwt.verify(token, config.jwt.secret) as AuthenticatedRequest['user'];
-    req.user = payload;
+    req.user = payload ? { ...payload, role: normalizeRole(payload.role) } : payload;
     return next();
   } catch (error) {
     return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Invalid token' });

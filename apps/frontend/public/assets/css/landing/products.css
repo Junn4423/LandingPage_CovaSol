@@ -7,16 +7,26 @@
    PRODUCTS PAGE STYLES
    ============================================================================ */
 
+.products-page {
+  --products-section-gap: clamp(60px, 10vw, 100px);
+}
+
 .products-section {
-  padding: 80px 0;
+  padding: var(--products-section-gap) 0;
   background: var(--white);
+}
+
+.products-section .container {
+  max-width: var(--content-max, 1200px);
+  margin-inline: auto;
+  padding-inline: var(--gutter, clamp(20px, 4vw, 48px));
 }
 
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
-  gap: clamp(1.5rem, 4vw, 2.5rem);
-  margin-top: clamp(2.5rem, 6vw, 3.75rem);
+  grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr));
+  gap: clamp(1.75rem, 4vw, 2.5rem);
+  margin-top: clamp(2.5rem, 6vw, 3.5rem);
 }
 
 .products-filter {
@@ -27,11 +37,12 @@
 
 .products-search {
   width: min(420px, 100%);
-  padding: 12px 16px;
+  padding: 14px 18px;
   border: 1px solid var(--gray-200);
   border-radius: var(--radius-lg);
   font-size: 1rem;
   transition: var(--transition-fast);
+  background: var(--white);
 }
 
 .products-search:focus {
@@ -44,7 +55,8 @@
   background: var(--white);
   border-radius: var(--radius-xl);
   overflow: hidden;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 20px rgba(13, 27, 42, 0.06);
+  border: 1px solid rgba(13, 27, 42, 0.04);
   transition: var(--transition-normal);
   position: relative;
   display: flex;
@@ -54,7 +66,8 @@
 
 .product-card:hover {
   transform: translateY(-8px);
-  box-shadow: var(--shadow-xl);
+  box-shadow: 0 20px 48px rgba(13, 27, 42, 0.14);
+  border-color: rgba(18, 78, 102, 0.15);
 }
 
 .product-card.featured {
@@ -63,7 +76,7 @@
 
 .product-image {
   position: relative;
-  height: 190px;
+  height: 200px;
   overflow: hidden;
 }
 
@@ -80,14 +93,15 @@
 
 .product-badge {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 14px;
+  right: 14px;
   background: var(--accent-green);
   color: var(--white);
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: var(--radius-lg);
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .product-badge.new {
@@ -95,7 +109,7 @@
 }
 
 .product-content {
-  padding: clamp(20px, 3.5vw, 26px);
+  padding: clamp(22px, 4vw, 28px);
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -103,42 +117,44 @@
 }
 
 .product-content h3 {
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   font-weight: 700;
   color: var(--primary-navy);
   margin-bottom: 8px;
+  letter-spacing: -0.01em;
 }
 
 .product-category {
-  color: var(--primary-green);
-  font-size: 0.875rem;
+  color: var(--primary-blue);
+  font-size: 0.85rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 16px;
+  letter-spacing: 0.05em;
+  margin-bottom: 14px;
 }
 
 .product-description {
   color: var(--gray-600);
-  line-height: 1.6;
+  line-height: 1.65;
   margin-bottom: 16px;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  font-size: 0.95rem;
 }
 
 .product-features {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .feature-tag {
   background: var(--gray-100);
   color: var(--gray-700);
-  padding: 4px 12px;
+  padding: 5px 12px;
   border-radius: var(--radius-md);
   font-size: 0.75rem;
   font-weight: 500;
@@ -149,7 +165,7 @@
   gap: clamp(0.5rem, 2vw, 0.75rem);
   flex-wrap: nowrap;
   margin-top: auto;
-  padding-top: 16px;
+  padding-top: 18px;
 }
 
 .product-actions .btn {
@@ -160,7 +176,7 @@
 }
 
 .products-pagination {
-  margin-top: 2rem;
+  margin-top: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -175,28 +191,36 @@
 
 .products-cta {
   background: var(--gradient-light);
-  padding: 80px 0;
+  padding: var(--products-section-gap) 0;
   text-align: center;
 }
 
+.products-cta .container {
+  max-width: 800px;
+  margin-inline: auto;
+  padding-inline: var(--gutter, clamp(20px, 4vw, 48px));
+}
+
 .cta-content h2 {
-  font-size: clamp(2rem, 4.5vw, 2.75rem);
+  font-size: clamp(1.875rem, 4.5vw, 2.5rem);
   color: var(--primary-navy);
-  margin-bottom: 20px;
+  margin-bottom: 18px;
+  font-weight: 700;
 }
 
 .cta-content p {
   color: var(--gray-600);
-  font-size: clamp(1rem, 2vw, 1.125rem);
-  margin-bottom: 40px;
+  font-size: clamp(1rem, 2vw, 1.1rem);
+  margin-bottom: 36px;
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+  line-height: 1.7;
 }
 
 .cta-buttons {
   display: flex;
-  gap: 20px;
+  gap: 16px;
   justify-content: center;
   flex-wrap: wrap;
 }
