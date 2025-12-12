@@ -9,6 +9,7 @@ import { HomeBlogGrid } from '@/components/home/home-blog-grid';
 import { ReviewsCarousel } from '@/components/home/reviews-carousel';
 import { ContactForm } from '@/components/home/contact-form';
 import { HeroVideo } from '@/components/home/hero-video';
+import { Metadata } from 'next';
 
 const HERO_VIDEO_SRC = '/assets/video/Hero_section_Landing_page_3D_animation.webm';
 
@@ -202,6 +203,16 @@ const contactSocials = [
   { icon: 'fab fa-twitter', label: 'Twitter', href: '#' },
   { icon: 'fab fa-github', label: 'GitHub', href: 'https://github.com/CovaSol' }
 ];
+
+export const metadata: Metadata = {
+  title: 'COVASOL - Giải pháp Chuyển đổi số & Phát triển Phần mềm',
+  description: 'Đối tác công nghệ tin cậy chuyên thiết kế Website, Mobile App và giải pháp cho doanh nghiệp.',
+  openGraph: {
+    title: 'COVASOL - Core Value. Smart Solutions.',
+    description: 'Giải pháp công nghệ toàn diện: Web, App, AI & Digital Transformation.',
+    images: ['https://res.cloudinary.com/dky6wyvnm/image/upload/v1765512563/quality_restoration_20251212110748919_hvu4af.jpg'], // Nhớ tạo ảnh này
+  },
+};
 
 export default async function HomePage() {
   // Fetch data on server side

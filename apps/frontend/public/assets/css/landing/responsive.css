@@ -32,6 +32,34 @@
   }
 }
 
+/* Narrow desktops: shrink navbar spacing before switching to mobile menu */
+@media (max-width: 1120px) {
+  .nav-container {
+    padding: 0 20px;
+    gap: 12px;
+  }
+
+  .nav-menu {
+    gap: 0.8rem;
+    margin: 0 0.8rem;
+  }
+
+  .nav-link {
+    font-size: 0.9rem;
+  }
+
+  .nav-cta {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+
+  .lang-btn {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+}
+
+/* Tablet breakpoint: switch to hamburger menu */
 @media (max-width: 1024px) {
   .nav-container {
     padding: 0 24px;
@@ -64,6 +92,7 @@
     width: 100%;
     text-align: center;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 1rem;
   }
 
   .nav-cta {

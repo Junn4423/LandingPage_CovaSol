@@ -8,9 +8,9 @@ export interface OptimizedImage {
   finalSize: number;
 }
 
-function normalizeFilename(name: string) {
+function normalizeFilename(name: string, ext: 'jpg' | 'webp' | 'png') {
   const base = name.replace(/\.[^/.]+$/, '') || 'upload';
-  return `${base}.jpg`;
+  return `${base}.${ext}`;
 }
 
 function loadImage(file: File): Promise<{ image: HTMLImageElement; revoke: () => void }> {
@@ -26,13 +26,32 @@ function loadImage(file: File): Promise<{ image: HTMLImageElement; revoke: () =>
   });
 }
 
-function canvasToBlob(canvas: HTMLCanvasElement, quality: number): Promise<Blob> {
+function canvasToBlob(canvas: HTMLCanvasElement, format: string, quality?: number): Promise<Blob> {
   return new Promise((resolve, reject) => {
-    canvas.toBlob(blob => {
-      if (!blob) return reject(new Error('Không thể nén ảnh.'));
-      resolve(blob);
-    }, 'image/jpeg', quality);
+    canvas.toBlob(
+      blob => {
+        if (!blob) return reject(new Error('Không thể nén ảnh.'));
+        resolve(blob);
+      },
+      format,
+      quality
+    );
   });
+}
+
+function hasTransparency(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D): boolean {
+  // Sample every 10th pixel to keep it fast on big images.
+  const { width, height } = canvas;
+  const step = 10;
+  const sampleWidth = Math.max(1, Math.floor(width / step));
+  const sampleHeight = Math.max(1, Math.floor(height / step));
+  const imageData = ctx.getImageData(0, 0, sampleWidth, sampleHeight);
+  for (let i = 3; i < imageData.data.length; i += 4) {
+    if (imageData.data[i] < 250) {
+      return true;
+    }
+  }
+  return false;
 }
 
 export async function compressImageFile(
@@ -47,7 +66,7 @@ export async function compressImageFile(
   }
 
   // Already small enough; keep original type to preserve transparency when possible.
-  if (file.size <= maxBytes && file.type === 'image/jpeg') {
+  if (file.size <= maxBytes && (file.type === 'image/jpeg' || file.type === 'image/png')) {
     return { file, wasCompressed: false, originalSize: file.size, finalSize: file.size };
   }
 
@@ -69,6 +88,8 @@ export async function compressImageFile(
   let quality = 0.82;
   let attempt = 0;
   let blob: Blob | null = null;
+  let targetFormat: 'image/jpeg' | 'image/webp' | 'image/png' = 'image/jpeg';
+  let targetExt: 'jpg' | 'webp' | 'png' = 'jpg';
 
   while (attempt < 6) {
     canvas.width = Math.max(1, Math.round(width));
@@ -76,7 +97,19 @@ export async function compressImageFile(
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 
-    blob = await canvasToBlob(canvas, quality);
+    // Detect transparency after first draw, then stick with chosen format for subsequent passes.
+    if (attempt === 0) {
+      const transparent = hasTransparency(canvas, ctx);
+      if (transparent) {
+        targetFormat = 'image/webp';
+        targetExt = 'webp';
+      } else {
+        targetFormat = 'image/jpeg';
+        targetExt = 'jpg';
+      }
+    }
+
+    blob = await canvasToBlob(canvas, targetFormat, quality);
 
     if (blob.size <= maxBytes) {
       break;
@@ -98,7 +131,8 @@ export async function compressImageFile(
     throw new Error('Ảnh quá lớn, vui lòng chọn ảnh nhỏ hơn hoặc giảm độ phân giải.');
   }
 
-  const compressedFile = new File([blob], normalizeFilename(file.name), { type: 'image/jpeg' });
+  // Preserve transparency by keeping a format that supports alpha (webp/png).
+  const compressedFile = new File([blob], normalizeFilename(file.name, targetExt), { type: targetFormat });
 
   return {
     file: compressedFile,
