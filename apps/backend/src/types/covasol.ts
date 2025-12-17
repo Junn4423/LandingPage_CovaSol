@@ -90,3 +90,38 @@ export interface AdminOverviewStats {
   lastConsentAt: string | null;
   lastUpdated: string;
 }
+
+export type TrafficLevel = 'normal' | 'high' | 'critical';
+
+export interface TrafficTopIp {
+  ipAddress: string;
+  count: number;
+  percent: number;
+}
+
+export interface TrafficAlert {
+  id: string;
+  level: TrafficLevel;
+  label: string;
+  message: string;
+  triggeredAt: string;
+  requestsPerMinute: number;
+  requestsLast5s: number;
+  uniqueIps: number;
+  baselineRpm: number;
+  rpmChange: number;
+  topIps: TrafficTopIp[];
+}
+
+export interface TrafficStatus {
+  level: TrafficLevel;
+  label: string;
+  requestsPerMinute: number;
+  requestsLast5s: number;
+  uniqueIps: number;
+  baselineRpm: number;
+  rpmChange: number;
+  topIps: TrafficTopIp[];
+  recentAlerts: TrafficAlert[];
+  lastUpdated: string;
+}

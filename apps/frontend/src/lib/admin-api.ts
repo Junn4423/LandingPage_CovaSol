@@ -3,7 +3,8 @@ import type {
   ApiSuccessResponse,
   AdminOverviewStats,
   AdminConsentResponse,
-  VisitLogResponse
+  VisitLogResponse,
+  TrafficStatus
 } from '@/types/api';
 import type {
   BlogPostDetail,
@@ -121,6 +122,13 @@ export async function fetchCurrentUser() {
 export async function fetchAdminOverview() {
   const res = await apiRequest<ApiSuccessResponse<AdminOverviewStats>>({
     path: '/v1/admin/analytics/overview'
+  });
+  return res.data;
+}
+
+export async function fetchAdminTrafficStatus() {
+  const res = await apiRequest<ApiSuccessResponse<TrafficStatus>>({
+    path: '/v1/admin/analytics/traffic'
   });
   return res.data;
 }
@@ -411,4 +419,188 @@ export async function deleteEditRequest(requestId: number) {
     path: `/v1/admin/blog/edit-requests/${requestId}`,
     method: 'DELETE'
   });
+}
+
+// =====================================================
+// System Logs APIs
+// =====================================================
+
+export interface SystemLogItem {
+  id: number;
+  action: string;
+  resource: string;
+  resourceId: string | null;
+  description: string | null;
+  ipAddress: string;
+  userAgent: string | null;
+  userId: number | null;
+  username: string | null;
+  method: string | null;
+  path: string | null;
+  statusCode: number | null;
+  duration: number | null;
+  requestBody: unknown | null;
+  responseSize: number | null;
+  createdAt: string;
+}
+
+export interface SystemLogFilters {
+  action?: string;
+  resource?: string;
+  ipAddress?: string;
+  userId?: number;
+  startDate?: string;
+  endDate?: string;
+  search?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface SystemLogsResponse {
+  items: SystemLogItem[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export interface LogStatsResponse {
+  totalLogs: number;
+  logsLast24h: number;
+  logsLastHour: number;
+  uniqueIPs24h: number;
+  actionBreakdown: { action: string; count: number }[];
+  resourceBreakdown: { resource: string; count: number }[];
+  recentErrors: SystemLogItem[];
+  avgRequestsPerHour: number;
+}
+
+export interface ThreatIndicator {
+  type: string;
+  severity: 'low' | 'medium' | 'high';
+  score: number;
+  description: string;
+}
+
+export interface IPThreatAnalysis {
+  ipAddress: string;
+  threatScore: number;
+  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  indicators: ThreatIndicator[];
+  stats: {
+    totalRequests: number;
+    requestsLastHour: number;
+    requestsLast24h: number;
+    uniquePaths: number;
+    errorRate: number;
+    avgRequestsPerMinute: number;
+    userAgentCount: number;
+    suspiciousPatterns: string[];
+  };
+  recommendation: string;
+}
+
+export interface BlockedIPItem {
+  id: number;
+  ipAddress: string;
+  reason: string;
+  threatScore: number;
+  requestCount: number;
+  blockedAt: string;
+  blockedBy: number | null;
+  blockedByName: string | null;
+  expiresAt: string | null;
+  isActive: boolean;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SystemLogsDashboard {
+  logStats: LogStatsResponse;
+  blockedIPsCount: number;
+  blockedIPs: BlockedIPItem[];
+  topSuspiciousIPs: IPThreatAnalysis[];
+  filterOptions: { actions: string[]; resources: string[] };
+  highThreatCount: number;
+  criticalThreatCount: number;
+}
+
+export async function fetchSystemLogsDashboard() {
+  const res = await apiRequest<ApiSuccessResponse<SystemLogsDashboard>>({
+    path: '/v1/admin/system-logs/dashboard'
+  });
+  return res.data;
+}
+
+export async function fetchSystemLogs(filters?: SystemLogFilters) {
+  const params = new URLSearchParams();
+  if (filters?.action) params.append('action', filters.action);
+  if (filters?.resource) params.append('resource', filters.resource);
+  if (filters?.ipAddress) params.append('ipAddress', filters.ipAddress);
+  if (filters?.userId) params.append('userId', filters.userId.toString());
+  if (filters?.startDate) params.append('startDate', filters.startDate);
+  if (filters?.endDate) params.append('endDate', filters.endDate);
+  if (filters?.search) params.append('search', filters.search);
+  if (filters?.page) params.append('page', filters.page.toString());
+  if (filters?.pageSize) params.append('pageSize', filters.pageSize.toString());
+
+  const queryString = params.toString();
+  const res = await apiRequest<ApiSuccessResponse<SystemLogsResponse>>({
+    path: `/v1/admin/system-logs${queryString ? `?${queryString}` : ''}`
+  });
+  return res.data;
+}
+
+export async function fetchLogStats() {
+  const res = await apiRequest<ApiSuccessResponse<LogStatsResponse>>({
+    path: '/v1/admin/system-logs/stats'
+  });
+  return res.data;
+}
+
+export async function fetchIPThreatAnalysis(ip: string) {
+  const res = await apiRequest<ApiSuccessResponse<IPThreatAnalysis>>({
+    path: `/v1/admin/system-logs/ip-analysis/${encodeURIComponent(ip)}`
+  });
+  return res.data;
+}
+
+export async function fetchSuspiciousIPs(limit?: number) {
+  const query = limit ? `?limit=${limit}` : '';
+  const res = await apiRequest<ApiSuccessResponse<IPThreatAnalysis[]>>({
+    path: `/v1/admin/system-logs/suspicious-ips${query}`
+  });
+  return res.data;
+}
+
+export async function fetchBlockedIPs(includeInactive = false) {
+  const query = includeInactive ? '?includeInactive=true' : '';
+  const res = await apiRequest<ApiSuccessResponse<BlockedIPItem[]>>({
+    path: `/v1/admin/system-logs/blocked-ips${query}`
+  });
+  return res.data;
+}
+
+export async function blockIPAddress(input: {
+  ipAddress: string;
+  reason: string;
+  expiresAt?: string | null;
+  notes?: string;
+}) {
+  const res = await apiRequest<ApiSuccessResponse<BlockedIPItem>>({
+    path: '/v1/admin/system-logs/block-ip',
+    method: 'POST',
+    body: input
+  });
+  return res.data;
+}
+
+export async function unblockIPAddress(ipAddress: string) {
+  const res = await apiRequest<ApiSuccessResponse<BlockedIPItem>>({
+    path: '/v1/admin/system-logs/unblock-ip',
+    method: 'POST',
+    body: { ipAddress }
+  });
+  return res.data;
 }

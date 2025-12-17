@@ -3,6 +3,7 @@
 import {
   useAdminCookieConsents,
   useAdminOverview,
+  useAdminTrafficStatus,
   useAdminVisitLogs
 } from '@/hooks/admin';
 
@@ -27,8 +28,31 @@ export default function AdminAnalyticsPage() {
   const { data: overview, isLoading: overviewLoading } = useAdminOverview();
   const { data: visits, isLoading: visitsLoading } = useAdminVisitLogs(50);
   const { data: consents, isLoading: consentsLoading } = useAdminCookieConsents({ page: 1, pageSize: 30 });
+  const { data: traffic, isLoading: trafficLoading } = useAdminTrafficStatus();
 
   const consentStats = consents?.stats;
+  const latestAlert = traffic?.recentAlerts?.[0];
+
+  const trafficTone = {
+    normal: {
+      bg: 'bg-slate-50',
+      border: 'border-slate-200',
+      text: 'text-slate-700',
+      pill: 'bg-slate-500'
+    },
+    high: {
+      bg: 'bg-amber-50',
+      border: 'border-amber-200',
+      text: 'text-amber-700',
+      pill: 'bg-amber-500'
+    },
+    critical: {
+      bg: 'bg-red-50',
+      border: 'border-red-200',
+      text: 'text-red-700',
+      pill: 'bg-red-500'
+    }
+  }[traffic?.level ?? 'normal'];
 
   const cards = [
     {
@@ -74,6 +98,43 @@ export default function AdminAnalyticsPage() {
         <span className="rounded-full bg-[#124e66]/10 px-4 py-2 text-sm font-semibold text-[#124e66]">
           Cập nhật: {overview?.lastUpdated ? formatDate(overview.lastUpdated) : 'Đang tải...'}
         </span>
+      </div>
+
+      <div className={`flex flex-wrap items-center gap-4 rounded-2xl border ${trafficTone.border} ${trafficTone.bg} px-5 py-4 shadow-sm transition-all`}>
+        <div className="flex items-center gap-3">
+          <span className={`flex h-10 w-10 items-center justify-center rounded-xl text-white ${trafficTone.pill}`}>
+            <i className={`fas ${traffic?.level === 'critical' ? 'fa-shield-halved' : 'fa-wave-square'} text-lg`}></i>
+          </span>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Cảnh báo lưu lượng</p>
+            <p className="text-base font-bold text-[#0d1b2a]">
+              {trafficLoading ? 'Đang phân tích...' : traffic?.label ?? 'Normal traffic'}
+            </p>
+            <p className={`text-sm ${trafficTone.text}`}>
+              {trafficLoading
+                ? 'Đang đo request/phút...'
+                : latestAlert?.message || 'Lưu lượng ổn định, không ghi nhận bất thường.'}
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-[#0d1b2a]">
+          <span className="rounded-full bg-white/80 px-3 py-1 shadow-sm">
+            {trafficLoading ? '—' : `${traffic?.requestsPerMinute ?? 0} req/phút`}
+          </span>
+          <span className="rounded-full bg-white/80 px-3 py-1 shadow-sm">
+            {trafficLoading ? '—' : `${traffic?.requestsLast5s ?? 0} req/5s`}
+          </span>
+          <span className="rounded-full bg-white/80 px-3 py-1 shadow-sm">
+            {trafficLoading
+              ? 'Δ so với baseline: —'
+              : `Δ so với baseline: ${Math.round((traffic?.rpmChange ?? 0) * 100)}%`}
+          </span>
+          {(traffic?.topIps?.length ?? 0) > 0 && (
+            <span className="rounded-full bg-white/80 px-3 py-1 shadow-sm text-slate-700">
+              IP nổi bật: {traffic?.topIps?.[0]?.ipAddress} ({traffic?.topIps?.[0]?.count} req)
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">

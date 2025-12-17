@@ -13,6 +13,7 @@ import { useAdminSession, useLogoutMutation, useAdminOverview, useMyPostsEditReq
 const adminNav: { href: Route; label: string; icon: string }[] = [
   { href: '/admin', label: 'Dashboard', icon: 'fas fa-gauge' },
   { href: '/admin/analytics', label: 'Analytics', icon: 'fas fa-chart-line' },
+  { href: '/admin/system-logs', label: 'Nhật ký hệ thống', icon: 'fas fa-shield-alt' },
   { href: '/admin/blog', label: 'Blog', icon: 'fas fa-newspaper' },
   { href: '/admin/edit-requests', label: 'Duyệt chỉnh sửa', icon: 'fas fa-clipboard-check' },
   { href: '/admin/products', label: 'Sản phẩm', icon: 'fas fa-cubes' },

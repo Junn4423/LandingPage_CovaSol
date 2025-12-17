@@ -197,3 +197,79 @@ model Session {
   @@index([expires], map: "idx_expires")
   @@map("sessions")
 }
+
+// =====================================================
+// Bảng system_logs - Nhật ký hoạt động hệ thống
+// =====================================================
+model SystemLog {
+  id            Int       @id @default(autoincrement())
+  action        String    @db.VarChar(100)                // CREATE, UPDATE, DELETE, VIEW, LOGIN, LOGOUT, etc.
+  resource      String    @db.VarChar(100)                // blog, product, user, auth, etc.
+  resourceId    String?   @map("resource_id") @db.VarChar(50) // ID của resource bị tác động
+  description   String?   @db.Text                        // Mô tả chi tiết
+  ipAddress     String    @map("ip_address") @db.VarChar(45)
+  userAgent     String?   @map("user_agent") @db.VarChar(500)
+  userId        Int?      @map("user_id")                 // Admin thực hiện (null nếu là guest)
+  username      String?   @db.VarChar(100)                // Lưu username tại thời điểm log
+  method        String?   @db.VarChar(10)                 // HTTP method
+  path          String?   @db.VarChar(500)                // Request path
+  statusCode    Int?      @map("status_code")             // HTTP status code
+  duration      Int?      @db.Int                         // Request duration in ms
+  requestBody   Json?     @map("request_body")            // Request body (sanitized)
+  responseSize  Int?      @map("response_size")           // Response size in bytes
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  @@index([ipAddress], map: "idx_syslog_ip")
+  @@index([userId], map: "idx_syslog_user")
+  @@index([action], map: "idx_syslog_action")
+  @@index([resource], map: "idx_syslog_resource")
+  @@index([createdAt(sort: Desc)], map: "idx_syslog_time")
+  @@map("system_logs")
+}
+
+// =====================================================
+// Bảng blocked_ips - Quản lý IP bị chặn
+// =====================================================
+model BlockedIP {
+  id            Int       @id @default(autoincrement())
+  ipAddress     String    @unique @map("ip_address") @db.VarChar(45)
+  reason        String    @db.VarChar(255)                // spam, ddos, scraping, manual
+  threatScore   Float     @default(0) @map("threat_score") @db.Float  // 0-100%
+  requestCount  Int       @default(0) @map("request_count")
+  blockedAt     DateTime  @default(now()) @map("blocked_at")
+  blockedBy     Int?      @map("blocked_by")              // Admin ID who blocked
+  blockedByName String?   @map("blocked_by_name") @db.VarChar(100)
+  expiresAt     DateTime? @map("expires_at")              // null = permanent
+  isActive      Boolean   @default(true) @map("is_active")
+  notes         String?   @db.Text
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  @@index([ipAddress], map: "idx_blocked_ip")
+  @@index([isActive], map: "idx_blocked_active")
+  @@index([threatScore], map: "idx_blocked_threat")
+  @@map("blocked_ips")
+}
+
+// =====================================================
+// Bảng ip_analytics - Phân tích IP theo thời gian
+// =====================================================
+model IPAnalytics {
+  id              Int       @id @default(autoincrement())
+  ipAddress       String    @map("ip_address") @db.VarChar(45)
+  hourWindow      DateTime  @map("hour_window")           // Truncated to hour
+  requestCount    Int       @default(0) @map("request_count")
+  uniquePaths     Int       @default(0) @map("unique_paths")
+  errorCount      Int       @default(0) @map("error_count")
+  avgDuration     Float     @default(0) @map("avg_duration") @db.Float
+  userAgents      Int       @default(1) @map("user_agents")  // Number of different UAs
+  threatIndicators Json?    @map("threat_indicators")     // Detailed threat signals
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  @@unique([ipAddress, hourWindow], map: "ux_ip_hour")
+  @@index([ipAddress], map: "idx_ipanalytics_ip")
+  @@index([hourWindow], map: "idx_ipanalytics_hour")
+  @@index([requestCount], map: "idx_ipanalytics_count")
+  @@map("ip_analytics")
+}

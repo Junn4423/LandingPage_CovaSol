@@ -14,6 +14,7 @@ import {
   fetchAdminBlogPosts,
   fetchAdminCookieConsents,
   fetchAdminOverview,
+  fetchAdminTrafficStatus,
   fetchAdminProducts,
   fetchAdminReviewStats,
   fetchAdminReviews,
@@ -44,12 +45,13 @@ import {
   type EditRequestSummary,
   type EditRequestDetail
 } from '@/lib/admin-api';
-import type { AdminConsentResponse, AdminOverviewStats, VisitLogResponse } from '@/types/api';
+import type { AdminConsentResponse, AdminOverviewStats, TrafficStatus, VisitLogResponse } from '@/types/api';
 import type { BlogPostDetail, CustomerReviewDetail, ProductDetail, UserSummary } from '@/types/content';
 
 const ADMIN_QUERY_KEYS = {
   session: ['admin', 'session'] as const,
   overview: ['admin', 'overview'] as const,
+  traffic: ['admin', 'traffic'] as const,
   visits: ['admin', 'visits'] as const,
   consents: ['admin', 'consents'] as const,
   blogList: ['admin', 'blog', 'list'] as const,
@@ -97,6 +99,7 @@ export function useLogoutMutation() {
       queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.reviewStats });
       queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.visits });
       queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.consents });
+      queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.traffic });
     }
   });
 }
@@ -106,6 +109,14 @@ export function useAdminOverview() {
     queryKey: ADMIN_QUERY_KEYS.overview,
     queryFn: fetchAdminOverview,
     staleTime: 30_000
+  });
+}
+
+export function useAdminTrafficStatus() {
+  return useQuery<TrafficStatus>({
+    queryKey: ADMIN_QUERY_KEYS.traffic,
+    queryFn: fetchAdminTrafficStatus,
+    staleTime: 10_000
   });
 }
 
@@ -376,6 +387,104 @@ export function useDeleteEditRequestMutation() {
     mutationFn: deleteEditRequestApi,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: EDIT_REQUEST_QUERY_KEYS.myRequests });
+    }
+  });
+}
+
+// =====================================================
+// System Logs Hooks
+// =====================================================
+import {
+  fetchSystemLogsDashboard,
+  fetchSystemLogs,
+  fetchLogStats,
+  fetchIPThreatAnalysis,
+  fetchSuspiciousIPs,
+  fetchBlockedIPs,
+  blockIPAddress,
+  unblockIPAddress,
+  type SystemLogsDashboard,
+  type SystemLogsResponse,
+  type SystemLogFilters,
+  type LogStatsResponse,
+  type IPThreatAnalysis,
+  type BlockedIPItem
+} from '@/lib/admin-api';
+
+const SYSTEM_LOGS_QUERY_KEYS = {
+  dashboard: ['admin', 'system-logs', 'dashboard'] as const,
+  logs: (filters?: SystemLogFilters) => ['admin', 'system-logs', 'list', filters] as const,
+  stats: ['admin', 'system-logs', 'stats'] as const,
+  suspiciousIPs: (limit?: number) => ['admin', 'system-logs', 'suspicious', limit] as const,
+  blockedIPs: (includeInactive?: boolean) => ['admin', 'system-logs', 'blocked', includeInactive] as const,
+  ipAnalysis: (ip: string) => ['admin', 'system-logs', 'ip-analysis', ip] as const
+};
+
+export function useSystemLogsDashboard() {
+  return useQuery<SystemLogsDashboard>({
+    queryKey: SYSTEM_LOGS_QUERY_KEYS.dashboard,
+    queryFn: fetchSystemLogsDashboard,
+    staleTime: 30_000,
+    refetchInterval: 60_000 // Auto refresh every minute
+  });
+}
+
+export function useSystemLogs(filters?: SystemLogFilters) {
+  return useQuery<SystemLogsResponse>({
+    queryKey: SYSTEM_LOGS_QUERY_KEYS.logs(filters),
+    queryFn: () => fetchSystemLogs(filters),
+    staleTime: 15_000
+  });
+}
+
+export function useLogStats() {
+  return useQuery<LogStatsResponse>({
+    queryKey: SYSTEM_LOGS_QUERY_KEYS.stats,
+    queryFn: fetchLogStats,
+    staleTime: 30_000
+  });
+}
+
+export function useSuspiciousIPs(limit?: number) {
+  return useQuery<IPThreatAnalysis[]>({
+    queryKey: SYSTEM_LOGS_QUERY_KEYS.suspiciousIPs(limit),
+    queryFn: () => fetchSuspiciousIPs(limit),
+    staleTime: 30_000
+  });
+}
+
+export function useBlockedIPs(includeInactive = false) {
+  return useQuery<BlockedIPItem[]>({
+    queryKey: SYSTEM_LOGS_QUERY_KEYS.blockedIPs(includeInactive),
+    queryFn: () => fetchBlockedIPs(includeInactive),
+    staleTime: 30_000
+  });
+}
+
+export function useIPThreatAnalysis(ip: string) {
+  return useQuery<IPThreatAnalysis>({
+    queryKey: SYSTEM_LOGS_QUERY_KEYS.ipAnalysis(ip),
+    queryFn: () => fetchIPThreatAnalysis(ip),
+    enabled: !!ip
+  });
+}
+
+export function useBlockIPMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: blockIPAddress,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'system-logs'] });
+    }
+  });
+}
+
+export function useUnblockIPMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: unblockIPAddress,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'system-logs'] });
     }
   });
 }

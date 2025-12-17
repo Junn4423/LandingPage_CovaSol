@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import { config } from './config';
 import { router } from './routes';
 import { errorHandler } from './middleware/error-handler';
+import { requestLogger, ipBlockChecker } from './middleware/request-logger';
 
 export function createApp() {
   const app = express();
@@ -26,6 +27,12 @@ export function createApp() {
   app.use(express.json({ limit: '200mb' }));
   app.use(express.urlencoded({ extended: true, limit: '200mb' }));
   app.use(cookieParser());
+
+  // IP Block checker - runs before other routes
+  app.use(ipBlockChecker);
+
+  // Request logger - logs all requests to SystemLog
+  app.use(requestLogger);
 
   app.get('/health', (_req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });

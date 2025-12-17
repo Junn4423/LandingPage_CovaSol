@@ -2,11 +2,17 @@ import { Router } from 'express';
 import { getAdminOverview } from '../../services/analytics.service';
 import { listCookieConsents } from '../../services/cookie-consent.service';
 import { getVisitOverview, listRecentVisits } from '../../services/visit.service';
+import { getTrafficStatus } from '../../services/traffic-monitor.service';
 
 export const adminAnalyticsRouter = Router();
 
 adminAnalyticsRouter.get('/overview', async (_req, res) => {
   const data = await getAdminOverview();
+  res.json({ data });
+});
+
+adminAnalyticsRouter.get('/traffic', async (_req, res) => {
+  const data = getTrafficStatus();
   res.json({ data });
 });
 

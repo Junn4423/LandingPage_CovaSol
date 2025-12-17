@@ -3,7 +3,7 @@
 export function LegacyBlogNewsletter() {
   return (
     <section className="newsletter-section">
-      <div className="container">
+      {/* <div className="container">
         <div className="newsletter-content" data-aos="fade-up">
           <h2 data-key="newsletter-title">Đăng ký nhận bản tin</h2>
           <p data-key="newsletter-description">
@@ -19,7 +19,7 @@ export function LegacyBlogNewsletter() {
             </button>
           </form>
         </div>
-      </div>
+      </div> */}
     </section>
   );
 }
