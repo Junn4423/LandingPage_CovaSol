@@ -120,12 +120,26 @@ function sortByPosition(a: InlineBlock, b: InlineBlock) {
 
 const HTML_MARKUP_REGEX = /<\/?[a-z][^>]*>/i;
 
+// Regex to check if content is rich HTML from CKEditor (has block-level HTML elements)
+const RICH_HTML_REGEX = /<(?:p|div|h[1-6]|ul|ol|li|table|blockquote|pre|figure|section|article|header|footer|aside|nav|main)[^>]*>/i;
+
 function hasHtmlMarkup(value: string) {
   return HTML_MARKUP_REGEX.test(value);
 }
 
+function isRichHtmlContent(content: string) {
+  return RICH_HTML_REGEX.test(content);
+}
+
 function splitContentIntoBlocks(content: string) {
   if (!content) return [] as string[];
+  
+  // If content is already rich HTML from CKEditor, return it as a single block
+  // This preserves all CKEditor formatting
+  if (isRichHtmlContent(content)) {
+    return [content];
+  }
+  
   const normalized = content.replace(/\r\n/g, '\n');
   const blocks = normalized
     .split(/\n{2,}/)

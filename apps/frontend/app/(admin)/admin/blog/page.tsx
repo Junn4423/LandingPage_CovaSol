@@ -1,5 +1,6 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { ApiError } from '@/lib/api-client';
 import { PaginationControls } from '@/components/admin/pagination-controls';
@@ -19,6 +20,22 @@ import {
 import { useClientPagination } from '@/hooks/use-pagination';
 import type { BlogPostDetail } from '@/types/content';
 import { renderBlogPreviewHtml } from '@/lib/legacy-preview';
+
+// Dynamic import CKEditor to avoid SSR issues
+const CKEditorWrapper = dynamic(
+  () => import('@/components/admin/ckeditor-wrapper'),
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="flex h-[400px] items-center justify-center rounded-xl border border-slate-200 bg-slate-50">
+        <div className="flex items-center gap-3 text-slate-500">
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#1c6e8c] border-t-transparent"></div>
+          <span>Đang tải trình soạn thảo...</span>
+        </div>
+      </div>
+    )
+  }
+);
 
 type BlogStatus = 'draft' | 'published' | 'archived' | 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
 const STATUS_OPTIONS: BlogStatus[] = ['draft', 'published', 'archived'];
@@ -1105,29 +1122,19 @@ export default function AdminBlogPage() {
                 <label className="text-base font-semibold text-[#0f172a]">Nội dung bài viết</label>
                 <span className="flex items-center gap-1 text-xs italic text-slate-500">
                   <i className="fas fa-info-circle"></i>
-                  Đặt con trỏ ở đoạn muốn chèn ảnh/video
+                  Sử dụng thanh công cụ để định dạng nội dung
                 </span>
               </div>
-              <textarea
-                className="flex-1 rounded-xl border border-slate-200 px-4 py-3 font-sans text-base leading-relaxed transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
-                ref={contentInputRef}
-                value={formState.content}
-                onChange={e => {
-                  const value = e.target.value;
-                  setFormState(prev => ({ ...prev, content: value }));
-                  updateCursorInfo();
-                }}
-                onClick={updateCursorInfo}
-                onKeyUp={updateCursorInfo}
-                onMouseUp={updateCursorInfo}
-                onSelect={updateCursorInfo}
-                placeholder="Viết nội dung bài viết tại đây...
-
-Mỗi đoạn văn cách nhau bởi 1 dòng trống.
-
-Đặt con trỏ vào giữa các đoạn để chèn ảnh/video."
-                required
-              />
+              <div className="flex-1 min-h-[400px]">
+                <CKEditorWrapper
+                  value={formState.content}
+                  onChange={(data) => {
+                    setFormState(prev => ({ ...prev, content: data }));
+                  }}
+                  placeholder="Viết nội dung bài viết tại đây..."
+                  minHeight="400px"
+                />
+              </div>
             </div>
 
             <div className="space-y-6 border-t border-slate-200 pt-6">

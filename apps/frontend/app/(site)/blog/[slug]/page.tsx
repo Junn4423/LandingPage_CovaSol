@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { fetchBlogPost, fetchBlogSummaries } from '@/lib/api/blog';
 import { renderBlogPreviewHtml } from '@/lib/legacy-preview';
+import { RichContent } from '@/components/common/rich-content';
 
 interface BlogPostPageProps {
   params: { slug: string };

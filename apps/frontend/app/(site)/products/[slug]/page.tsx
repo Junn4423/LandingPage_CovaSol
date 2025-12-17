@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { fetchProductDetail, fetchProductSummaries } from '@/lib/api/products';
 import { renderProductPreviewHtml } from '@/lib/legacy-preview';
 import { ProductGalleryHandler } from '@/components/products/product-gallery-handler';
+import { RichContent } from '@/components/common/rich-content';
 
 interface ProductPageProps {
   params: { slug: string };
