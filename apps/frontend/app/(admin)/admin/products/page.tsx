@@ -1,6 +1,5 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { ApiError } from '@/lib/api-client';
 import { PaginationControls } from '@/components/admin/pagination-controls';
@@ -8,6 +7,7 @@ import { MediaListEditor, type MediaFormItem } from '@/components/admin/media-li
 import { QuickMediaDialog } from '@/components/admin/quick-media-dialog';
 import { ImageSelector } from '@/components/admin/image-selector';
 import { AlbumPickerModal } from '@/components/admin/album-picker-modal';
+import { RichTextEditor, type MediaInsertEvent } from '@/components/admin/rich-text-editor';
 import {
   useAdminProducts,
   useDeleteProductMutation,
@@ -17,22 +17,6 @@ import {
 import { useClientPagination } from '@/hooks/use-pagination';
 import type { ProductDetail } from '@/types/content';
 import { renderProductPreviewHtml } from '@/lib/legacy-preview';
-
-// Dynamic import CKEditor to avoid SSR issues
-const CKEditorWrapper = dynamic(
-  () => import('@/components/admin/ckeditor-wrapper'),
-  { 
-    ssr: false,
-    loading: () => (
-      <div className="flex h-[400px] items-center justify-center rounded-xl border border-slate-200 bg-slate-50">
-        <div className="flex items-center gap-3 text-slate-500">
-          <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#1c6e8c] border-t-transparent"></div>
-          <span>Đang tải trình soạn thảo...</span>
-        </div>
-      </div>
-    )
-  }
-);
 
 type ProductStatus = 'draft' | 'active' | 'archived' | 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
 const STATUS_OPTIONS: ProductStatus[] = ['draft', 'active', 'archived'];
@@ -265,9 +249,12 @@ export default function AdminProductsPage() {
   const [isDemoImageMode, setIsDemoImageMode] = useState(false);
   const [isImageMenuOpen, setIsImageMenuOpen] = useState(false);
   const [isDemoMenuOpen, setIsDemoMenuOpen] = useState(false);
+  const [editorAlbumOpen, setEditorAlbumOpen] = useState(false);
+  const [pendingEditorImage, setPendingEditorImage] = useState<string | null>(null);
   const imageMenuRef = useRef<HTMLDivElement | null>(null);
   const demoMenuRef = useRef<HTMLDivElement | null>(null);
   const contentInputRef = useRef<HTMLTextAreaElement | null>(null);
+  const previewRef = useRef<HTMLDivElement | null>(null);
   const pagination = useClientPagination(data ?? [], { pageSize: PRODUCT_PAGE_SIZE });
   const visibleProducts = pagination.items;
   const serializedForm = useMemo(() => JSON.stringify(formState), [formState]);
@@ -520,6 +507,80 @@ export default function AdminProductsPage() {
     updateCursorInfo();
   }
 
+  // Handle media inserted from RichTextEditor - sync to MediaListEditor
+  function handleEditorMediaInserted(event: MediaInsertEvent) {
+    const position = inlinePositionHint;
+    if (event.type === 'image') {
+      setFormState(prev => ({
+        ...prev,
+        galleryMedia: [
+          ...prev.galleryMedia,
+          createMediaItem({
+            url: event.url,
+            caption: event.caption || '',
+            type: 'inline',
+            position
+          }, DEFAULT_IMAGE_TYPE)
+        ]
+      }));
+      showFlash(`Đã đồng bộ ảnh vào thư viện (vị trí ${position})`, 'info');
+    } else if (event.type === 'video') {
+      setFormState(prev => ({
+        ...prev,
+        videoItems: [
+          ...prev.videoItems,
+          createMediaItem({
+            url: event.url,
+            caption: event.caption || '',
+            type: DEFAULT_VIDEO_TYPE,
+            position
+          }, DEFAULT_VIDEO_TYPE)
+        ]
+      }));
+      showFlash(`Đã đồng bộ video vào danh sách (vị trí ${position})`, 'info');
+    }
+  }
+
+  // Handle position adjustment from preview buttons
+  function handlePreviewPositionClick(event: React.MouseEvent<HTMLDivElement>) {
+    const target = event.target as HTMLElement;
+    const button = target.closest('.preview-position-btn') as HTMLElement;
+    if (!button) return;
+    
+    const action = button.dataset.action;
+    const inlineId = button.dataset.inlineId;
+    const kind = button.dataset.inlineKind;
+    
+    if (!action || !inlineId) return;
+    
+    const updatePosition = (items: MediaFormItem[], delta: number): MediaFormItem[] => {
+      return items.map(item => {
+        if (item.id === inlineId || item.url === inlineId) {
+          const currentPos = typeof item.position === 'number' ? item.position : 0;
+          const newPos = Math.max(0, currentPos + delta);
+          return { ...item, position: newPos };
+        }
+        return item;
+      });
+    };
+    
+    const delta = action === 'move-up' ? -1 : 1;
+    
+    if (kind === 'media') {
+      setFormState(prev => ({
+        ...prev,
+        galleryMedia: updatePosition(prev.galleryMedia, delta)
+      }));
+      showFlash(`Đã di chuyển ảnh ${action === 'move-up' ? 'lên' : 'xuống'}`, 'info');
+    } else if (kind === 'video') {
+      setFormState(prev => ({
+        ...prev,
+        videoItems: updatePosition(prev.videoItems, delta)
+      }));
+      showFlash(`Đã di chuyển video ${action === 'move-up' ? 'lên' : 'xuống'}`, 'info');
+    }
+  }
+
   function confirmDiscardChanges() {
     if (!showEditor || !isDirty) {
       return true;
@@ -557,7 +618,7 @@ export default function AdminProductsPage() {
     } as ProductDetail;
   }, [formState, selectedProduct]);
 
-  const previewHtml = useMemo(() => renderProductPreviewHtml(previewData), [previewData]);
+  const previewHtml = useMemo(() => renderProductPreviewHtml(previewData, { showPositionControls: true }), [previewData]);
 
   const flashClass =
     flash?.type === 'success'
@@ -951,19 +1012,32 @@ export default function AdminProductsPage() {
                   <label className="text-base font-semibold text-[#0f172a]">Mô tả chi tiết sản phẩm</label>
                   <span className="flex items-center gap-1 text-xs italic text-slate-500">
                     <i className="fas fa-info-circle"></i>
-                    Sử dụng thanh công cụ để định dạng nội dung
+                    Sử dụng thanh công cụ hoặc Ctrl+B/I/U để định dạng
                   </span>
                 </div>
-                <div className="flex-1 min-h-[400px]">
-                  <CKEditorWrapper
-                    value={formState.description}
-                    onChange={(data) => {
-                      setFormState(prev => ({ ...prev, description: data }));
-                    }}
-                    placeholder="Viết mô tả chi tiết về sản phẩm tại đây..."
-                    minHeight="400px"
-                  />
-                </div>
+                <RichTextEditor
+                  value={formState.description}
+                  onChange={(value) => setFormState(prev => ({ ...prev, description: value }))}
+                  placeholder="Viết mô tả chi tiết về sản phẩm tại đây..."
+                  minHeight="400px"
+                  required
+                  onRequestImageUpload={async () => {
+                    const file = await pickImageFile();
+                    if (!file) return null;
+                    try {
+                      const uploaded = await uploadMutation.mutateAsync({ file, folder: 'products/inline' });
+                      showFlash('Đã upload và chèn ảnh', 'success');
+                      return ensureUploadedUrl(uploaded, 'inline');
+                    } catch (err) {
+                      showFlash(toErrorMessage(err), 'error');
+                      return null;
+                    }
+                  }}
+                  onRequestImageAlbum={() => setEditorAlbumOpen(true)}
+                  pendingImageUrl={pendingEditorImage}
+                  onPendingImageConsumed={() => setPendingEditorImage(null)}
+                  onMediaInserted={handleEditorMediaInserted}
+                />
               </div>
 
               <div className="space-y-6 border-t border-slate-200 pt-6">
@@ -1038,8 +1112,10 @@ export default function AdminProductsPage() {
             <div className="flex-1 overflow-y-auto p-8">
               {formState.name || formState.description ? (
                 <div
+                  ref={previewRef}
                   className="legacy-preview space-y-4"
                   dangerouslySetInnerHTML={{ __html: previewHtml }}
+                  onClick={handlePreviewPositionClick}
                 />
               ) : (
                 <div className="flex h-full flex-col items-center justify-center text-slate-400">
@@ -1070,6 +1146,16 @@ export default function AdminProductsPage() {
               handleAlbumImageSelected(url);
               setIsImageMenuOpen(false);
               setIsDemoMenuOpen(false);
+            }}
+          />
+        )}
+        {editorAlbumOpen && (
+          <AlbumPickerModal
+            onClose={() => setEditorAlbumOpen(false)}
+            onSelect={(url) => {
+              setPendingEditorImage(url);
+              setEditorAlbumOpen(false);
+              showFlash('Đã chèn ảnh từ thư viện', 'success');
             }}
           />
         )}

@@ -5,11 +5,17 @@ import { AppProviders } from '@/components/providers/app-providers';
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | COVASOL Technology Solutions',
-    default: 'COVASOL Technology Solutions'
+    template: '%s | COVA - Solutions',
+    default: 'COVA - Solutions'
   },
-  description: 'Core Value. Smart Solutions. Dịch vụ tư vấn và triển khai giải pháp chuyển đổi số toàn diện.',
+  description: 'Đối tác công nghệ đáng tin cậy cho doanh nghiệp hiện đại. Chúng tôi phát triển phần mềm, thiết kế trải nghiệm người dùng và hỗ trợ chuyển đổi số toàn diện.',
+  keywords: ['Công nghệ', 'Tech', 'Cova', 'Covasol', 'Giải pháp', 'Doanh Nghiệp', 'Thương mại'],
+  authors: [{ name: 'COVASOL' }],
+  robots: 'index, follow',
   metadataBase: new URL('https://covasol.com.vn'),
+  alternates: {
+    canonical: '/'
+  },
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
@@ -21,6 +27,32 @@ export const metadata: Metadata = {
   manifest: '/assets/favicon/site.webmanifest',
   appleWebApp: {
     title: 'CovaSol'
+  },
+  openGraph: {
+    title: 'COVA - Solutions',
+    description: 'Đối tác công nghệ đáng tin cậy cho doanh nghiệp hiện đại. Chúng tôi phát triển phần mềm, thiết kế trải nghiệm người dùng và hỗ trợ chuyển đổi số toàn diện.',
+    url: 'https://covasol.com.vn/',
+    siteName: 'Covasol',
+    locale: 'vi_VN',
+    type: 'website',
+    images: [
+      {
+        url: 'https://res.cloudinary.com/dky6wyvnm/image/upload/v1765512563/quality_restoration_20251212110748919_hvu4af.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'COVA - Solutions',
+        type: 'image/jpeg'
+      }
+    ]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'COVA - Solutions',
+    description: 'Đối tác công nghệ đáng tin cậy cho doanh nghiệp hiện đại. Chúng tôi phát triển phần mềm, thiết kế trải nghiệm người dùng và hỗ trợ chuyển đổi số toàn diện.',
+    images: ['https://res.cloudinary.com/dky6wyvnm/image/upload/v1765512563/quality_restoration_20251212110748919_hvu4af.jpg']
+  },
+  other: {
+    'theme-color': '#0d500c'
   }
 };
 
@@ -28,6 +60,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="vi">
       <head>
+        {/* Explicit Open Graph and Facebook meta tags */}
+        <meta property="og:url" content="https://covasol.com.vn/" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="COVA - Solutions" />
+        <meta property="og:description" content="Đối tác công nghệ đáng tin cậy cho doanh nghiệp hiện đại. Chúng tôi phát triển phần mềm, thiết kế trải nghiệm người dùng và hỗ trợ chuyển đổi số toàn diện." />
+        <meta property="og:image" content="https://res.cloudinary.com/dky6wyvnm/image/upload/v1765512563/quality_restoration_20251212110748919_hvu4af.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:site_name" content="Covasol" />
+        <meta property="og:locale" content="vi_VN" />
+        <meta property="fb:app_id" content="1234567890" />
+        
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://cdnjs.cloudflare.com" />

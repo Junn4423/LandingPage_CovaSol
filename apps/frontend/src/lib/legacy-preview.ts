@@ -120,26 +120,12 @@ function sortByPosition(a: InlineBlock, b: InlineBlock) {
 
 const HTML_MARKUP_REGEX = /<\/?[a-z][^>]*>/i;
 
-// Regex to check if content is rich HTML from CKEditor (has block-level HTML elements)
-const RICH_HTML_REGEX = /<(?:p|div|h[1-6]|ul|ol|li|table|blockquote|pre|figure|section|article|header|footer|aside|nav|main)[^>]*>/i;
-
 function hasHtmlMarkup(value: string) {
   return HTML_MARKUP_REGEX.test(value);
 }
 
-function isRichHtmlContent(content: string) {
-  return RICH_HTML_REGEX.test(content);
-}
-
 function splitContentIntoBlocks(content: string) {
   if (!content) return [] as string[];
-  
-  // If content is already rich HTML from CKEditor, return it as a single block
-  // This preserves all CKEditor formatting
-  if (isRichHtmlContent(content)) {
-    return [content];
-  }
-  
   const normalized = content.replace(/\r\n/g, '\n');
   const blocks = normalized
     .split(/\n{2,}/)
@@ -180,17 +166,27 @@ function toEmbedUrl(url: string) {
   return url;
 }
 
-function buildInlineImageBlock(item: InlineItem, labels: Record<string, string>): InlineBlock {
+function buildInlineImageBlock(item: InlineItem, labels: Record<string, string>, showPositionControls = false): InlineBlock {
   const badge = labels[item.type ?? ''] || labels.default || 'Ảnh';
   const caption = item.caption ? `<figcaption class="preview-caption"><em>${escapeHtml(item.caption)}</em></figcaption>` : '';
   const altText = escapeHtml(item.caption || badge);
   const safeUrl = sanitizeImageUrl(item.url);
   const inlineId = escapeHtml(item.__clientId || item.__inlineSource || item.url || '');
   const inlineSource = escapeHtml(item.__inlineSource || 'media');
+  const positionControls = showPositionControls ? `
+    <div class="preview-position-controls" style="position: absolute; top: 4px; right: 4px; display: flex; gap: 2px; z-index: 10;">
+      <button type="button" class="preview-position-btn preview-position-up" data-action="move-up" data-inline-id="${inlineId}" data-inline-kind="media" title="Di chuyển lên" style="width: 24px; height: 24px; border-radius: 4px; border: none; background: rgba(255,255,255,0.9); cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
+        <i class="fas fa-chevron-up" style="font-size: 10px; color: #374151;"></i>
+      </button>
+      <button type="button" class="preview-position-btn preview-position-down" data-action="move-down" data-inline-id="${inlineId}" data-inline-kind="media" title="Di chuyển xuống" style="width: 24px; height: 24px; border-radius: 4px; border: none; background: rgba(255,255,255,0.9); cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
+        <i class="fas fa-chevron-down" style="font-size: 10px; color: #374151;"></i>
+      </button>
+    </div>` : '';
   return {
     position: getPositionNumber(item.position ?? null),
     html: `
-      <figure class="preview-inline-block preview-inline-block--media" data-type="${item.type || 'media'}" data-inline-id="${inlineId}" data-inline-kind="media" data-inline-source="${inlineSource}" data-inline-position="${item.position ?? ''}">
+      <figure class="preview-inline-block preview-inline-block--media" data-type="${item.type || 'media'}" data-inline-id="${inlineId}" data-inline-kind="media" data-inline-source="${inlineSource}" data-inline-position="${item.position ?? ''}" style="position: relative;">
+        ${positionControls}
         <img src="${safeUrl}" alt="${altText}" loading="lazy" />
         ${caption}
       </figure>
@@ -198,14 +194,24 @@ function buildInlineImageBlock(item: InlineItem, labels: Record<string, string>)
   };
 }
 
-function buildInlineVideoBlock(item: InlineItem, labels: Record<string, string>): InlineBlock {
+function buildInlineVideoBlock(item: InlineItem, labels: Record<string, string>, showPositionControls = false): InlineBlock {
   const caption = item.caption ? `<p class="preview-caption"><em>${escapeHtml(item.caption)}</em></p>` : '';
   const inlineId = escapeHtml(item.__clientId || item.__inlineSource || item.url || '');
   const inlineSource = escapeHtml(item.__inlineSource || 'video');
+  const positionControls = showPositionControls ? `
+    <div class="preview-position-controls" style="position: absolute; top: 4px; right: 4px; display: flex; gap: 2px; z-index: 10;">
+      <button type="button" class="preview-position-btn preview-position-up" data-action="move-up" data-inline-id="${inlineId}" data-inline-kind="video" title="Di chuyển lên" style="width: 24px; height: 24px; border-radius: 4px; border: none; background: rgba(255,255,255,0.9); cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
+        <i class="fas fa-chevron-up" style="font-size: 10px; color: #374151;"></i>
+      </button>
+      <button type="button" class="preview-position-btn preview-position-down" data-action="move-down" data-inline-id="${inlineId}" data-inline-kind="video" title="Di chuyển xuống" style="width: 24px; height: 24px; border-radius: 4px; border: none; background: rgba(255,255,255,0.9); cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
+        <i class="fas fa-chevron-down" style="font-size: 10px; color: #374151;"></i>
+      </button>
+    </div>` : '';
   return {
     position: getPositionNumber(item.position ?? null),
     html: `
-      <article class="preview-inline-block preview-inline-block--video" data-type="${item.type || 'video'}" data-inline-id="${inlineId}" data-inline-kind="video" data-inline-source="${inlineSource}" data-inline-position="${item.position ?? ''}">
+      <article class="preview-inline-block preview-inline-block--video" data-type="${item.type || 'video'}" data-inline-id="${inlineId}" data-inline-kind="video" data-inline-source="${inlineSource}" data-inline-position="${item.position ?? ''}" style="position: relative;">
+        ${positionControls}
         <div class="preview-inline-frame">
           ${buildVideoFrame(item.url || '')}
         </div>
@@ -350,7 +356,12 @@ function renderSourceList(sources: unknown) {
   `;
 }
 
-export function renderBlogPreviewHtml(data: BlogPostDetail) {
+export interface PreviewOptions {
+  showPositionControls?: boolean;
+}
+
+export function renderBlogPreviewHtml(data: BlogPostDetail, options: PreviewOptions = {}) {
+  const { showPositionControls = false } = options;
   const safeData = data ?? ({} as BlogPostDetail);
   const safeTitle = escapeHtml(safeData.title || 'Không có tiêu đề');
   const subtitleHtml = safeData.subtitle ? `<p class="preview-subtitle">${escapeHtml(safeData.subtitle)}</p>` : '';
@@ -385,8 +396,8 @@ export function renderBlogPreviewHtml(data: BlogPostDetail) {
   const { inline: inlineVideos, remainder: videoItems } = splitInlineItems(safeData.videoItems);
 
   const inlineBlocks: InlineBlock[] = [
-    ...inlineMedia.map(item => buildInlineImageBlock(item, BLOG_MEDIA_LABELS)),
-    ...inlineVideos.map(item => buildInlineVideoBlock(item, BLOG_VIDEO_LABELS))
+    ...inlineMedia.map(item => buildInlineImageBlock(item, BLOG_MEDIA_LABELS, showPositionControls)),
+    ...inlineVideos.map(item => buildInlineVideoBlock(item, BLOG_VIDEO_LABELS, showPositionControls))
   ];
 
   const inlineBody = renderBodyWithInlineEmbeds(safeData.content || 'Không có nội dung', inlineBlocks);
@@ -471,7 +482,8 @@ function renderDemoComboSection(items?: DemoMediaItem[]) {
   `;
 }
 
-export function renderProductPreviewHtml(data: ProductDetail) {
+export function renderProductPreviewHtml(data: ProductDetail, options: PreviewOptions = {}) {
+  const { showPositionControls = false } = options;
   const safeData = data ?? ({} as ProductDetail);
   const title = escapeHtml(safeData.name || 'Sản phẩm chưa đặt tên');
   const category = safeData.category ? `<div class="meta-badge">${escapeHtml(safeData.category)}</div>` : '';
@@ -483,8 +495,8 @@ export function renderProductPreviewHtml(data: ProductDetail) {
   const { inline: inlineVideos, remainder: videoItems } = splitInlineItems(safeData.videoItems);
 
   const inlineBlocks: InlineBlock[] = [
-    ...inlineMedia.map(item => buildInlineImageBlock(item, PRODUCT_MEDIA_LABELS)),
-    ...inlineVideos.map(item => buildInlineVideoBlock(item, PRODUCT_VIDEO_LABELS))
+    ...inlineMedia.map(item => buildInlineImageBlock(item, PRODUCT_MEDIA_LABELS, showPositionControls)),
+    ...inlineVideos.map(item => buildInlineVideoBlock(item, PRODUCT_VIDEO_LABELS, showPositionControls))
   ];
 
   const inlineBody = renderBodyWithInlineEmbeds(safeData.description || 'Nội dung sản phẩm đang cập nhật', inlineBlocks);
