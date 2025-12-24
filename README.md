@@ -121,7 +121,7 @@ That’s the current baseline. Backend now boots cleanly, the admin UI can authe
 
 Core Value. Smart Solutions.
 
-Landing page hiện đại, sang trọng và chuyên nghiệp cho công ty công nghệ COVASOL.
+Landing page hiện đại, sang trọng và chuyên nghiệp cho team công nghệ COVASOL.
 
 Documentation • Demo • Contact
 
@@ -149,12 +149,12 @@ Documentation • Demo • Contact
 
 ## Giới thiệu
 
-COVASOL Landing Page là một trang web hiện đại, sang trọng được thiết kế chuyên nghiệp cho công ty công nghệ COVASOL. Dự án kết hợp giữa thiết kế UI/UX tinh tế với hiệu suất cao, mang đến trải nghiệm người dùng vượt trội.
+COVASOL Landing Page là một trang web hiện đại, sang trọng được thiết kế chuyên nghiệp cho team công nghệ COVASOL. Dự án kết hợp giữa thiết kế UI/UX tinh tế với hiệu suất cao, mang đến trải nghiệm người dùng vượt trội.
 
 ### Mục tiêu
 - Truyền tải giá trị cốt lõi: "Core Value. Smart Solutions."
 - Tăng tỷ lệ chuyển đổi: Thiết kế tập trung vào call-to-action
-- Xây dựng niềm tin: Hiển thị năng lực và thành tựu của công ty
+- Xây dựng niềm tin: Hiển thị năng lực và thành tựu của team
 - Tối ưu SEO: Cấu trúc semantic và meta tags đầy đủ
 
 ---

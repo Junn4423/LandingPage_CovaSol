@@ -20,7 +20,7 @@ const sections = [
   {
     title: 'Định nghĩa chính',
     bullets: [
-      '“COVASOL” hoặc “Chúng tôi”: Công ty cung cấp nền tảng, dịch vụ và nội dung tại tên miền covasol.com.vn.',
+      '“COVASOL” hoặc “Chúng tôi”: team cung cấp nền tảng, dịch vụ và nội dung tại tên miền covasol.com.vn.',
       '“Khách hàng” hoặc “Bạn”: Cá nhân/tổ chức sử dụng website, liên hệ, ký kết hoặc triển khai dịch vụ với COVASOL.',
       '“Dịch vụ”: Các gói tư vấn, thiết kế, phát triển, vận hành hệ thống và sản phẩm số do COVASOL thực hiện.'
     ]

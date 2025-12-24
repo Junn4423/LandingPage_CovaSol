@@ -19,7 +19,7 @@ const sections = [
   {
     title: 'Loại dữ liệu chúng tôi thu thập',
     bullets: [
-      'Thông tin liên hệ: họ tên, email, số điện thoại, công ty, chức danh.',
+      'Thông tin liên hệ: họ tên, email, số điện thoại, team, chức danh.',
       'Thông tin giao dịch: yêu cầu tư vấn, lịch sử trao đổi, phạm vi dự án, tài liệu làm việc do bạn cung cấp.',
       'Dữ liệu kỹ thuật: địa chỉ IP, loại trình duyệt, thiết bị, cookie, hành vi truy cập trang để cải thiện trải nghiệm người dùng.'
     ]

@@ -72,7 +72,7 @@ const translations = {
         'api-dev-target': 'Các dự án cần kết nối dữ liệu hoặc nền tảng mở rộng.',
         'automation-title': 'Automation & Integration',
         'automation-desc': 'Tự động hóa quy trình, kết nối ứng dụng (Zapier, n8n, custom API).',
-        'automation-target': 'Công ty muốn giảm thao tác thủ công, tăng hiệu suất.',
+        'automation-target': 'team muốn giảm thao tác thủ công, tăng hiệu suất.',
         'api-dev-title': 'API & Backend Development',
         'api-dev-desc': 'Xây dựng hệ thống API, cơ sở dữ liệu, microservice, bảo mật, mở rộng nền tảng.',
         'automation-title': 'Automation & Integration',
@@ -83,11 +83,11 @@ const translations = {
         'web-dev-target': 'Startup, SME, tổ chức cần hệ thống quản lý hoặc kênh tương tác.',
         'mobile-dev-target': 'Doanh nghiệp cần sản phẩm hướng tới người dùng cuối.',
         'api-dev-target': 'Các dự án cần kết nối dữ liệu hoặc nền tảng mở rộng.',
-        'automation-target': 'Công ty muốn giảm thao tác thủ công, tăng hiệu suất.',
+        'automation-target': 'team muốn giảm thao tác thủ công, tăng hiệu suất.',
         
         // About Section
         'about-title': 'Về COVASOL',
-        'about-text': 'COVASOL là công ty công nghệ chuyên cung cấp giải pháp phần mềm và dịch vụ chuyển đổi số cho các doanh nghiệp vừa và nhỏ. Với phương châm "Core Value. Smart Solutions.", chúng tôi cam kết mang đến những giải pháp công nghệ thông minh, hiệu quả và bền vững.',
+        'about-text': 'COVASOL là team công nghệ chuyên cung cấp giải pháp phần mềm và dịch vụ chuyển đổi số cho các doanh nghiệp vừa và nhỏ. Với phương châm "Core Value. Smart Solutions.", chúng tôi cam kết mang đến những giải pháp công nghệ thông minh, hiệu quả và bền vững.',
         
         // Stats
         'stat1-label': 'Dự án hoàn thành',

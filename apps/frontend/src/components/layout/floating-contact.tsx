@@ -9,7 +9,7 @@ const ZALO_ICON = normalizeImageUrl('/assets/img/icons/Zalo.png', { fallback: '/
 // Gmail compose URL với nội dung soạn sẵn
 const GMAIL_COMPOSE_URL = `https://mail.google.com/mail/?view=cm&fs=1&to=covasol.studio@gmail.com&su=${encodeURIComponent('Liên Hệ Báo Giá Phần Mềm')}&body=${encodeURIComponent(`Kính gửi đội ngũ COVA,
 
-Tôi quan tâm đến phần mềm/dịch vụ của quý công ty.
+Tôi quan tâm đến phần mềm/dịch vụ của quý team.
 
 Xin vui lòng gửi cho tôi báo giá chi tiết.
 

@@ -20,8 +20,8 @@ const ReviewsCarousel = dynamic(() => import('@/components/home/reviews-carousel
 const HERO_VIDEO_SRC = '/assets/video/Hero_section_Landing_page_3D_animation.webm';
 
 const heroStats = [
-  { label: 'Dự án triển khai', value: '120+' },
-  { label: 'Khách hàng hài lòng', value: '60+' },
+  { label: 'Dự án đã được triển khai', value: '50+' },
+  { label: 'Khách hàng hài lòng', value: '40+' },
   { label: 'Đối tác chiến lược', value: '12' }
 ];
 
@@ -122,9 +122,9 @@ const detailedServices = [
 ];
 
 const aboutStats = [
-  { labelKey: 'stat1-label', label: 'Dự án hoàn thành', value: 100 },
-  { labelKey: 'stat2-label', label: 'Khách hàng hài lòng', value: 50 },
-  { labelKey: 'stat3-label', label: 'Năm kinh nghiệm', value: 3 }
+  { labelKey: 'stat1-label', label: 'Dự án hoàn thành', value: '50+' },
+  { labelKey: 'stat2-label', label: 'Khách hàng hài lòng', value: "40+" },
+  { labelKey: 'stat3-label', label: 'Năm kinh nghiệm', value: 2 }
 ];
 
 const aboutPhotos = [
@@ -365,20 +365,22 @@ export default async function HomePage() {
             <div className="about-text" data-aos="fade-right">
               <h2 data-key="about-title">Về COVASOL</h2>
               <p data-key="about-text">
-                COVASOL là công ty công nghệ chuyên cung cấp giải pháp phần mềm và dịch vụ chuyển đổi số cho doanh nghiệp vừa và nhỏ.
+                COVASOL là team công nghệ chuyên cung cấp giải pháp phần mềm và dịch vụ chuyển đổi số cho doanh nghiệp vừa và nhỏ.
                 Với phương châm Core Value. Smart Solutions., chúng tôi cam kết mang đến giải pháp thông minh, hiệu quả và bền vững.
               </p>
               <div className="about-stats">
-                {aboutStats.map(stat => (
-                  <div className="stat-item" key={stat.label}>
-                    <span className="stat-number" data-counter={stat.value}>
-                      0
-                    </span>
-                    <span className="stat-label" data-key={stat.labelKey}>
-                      {stat.label}
-                    </span>
-                  </div>
-                ))}
+                <div className="stat-item" key="Dự án hoàn thành">
+                  <span className="stat-number" data-counter="50+">50+</span>
+                  <span className="stat-label" data-key="stat1-label">Dự án hoàn thành</span>
+                </div>
+                <div className="stat-item" key="Khách hàng hài lòng">
+                  <span className="stat-number" data-counter="40+">40+</span>
+                  <span className="stat-label" data-key="stat2-label">Khách hàng hài lòng</span>
+                </div>
+                <div className="stat-item" key="Năm kinh nghiệm">
+                  <span className="stat-number" data-counter="2">2</span>
+                  <span className="stat-label" data-key="stat3-label">Năm kinh nghiệm</span>
+                </div>
               </div>
             </div>
             <div className="about-image" data-aos="fade-left">
