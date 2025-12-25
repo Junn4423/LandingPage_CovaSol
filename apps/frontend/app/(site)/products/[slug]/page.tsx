@@ -21,9 +21,44 @@ export async function generateMetadata({ params }: ProductPageProps) {
   if (!product) {
     return { title: 'Giải pháp không tồn tại' };
   }
+
+  const baseUrl = 'https://covasol.com.vn';
+  const productUrl = `${baseUrl}/products/${params.slug}`;
+  
+  // Đảm bảo imageUrl luôn là absolute URL cho Facebook/social sharing
+  let imageUrl = product.imageUrl || `${baseUrl}/assets/img/anh2.jpeg`;
+  if (imageUrl && !imageUrl.startsWith('http')) {
+    imageUrl = imageUrl.startsWith('/') ? `${baseUrl}${imageUrl}` : `${baseUrl}/${imageUrl}`;
+  }
+
   return {
     title: product.name,
-    description: product.shortDescription || product.description
+    description: product.shortDescription || product.description,
+    alternates: {
+      canonical: productUrl
+    },
+    openGraph: {
+      title: product.name,
+      description: product.shortDescription || product.description || product.name,
+      url: productUrl,
+      siteName: 'Covasol',
+      locale: 'vi_VN',
+      type: 'website',
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: product.name
+        }
+      ]
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: product.name,
+      description: product.shortDescription || product.description || product.name,
+      images: [imageUrl]
+    }
   };
 }
 
