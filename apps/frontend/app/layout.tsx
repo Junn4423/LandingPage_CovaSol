@@ -117,6 +117,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="stylesheet" href="/assets/css/landing/hero.css" />
         <link rel="stylesheet" href="/assets/css/landing/home-sections.css" />
         <link rel="stylesheet" href="/assets/css/landing/blog.css" />
+        <link rel="stylesheet" href="/assets/css/landing/blog-yatame.css" />
         <link rel="stylesheet" href="/assets/css/landing/products.css" />
         <link rel="stylesheet" href="/assets/css/landing/detail-pages.css" />
         <link rel="stylesheet" href="/assets/css/landing/responsive.css" />
