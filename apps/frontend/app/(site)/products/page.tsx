@@ -100,7 +100,7 @@ export default async function ProductsPage() {
   const items = products.length ? products : FALLBACK_PRODUCTS;
 
   return (
-    <div className="products-page legacy-products">
+    <div className="products-page yatame-blog-page">
       <ProductsHero
         videoSrc={HERO_VIDEO}
         title={HERO_COPY.title}

@@ -19,16 +19,16 @@ interface ProductsCtaProps {
 
 export function ProductsCta({ title, description, titleKey, descriptionKey, primaryCta, secondaryCta }: ProductsCtaProps) {
   return (
-    <section className="products-cta">
+    <section className="yatame-cta-section">
       <div className="container">
-        <div className="cta-content" data-aos="fade-up">
+        <div className="yatame-cta-content" data-aos="fade-up">
           <h2 data-key={titleKey}>{title}</h2>
           <p data-key={descriptionKey}>{description}</p>
-          <div className="cta-buttons">
-            <Link href={primaryCta.href as any} className="btn btn-primary btn-large" data-key={primaryCta.key}>
+          <div className="yatame-cta-buttons">
+            <Link href={primaryCta.href as any} className="btn btn-primary" data-key={primaryCta.key}>
               {primaryCta.label}
             </Link>
-            <Link href={secondaryCta.href as any} className="btn btn-outline btn-large" data-key={secondaryCta.key}>
+            <Link href={secondaryCta.href as any} className="btn btn-outline" data-key={secondaryCta.key}>
               {secondaryCta.label}
             </Link>
           </div>

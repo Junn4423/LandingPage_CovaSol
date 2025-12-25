@@ -22,9 +22,40 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
     };
   }
 
+  const baseUrl = 'https://covasol.com.vn';
+  const blogUrl = `${baseUrl}/blog/${params.slug}`;
+  const imageUrl = post.heroImage || `${baseUrl}/assets/img/anh1.jpeg`;
+
   return {
     title: post.title,
-    description: post.excerpt
+    description: post.excerpt,
+    alternates: {
+      canonical: blogUrl
+    },
+    openGraph: {
+      title: post.title,
+      description: post.excerpt || post.title,
+      url: blogUrl,
+      siteName: 'Covasol',
+      locale: 'vi_VN',
+      type: 'article',
+      publishedTime: post.publishedAt || undefined,
+      authors: post.author ? [post.author] : ['COVASOL'],
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: post.title
+        }
+      ]
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.excerpt || post.title,
+      images: [imageUrl]
+    }
   };
 }
 

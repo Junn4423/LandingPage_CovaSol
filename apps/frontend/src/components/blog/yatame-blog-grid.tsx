@@ -76,14 +76,24 @@ export function YatameBlogGrid({ posts }: YatameBlogGridProps) {
           return key === activeCategory;
         });
 
-    if (!term) return byCategory;
+    const filtered = !term
+      ? byCategory
+      : byCategory.filter(post => {
+          const haystack = [post.title, post.excerpt, post.category, post.author, post.subtitle]
+            .filter(Boolean)
+            .join(' ')
+            .toLowerCase();
+          return haystack.includes(term);
+        });
 
-    return byCategory.filter(post => {
-      const haystack = [post.title, post.excerpt, post.category, post.author, post.subtitle]
-        .filter(Boolean)
-        .join(' ')
-        .toLowerCase();
-      return haystack.includes(term);
+    // Sort: featured posts first, then by publishedAt descending
+    return [...filtered].sort((a, b) => {
+      if (a.isFeatured && !b.isFeatured) return -1;
+      if (!a.isFeatured && b.isFeatured) return 1;
+      // Secondary sort by publishedAt
+      const dateA = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
+      const dateB = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
+      return dateB - dateA;
     });
   }, [activeCategory, safePosts, searchTerm]);
 
@@ -178,7 +188,7 @@ export function YatameBlogGrid({ posts }: YatameBlogGridProps) {
                 {visiblePosts.map((post) => (
                   <article
                     key={post.id}
-                    className="yatame-post-card"
+                    className={`yatame-post-card${post.isFeatured ? ' is-featured' : ''}`}
                     data-aos="fade-up"
                   >
                     <Link href={`/blog/${post.slug}`} className="card-thumbnail">
@@ -192,6 +202,9 @@ export function YatameBlogGrid({ posts }: YatameBlogGridProps) {
                           }
                         }}
                       />
+                      {post.isFeatured && (
+                        <span className="featured-badge">Bài viết nổi bật</span>
+                      )}
                     </Link>
                     <div className="card-body">
                       <h3 className="card-title">

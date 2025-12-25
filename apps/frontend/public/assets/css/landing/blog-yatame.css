@@ -161,6 +161,87 @@
   flex: 1;
 }
 
+/* Featured Badge */
+.yatame-post-card .card-thumbnail {
+  position: relative;
+}
+
+.yatame-post-card .featured-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: linear-gradient(135deg, var(--primary-green) 0%, var(--accent-green) 100%);
+  color: var(--white);
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  box-shadow: 0 2px 8px rgba(46, 139, 87, 0.35);
+  z-index: 10;
+}
+
+.yatame-post-card .featured-badge.is-new {
+  background: linear-gradient(135deg, var(--primary-blue) 0%, #3b82f6 100%);
+  box-shadow: 0 2px 8px rgba(18, 78, 102, 0.35);
+}
+
+.yatame-post-card.is-featured {
+  border: 2px solid var(--primary-green);
+  box-shadow: 0 4px 20px rgba(46, 139, 87, 0.15);
+}
+
+.yatame-post-card.is-featured:hover {
+  box-shadow: 0 20px 40px rgba(46, 139, 87, 0.2);
+}
+
+/* Card Category Badge */
+.yatame-post-card .card-category {
+  display: inline-block;
+  color: var(--primary-blue);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+/* Card Tags */
+.yatame-post-card .card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.yatame-post-card .card-tag {
+  background: var(--gray-100);
+  color: var(--gray-700);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+/* Card Actions */
+.yatame-post-card .card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.yatame-post-card .card-actions .btn {
+  flex: 1;
+  text-align: center;
+}
+
+.yatame-post-card .card-actions .btn-sm {
+  padding: 8px 12px;
+  font-size: 0.8rem;
+}
+
 /* Yatame Pagination */
 .yatame-pagination {
   display: flex;
@@ -710,4 +791,77 @@
   font-size: 1.1rem;
   color: var(--gray-600);
   margin: 0;
+}
+
+/* ==========================================================================
+   CTA SECTION - Yatame Style
+   ========================================================================== */
+
+.yatame-cta-section {
+  background: var(--gradient-light);
+  padding: clamp(60px, 10vw, 100px) 0;
+  text-align: center;
+}
+
+.yatame-cta-section .container {
+  max-width: 800px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.yatame-cta-content h2 {
+  font-size: clamp(1.875rem, 4.5vw, 2.5rem);
+  color: var(--primary-navy);
+  margin-bottom: 18px;
+  font-weight: 700;
+}
+
+.yatame-cta-content p {
+  color: var(--gray-600);
+  font-size: clamp(1rem, 2vw, 1.1rem);
+  margin-bottom: 36px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.7;
+}
+
+.yatame-cta-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.yatame-cta-buttons .btn {
+  padding: 14px 32px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.yatame-cta-buttons .btn-primary {
+  background: var(--primary-green);
+  color: var(--white);
+  border: 2px solid var(--primary-green);
+}
+
+.yatame-cta-buttons .btn-primary:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(46, 139, 87, 0.25);
+}
+
+.yatame-cta-buttons .btn-outline {
+  background: transparent;
+  color: var(--primary-green);
+  border: 2px solid var(--primary-green);
+}
+
+.yatame-cta-buttons .btn-outline:hover {
+  background: var(--primary-green);
+  color: var(--white);
+  transform: translateY(-2px);
 }
