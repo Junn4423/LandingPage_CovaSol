@@ -604,3 +604,98 @@ export async function unblockIPAddress(ipAddress: string) {
   });
   return res.data;
 }
+
+// =====================================================
+// Seasonal Theme Admin APIs
+// =====================================================
+import type {
+  SeasonalTheme,
+  SeasonalThemeInput,
+  SeasonalThemeSetting,
+  ActiveSeasonalThemeResponse
+} from '@covasol/types';
+
+export async function fetchAdminSeasonalThemes() {
+  const res = await apiRequest<ApiSuccessResponse<SeasonalTheme[]>>({
+    path: '/v1/admin/seasonal-themes'
+  });
+  return res.data;
+}
+
+export async function fetchAdminSeasonalTheme(id: number) {
+  const res = await apiRequest<ApiSuccessResponse<SeasonalTheme>>({
+    path: `/v1/admin/seasonal-themes/${id}`
+  });
+  return res.data;
+}
+
+export async function createAdminSeasonalTheme(input: SeasonalThemeInput) {
+  const res = await apiRequest<ApiSuccessResponse<SeasonalTheme>>({
+    path: '/v1/admin/seasonal-themes',
+    method: 'POST',
+    body: input
+  });
+  return res.data;
+}
+
+export async function updateAdminSeasonalTheme(id: number, input: Partial<SeasonalThemeInput>) {
+  const res = await apiRequest<ApiSuccessResponse<SeasonalTheme>>({
+    path: `/v1/admin/seasonal-themes/${id}`,
+    method: 'PUT',
+    body: input
+  });
+  return res.data;
+}
+
+export async function deleteAdminSeasonalTheme(id: number) {
+  await apiRequest<void>({
+    path: `/v1/admin/seasonal-themes/${id}`,
+    method: 'DELETE'
+  });
+}
+
+export async function activateSeasonalTheme(id: number) {
+  const res = await apiRequest<ApiSuccessResponse<SeasonalTheme>>({
+    path: `/v1/admin/seasonal-themes/${id}/activate`,
+    method: 'POST'
+  });
+  return res.data;
+}
+
+export async function deactivateAllSeasonalThemes() {
+  await apiRequest<void>({
+    path: '/v1/admin/seasonal-themes/deactivate-all',
+    method: 'POST'
+  });
+}
+
+export async function fetchSeasonalThemeSettings() {
+  const res = await apiRequest<ApiSuccessResponse<SeasonalThemeSetting[]>>({
+    path: '/v1/admin/seasonal-themes/settings/all'
+  });
+  return res.data;
+}
+
+export async function upsertSeasonalThemeSetting(key: string, value: string, description?: string) {
+  const res = await apiRequest<ApiSuccessResponse<SeasonalThemeSetting>>({
+    path: `/v1/admin/seasonal-themes/settings/${encodeURIComponent(key)}`,
+    method: 'PUT',
+    body: { value, description }
+  });
+  return res.data;
+}
+
+export async function deleteSeasonalThemeSetting(key: string) {
+  await apiRequest<void>({
+    path: `/v1/admin/seasonal-themes/settings/${encodeURIComponent(key)}`,
+    method: 'DELETE'
+  });
+}
+
+// Public API for frontend
+export async function fetchActiveSeasonalTheme() {
+  const res = await apiRequest<ApiSuccessResponse<ActiveSeasonalThemeResponse>>({
+    path: '/v1/seasonal-theme/active'
+  });
+  return res.data;
+}

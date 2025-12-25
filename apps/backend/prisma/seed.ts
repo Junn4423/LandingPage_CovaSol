@@ -333,6 +333,105 @@ async function main() {
   }
   console.log('✅ Đã tạo', reviews.length, 'đánh giá khách hàng mẫu');
 
+  // Tạo seasonal themes mẫu cho các sự kiện Việt Nam
+  const currentYear = new Date().getFullYear();
+  const seasonalThemes = [
+    {
+      code: 'christmas',
+      name: 'Giáng Sinh',
+      description: 'Ông già Noel, Tuần lộc, Tuyết rơi - Mùa lễ hội cuối năm',
+      startDate: new Date(currentYear, 11, 15),
+      endDate: new Date(currentYear, 11, 31),
+      primaryColor: '#DC2626',
+      secondaryColor: '#16A34A',
+      accentColor: '#FFFFFF',
+      effectType: 'snow',
+      effectEnabled: true,
+      disableOnMobile: true,
+      bannerText: '🎄 Chúc mừng Giáng Sinh! Ưu đãi đặc biệt 20%',
+      bannerLink: '/khuyen-mai',
+      isActive: false,
+      priority: 10,
+      status: 'active'
+    },
+    {
+      code: 'new_year',
+      name: 'Tết Dương Lịch',
+      description: 'Pháo hoa, số năm mới, rượu champagne - Chào đón năm mới',
+      startDate: new Date(currentYear + 1, 0, 1),
+      endDate: new Date(currentYear + 1, 0, 7),
+      primaryColor: '#FFD700',
+      secondaryColor: '#000000',
+      accentColor: '#C0C0C0',
+      effectType: 'firework',
+      effectEnabled: true,
+      disableOnMobile: true,
+      bannerText: '🎆 Happy New Year ' + (currentYear + 1) + '!',
+      isActive: false,
+      priority: 15,
+      status: 'active'
+    },
+    {
+      code: 'tet_nguyen_dan',
+      name: 'Tết Nguyên Đán',
+      description: 'Hoa đào/mai, lồng đèn, bao lì xì, con giáp - Tết cổ truyền Việt Nam',
+      startDate: new Date(currentYear + 1, 0, 20),
+      endDate: new Date(currentYear + 1, 1, 15),
+      primaryColor: '#DC2626',
+      secondaryColor: '#FBBF24',
+      accentColor: '#FEE2E2',
+      effectType: 'petals',
+      effectEnabled: true,
+      disableOnMobile: true,
+      bannerText: '🏮 Chúc Mừng Năm Mới! An Khang Thịnh Vượng 🧧',
+      isActive: false,
+      priority: 20,
+      status: 'active'
+    },
+    {
+      code: 'valentine',
+      name: 'Valentine 14/2',
+      description: 'Trái tim, Cupid, chocolate - Ngày lễ tình nhân',
+      startDate: new Date(currentYear + 1, 1, 10),
+      endDate: new Date(currentYear + 1, 1, 15),
+      primaryColor: '#EC4899',
+      secondaryColor: '#DC2626',
+      accentColor: '#FDF2F8',
+      effectType: 'hearts',
+      effectEnabled: true,
+      disableOnMobile: true,
+      bannerText: '💕 Happy Valentine\'s Day!',
+      isActive: false,
+      priority: 10,
+      status: 'active'
+    }
+  ];
+
+  for (const theme of seasonalThemes) {
+    await prisma.seasonalTheme.upsert({
+      where: { code: theme.code },
+      update: {},
+      create: theme
+    });
+  }
+  console.log('✅ Đã tạo', seasonalThemes.length, 'seasonal themes mẫu');
+
+  // Tạo settings mặc định cho seasonal themes
+  const seasonalSettings = [
+    { key: 'global_effects_enabled', value: 'true', description: 'Bật/tắt toàn bộ hiệu ứng mùa' },
+    { key: 'auto_switch_enabled', value: 'true', description: 'Tự động chuyển theme theo ngày' },
+    { key: 'particle_density', value: 'medium', description: 'Mật độ hiệu ứng: low, medium, high' }
+  ];
+
+  for (const setting of seasonalSettings) {
+    await prisma.seasonalThemeSetting.upsert({
+      where: { key: setting.key },
+      update: {},
+      create: setting
+    });
+  }
+  console.log('✅ Đã tạo seasonal theme settings');
+
   console.log('🎉 Seed database hoàn tất!');
   console.log('📝 Admin credentials:');
   console.log('   Username: admin');

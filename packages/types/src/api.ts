@@ -111,3 +111,92 @@ export interface AdminConsentResponse {
   pageSize: number;
   stats: CookieConsentStats;
 }
+
+// =====================================================
+// Seasonal Theme Types
+// =====================================================
+export type SeasonalEffectType = 
+  | 'snow'           // Tuyết rơi (Christmas)
+  | 'firework'       // Pháo hoa (New Year)
+  | 'petals'         // Cánh hoa đào/mai (Tết)
+  | 'hearts'         // Trái tim (Valentine)
+  | 'confetti'       // Hoa giấy (Celebration)
+  | 'leaves'         // Lá rơi (Autumn)
+  | 'lanterns'       // Đèn lồng (Mid-Autumn)
+  | 'bats'           // Dơi bay (Halloween)
+  | 'bubbles'        // Bong bóng (Summer)
+  | 'stars'          // Ngôi sao (General)
+  | 'lixi'           // Bao lì xì (Tết)
+  | 'none';          // Không hiệu ứng
+
+export interface SeasonalDecoration {
+  id: string;
+  type: 'corner' | 'banner' | 'icon' | 'floating';
+  position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'header' | 'footer';
+  imageUrl: string;
+  altText?: string;
+  link?: string;
+  size?: 'small' | 'medium' | 'large';
+  animation?: 'none' | 'swing' | 'bounce' | 'pulse' | 'shake';
+}
+
+export interface SeasonalTheme {
+  id: number;
+  code: string;
+  name: string;
+  description?: string;
+  startDate: string;
+  endDate: string;
+  primaryColor: string;
+  secondaryColor: string;
+  accentColor?: string;
+  effectType?: SeasonalEffectType;
+  effectConfig?: Record<string, unknown>;
+  effectEnabled: boolean;
+  disableOnMobile: boolean;
+  decorations?: SeasonalDecoration[];
+  bannerImageUrl?: string;
+  bannerText?: string;
+  bannerLink?: string;
+  isActive: boolean;
+  priority: number;
+  status: 'active' | 'inactive';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SeasonalThemeInput {
+  code: string;
+  name: string;
+  description?: string;
+  startDate: string;
+  endDate: string;
+  primaryColor: string;
+  secondaryColor: string;
+  accentColor?: string;
+  effectType?: SeasonalEffectType;
+  effectConfig?: Record<string, unknown>;
+  effectEnabled?: boolean;
+  disableOnMobile?: boolean;
+  decorations?: SeasonalDecoration[];
+  bannerImageUrl?: string;
+  bannerText?: string;
+  bannerLink?: string;
+  isActive?: boolean;
+  priority?: number;
+  status?: 'active' | 'inactive';
+}
+
+export interface SeasonalThemeSetting {
+  id: number;
+  key: string;
+  value: string;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ActiveSeasonalThemeResponse {
+  theme: SeasonalTheme | null;
+  settings: Record<string, string>;
+}

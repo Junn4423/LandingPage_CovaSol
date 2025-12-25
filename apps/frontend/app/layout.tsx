@@ -60,17 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="vi">
       <head>
-        {/* Explicit Open Graph and Facebook meta tags */}
-        <meta property="og:url" content="https://covasol.com.vn/" />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content="COVA - Solutions" />
-        <meta property="og:description" content="Đối tác công nghệ đáng tin cậy cho doanh nghiệp hiện đại. Chúng tôi phát triển phần mềm, thiết kế trải nghiệm người dùng và hỗ trợ chuyển đổi số toàn diện." />
-        <meta property="og:image" content="https://res.cloudinary.com/dky6wyvnm/image/upload/v1765512563/quality_restoration_20251212110748919_hvu4af.jpg" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:image:type" content="image/jpeg" />
-        <meta property="og:site_name" content="Covasol" />
-        <meta property="og:locale" content="vi_VN" />
+        {/* fb:app_id - chỉ giữ lại tag này vì Next.js không hỗ trợ trong metadata object */}
         <meta property="fb:app_id" content="1234567890" />
         
         <link rel="preconnect" href="https://fonts.googleapis.com" />

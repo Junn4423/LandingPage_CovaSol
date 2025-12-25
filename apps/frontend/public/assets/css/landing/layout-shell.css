@@ -65,9 +65,13 @@
    NAVIGATION
    ============================================================================ */
 
+:root {
+  --seasonal-banner-height: 0px;
+}
+
 .navbar {
   position: fixed;
-  top: 0;
+  top: var(--seasonal-banner-height, 0px);
   left: 0;
   width: 100%;
   background: rgba(13, 27, 42, 0.95);
@@ -76,7 +80,13 @@
   z-index: 1000;
   padding: 0;
   min-height: var(--nav-height);
-  transition: var(--transition-normal);
+  transition: var(--transition-normal), top 0.3s ease;
+}
+
+/* Seasonal banner styling */
+.seasonal-banner + .navbar,
+.seasonal-banner ~ .navbar {
+  top: var(--seasonal-banner-height, 0px);
 }
 
 .nav-container {

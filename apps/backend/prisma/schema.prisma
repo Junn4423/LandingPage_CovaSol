@@ -273,3 +273,64 @@ model IPAnalytics {
   @@index([requestCount], map: "idx_ipanalytics_count")
   @@map("ip_analytics")
 }
+
+// =====================================================
+// Bảng seasonal_themes - Cấu hình giao diện theo mùa/sự kiện
+// =====================================================
+model SeasonalTheme {
+  id                Int       @id @default(autoincrement())
+  code              String    @unique @db.VarChar(50)       // new_year, tet, valentine, etc.
+  name              String    @db.VarChar(100)              // Tên hiển thị
+  description       String?   @db.Text                      // Mô tả
+  
+  // Thời gian áp dụng
+  startDate         DateTime  @map("start_date")            // Ngày bắt đầu (MM-DD format stored)
+  endDate           DateTime  @map("end_date")              // Ngày kết thúc
+  
+  // Màu sắc chủ đạo
+  primaryColor      String    @map("primary_color") @db.VarChar(20)    // Màu chính (hex)
+  secondaryColor    String    @map("secondary_color") @db.VarChar(20)  // Màu phụ (hex)
+  accentColor       String?   @map("accent_color") @db.VarChar(20)     // Màu nhấn (hex)
+  
+  // Hiệu ứng particles (tsparticles config)
+  effectType        String?   @map("effect_type") @db.VarChar(50)      // snow, firework, hearts, petals, etc.
+  effectConfig      Json?     @map("effect_config")                     // JSON config cho tsparticles
+  effectEnabled     Boolean   @default(true) @map("effect_enabled")    // Bật/tắt hiệu ứng
+  disableOnMobile   Boolean   @default(true) @map("disable_on_mobile") // Tắt trên mobile
+  
+  // Trang trí (decorations)
+  decorations       Json?     @map("decorations")                       // Array of decoration items
+  // Example: [{ type: 'corner', position: 'top-left', imageUrl: '/assets/img/seasonal/...' }]
+  
+  // Header banner
+  bannerImageUrl    String?   @map("banner_image_url") @db.Text        // Banner image URL
+  bannerText        String?   @map("banner_text") @db.VarChar(255)     // Banner text
+  bannerLink        String?   @map("banner_link") @db.VarChar(500)     // Banner link
+  
+  // Trạng thái
+  isActive          Boolean   @default(false) @map("is_active")        // Đang active (chỉ 1 theme active)
+  priority          Int       @default(0)                               // Ưu tiên khi trùng ngày
+  status            String    @default("active") @db.VarChar(20)       // active, inactive
+  
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  @@index([isActive], map: "idx_seasonal_active")
+  @@index([startDate, endDate], map: "idx_seasonal_dates")
+  @@index([status], map: "idx_seasonal_status")
+  @@map("seasonal_themes")
+}
+
+// =====================================================
+// Bảng seasonal_theme_settings - Cài đặt chung cho seasonal themes
+// =====================================================
+model SeasonalThemeSetting {
+  id                Int       @id @default(autoincrement())
+  key               String    @unique @db.VarChar(100)      // Setting key
+  value             String    @db.Text                      // Setting value (JSON or string)
+  description       String?   @db.Text                      // Mô tả
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  @@map("seasonal_theme_settings")
+}

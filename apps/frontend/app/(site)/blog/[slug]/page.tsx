@@ -24,7 +24,12 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
 
   const baseUrl = 'https://covasol.com.vn';
   const blogUrl = `${baseUrl}/blog/${params.slug}`;
-  const imageUrl = post.heroImage || `${baseUrl}/assets/img/anh1.jpeg`;
+  
+  // Đảm bảo imageUrl luôn là absolute URL cho Facebook/social sharing
+  let imageUrl = post.heroImage || `${baseUrl}/assets/img/anh1.jpeg`;
+  if (imageUrl && !imageUrl.startsWith('http')) {
+    imageUrl = imageUrl.startsWith('/') ? `${baseUrl}${imageUrl}` : `${baseUrl}/${imageUrl}`;
+  }
 
   return {
     title: post.title,

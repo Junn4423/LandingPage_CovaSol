@@ -3,6 +3,7 @@ import Script from 'next/script';
 import dynamic from 'next/dynamic';
 import { LegacyNavbar } from './legacy-navbar';
 import { LegacyFooter } from './legacy-footer';
+import { SeasonalThemeProvider } from '@/components/providers/seasonal-theme-provider';
 
 // Defer non-critical, client-only widgets to trim the initial JS payload
 const FloatingPanels = dynamic(() => import('./floating-panels').then(mod => mod.FloatingPanels), {
@@ -30,29 +31,37 @@ const CookieConsentBanner = dynamic(
   { ssr: false, loading: () => null }
 );
 
+const SeasonalWrapper = dynamic(
+  () => import('@/components/common/seasonal-wrapper').then(mod => mod.SeasonalWrapper),
+  { ssr: false, loading: () => null }
+);
+
 function FooterFallback() {
   return <div className="footer placeholder" aria-hidden="true" />;
 }
 
 export function SiteLayout({ children }: PropsWithChildren) {
   return (
-    <div className="legacy-shell" data-nav-current="home">
-      <LegacyNavbar />
-      <main>{children}</main>
-      <Suspense fallback={<FooterFallback />}>
-        <LegacyFooter />
-      </Suspense>
-      <FloatingPanels />
-      <BackToTopButton />
-      <GlobalImageLightbox />
-      <VisitTracker />
-      <CookieConsentBanner />
+    <SeasonalThemeProvider>
+      <div className="legacy-shell" data-nav-current="home">
+        <SeasonalWrapper showBanner={true} showEffects={true} showDecorations={true} />
+        <LegacyNavbar />
+        <main>{children}</main>
+        <Suspense fallback={<FooterFallback />}>
+          <LegacyFooter />
+        </Suspense>
+        <FloatingPanels />
+        <BackToTopButton />
+        <GlobalImageLightbox />
+        <VisitTracker />
+        <CookieConsentBanner />
 
-      <Script src="https://unpkg.com/aos@2.3.1/dist/aos.js" strategy="afterInteractive" />
-      <Script src="/assets/js/translations.js" strategy="afterInteractive" />
-      <Script src="/assets/js/config.js" strategy="afterInteractive" />
-      <Script src="/assets/js/data-service.js" strategy="afterInteractive" />
-      <Script src="/assets/js/script.js" strategy="afterInteractive" />
-    </div>
+        <Script src="https://unpkg.com/aos@2.3.1/dist/aos.js" strategy="afterInteractive" />
+        <Script src="/assets/js/translations.js" strategy="afterInteractive" />
+        <Script src="/assets/js/config.js" strategy="afterInteractive" />
+        <Script src="/assets/js/data-service.js" strategy="afterInteractive" />
+        <Script src="/assets/js/script.js" strategy="afterInteractive" />
+      </div>
+    </SeasonalThemeProvider>
   );
 }

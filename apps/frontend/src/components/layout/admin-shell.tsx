@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import type { Route } from 'next';
 import { PropsWithChildren } from 'react';
 import { usePathname } from 'next/navigation';
 import { AdminLoginPanel } from '@/components/admin/admin-login-panel';
@@ -10,10 +9,11 @@ import { ApiError } from '@/lib/api-client';
 import { normalizeImageUrl } from '@/lib/image-url';
 import { useAdminSession, useLogoutMutation, useAdminOverview, useMyPostsEditRequests } from '@/hooks/admin';
 
-const adminNav: { href: Route; label: string; icon: string }[] = [
+const adminNav: { href: string; label: string; icon: string }[] = [
   { href: '/admin', label: 'Dashboard', icon: 'fas fa-gauge' },
   { href: '/admin/analytics', label: 'Analytics', icon: 'fas fa-chart-line' },
   { href: '/admin/system-logs', label: 'Nhật ký hệ thống', icon: 'fas fa-shield-alt' },
+  { href: '/admin/seasonal-themes', label: 'Giao diện Mùa', icon: 'fas fa-snowflake' },
   { href: '/admin/blog', label: 'Blog', icon: 'fas fa-newspaper' },
   { href: '/admin/edit-requests', label: 'Duyệt chỉnh sửa', icon: 'fas fa-clipboard-check' },
   { href: '/admin/products', label: 'Sản phẩm', icon: 'fas fa-cubes' },
@@ -91,7 +91,7 @@ export function AdminShell({ children }: PropsWithChildren) {
           {adminNav.map(item => (
             <Link
               key={item.href}
-              href={item.href}
+              href={item.href as any}
               className={`flex items-center gap-3 rounded-xl px-4 py-3 font-semibold transition-all duration-200 ${
                 isActive(item.href)
                   ? 'bg-white/20 -translate-y-0.5'
