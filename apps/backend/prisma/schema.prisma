@@ -302,6 +302,9 @@ model SeasonalTheme {
   decorations       Json?     @map("decorations")                       // Array of decoration items
   // Example: [{ type: 'corner', position: 'top-left', imageUrl: '/assets/img/seasonal/...' }]
   
+  // Background image
+  backgroundImageUrl String?  @map("background_image_url") @db.Text    // Background image URL for the website
+  
   // Header banner
   bannerImageUrl    String?   @map("banner_image_url") @db.Text        // Banner image URL
   bannerText        String?   @map("banner_text") @db.VarChar(255)     // Banner text

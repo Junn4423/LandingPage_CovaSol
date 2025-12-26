@@ -1,14 +1,16 @@
 import { prisma } from '../db/prisma';
 
 // Types defined locally to avoid cross-package import issues
+// Updated: Added couplet type and backgroundImageUrl support
 interface SeasonalDecoration {
   id: string;
-  type: 'corner' | 'banner' | 'icon' | 'floating';
-  position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'header' | 'footer';
+  type: 'corner' | 'banner' | 'icon' | 'floating' | 'couplet';
+  position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'header' | 'footer' | 'side-left' | 'side-right';
   imageUrl: string;
   altText?: string;
   link?: string;
   size?: 'small' | 'medium' | 'large';
+  width?: number;  // Custom width in pixels for couplets
   animation?: 'none' | 'swing' | 'bounce' | 'pulse' | 'shake';
 }
 
@@ -31,6 +33,7 @@ interface SeasonalTheme {
   effectEnabled: boolean;
   disableOnMobile: boolean;
   decorations?: SeasonalDecoration[];
+  backgroundImageUrl?: string;
   bannerImageUrl?: string;
   bannerText?: string;
   bannerLink?: string;
@@ -55,6 +58,7 @@ interface SeasonalThemeInput {
   effectEnabled?: boolean;
   disableOnMobile?: boolean;
   decorations?: SeasonalDecoration[];
+  backgroundImageUrl?: string;
   bannerImageUrl?: string;
   bannerText?: string;
   bannerLink?: string;
@@ -96,6 +100,7 @@ function serializeTheme(theme: any): SeasonalTheme {
     effectEnabled: theme.effectEnabled,
     disableOnMobile: theme.disableOnMobile,
     decorations: theme.decorations ?? undefined,
+    backgroundImageUrl: theme.backgroundImageUrl ?? undefined,
     bannerImageUrl: theme.bannerImageUrl ?? undefined,
     bannerText: theme.bannerText ?? undefined,
     bannerLink: theme.bannerLink ?? undefined,
@@ -191,6 +196,7 @@ export async function createTheme(input: SeasonalThemeInput): Promise<SeasonalTh
       effectEnabled: input.effectEnabled ?? true,
       disableOnMobile: input.disableOnMobile ?? true,
       decorations: input.decorations ? JSON.parse(JSON.stringify(input.decorations)) : undefined,
+      backgroundImageUrl: input.backgroundImageUrl,
       bannerImageUrl: input.bannerImageUrl,
       bannerText: input.bannerText,
       bannerLink: input.bannerLink,
@@ -225,6 +231,7 @@ export async function updateTheme(id: number, input: Partial<SeasonalThemeInput>
       effectEnabled: input.effectEnabled ?? existing.effectEnabled,
       disableOnMobile: input.disableOnMobile ?? existing.disableOnMobile,
       decorations: input.decorations !== undefined ? JSON.parse(JSON.stringify(input.decorations)) : undefined,
+      backgroundImageUrl: input.backgroundImageUrl !== undefined ? input.backgroundImageUrl : existing.backgroundImageUrl,
       bannerImageUrl: input.bannerImageUrl !== undefined ? input.bannerImageUrl : existing.bannerImageUrl,
       bannerText: input.bannerText !== undefined ? input.bannerText : existing.bannerText,
       bannerLink: input.bannerLink !== undefined ? input.bannerLink : existing.bannerLink,

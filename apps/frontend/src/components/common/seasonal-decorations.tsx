@@ -1,12 +1,40 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import type { SeasonalTheme, SeasonalDecoration } from '@covasol/types';
 
 interface SeasonalDecorationsProps {
   theme: SeasonalTheme | null;
 }
 
+// Hook to detect if user has scrolled past hero section
+function useScrollPastHero({ forceVisible = false }: { forceVisible?: boolean }) {
+  const [isPastHero, setIsPastHero] = useState(forceVisible);
+
+  useEffect(() => {
+    if (forceVisible) {
+      setIsPastHero(true);
+      return;
+    }
+
+    const handleScroll = () => {
+      // Hero section is typically 100vh, so we check if scrolled past ~80% of viewport height
+      const heroThreshold = window.innerHeight * 0.8;
+      setIsPastHero(window.scrollY > heroThreshold);
+    };
+
+    // Check initial scroll position
+    handleScroll();
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [forceVisible]);
+
+  return isPastHero;
+}
+
+// DecorationItem component for corner and floating decorations
 function DecorationItem({ decoration }: { decoration: SeasonalDecoration }) {
   const positionClasses = useMemo(() => {
     switch (decoration.position) {
@@ -79,13 +107,98 @@ function DecorationItem({ decoration }: { decoration: SeasonalDecoration }) {
 }
 
 export function SeasonalDecorations({ theme }: SeasonalDecorationsProps) {
+  const pathname = usePathname();
+  // Blog & product pages: always show couplets (no hide-on-hero behavior)
+  const isContentPage = pathname?.startsWith('/blog') || pathname?.startsWith('/products');
+  const isPastHero = useScrollPastHero({ forceVisible: Boolean(isContentPage) });
+
   if (!theme || !theme.decorations || theme.decorations.length === 0) {
     return null;
   }
 
+  const couplets = theme.decorations.filter(d => d.type === 'couplet');
+  const otherDecorations = theme.decorations.filter(d => d.type !== 'couplet');
+
+  // Group couplets by side (left/right)
+  const leftCouplets = couplets.filter(d => d.position === 'side-left');
+  const rightCouplets = couplets.filter(d => d.position === 'side-right');
+
   return (
     <>
-      {theme.decorations.map((decoration) => (
+      {/* Left side couplets - hidden until scroll past hero (except blog/product) */}
+      {leftCouplets.map((decoration) => {
+        const width = decoration.width || 180;
+        const content = (
+          <img
+            src={decoration.imageUrl}
+            alt={decoration.altText || ''}
+            className="block w-full h-auto"
+            loading="lazy"
+          />
+        );
+
+        return (
+          <div
+            key={decoration.id}
+            className={`homenest-tet-left ${isPastHero ? 'couplet-visible' : 'couplet-hidden-left'}`}
+            style={{
+              position: 'fixed',
+              top: '100px',
+              left: 0,
+              width: `${width}px`,
+              zIndex: 10,
+              pointerEvents: 'none',
+            }}
+          >
+            {decoration.link ? (
+              <a href={decoration.link} className="block pointer-events-auto">
+                {content}
+              </a>
+            ) : (
+              content
+            )}
+          </div>
+        );
+      })}
+
+      {/* Right side couplets - hidden until scroll past hero, then slide in */}
+      {rightCouplets.map((decoration) => {
+        const width = decoration.width || 180;
+        const content = (
+          <img
+            src={decoration.imageUrl}
+            alt={decoration.altText || ''}
+            className="block w-full h-auto"
+            loading="lazy"
+          />
+        );
+
+        return (
+          <div
+            key={decoration.id}
+            className={`homenest-tet-right ${isPastHero ? 'couplet-visible' : 'couplet-hidden-right'}`}
+            style={{
+              position: 'fixed',
+              top: '100px',
+              right: 0,
+              width: `${width}px`,
+              zIndex: 10,
+              pointerEvents: 'none',
+            }}
+          >
+            {decoration.link ? (
+              <a href={decoration.link} className="block pointer-events-auto">
+                {content}
+              </a>
+            ) : (
+              content
+            )}
+          </div>
+        );
+      })}
+
+      {/* Other decorations */}
+      {otherDecorations.map((decoration) => (
         <DecorationItem key={decoration.id} decoration={decoration} />
       ))}
 
@@ -106,6 +219,36 @@ export function SeasonalDecorations({ theme }: SeasonalDecorationsProps) {
         }
         .animate-shake {
           animation: shake 0.5s ease-in-out infinite;
+        }
+        
+        /* Couplet slide-in animations */
+        .homenest-tet-left,
+        .homenest-tet-right {
+          transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+        }
+        
+        /* Hidden state - slide out of view */
+        .couplet-hidden-left {
+          transform: translateX(-110%);
+          opacity: 0;
+        }
+        .couplet-hidden-right {
+          transform: translateX(110%);
+          opacity: 0;
+        }
+        
+        /* Visible state - slide into view */
+        .couplet-visible {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        
+        /* Câu đối (Tết couplets) - hide on smaller screens */
+        @media (max-width: 1524px) {
+          .homenest-tet-left,
+          .homenest-tet-right {
+            display: none !important;
+          }
         }
       `}</style>
     </>

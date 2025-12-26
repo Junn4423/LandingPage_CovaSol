@@ -27,10 +27,87 @@ body {
   background-color: #f8fafc;
   color: #0f172a;
   min-height: 100vh;
+  position: relative;
+}
+
+/* Seasonal background support - allow background to show through */
+body.has-seasonal-bg {
+  background-color: transparent;
+}
+
+/* ============================================
+   HOME PAGE ONLY - Make sections transparent
+   ============================================ */
+/* Only target home page sections - these use specific classes */
+body.has-seasonal-bg .legacy-shell,
+body.has-seasonal-bg main,
+body.has-seasonal-bg .hero-section,
+body.has-seasonal-bg .services-section,
+body.has-seasonal-bg .services-overview,
+body.has-seasonal-bg .products-section,
+body.has-seasonal-bg .home-featured-products,
+body.has-seasonal-bg .blog-section,
+body.has-seasonal-bg .home-latest-blog,
+body.has-seasonal-bg .reviews-section,
+body.has-seasonal-bg .contact-section {
+  background-color: transparent !important;
+  background-image: none !important;
+  background: transparent !important;
+}
+
+/* Ensure content cards remain visible with semi-transparent background */
+body.has-seasonal-bg .card,
+body.has-seasonal-bg .blog-card,
+body.has-seasonal-bg .product-card,
+body.has-seasonal-bg .review-card,
+body.has-seasonal-bg .service-card {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(8px);
+}
+
+/* ============================================
+   BLOG & PRODUCT PAGES - Keep hero/footer visible
+   ============================================ */
+/* Override blog and product page background to show seasonal background */
+body.has-seasonal-bg .yatame-blog-page,
+body.has-seasonal-bg .yatame-detail-page,
+body.has-seasonal-bg .products-page {
+  background: transparent !important;
+}
+
+/* Do NOT make these transparent - they need their background */
+body.has-seasonal-bg .yatame-detail-hero,
+body.has-seasonal-bg .yatame-blog-hero,
+body.has-seasonal-bg .footer {
+  /* Keep original background - do not override */
+}
+
+/* Blog/Product list pages - semi-transparent content area only */
+body.has-seasonal-bg .yatame-posts-section {
+  background-color: rgba(248, 250, 252, 0.75) !important;
+  backdrop-filter: blur(6px);
+}
+
+/* Detail pages - keep hero, make content semi-transparent */
+body.has-seasonal-bg .yatame-detail-content {
+  background-color: transparent !important;
+}
+
+body.has-seasonal-bg .yatame-main-content {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+}
+
+/* Base background layer behind everything */
+.seasonal-background {
+  isolation: isolate;
 }
 
 main {
   width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 /* ============================================

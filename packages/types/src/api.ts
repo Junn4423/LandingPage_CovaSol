@@ -131,12 +131,13 @@ export type SeasonalEffectType =
 
 export interface SeasonalDecoration {
   id: string;
-  type: 'corner' | 'banner' | 'icon' | 'floating';
-  position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'header' | 'footer';
+  type: 'corner' | 'banner' | 'icon' | 'floating' | 'couplet';
+  position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'header' | 'footer' | 'side-left' | 'side-right';
   imageUrl: string;
   altText?: string;
   link?: string;
   size?: 'small' | 'medium' | 'large';
+  width?: number;  // Custom width in pixels for couplets
   animation?: 'none' | 'swing' | 'bounce' | 'pulse' | 'shake';
 }
 
@@ -155,6 +156,7 @@ export interface SeasonalTheme {
   effectEnabled: boolean;
   disableOnMobile: boolean;
   decorations?: SeasonalDecoration[];
+  backgroundImageUrl?: string;  // Background image for the website
   bannerImageUrl?: string;
   bannerText?: string;
   bannerLink?: string;
@@ -179,6 +181,7 @@ export interface SeasonalThemeInput {
   effectEnabled?: boolean;
   disableOnMobile?: boolean;
   decorations?: SeasonalDecoration[];
+  backgroundImageUrl?: string;  // Background image for the website
   bannerImageUrl?: string;
   bannerText?: string;
   bannerLink?: string;

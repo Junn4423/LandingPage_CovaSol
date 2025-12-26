@@ -34,6 +34,18 @@ export function SeasonalWrapper({
   const { theme, isLoading } = useSeasonalTheme();
   const [bannerHeight, setBannerHeight] = useState(0);
 
+  // Add/remove body class for seasonal background
+  useEffect(() => {
+    if (theme?.backgroundImageUrl) {
+      document.body.classList.add('has-seasonal-bg');
+    } else {
+      document.body.classList.remove('has-seasonal-bg');
+    }
+    return () => {
+      document.body.classList.remove('has-seasonal-bg');
+    };
+  }, [theme?.backgroundImageUrl]);
+
   // Measure banner height for navbar offset
   useEffect(() => {
     if (!theme || isLoading) {
@@ -68,6 +80,29 @@ export function SeasonalWrapper({
 
   return (
     <>
+      {/* Background image for the entire page */}
+      {theme.backgroundImageUrl && (
+        <div
+          className="seasonal-background pointer-events-none"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundImage: `url(${theme.backgroundImageUrl})`,
+            backgroundPosition: 'center center',
+            backgroundRepeat: 'repeat',
+            backgroundSize: 'cover',
+            opacity: 0.35,
+            zIndex: 0,
+          }}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Banner at the top - positioned in document flow */}
       {showBanner && <SeasonalBanner theme={theme} />}
 

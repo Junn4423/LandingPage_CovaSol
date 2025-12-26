@@ -15,25 +15,33 @@ import type { SeasonalTheme, SeasonalThemeInput, SeasonalEffectType } from '@cov
 // Predefined Vietnamese events/seasons
 const PRESET_THEMES: Partial<SeasonalThemeInput>[] = [
   {
-    code: 'new_year',
-    name: 'Tết Dương Lịch',
-    description: 'Pháo hoa, số năm mới, rượu champagne',
-    primaryColor: '#FFD700',
-    secondaryColor: '#000000',
-    accentColor: '#C0C0C0',
-    effectType: 'firework',
-    startDate: new Date(new Date().getFullYear(), 0, 1).toISOString(),
-    endDate: new Date(new Date().getFullYear(), 0, 7).toISOString(),
-  },
-  {
-    code: 'tet_nguyen_dan',
-    name: 'Tết Nguyên Đán',
-    description: 'Hoa đào/mai, lồng đèn, bao lì xì, con giáp',
+    code: 'tet',
+    name: 'Tết',
+    description: 'Tết Dương Lịch & Tết Nguyên Đán - Hoa đào/mai, câu đối tết',
     primaryColor: '#DC2626',
     secondaryColor: '#FBBF24',
     accentColor: '#FEE2E2',
     effectType: 'petals',
-    startDate: new Date(new Date().getFullYear(), 0, 20).toISOString(),
+    backgroundImageUrl: 'https://homenest.com.vn/wp-content/uploads/2025/12/Hoa-dao-ngay-tet-decor-website.png',
+    decorations: [
+      {
+        id: 'tet-couplet-left',
+        type: 'couplet',
+        position: 'side-left',
+        imageUrl: 'https://homenest.com.vn/wp-content/uploads/2025/12/Cau-noi-cau-duoc-uoc-thay.png',
+        altText: 'Câu đối Tết bên trái',
+        width: 180,
+      },
+      {
+        id: 'tet-couplet-right',
+        type: 'couplet',
+        position: 'side-right',
+        imageUrl: 'https://homenest.com.vn/wp-content/uploads/2025/12/Tan-tai-tan-loc-tan-binh-an.png',
+        altText: 'Câu đối Tết bên phải',
+        width: 180,
+      },
+    ],
+    startDate: new Date(new Date().getFullYear(), 0, 1).toISOString(),
     endDate: new Date(new Date().getFullYear(), 1, 15).toISOString(),
   },
   {
@@ -218,6 +226,9 @@ export default function SeasonalThemesPage() {
       disableOnMobile: theme.disableOnMobile,
       bannerText: theme.bannerText,
       bannerLink: theme.bannerLink,
+      bannerImageUrl: theme.bannerImageUrl,
+      backgroundImageUrl: theme.backgroundImageUrl,
+      decorations: theme.decorations,
       priority: theme.priority,
       status: theme.status,
     });
@@ -252,6 +263,9 @@ export default function SeasonalThemesPage() {
       disableOnMobile: formData.disableOnMobile ?? true,
       bannerText: formData.bannerText,
       bannerLink: formData.bannerLink,
+      bannerImageUrl: formData.bannerImageUrl,
+      backgroundImageUrl: formData.backgroundImageUrl,
+      decorations: formData.decorations,
       priority: formData.priority ?? 0,
       status: formData.status ?? 'active',
     };
@@ -538,6 +552,130 @@ export default function SeasonalThemesPage() {
                     placeholder="/khuyen-mai"
                   />
                 </div>
+              </div>
+
+              {/* Background Image URL */}
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">
+                  <i className="fas fa-image mr-1 text-slate-400"></i>
+                  URL ảnh nền (Background)
+                </label>
+                <input
+                  type="url"
+                  value={formData.backgroundImageUrl || ''}
+                  onChange={(e) => setFormData({ ...formData, backgroundImageUrl: e.target.value })}
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-[#124e66] focus:outline-none"
+                  placeholder="https://example.com/background.png"
+                />
+                {formData.backgroundImageUrl && (
+                  <div className="mt-2 flex items-center gap-2">
+                    <img 
+                      src={formData.backgroundImageUrl} 
+                      alt="Preview background" 
+                      className="h-16 w-24 object-cover rounded border"
+                      onError={(e) => (e.currentTarget.style.display = 'none')}
+                    />
+                    <span className="text-xs text-slate-500">Preview</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Couplet Images */}
+              <div className="rounded-lg border border-slate-200 p-4 bg-slate-50">
+                <h4 className="mb-3 text-sm font-semibold text-slate-700">
+                  <i className="fas fa-scroll mr-1 text-red-500"></i>
+                  Câu đối (Couplets) - Hiển thị 2 bên màn hình
+                </h4>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-slate-600">URL ảnh bên trái</label>
+                    <input
+                      type="url"
+                      value={
+                        formData.decorations?.find(d => d.position === 'side-left')?.imageUrl || ''
+                      }
+                      onChange={(e) => {
+                        const leftDecoration = {
+                          id: 'couplet-left',
+                          type: 'couplet' as const,
+                          position: 'side-left' as const,
+                          imageUrl: e.target.value,
+                          altText: 'Câu đối bên trái',
+                          width: 180,
+                        };
+                        const rightDecoration = formData.decorations?.find(d => d.position === 'side-right') || {
+                          id: 'couplet-right',
+                          type: 'couplet' as const,
+                          position: 'side-right' as const,
+                          imageUrl: '',
+                          altText: 'Câu đối bên phải',
+                          width: 180,
+                        };
+                        setFormData({ 
+                          ...formData, 
+                          decorations: e.target.value ? [leftDecoration, rightDecoration].filter(d => d.imageUrl) : 
+                            rightDecoration.imageUrl ? [rightDecoration] : undefined
+                        });
+                      }}
+                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-[#124e66] focus:outline-none"
+                      placeholder="https://example.com/couplet-left.png"
+                    />
+                    {formData.decorations?.find(d => d.position === 'side-left')?.imageUrl && (
+                      <img 
+                        src={formData.decorations.find(d => d.position === 'side-left')?.imageUrl} 
+                        alt="Preview left couplet" 
+                        className="mt-2 h-24 w-auto rounded border"
+                        onError={(e) => (e.currentTarget.style.display = 'none')}
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-slate-600">URL ảnh bên phải</label>
+                    <input
+                      type="url"
+                      value={
+                        formData.decorations?.find(d => d.position === 'side-right')?.imageUrl || ''
+                      }
+                      onChange={(e) => {
+                        const leftDecoration = formData.decorations?.find(d => d.position === 'side-left') || {
+                          id: 'couplet-left',
+                          type: 'couplet' as const,
+                          position: 'side-left' as const,
+                          imageUrl: '',
+                          altText: 'Câu đối bên trái',
+                          width: 180,
+                        };
+                        const rightDecoration = {
+                          id: 'couplet-right',
+                          type: 'couplet' as const,
+                          position: 'side-right' as const,
+                          imageUrl: e.target.value,
+                          altText: 'Câu đối bên phải',
+                          width: 180,
+                        };
+                        setFormData({ 
+                          ...formData, 
+                          decorations: e.target.value ? [leftDecoration, rightDecoration].filter(d => d.imageUrl) : 
+                            leftDecoration.imageUrl ? [leftDecoration] : undefined
+                        });
+                      }}
+                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-[#124e66] focus:outline-none"
+                      placeholder="https://example.com/couplet-right.png"
+                    />
+                    {formData.decorations?.find(d => d.position === 'side-right')?.imageUrl && (
+                      <img 
+                        src={formData.decorations.find(d => d.position === 'side-right')?.imageUrl} 
+                        alt="Preview right couplet" 
+                        className="mt-2 h-24 w-auto rounded border"
+                        onError={(e) => (e.currentTarget.style.display = 'none')}
+                      />
+                    )}
+                  </div>
+                </div>
+                <p className="mt-2 text-xs text-slate-500">
+                  <i className="fas fa-info-circle mr-1"></i>
+                  Câu đối sẽ được hiển thị ở 2 bên màn hình (chỉ desktop, ẩn khi &lt; 1524px)
+                </p>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
