@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { ApiError } from '@/lib/api-client';
 import { PaginationControls } from '@/components/admin/pagination-controls';
 import { MediaListEditor, type MediaFormItem } from '@/components/admin/media-list-editor';
@@ -8,11 +8,14 @@ import { QuickMediaDialog } from '@/components/admin/quick-media-dialog';
 import { ImageSelector } from '@/components/admin/image-selector';
 import { AlbumPickerModal } from '@/components/admin/album-picker-modal';
 import { RichTextEditor, type MediaInsertEvent } from '@/components/admin/rich-text-editor';
+import { CategorySelector } from '@/components/admin/category-selector';
 import {
   useAdminProducts,
   useDeleteProductMutation,
   useSaveProductMutation,
-  useUploadMediaMutation
+  useUploadMediaMutation,
+  useProductCategories,
+  useCreateProductCategoryMutation
 } from '@/hooks/admin';
 import { useClientPagination } from '@/hooks/use-pagination';
 import type { ProductDetail } from '@/types/content';
@@ -234,6 +237,8 @@ const emptyForm: ProductFormState = {
 
 export default function AdminProductsPage() {
   const { data, isLoading, error } = useAdminProducts();
+  const { data: productCategories = [], isLoading: isCategoriesLoading } = useProductCategories();
+  const createCategoryMutation = useCreateProductCategoryMutation();
   const saveMutation = useSaveProductMutation();
   const deleteMutation = useDeleteProductMutation();
   const uploadMutation = useUploadMediaMutation();
@@ -845,10 +850,19 @@ export default function AdminProductsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-[#0f172a]">Danh mục</label>
-                  <input
-                    className="w-full rounded-xl border border-slate-200 px-4 py-3 transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
+                  <CategorySelector
                     value={formState.category}
-                    onChange={e => setFormState(prev => ({ ...prev, category: e.target.value }))}
+                    onChange={value => setFormState(prev => ({ ...prev, category: value }))}
+                    categories={productCategories}
+                    isLoading={isCategoriesLoading}
+                    onCreateNew={async (name) => {
+                      try {
+                        const newCategory = await createCategoryMutation.mutateAsync({ name });
+                        return newCategory;
+                      } catch (error) {
+                        setFlash({ type: 'error', message: error instanceof Error ? error.message : 'Không thể tạo danh mục' });
+                      }
+                    }}
                     placeholder="VD: Automation"
                   />
                 </div>

@@ -488,3 +488,57 @@ export function useUnblockIPMutation() {
     }
   });
 }
+
+// =====================================================
+// Categories Hooks
+// =====================================================
+
+import {
+  fetchBlogCategories,
+  fetchProductCategories,
+  createBlogCategory as createBlogCategoryApi,
+  createProductCategory as createProductCategoryApi,
+  type CategoryItem,
+  type CreateCategoryInput
+} from '@/lib/admin-api';
+
+const CATEGORY_QUERY_KEYS = {
+  blogCategories: ['admin', 'categories', 'blog'] as const,
+  productCategories: ['admin', 'categories', 'products'] as const
+};
+
+export function useBlogCategories() {
+  return useQuery<CategoryItem[]>({
+    queryKey: CATEGORY_QUERY_KEYS.blogCategories,
+    queryFn: fetchBlogCategories,
+    staleTime: 60_000
+  });
+}
+
+export function useProductCategories() {
+  return useQuery<CategoryItem[]>({
+    queryKey: CATEGORY_QUERY_KEYS.productCategories,
+    queryFn: fetchProductCategories,
+    staleTime: 60_000
+  });
+}
+
+export function useCreateBlogCategoryMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: CreateCategoryInput) => createBlogCategoryApi(input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: CATEGORY_QUERY_KEYS.blogCategories });
+    }
+  });
+}
+
+export function useCreateProductCategoryMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: CreateCategoryInput) => createProductCategoryApi(input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: CATEGORY_QUERY_KEYS.productCategories });
+    }
+  });
+}

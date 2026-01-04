@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { ApiError } from '@/lib/api-client';
 import { PaginationControls } from '@/components/admin/pagination-controls';
 import { MediaListEditor, type MediaFormItem } from '@/components/admin/media-list-editor';
@@ -10,12 +10,15 @@ import { QuickSourceDialog } from '@/components/admin/quick-source-dialog';
 import { ImageSelector } from '@/components/admin/image-selector';
 import { AlbumPickerModal } from '@/components/admin/album-picker-modal';
 import { RichTextEditor } from '@/components/admin/rich-text-editor';
+import { CategorySelector } from '@/components/admin/category-selector';
 import {
   useAdminBlogPosts,
   useAdminSession,
   useDeleteBlogPostMutation,
   useSaveBlogPostMutation,
-  useUploadMediaMutation
+  useUploadMediaMutation,
+  useBlogCategories,
+  useCreateBlogCategoryMutation
 } from '@/hooks/admin';
 import { useClientPagination } from '@/hooks/use-pagination';
 import type { BlogPostDetail } from '@/types/content';
@@ -346,6 +349,8 @@ function toErrorMessage(error: unknown, fallback = 'Đã có lỗi xảy ra, vui
 export default function AdminBlogPage() {
   const { data, isLoading, error } = useAdminBlogPosts();
   const { data: currentUser } = useAdminSession();
+  const { data: blogCategories = [], isLoading: isCategoriesLoading } = useBlogCategories();
+  const createCategoryMutation = useCreateBlogCategoryMutation();
   const saveMutation = useSaveBlogPostMutation();
   const deleteMutation = useDeleteBlogPostMutation();
   const uploadMutation = useUploadMediaMutation();
@@ -1032,10 +1037,19 @@ export default function AdminBlogPage() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-[#0f172a]">Danh mục</label>
-                  <input
-                    className="w-full rounded-xl border border-slate-200 px-4 py-3 transition-all focus:border-[#1c6e8c] focus:outline-none focus:ring-2 focus:ring-[#1c6e8c]/20"
+                  <CategorySelector
                     value={formState.category}
-                    onChange={e => setFormState(prev => ({ ...prev, category: e.target.value }))}
+                    onChange={value => setFormState(prev => ({ ...prev, category: value }))}
+                    categories={blogCategories}
+                    isLoading={isCategoriesLoading}
+                    onCreateNew={async (name) => {
+                      try {
+                        const newCategory = await createCategoryMutation.mutateAsync({ name });
+                        return newCategory;
+                      } catch (error) {
+                        setFlash({ type: 'error', message: error instanceof Error ? error.message : 'Không thể tạo danh mục' });
+                      }
+                    }}
                     placeholder="VD: Chuyển đổi số"
                   />
                 </div>

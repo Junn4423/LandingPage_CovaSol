@@ -337,3 +337,35 @@ model SeasonalThemeSetting {
 
   @@map("seasonal_theme_settings")
 }
+
+// =====================================================
+// Bảng blog_categories - Danh mục blog
+// =====================================================
+model BlogCategory {
+  id          Int       @id @default(autoincrement())
+  code        String    @unique @db.VarChar(100)          // Mã danh mục (unique)
+  name        String    @unique @db.VarChar(255)          // Tên danh mục (unique)
+  description String?   @db.Text                          // Mô tả
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@index([code], map: "idx_blog_category_code")
+  @@index([name], map: "idx_blog_category_name")
+  @@map("blog_categories")
+}
+
+// =====================================================
+// Bảng product_categories - Danh mục sản phẩm
+// =====================================================
+model ProductCategory {
+  id          Int       @id @default(autoincrement())
+  code        String    @unique @db.VarChar(100)          // Mã danh mục (unique)
+  name        String    @unique @db.VarChar(255)          // Tên danh mục (unique)
+  description String?   @db.Text                          // Mô tả
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@index([code], map: "idx_product_category_code")
+  @@index([name], map: "idx_product_category_name")
+  @@map("product_categories")
+}

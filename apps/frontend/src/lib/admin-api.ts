@@ -699,3 +699,88 @@ export async function fetchActiveSeasonalTheme() {
   });
   return res.data;
 }
+
+// =====================================================
+// Categories API
+// =====================================================
+
+export interface CategoryItem {
+  id: number;
+  code: string;
+  name: string;
+  description?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateCategoryInput {
+  name: string;
+  code?: string;
+  description?: string;
+}
+
+// Blog Categories
+export async function fetchBlogCategories(): Promise<CategoryItem[]> {
+  const res = await apiRequest<ApiSuccessResponse<CategoryItem[]>>({
+    path: '/v1/admin/categories/blog'
+  });
+  return res.data;
+}
+
+export async function createBlogCategory(input: CreateCategoryInput): Promise<CategoryItem> {
+  const res = await apiRequest<ApiSuccessResponse<CategoryItem>>({
+    path: '/v1/admin/categories/blog',
+    method: 'POST',
+    body: input
+  });
+  return res.data;
+}
+
+export async function updateBlogCategory(id: number, input: Partial<CreateCategoryInput>): Promise<CategoryItem> {
+  const res = await apiRequest<ApiSuccessResponse<CategoryItem>>({
+    path: `/v1/admin/categories/blog/${id}`,
+    method: 'PUT',
+    body: input
+  });
+  return res.data;
+}
+
+export async function deleteBlogCategory(id: number): Promise<void> {
+  await apiRequest<void>({
+    path: `/v1/admin/categories/blog/${id}`,
+    method: 'DELETE'
+  });
+}
+
+// Product Categories
+export async function fetchProductCategories(): Promise<CategoryItem[]> {
+  const res = await apiRequest<ApiSuccessResponse<CategoryItem[]>>({
+    path: '/v1/admin/categories/products'
+  });
+  return res.data;
+}
+
+export async function createProductCategory(input: CreateCategoryInput): Promise<CategoryItem> {
+  const res = await apiRequest<ApiSuccessResponse<CategoryItem>>({
+    path: '/v1/admin/categories/products',
+    method: 'POST',
+    body: input
+  });
+  return res.data;
+}
+
+export async function updateProductCategory(id: number, input: Partial<CreateCategoryInput>): Promise<CategoryItem> {
+  const res = await apiRequest<ApiSuccessResponse<CategoryItem>>({
+    path: `/v1/admin/categories/products/${id}`,
+    method: 'PUT',
+    body: input
+  });
+  return res.data;
+}
+
+export async function deleteProductCategory(id: number): Promise<void> {
+  await apiRequest<void>({
+    path: `/v1/admin/categories/products/${id}`,
+    method: 'DELETE'
+  });
+}
