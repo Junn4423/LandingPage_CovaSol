@@ -18,14 +18,22 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/favicon.ico', sizes: 'any' },
-      { url: '/assets/favicon/favicon.svg', type: 'image/svg+xml' },
-      { url: '/assets/favicon/favicon-96x96.png', sizes: '96x96', type: 'image/png' }
+      { url: '/favicon.ico', sizes: '48x48 32x32 16x16', type: 'image/x-icon' },
+      { url: '/assets/favicon/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
+      { url: '/assets/favicon/favicon.svg', type: 'image/svg+xml' }
     ],
-    apple: { url: '/assets/favicon/apple-touch-icon.png', sizes: '180x180' }
+    shortcut: '/favicon.ico',
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }
+    ],
+    other: [
+      { rel: 'mask-icon', url: '/assets/favicon/favicon.svg', color: '#0d500c' }
+    ]
   },
   manifest: '/assets/favicon/site.webmanifest',
   appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
     title: 'CovaSol'
   },
   openGraph: {
