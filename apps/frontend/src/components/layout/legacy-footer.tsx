@@ -17,7 +17,7 @@ const productLinks = [
 const supportLinks = [
   { label: 'Hướng dẫn sử dụng', href: '/blog' },
   { label: 'Video hướng dẫn', href: '/blog' },
-  { label: 'FAQ', href: '/blog' },
+  { label: 'FAQ', href: '/faq' },
   { label: 'Liên hệ hỗ trợ', href: '/#contact' }
 ];
 

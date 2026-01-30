@@ -542,3 +542,56 @@ export function useCreateProductCategoryMutation() {
     }
   });
 }
+
+// =====================================================
+// Comments Hooks
+// =====================================================
+import {
+  fetchPendingComments,
+  approveComment as approveCommentApi,
+  rejectComment as rejectCommentApi,
+  deleteComment as deleteCommentApi,
+  type AdminComment
+} from '@/lib/admin-api';
+
+const COMMENT_QUERY_KEYS = {
+  pending: ['admin', 'comments', 'pending'] as const
+};
+
+export function usePendingComments() {
+  return useQuery<AdminComment[]>({
+    queryKey: COMMENT_QUERY_KEYS.pending,
+    queryFn: fetchPendingComments,
+    staleTime: 30_000
+  });
+}
+
+export function useApproveCommentMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: approveCommentApi,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: COMMENT_QUERY_KEYS.pending });
+    }
+  });
+}
+
+export function useRejectCommentMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: rejectCommentApi,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: COMMENT_QUERY_KEYS.pending });
+    }
+  });
+}
+
+export function useDeleteCommentMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteCommentApi,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: COMMENT_QUERY_KEYS.pending });
+    }
+  });
+}

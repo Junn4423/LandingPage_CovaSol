@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 import { AdminLoginPanel } from '@/components/admin/admin-login-panel';
 import { ApiError } from '@/lib/api-client';
 import { normalizeImageUrl } from '@/lib/image-url';
-import { useAdminSession, useLogoutMutation, useAdminOverview, useMyPostsEditRequests } from '@/hooks/admin';
+import { useAdminSession, useLogoutMutation, useAdminOverview, useMyPostsEditRequests, usePendingComments } from '@/hooks/admin';
 
 const adminNav: { href: string; label: string; icon: string }[] = [
   { href: '/admin', label: 'Dashboard', icon: 'fas fa-gauge' },
@@ -15,6 +15,7 @@ const adminNav: { href: string; label: string; icon: string }[] = [
   { href: '/admin/system-logs', label: 'Nhật ký hệ thống', icon: 'fas fa-shield-alt' },
   { href: '/admin/seasonal-themes', label: 'Giao diện Mùa', icon: 'fas fa-snowflake' },
   { href: '/admin/blog', label: 'Blog', icon: 'fas fa-newspaper' },
+  { href: '/admin/comments', label: 'Bình luận', icon: 'fas fa-comments' },
   { href: '/admin/edit-requests', label: 'Duyệt chỉnh sửa', icon: 'fas fa-clipboard-check' },
   { href: '/admin/products', label: 'Sản phẩm', icon: 'fas fa-cubes' },
   { href: '/admin/album', label: 'Album ảnh', icon: 'fas fa-images' },
@@ -30,9 +31,11 @@ export function AdminShell({ children }: PropsWithChildren) {
   const logoutMutation = useLogoutMutation();
   const { refetch, isFetching } = useAdminOverview();
   const { data: editRequests = [] } = useMyPostsEditRequests();
+  const { data: pendingComments = [] } = usePendingComments();
   
-  // Count pending edit requests
+  // Count pending edit requests and comments
   const pendingEditCount = editRequests.filter(r => r.status === 'pending').length;
+  const pendingCommentCount = pendingComments.length;
 
   if (isLoading) {
     return (
@@ -103,6 +106,11 @@ export function AdminShell({ children }: PropsWithChildren) {
               {item.href === '/admin/edit-requests' && pendingEditCount > 0 && (
                 <span className="rounded-full bg-amber-500 px-2 py-0.5 text-xs font-bold text-white">
                   {pendingEditCount}
+                </span>
+              )}
+              {item.href === '/admin/comments' && pendingCommentCount > 0 && (
+                <span className="rounded-full bg-red-500 px-2 py-0.5 text-xs font-bold text-white">
+                  {pendingCommentCount}
                 </span>
               )}
             </Link>

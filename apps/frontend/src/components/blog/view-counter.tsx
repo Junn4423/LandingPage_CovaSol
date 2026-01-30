@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from 'react';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000';
-
 interface ViewCounterProps {
   blogId?: string;
   slug: string;
@@ -22,7 +20,7 @@ export function ViewCounter({ blogId, slug, className = '' }: ViewCounterProps) 
     
     const trackView = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/v1/blog/${slug}/view`, {
+        const response = await fetch(`/api/v1/blog/${slug}/view`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

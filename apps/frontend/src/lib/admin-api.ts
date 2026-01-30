@@ -784,3 +784,46 @@ export async function deleteProductCategory(id: number): Promise<void> {
     method: 'DELETE'
   });
 }
+
+// =====================================================
+// Comments API
+// =====================================================
+export interface AdminComment {
+  id: string;
+  blogPostId: number;
+  name: string;
+  email?: string;
+  content: string;
+  status: string;
+  createdAt: string;
+}
+
+export async function fetchPendingComments(): Promise<AdminComment[]> {
+  const res = await apiRequest<ApiSuccessResponse<AdminComment[]>>({
+    path: '/v1/admin/comments/pending'
+  });
+  return res.data;
+}
+
+export async function approveComment(id: string): Promise<AdminComment> {
+  const res = await apiRequest<ApiSuccessResponse<AdminComment>>({
+    path: `/v1/admin/comments/${id}/approve`,
+    method: 'PUT'
+  });
+  return res.data;
+}
+
+export async function rejectComment(id: string): Promise<AdminComment> {
+  const res = await apiRequest<ApiSuccessResponse<AdminComment>>({
+    path: `/v1/admin/comments/${id}/reject`,
+    method: 'PUT'
+  });
+  return res.data;
+}
+
+export async function deleteComment(id: string): Promise<void> {
+  await apiRequest<void>({
+    path: `/v1/admin/comments/${id}`,
+    method: 'DELETE'
+  });
+}

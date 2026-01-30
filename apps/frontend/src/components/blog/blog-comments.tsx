@@ -33,7 +33,7 @@ export function BlogComments({ blogId, slug }: BlogCommentsProps) {
 
   const fetchComments = async () => {
     try {
-      const response = await fetch(`/api/blog/${slug}/comments`);
+      const response = await fetch(`/api/v1/blog/${slug}/comments`);
       if (response.ok) {
         const data = await response.json();
         setComments(data.comments || []);
@@ -58,7 +58,7 @@ export function BlogComments({ blogId, slug }: BlogCommentsProps) {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`/api/blog/${slug}/comments`, {
+      const response = await fetch(`/api/v1/blog/${slug}/comments`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -227,7 +227,7 @@ export function BlogComments({ blogId, slug }: BlogCommentsProps) {
         .blog-comments {
           margin-top: 48px;
           padding-top: 32px;
-          border-top: 2px solid #e5e7eb;
+          border-top: 2px solid var(--gray-200, #e5e7eb);
         }
 
         .comments-title {
@@ -236,14 +236,18 @@ export function BlogComments({ blogId, slug }: BlogCommentsProps) {
           gap: 10px;
           font-size: 20px;
           font-weight: 700;
-          color: #1f2937;
+          color: var(--gray-800, #1f2937);
           margin-bottom: 24px;
         }
 
+        .comments-title i {
+          color: var(--primary-dark, #124e66);
+        }
+
         .comment-form {
-          background: #f9fafb;
+          background: var(--gray-100, #f9fafb);
           padding: 24px;
-          border-radius: 12px;
+          border-radius: var(--radius-md, 12px);
           margin-bottom: 32px;
         }
 
@@ -260,7 +264,7 @@ export function BlogComments({ blogId, slug }: BlogCommentsProps) {
         .form-group label {
           display: block;
           font-weight: 500;
-          color: #374151;
+          color: var(--gray-700, #374151);
           margin-bottom: 6px;
           font-size: 14px;
         }
@@ -269,23 +273,31 @@ export function BlogComments({ blogId, slug }: BlogCommentsProps) {
         .form-group textarea {
           width: 100%;
           padding: 12px 14px;
-          border: 1px solid #d1d5db;
-          border-radius: 8px;
+          border: 1px solid var(--gray-300, #d1d5db);
+          border-radius: var(--radius-sm, 8px);
           font-size: 14px;
-          transition: all 0.2s;
-          background: white;
+          font-family: inherit;
+          transition: all var(--transition-fast, 0.2s ease);
+          background: var(--white, #ffffff);
+          color: var(--gray-900, #1f2937);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+          color: var(--gray-400, #9ca3af);
         }
 
         .form-group input:focus,
         .form-group textarea:focus {
           outline: none;
-          border-color: #124e66;
+          border-color: var(--primary-dark, #124e66);
           box-shadow: 0 0 0 3px rgba(18, 78, 102, 0.1);
         }
 
         .form-group input:disabled,
         .form-group textarea:disabled {
-          background: #f3f4f6;
+          background: var(--gray-200, #f3f4f6);
+          color: var(--gray-500, #6b7280);
           cursor: not-allowed;
         }
 
@@ -293,16 +305,16 @@ export function BlogComments({ blogId, slug }: BlogCommentsProps) {
           background: #fef2f2;
           color: #dc2626;
           padding: 12px 16px;
-          border-radius: 8px;
+          border-radius: var(--radius-sm, 8px);
           margin-bottom: 16px;
           font-size: 14px;
         }
 
         .form-success {
           background: #f0fdf4;
-          color: #16a34a;
+          color: var(--primary-green, #16a34a);
           padding: 12px 16px;
-          border-radius: 8px;
+          border-radius: var(--radius-sm, 8px);
           margin-bottom: 16px;
           font-size: 14px;
         }
@@ -312,18 +324,18 @@ export function BlogComments({ blogId, slug }: BlogCommentsProps) {
           align-items: center;
           gap: 8px;
           padding: 12px 24px;
-          background: #124e66;
-          color: white;
+          background: var(--primary-dark, #124e66);
+          color: var(--white, #ffffff);
           border: none;
-          border-radius: 8px;
+          border-radius: var(--radius-sm, 8px);
           font-weight: 600;
           font-size: 14px;
           cursor: pointer;
-          transition: all 0.2s;
+          transition: all var(--transition-fast, 0.2s ease);
         }
 
         .submit-btn:hover:not(:disabled) {
-          background: #0d3d51;
+          background: var(--primary-navy, #0d3d51);
         }
 
         .submit-btn:disabled {
@@ -341,21 +353,22 @@ export function BlogComments({ blogId, slug }: BlogCommentsProps) {
         .empty-state {
           text-align: center;
           padding: 48px 24px;
-          color: #6b7280;
+          color: var(--gray-500, #6b7280);
         }
 
         .empty-state i {
           font-size: 48px;
           margin-bottom: 16px;
           display: block;
+          color: var(--gray-400, #9ca3af);
         }
 
         .comment-item {
           display: flex;
           gap: 16px;
           padding: 20px;
-          background: #f9fafb;
-          border-radius: 12px;
+          background: var(--gray-100, #f9fafb);
+          border-radius: var(--radius-md, 12px);
         }
 
         .comment-avatar {
@@ -366,7 +379,7 @@ export function BlogComments({ blogId, slug }: BlogCommentsProps) {
           display: flex;
           align-items: center;
           justify-content: center;
-          color: white;
+          color: var(--white, #ffffff);
           font-weight: 600;
           font-size: 16px;
           overflow: hidden;
@@ -392,16 +405,16 @@ export function BlogComments({ blogId, slug }: BlogCommentsProps) {
 
         .comment-author {
           font-weight: 600;
-          color: #1f2937;
+          color: var(--gray-800, #1f2937);
         }
 
         .comment-date {
           font-size: 13px;
-          color: #9ca3af;
+          color: var(--gray-400, #9ca3af);
         }
 
         .comment-content {
-          color: #4b5563;
+          color: var(--gray-600, #4b5563);
           line-height: 1.6;
           white-space: pre-wrap;
         }

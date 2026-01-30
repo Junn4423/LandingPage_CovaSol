@@ -14,6 +14,7 @@ import { adminUploadRouter } from './admin/uploads';
 import { adminSystemLogsRouter } from './admin/system-logs';
 import { adminSeasonalThemeRouter } from './admin/seasonal-themes';
 import { adminCategoriesRouter } from './admin/categories';
+import { adminCommentsRouter } from './admin/comments';
 import { requireAuth } from '../middleware/require-auth';
 
 export const router = Router();
@@ -33,3 +34,4 @@ router.use('/admin/uploads', requireAuth, adminUploadRouter);
 router.use('/admin/system-logs', requireAuth, adminSystemLogsRouter);
 router.use('/admin/seasonal-themes', requireAuth, adminSeasonalThemeRouter);
 router.use('/admin/categories', requireAuth, adminCategoriesRouter);
+router.use('/admin/comments', requireAuth, adminCommentsRouter);
