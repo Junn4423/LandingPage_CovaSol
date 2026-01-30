@@ -120,6 +120,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="stylesheet" href="/assets/css/landing/detail-pages.css" />
         <link rel="stylesheet" href="/assets/css/landing/responsive.css" />
         <link rel="stylesheet" href="/assets/css/detail-preview.css" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "COVASOL",
+              "url": "https://covasol.com.vn",
+              "logo": "https://covasol.com.vn/favicon.ico",
+              "alternateName": ["Cova Sol", "Covasol Software"],
+              "sameAs": [
+                "https://www.facebook.com/covasol.studio"
+              ]
+            })
+          }}
+        />
       </head>
       <body>
         <AppProviders>
