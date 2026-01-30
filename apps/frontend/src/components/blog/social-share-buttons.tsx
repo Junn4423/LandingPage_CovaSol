@@ -1,7 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { trackSocialShare } from '@/components/common/google-analytics';
+
+// Official brand logos
+const BRAND_LOGOS = {
+  facebook: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/1200px-Facebook_Logo_%282019%29.png',
+  zalo: '/assets/img/icons/Zalo.png',
+  linkedin: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png',
+  twitter: 'https://upload.wikimedia.org/wikipedia/commons/5/5a/X_icon_2.svg',
+  telegram: 'https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg'
+};
 
 interface SocialShareButtonsProps {
   title: string;
@@ -82,7 +92,13 @@ export function SocialShareButtons({ title, excerpt, slug, className = '' }: Soc
           title="Chia sẻ lên Facebook"
           aria-label="Chia sẻ lên Facebook"
         >
-          <i className="fab fa-facebook-f" aria-hidden="true" />
+          <img 
+            src={BRAND_LOGOS.facebook} 
+            alt="Facebook" 
+            className="brand-logo"
+            width={20}
+            height={20}
+          />
         </button>
         
         <button
@@ -91,7 +107,13 @@ export function SocialShareButtons({ title, excerpt, slug, className = '' }: Soc
           title="Chia sẻ qua Zalo"
           aria-label="Chia sẻ qua Zalo"
         >
-          <span className="zalo-icon">Z</span>
+          <img 
+            src={BRAND_LOGOS.zalo} 
+            alt="Zalo" 
+            className="brand-logo zalo-logo"
+            width={24}
+            height={24}
+          />
         </button>
 
         <button
@@ -100,7 +122,13 @@ export function SocialShareButtons({ title, excerpt, slug, className = '' }: Soc
           title="Chia sẻ lên LinkedIn"
           aria-label="Chia sẻ lên LinkedIn"
         >
-          <i className="fab fa-linkedin-in" aria-hidden="true" />
+          <img 
+            src={BRAND_LOGOS.linkedin} 
+            alt="LinkedIn" 
+            className="brand-logo"
+            width={20}
+            height={20}
+          />
         </button>
 
         <button
@@ -109,7 +137,13 @@ export function SocialShareButtons({ title, excerpt, slug, className = '' }: Soc
           title="Chia sẻ lên X (Twitter)"
           aria-label="Chia sẻ lên X (Twitter)"
         >
-          <i className="fab fa-x-twitter" aria-hidden="true" />
+          <img 
+            src={BRAND_LOGOS.twitter} 
+            alt="X (Twitter)" 
+            className="brand-logo twitter-logo"
+            width={18}
+            height={18}
+          />
         </button>
 
         <button
@@ -118,7 +152,13 @@ export function SocialShareButtons({ title, excerpt, slug, className = '' }: Soc
           title="Chia sẻ qua Telegram"
           aria-label="Chia sẻ qua Telegram"
         >
-          <i className="fab fa-telegram-plane" aria-hidden="true" />
+          <img 
+            src={BRAND_LOGOS.telegram} 
+            alt="Telegram" 
+            className="brand-logo"
+            width={22}
+            height={22}
+          />
         </button>
 
         <button
@@ -170,6 +210,18 @@ export function SocialShareButtons({ title, excerpt, slug, className = '' }: Soc
           font-size: 16px;
           color: white;
           transition: all 0.2s ease;
+        }
+
+        .share-btn :global(.brand-logo) {
+          object-fit: contain;
+        }
+
+        .share-btn :global(.zalo-logo) {
+          border-radius: 6px;
+        }
+
+        .share-btn :global(.twitter-logo) {
+          filter: invert(1);
         }
 
         .share-btn:hover {

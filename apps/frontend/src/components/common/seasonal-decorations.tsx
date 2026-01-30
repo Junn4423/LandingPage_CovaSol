@@ -243,6 +243,21 @@ export function SeasonalDecorations({ theme }: SeasonalDecorationsProps) {
           opacity: 1;
         }
         
+        /* Hover effect - slide more inward to avoid blocking content */
+        .homenest-tet-left.couplet-visible:hover {
+          transform: translateX(-65%);
+        }
+        
+        .homenest-tet-right.couplet-visible:hover {
+          transform: translateX(65%);
+        }
+        
+        /* Make couplets interactive for hover */
+        .homenest-tet-left,
+        .homenest-tet-right {
+          pointer-events: auto !important;
+        }
+        
         /* Câu đối (Tết couplets) - hide on smaller screens */
         @media (max-width: 1524px) {
           .homenest-tet-left,

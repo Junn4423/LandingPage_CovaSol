@@ -88,11 +88,25 @@ export function ExitIntentPopup({
     setIsSubmitting(true);
     
     try {
-      // Simulate newsletter subscription
-      // Replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setSubmitted(true);
-      trackEvent('newsletter_signup', { source: 'exit_intent' });
+      // Call actual API to save newsletter subscription
+      const response = await fetch('/api/v1/newsletter/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: email.trim(),
+          source: 'exit_intent'
+        })
+      });
+
+      if (response.ok) {
+        setSubmitted(true);
+        trackEvent('newsletter_signup', { source: 'exit_intent' });
+      } else {
+        const data = await response.json();
+        console.error('Newsletter signup failed:', data.message);
+      }
     } catch (error) {
       console.error('Newsletter signup failed:', error);
     } finally {

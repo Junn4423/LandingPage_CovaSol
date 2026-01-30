@@ -54,16 +54,19 @@ export function ReviewsCarousel({ reviews, stats }: ReviewsCarouselProps) {
   const carouselRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [currentPage, setCurrentPage] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
   const cardsPerPage = 3;
   const totalPages = Math.ceil(reviews.length / cardsPerPage);
 
-//   // Auto-scroll carousel
-//   useEffect(() => {
-//     const interval = setInterval(() => {
-//       setCurrentPage(prev => (prev + 1) % totalPages);
-//     }, 5000);
-//     return () => clearInterval(interval);
-//   }, [totalPages]);
+  // Auto-scroll carousel every 3 seconds
+  useEffect(() => {
+    if (isHovered || totalPages <= 1) return;
+    
+    const interval = setInterval(() => {
+      setCurrentPage(prev => (prev + 1) % totalPages);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [totalPages, isHovered]);
 
   // Scroll to current page
   useEffect(() => {
@@ -102,7 +105,11 @@ export function ReviewsCarousel({ reviews, stats }: ReviewsCarouselProps) {
 
   return (
     <>
-      <div className="reviews-carousel-wrapper">
+      <div 
+        className="reviews-carousel-wrapper"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         <div className="reviews-carousel" ref={carouselRef}>
           <div className="reviews-track" ref={trackRef}>
             {reviews.map((review, index) => (

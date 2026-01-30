@@ -405,3 +405,25 @@ model BlogComment {
   @@index([createdAt(sort: Desc)], map: "idx_comment_time")
   @@map("blog_comments")
 }
+
+// =====================================================
+// Bảng newsletter_subscriptions - Đăng ký nhận bản tin
+// =====================================================
+model NewsletterSubscription {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique @db.VarChar(255)
+  name          String?   @db.VarChar(100)
+  status        String    @default("active") @db.VarChar(20)  // active, unsubscribed
+  source        String?   @db.VarChar(50)                     // exit_popup, blog_footer, etc.
+  ipAddress     String?   @map("ip_address") @db.VarChar(45)
+  userAgent     String?   @map("user_agent") @db.VarChar(500)
+  subscribedAt  DateTime  @default(now()) @map("subscribed_at")
+  unsubscribedAt DateTime? @map("unsubscribed_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  @@index([email], map: "idx_newsletter_email")
+  @@index([status], map: "idx_newsletter_status")
+  @@index([subscribedAt(sort: Desc)], map: "idx_newsletter_subscribed")
+  @@map("newsletter_subscriptions")
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 
 interface Comment {
   id: string;
@@ -16,9 +16,14 @@ interface BlogCommentsProps {
   slug: string;
 }
 
+const PAGE_SIZE_OPTIONS = [5, 10, 15] as const;
+type PageSize = typeof PAGE_SIZE_OPTIONS[number];
+
 export function BlogComments({ blogId, slug }: BlogCommentsProps) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState<PageSize>(5);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -121,6 +126,19 @@ export function BlogComments({ blogId, slug }: BlogCommentsProps) {
     return colors[hash % colors.length];
   };
 
+  // Pagination logic
+  const totalPages = Math.ceil(comments.length / pageSize);
+  const paginatedComments = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return comments.slice(start, start + pageSize);
+  }, [comments, currentPage, pageSize]);
+
+  // Reset to page 1 when page size changes
+  const handlePageSizeChange = (newSize: PageSize) => {
+    setPageSize(newSize);
+    setCurrentPage(1);
+  };
+
   return (
     <section className="blog-comments">
       <h3 className="comments-title">
@@ -186,6 +204,29 @@ export function BlogComments({ blogId, slug }: BlogCommentsProps) {
         </button>
       </form>
 
+      {/* Pagination Controls - Top */}
+      {!isLoading && comments.length > 0 && (
+        <div className="comments-pagination-controls">
+          <div className="page-size-selector">
+            <span>Hiển thị:</span>
+            <select
+              value={pageSize}
+              onChange={(e) => handlePageSizeChange(Number(e.target.value) as PageSize)}
+              className="page-size-select"
+            >
+              {PAGE_SIZE_OPTIONS.map((size) => (
+                <option key={size} value={size}>
+                  {size} bình luận
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="page-info">
+            Trang {currentPage}/{totalPages} ({comments.length} bình luận)
+          </div>
+        </div>
+      )}
+
       {/* Comments List */}
       <div className="comments-list">
         {isLoading ? (
@@ -199,7 +240,7 @@ export function BlogComments({ blogId, slug }: BlogCommentsProps) {
             <p>Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</p>
           </div>
         ) : (
-          comments.map((comment) => (
+          paginatedComments.map((comment) => (
             <article key={comment.id} className="comment-item">
               <div 
                 className="comment-avatar"
@@ -222,6 +263,41 @@ export function BlogComments({ blogId, slug }: BlogCommentsProps) {
           ))
         )}
       </div>
+
+      {/* Pagination Navigation */}
+      {!isLoading && comments.length > 0 && totalPages > 1 && (
+        <div className="comments-pagination">
+          <button
+            className="pagination-btn"
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            aria-label="Trang trước"
+          >
+            <i className="fas fa-chevron-left" aria-hidden="true" />
+            Trước
+          </button>
+          <div className="pagination-pages">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                className={`pagination-page ${page === currentPage ? 'active' : ''}`}
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+          <button
+            className="pagination-btn"
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            aria-label="Trang sau"
+          >
+            Sau
+            <i className="fas fa-chevron-right" aria-hidden="true" />
+          </button>
+        </div>
+      )}
 
       <style jsx>{`
         .blog-comments {
@@ -419,6 +495,110 @@ export function BlogComments({ blogId, slug }: BlogCommentsProps) {
           white-space: pre-wrap;
         }
 
+        /* Pagination Controls */
+        .comments-pagination-controls {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+          padding: 12px 16px;
+          background: var(--gray-50, #f9fafb);
+          border-radius: var(--radius-sm, 8px);
+        }
+
+        .page-size-selector {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 14px;
+          color: var(--gray-600, #4b5563);
+        }
+
+        .page-size-select {
+          padding: 6px 12px;
+          border: 1px solid var(--gray-300, #d1d5db);
+          border-radius: 6px;
+          background: var(--white, #ffffff);
+          font-size: 14px;
+          cursor: pointer;
+        }
+
+        .page-size-select:focus {
+          outline: none;
+          border-color: var(--primary-dark, #124e66);
+        }
+
+        .page-info {
+          font-size: 14px;
+          color: var(--gray-500, #6b7280);
+        }
+
+        /* Pagination Navigation */
+        .comments-pagination {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 8px;
+          margin-top: 24px;
+          padding-top: 20px;
+          border-top: 1px solid var(--gray-200, #e5e7eb);
+        }
+
+        .pagination-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 8px 16px;
+          background: var(--gray-100, #f3f4f6);
+          border: 1px solid var(--gray-200, #e5e7eb);
+          border-radius: 6px;
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--gray-700, #374151);
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+          background: var(--gray-200, #e5e7eb);
+        }
+
+        .pagination-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .pagination-pages {
+          display: flex;
+          gap: 4px;
+        }
+
+        .pagination-page {
+          width: 36px;
+          height: 36px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: transparent;
+          border: 1px solid var(--gray-200, #e5e7eb);
+          border-radius: 6px;
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--gray-600, #4b5563);
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .pagination-page:hover {
+          background: var(--gray-100, #f3f4f6);
+        }
+
+        .pagination-page.active {
+          background: var(--primary-dark, #124e66);
+          border-color: var(--primary-dark, #124e66);
+          color: var(--white, #ffffff);
+        }
+
         @media (max-width: 640px) {
           .form-row {
             grid-template-columns: 1fr;
@@ -432,6 +612,22 @@ export function BlogComments({ blogId, slug }: BlogCommentsProps) {
             width: 40px;
             height: 40px;
             font-size: 14px;
+          }
+
+          .comments-pagination-controls {
+            flex-direction: column;
+            gap: 12px;
+          }
+
+          .comments-pagination {
+            flex-wrap: wrap;
+          }
+
+          .pagination-pages {
+            order: -1;
+            width: 100%;
+            justify-content: center;
+            flex-wrap: wrap;
           }
         }
       `}</style>
