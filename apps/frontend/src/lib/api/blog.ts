@@ -37,3 +37,29 @@ export async function fetchBlogPost(slug: string): Promise<BlogPostDetail | null
     return mockBlogPostDetails.find(post => post.slug === slug) ?? null;
   }
 }
+
+export async function searchBlogPosts(query: string): Promise<BlogPostSummary[]> {
+  if (!query || query.trim().length < 2) {
+    return [];
+  }
+  
+  try {
+    const response = await apiRequest<ApiSuccessResponse<BlogPostSummary[]>>({
+      path: `/v1/blog/search?q=${encodeURIComponent(query)}`,
+      nextOptions: {
+        next: { revalidate: 0 } // Don't cache search results
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Không thể tìm kiếm blog', error);
+    // Fallback to client-side filtering
+    const allPosts = await fetchBlogSummaries();
+    const lowerQuery = query.toLowerCase();
+    return allPosts.filter(post => 
+      post.title.toLowerCase().includes(lowerQuery) ||
+      post.excerpt?.toLowerCase().includes(lowerQuery) ||
+      post.category?.toLowerCase().includes(lowerQuery)
+    );
+  }
+}

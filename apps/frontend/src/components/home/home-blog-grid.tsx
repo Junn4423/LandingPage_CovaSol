@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import type { BlogPostSummary } from '@/types/content';
 import type { Route } from 'next';
 import { normalizeImageUrl } from '@/lib/image-url';
@@ -58,12 +59,13 @@ function BlogPostCard({ post, index }: BlogPostCardProps) {
       tabIndex={0}
     >
       <div className="post-image">
-        <Link href={detailUrl}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+        <Link href={detailUrl} className="block w-full h-full relative">
+          <Image
             src={imageSrc}
             alt={post.title || 'COVASOL Blog'}
-            loading="lazy"
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
           />
         </Link>
       </div>

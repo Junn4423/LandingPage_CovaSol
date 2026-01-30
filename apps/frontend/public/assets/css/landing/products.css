@@ -224,3 +224,235 @@
   justify-content: center;
   flex-wrap: wrap;
 }
+
+/* ============================================================================
+   PRODUCTS ENHANCED RESPONSIVE
+   ============================================================================ */
+
+/* Ultra-wide (2560px+) */
+@media (min-width: 2560px) {
+  .products-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+  }
+
+  .product-card {
+    border-radius: var(--radius-xl);
+  }
+
+  .product-image {
+    height: 280px;
+  }
+
+  .product-content {
+    padding: 36px;
+  }
+
+  .product-content h3 {
+    font-size: 1.625rem;
+  }
+
+  .product-description {
+    font-size: 1.0625rem;
+  }
+
+  .cta-content h2 {
+    font-size: 3rem;
+  }
+
+  .cta-content p {
+    font-size: 1.25rem;
+  }
+}
+
+/* Full HD (1920px - 2559px) */
+@media (min-width: 1920px) and (max-width: 2559px) {
+  .products-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 36px;
+  }
+
+  .product-image {
+    height: 260px;
+  }
+
+  .product-content {
+    padding: 32px;
+  }
+
+  .product-content h3 {
+    font-size: 1.5rem;
+  }
+
+  .product-description {
+    font-size: 1rem;
+  }
+
+  .cta-content h2 {
+    font-size: 2.75rem;
+  }
+
+  .cta-content p {
+    font-size: 1.1875rem;
+  }
+}
+
+/* Large laptop (1680px - 1919px) */
+@media (min-width: 1680px) and (max-width: 1919px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .product-image {
+    height: 240px;
+  }
+
+  .product-content {
+    padding: 30px;
+  }
+
+  .product-content h3 {
+    font-size: 1.4375rem;
+  }
+
+  .product-description {
+    font-size: 0.9687rem;
+  }
+
+  .cta-content h2 {
+    font-size: 2.625rem;
+  }
+
+  .cta-content p {
+    font-size: 1.125rem;
+  }
+}
+
+/* MacBook Pro 14" (1536px - 1679px) */
+@media (min-width: 1536px) and (max-width: 1679px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+  }
+
+  .product-image {
+    height: 230px;
+  }
+
+  .product-content {
+    padding: 28px;
+  }
+
+  .product-content h3 {
+    font-size: 1.375rem;
+  }
+
+  .product-description {
+    font-size: 0.9375rem;
+  }
+
+  .cta-content h2 {
+    font-size: 2.5rem;
+  }
+
+  .cta-content p {
+    font-size: 1.0625rem;
+  }
+}
+
+/* WXGA+ laptop (1440px - 1535px) */
+@media (min-width: 1440px) and (max-width: 1535px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+
+  .product-image {
+    height: 220px;
+  }
+
+  .product-content {
+    padding: 26px;
+  }
+
+  .product-content h3 {
+    font-size: 1.3125rem;
+  }
+
+  .product-description {
+    font-size: 0.9375rem;
+  }
+
+  .cta-content h2 {
+    font-size: 2.375rem;
+  }
+
+  .cta-content p {
+    font-size: 1.0625rem;
+  }
+}
+
+/* HD laptop (1366px - 1439px) */
+@media (min-width: 1366px) and (max-width: 1439px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 26px;
+  }
+
+  .product-image {
+    height: 210px;
+  }
+
+  .product-content {
+    padding: 24px;
+  }
+
+  .product-content h3 {
+    font-size: 1.25rem;
+  }
+
+  .product-description {
+    font-size: 0.9375rem;
+  }
+
+  .cta-content h2 {
+    font-size: 2.25rem;
+  }
+
+  .cta-content p {
+    font-size: 1rem;
+  }
+}
+
+/* Standard desktop (1200px - 1365px) */
+@media (min-width: 1200px) and (max-width: 1365px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .product-image {
+    height: 200px;
+  }
+
+  .product-content {
+    padding: 22px;
+  }
+
+  .product-content h3 {
+    font-size: 1.1875rem;
+  }
+
+  .product-description {
+    font-size: 0.9375rem;
+  }
+
+  .cta-content h2 {
+    font-size: 2.125rem;
+  }
+
+  .cta-content p {
+    font-size: 1rem;
+  }
+}

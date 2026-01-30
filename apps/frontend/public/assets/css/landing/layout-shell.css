@@ -708,3 +708,432 @@ h1, h2, h3, h4, h5, h6 {
   min-width: 70px;
   text-align: left;
 }
+
+/* ============================================================================
+   ENHANCED RESPONSIVE FOR LAYOUT SHELL
+   ============================================================================ */
+
+/* Ultra-wide (2560px+) */
+@media (min-width: 2560px) {
+  .nav-container {
+    max-width: 2000px;
+    padding-inline: 60px;
+    height: 84px;
+  }
+
+  .nav-logo {
+    font-size: 2rem;
+  }
+
+  .nav-logo img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .nav-menu {
+    gap: 3rem;
+  }
+
+  .nav-link {
+    font-size: 1.125rem;
+  }
+
+  .nav-cta {
+    padding: 14px 32px;
+    font-size: 1.0625rem;
+  }
+
+  .container {
+    max-width: 2000px;
+    padding: 0 60px;
+  }
+
+  .page-hero {
+    padding: clamp(140px, 15vh, 180px) 0 clamp(80px, 12vh, 120px);
+  }
+
+  .page-title {
+    font-size: 4rem;
+  }
+
+  .page-description {
+    font-size: 1.5rem;
+    max-width: 900px;
+  }
+
+  .footer {
+    padding: 80px 0;
+  }
+
+  .footer-grid {
+    gap: 3rem;
+  }
+
+  .footer-logo {
+    font-size: 1.5rem;
+  }
+
+  .footer-logo img {
+    width: 90px;
+    height: 90px;
+  }
+
+  .footer-description {
+    font-size: 1.125rem;
+  }
+}
+
+/* Full HD (1920px - 2559px) */
+@media (min-width: 1920px) and (max-width: 2559px) {
+  .nav-container {
+    max-width: 1800px;
+    padding-inline: 50px;
+    height: 80px;
+  }
+
+  .nav-logo {
+    font-size: 1.875rem;
+  }
+
+  .nav-logo img {
+    width: 48px;
+    height: 48px;
+  }
+
+  .nav-menu {
+    gap: 2.5rem;
+  }
+
+  .nav-link {
+    font-size: 1.0625rem;
+  }
+
+  .nav-cta {
+    padding: 12px 28px;
+    font-size: 1rem;
+  }
+
+  .container {
+    max-width: 1800px;
+    padding: 0 50px;
+  }
+
+  .page-hero {
+    padding: clamp(130px, 14vh, 160px) 0 clamp(70px, 11vh, 110px);
+  }
+
+  .page-title {
+    font-size: 3.75rem;
+  }
+
+  .page-description {
+    font-size: 1.375rem;
+    max-width: 860px;
+  }
+
+  .footer {
+    padding: 70px 0;
+  }
+
+  .footer-grid {
+    gap: 2.75rem;
+  }
+
+  .footer-logo img {
+    width: 84px;
+    height: 84px;
+  }
+}
+
+/* Large laptop (1680px - 1919px) */
+@media (min-width: 1680px) and (max-width: 1919px) {
+  .nav-container {
+    max-width: 1600px;
+    padding-inline: 45px;
+    height: 78px;
+  }
+
+  .nav-logo {
+    font-size: 1.75rem;
+  }
+
+  .nav-logo img {
+    width: 46px;
+    height: 46px;
+  }
+
+  .nav-menu {
+    gap: 2.25rem;
+  }
+
+  .nav-link {
+    font-size: 1rem;
+  }
+
+  .nav-cta {
+    padding: 11px 26px;
+    font-size: 0.9375rem;
+  }
+
+  .container {
+    max-width: 1600px;
+    padding: 0 45px;
+  }
+
+  .page-hero {
+    padding: clamp(125px, 13vh, 150px) 0 clamp(65px, 10vh, 100px);
+  }
+
+  .page-title {
+    font-size: 3.5rem;
+  }
+
+  .page-description {
+    font-size: 1.25rem;
+    max-width: 820px;
+  }
+
+  .footer {
+    padding: 64px 0;
+  }
+
+  .footer-logo img {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+/* MacBook Pro 14" (1536px - 1679px) */
+@media (min-width: 1536px) and (max-width: 1679px) {
+  .nav-container {
+    max-width: 1480px;
+    padding-inline: 40px;
+    height: 76px;
+  }
+
+  .nav-logo {
+    font-size: 1.625rem;
+  }
+
+  .nav-logo img {
+    width: 44px;
+    height: 44px;
+  }
+
+  .nav-menu {
+    gap: 2rem;
+  }
+
+  .nav-link {
+    font-size: 0.9375rem;
+  }
+
+  .nav-cta {
+    padding: 10px 24px;
+    font-size: 0.9375rem;
+  }
+
+  .container {
+    max-width: 1480px;
+    padding: 0 40px;
+  }
+
+  .page-hero {
+    padding: clamp(120px, 12vh, 145px) 0 clamp(60px, 9vh, 95px);
+  }
+
+  .page-title {
+    font-size: 3.25rem;
+  }
+
+  .page-description {
+    font-size: 1.1875rem;
+    max-width: 780px;
+  }
+
+  .footer {
+    padding: 60px 0;
+  }
+
+  .footer-logo img {
+    width: 78px;
+    height: 78px;
+  }
+}
+
+/* WXGA+ laptop (1440px - 1535px) */
+@media (min-width: 1440px) and (max-width: 1535px) {
+  .nav-container {
+    max-width: 1380px;
+    padding-inline: 36px;
+    height: 74px;
+  }
+
+  .nav-logo {
+    font-size: 1.5rem;
+  }
+
+  .nav-logo img {
+    width: 42px;
+    height: 42px;
+  }
+
+  .nav-menu {
+    gap: 1.75rem;
+    margin: 0 1.5rem;
+  }
+
+  .nav-link {
+    font-size: 0.9375rem;
+  }
+
+  .nav-cta {
+    padding: 10px 22px;
+    font-size: 0.9375rem;
+  }
+
+  .container {
+    max-width: 1380px;
+    padding: 0 36px;
+  }
+
+  .page-hero {
+    padding: clamp(115px, 11vh, 140px) 0 clamp(55px, 8vh, 90px);
+  }
+
+  .page-title {
+    font-size: 3rem;
+  }
+
+  .page-description {
+    font-size: 1.125rem;
+    max-width: 750px;
+  }
+
+  .footer {
+    padding: 58px 0;
+  }
+
+  .footer-logo img {
+    width: 76px;
+    height: 76px;
+  }
+}
+
+/* HD laptop (1366px - 1439px) */
+@media (min-width: 1366px) and (max-width: 1439px) {
+  .nav-container {
+    max-width: 1300px;
+    padding-inline: 32px;
+    height: 72px;
+  }
+
+  .nav-logo {
+    font-size: 1.4375rem;
+  }
+
+  .nav-logo img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .nav-menu {
+    gap: 1.5rem;
+    margin: 0 1.25rem;
+  }
+
+  .nav-link {
+    font-size: 0.9rem;
+  }
+
+  .nav-cta {
+    padding: 9px 20px;
+    font-size: 0.9rem;
+  }
+
+  .container {
+    max-width: 1300px;
+    padding: 0 32px;
+  }
+
+  .page-hero {
+    padding: clamp(110px, 10vh, 135px) 0 clamp(50px, 7vh, 85px);
+  }
+
+  .page-title {
+    font-size: 2.875rem;
+  }
+
+  .page-description {
+    font-size: 1.0625rem;
+    max-width: 720px;
+  }
+
+  .footer {
+    padding: 56px 0;
+  }
+
+  .footer-logo img {
+    width: 74px;
+    height: 74px;
+  }
+}
+
+/* Standard desktop (1200px - 1365px) */
+@media (min-width: 1200px) and (max-width: 1365px) {
+  .nav-container {
+    max-width: 1160px;
+    padding-inline: 28px;
+    height: 70px;
+  }
+
+  .nav-logo {
+    font-size: 1.375rem;
+  }
+
+  .nav-logo img {
+    width: 38px;
+    height: 38px;
+  }
+
+  .nav-menu {
+    gap: 1.25rem;
+    margin: 0 1rem;
+  }
+
+  .nav-link {
+    font-size: 0.875rem;
+  }
+
+  .nav-cta {
+    padding: 9px 18px;
+    font-size: 0.875rem;
+  }
+
+  .container {
+    max-width: 1160px;
+    padding: 0 28px;
+  }
+
+  .page-hero {
+    padding: clamp(105px, 9vh, 130px) 0 clamp(48px, 6vh, 80px);
+  }
+
+  .page-title {
+    font-size: 2.75rem;
+  }
+
+  .page-description {
+    font-size: 1rem;
+    max-width: 680px;
+  }
+
+  .footer {
+    padding: 54px 0;
+  }
+
+  .footer-logo img {
+    width: 72px;
+    height: 72px;
+  }
+}

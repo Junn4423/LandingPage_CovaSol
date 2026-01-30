@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import type { ProductSummary } from '@/types/content';
 import type { Route } from 'next';
 import { normalizeImageUrl } from '@/lib/image-url';
@@ -45,12 +46,13 @@ function ProductCard({ product, index }: ProductCardProps) {
       tabIndex={0}
     >
       <div className="product-image">
-        <Link href={detailUrl}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+        <Link href={detailUrl} className="block w-full h-full relative">
+          <Image
             src={imageSrc}
             alt={product.name || 'COVASOL Product'}
-            loading="lazy"
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
           />
         </Link>
       </div>

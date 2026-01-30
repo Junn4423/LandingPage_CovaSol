@@ -228,3 +228,121 @@ export async function deleteBlogPost(id: number | string) {
   const numId = typeof id === 'string' ? parseInt(id, 10) : id;
   await prisma.blogPost.delete({ where: { id: numId } });
 }
+
+// Search blog posts by query
+export async function searchBlogPosts(query: string): Promise<BlogPostSummary[]> {
+  const searchTerms = query.toLowerCase().split(/\s+/).filter(Boolean);
+  
+  const posts = await prisma.blogPost.findMany({
+    where: {
+      status: { in: ['published', 'PUBLISHED'] },
+      OR: [
+        { title: { contains: query } },
+        { excerpt: { contains: query } },
+        { content: { contains: query } },
+        { tags: { contains: query } },
+        { category: { contains: query } }
+      ]
+    },
+    include: { author: true },
+    orderBy: { publishedAt: 'desc' },
+    take: 20
+  });
+  
+  return posts.map(toSummary);
+}
+
+// Track blog view
+export async function trackBlogView(blogPostId: number, ipAddress: string, userAgent: string | undefined): Promise<number> {
+  try {
+    // Try to create a new view record (unique constraint will prevent duplicates)
+    await prisma.blogView.upsert({
+      where: {
+        blogPostId_ipAddress: {
+          blogPostId,
+          ipAddress
+        }
+      },
+      create: {
+        blogPostId,
+        ipAddress,
+        userAgent: userAgent || null
+      },
+      update: {
+        viewedAt: new Date(),
+        userAgent: userAgent || null
+      }
+    });
+  } catch (error) {
+    // Ignore duplicate key errors
+    console.error('Error tracking view:', error);
+  }
+  
+  // Return total view count
+  const count = await prisma.blogView.count({
+    where: { blogPostId }
+  });
+  
+  return count;
+}
+
+// Get view count for a blog post
+export async function getBlogViewCount(blogPostId: number): Promise<number> {
+  return prisma.blogView.count({
+    where: { blogPostId }
+  });
+}
+
+// Get related posts based on category and tags
+export async function getRelatedPosts(
+  currentPostId: number,
+  category: string | undefined,
+  tags: string[] | undefined,
+  limit: number = 6
+): Promise<BlogPostSummary[]> {
+  const conditions: any[] = [
+    { id: { not: currentPostId } },
+    { status: { in: ['published', 'PUBLISHED'] } }
+  ];
+  
+  // Build OR conditions for matching
+  const matchConditions: any[] = [];
+  
+  if (category) {
+    matchConditions.push({ category });
+  }
+  
+  // Match any of the tags
+  if (tags && tags.length > 0) {
+    tags.forEach(tag => {
+      matchConditions.push({ tags: { contains: tag } });
+    });
+  }
+  
+  const posts = await prisma.blogPost.findMany({
+    where: {
+      AND: conditions,
+      ...(matchConditions.length > 0 ? { OR: matchConditions } : {})
+    },
+    include: { author: true },
+    orderBy: { publishedAt: 'desc' },
+    take: limit
+  });
+  
+  // If not enough related posts, fill with recent posts
+  if (posts.length < limit) {
+    const additionalIds = posts.map(p => p.id);
+    const morePosts = await prisma.blogPost.findMany({
+      where: {
+        id: { notIn: [currentPostId, ...additionalIds] },
+        status: { in: ['published', 'PUBLISHED'] }
+      },
+      include: { author: true },
+      orderBy: { publishedAt: 'desc' },
+      take: limit - posts.length
+    });
+    posts.push(...morePosts);
+  }
+  
+  return posts.map(toSummary);
+}

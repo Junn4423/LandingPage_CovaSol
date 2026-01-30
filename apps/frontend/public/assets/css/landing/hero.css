@@ -10,6 +10,7 @@
 .hero {
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height for mobile */
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -93,73 +94,72 @@
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 1200px;
+  max-width: var(--content-max, 1200px);
   margin: 0 auto;
-  padding: clamp(120px, 12vh, 180px) 20px 120px;
+  padding: clamp(120px, 12vh, 180px) clamp(20px, 4vw, 48px) 120px;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: clamp(24px, 4vw, 40px);
 }
 
 .hero-content {
-  max-width: 640px;
+  max-width: clamp(480px, 50vw, 720px);
 }
 
 .hero-title {
-  margin-bottom: 24px;
+  margin-bottom: clamp(20px, 3vw, 32px);
 }
 
 .title-main {
   display: block;
   font-family: var(--font-heading);
-  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-size: clamp(2.5rem, 5vw + 1rem, 5rem);
   font-weight: 800;
-  line-height: 1.2; /* Better for Vietnamese */
-  margin-bottom: 8px;
+  line-height: 1.2;
+  margin-bottom: clamp(6px, 1vw, 12px);
   background: linear-gradient(135deg, var(--white) 0%, var(--accent-green) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  /* Ensure Vietnamese diacritics are properly displayed */
   text-transform: none;
   letter-spacing: -0.02em;
 }
 
 .title-sub {
   display: block;
-  font-family: var(--font-primary); /* Use primary font for slogan */
-  font-size: clamp(1.1rem, 2.6vw, 1.75rem);
-  font-weight: 500; /* Slightly bolder for Vietnamese */
+  font-family: var(--font-primary);
+  font-size: clamp(1.1rem, 2vw + 0.5rem, 2.25rem);
+  font-weight: 500;
   color: var(--primary-light);
   opacity: 0.9;
   line-height: 1.4;
-  letter-spacing: 0.02em; /* Better spacing for Vietnamese */
+  letter-spacing: 0.02em;
 }
 
 .hero-description {
-  font-size: clamp(1rem, 2.2vw, 1.25rem);
+  font-size: clamp(1rem, 1.5vw + 0.5rem, 1.5rem);
   line-height: 1.6;
-  margin-bottom: 40px;
+  margin-bottom: clamp(30px, 5vw, 48px);
   color: var(--primary-light);
-  max-width: 500px;
+  max-width: clamp(400px, 45vw, 580px);
 }
 
 .hero-buttons {
   display: flex;
-  gap: clamp(0.75rem, 3vw, 1.5rem);
+  gap: clamp(0.75rem, 2vw, 1.5rem);
   flex-wrap: wrap;
 }
 
 
 .hero-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr));
-  gap: 18px;
-  margin-top: 32px;
+  grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
+  gap: clamp(14px, 2vw, 24px);
+  margin-top: clamp(24px, 4vw, 40px);
 }
 
 .hero-stat {
-  padding: 18px 20px;
+  padding: clamp(16px, 2vw, 24px) clamp(18px, 2.5vw, 28px);
   border-radius: var(--radius-lg);
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -170,14 +170,14 @@
 .hero-stat strong {
   color: white;
   display: block;
-  font-size: 2rem;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
   margin-bottom: 4px;
 }
 
 .hero-stat .stat-label {
-  font-size: 0.85rem;
+  font-size: clamp(0.75rem, 0.9vw, 0.9rem);
   text-transform: uppercase;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.15em;
   color: rgba(240, 240, 240, 0.959);
 }
 
@@ -211,4 +211,120 @@
   10% { opacity: 0.6; }
   90% { opacity: 0.6; }
   100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+}
+
+/* ============================================================================
+   Hero Responsive Adjustments for Various Screens
+   ============================================================================ */
+
+/* Ultra-wide (2560px+) */
+@media (min-width: 2560px) {
+  .hero-container {
+    max-width: 1800px;
+    padding: clamp(160px, 16vh, 240px) 60px 160px;
+  }
+
+  .hero-content {
+    max-width: 840px;
+  }
+
+  .hero-stats {
+    max-width: 900px;
+  }
+}
+
+/* Full HD (1920px - 2559px) */
+@media (min-width: 1920px) and (max-width: 2559px) {
+  .hero-container {
+    max-width: 1600px;
+    padding: clamp(150px, 15vh, 220px) 50px 150px;
+  }
+
+  .hero-content {
+    max-width: 780px;
+  }
+
+  .hero-stats {
+    max-width: 840px;
+  }
+}
+
+/* Large laptop (1680px - 1919px) */
+@media (min-width: 1680px) and (max-width: 1919px) {
+  .hero-container {
+    max-width: 1500px;
+    padding: clamp(135px, 14vh, 200px) 45px 135px;
+  }
+
+  .hero-content {
+    max-width: 700px;
+  }
+
+  .hero-stats {
+    max-width: 760px;
+  }
+}
+
+/* MacBook Pro 14" (1536px - 1679px) */
+@media (min-width: 1536px) and (max-width: 1679px) {
+  .hero-container {
+    max-width: 1380px;
+    padding: clamp(125px, 13vh, 180px) 40px 125px;
+  }
+
+  .hero-content {
+    max-width: 660px;
+  }
+
+  .hero-stats {
+    max-width: 720px;
+  }
+}
+
+/* WXGA+ laptop (1440px - 1535px) */
+@media (min-width: 1440px) and (max-width: 1535px) {
+  .hero-container {
+    max-width: 1300px;
+    padding: clamp(120px, 12vh, 170px) 36px 115px;
+  }
+
+  .hero-content {
+    max-width: 640px;
+  }
+
+  .hero-stats {
+    max-width: 700px;
+  }
+}
+
+/* HD laptop (1366px - 1439px) */
+@media (min-width: 1366px) and (max-width: 1439px) {
+  .hero-container {
+    max-width: 1220px;
+    padding: clamp(110px, 11vh, 160px) 32px 105px;
+  }
+
+  .hero-content {
+    max-width: 620px;
+  }
+
+  .hero-stats {
+    max-width: 680px;
+  }
+}
+
+/* Standard desktop (1200px - 1365px) */
+@media (min-width: 1200px) and (max-width: 1365px) {
+  .hero-container {
+    max-width: 1140px;
+    padding: clamp(105px, 10vh, 150px) 28px 100px;
+  }
+
+  .hero-content {
+    max-width: 580px;
+  }
+
+  .hero-stats {
+    max-width: 640px;
+  }
 }

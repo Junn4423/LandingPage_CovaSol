@@ -369,3 +369,39 @@ model ProductCategory {
   @@index([name], map: "idx_product_category_name")
   @@map("product_categories")
 }
+
+// =====================================================
+// Bảng blog_views - Theo dõi lượt xem bài viết
+// =====================================================
+model BlogView {
+  id          Int       @id @default(autoincrement())
+  blogPostId  Int       @map("blog_post_id")
+  ipAddress   String    @map("ip_address") @db.VarChar(45)
+  userAgent   String?   @map("user_agent") @db.VarChar(500)
+  viewedAt    DateTime  @default(now()) @map("viewed_at")
+  
+  @@unique([blogPostId, ipAddress], map: "ux_blog_view_ip")
+  @@index([blogPostId], map: "idx_blog_view_post")
+  @@index([viewedAt(sort: Desc)], map: "idx_blog_view_time")
+  @@map("blog_views")
+}
+
+// =====================================================
+// Bảng blog_comments - Bình luận bài viết blog
+// =====================================================
+model BlogComment {
+  id          Int       @id @default(autoincrement())
+  blogPostId  Int       @map("blog_post_id")
+  name        String    @db.VarChar(100)
+  email       String?   @db.VarChar(255)
+  content     String    @db.Text
+  status      String    @default("pending") @db.VarChar(20)  // pending, approved, rejected
+  ipAddress   String?   @map("ip_address") @db.VarChar(45)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@index([blogPostId], map: "idx_comment_blog")
+  @@index([status], map: "idx_comment_status")
+  @@index([createdAt(sort: Desc)], map: "idx_comment_time")
+  @@map("blog_comments")
+}

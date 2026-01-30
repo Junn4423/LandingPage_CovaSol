@@ -58,5 +58,8 @@
   "devDependencies": {
     "concurrently": "^8.2.2"
   },
-  "packageManager": "npm@10.8.1"
+  "packageManager": "npm@10.8.1",
+  "dependencies": {
+    "@next/third-parties": "^16.1.6"
+  }
 }

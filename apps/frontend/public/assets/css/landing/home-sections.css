@@ -1131,3 +1131,872 @@
   content: '⚠';
   font-size: 0.9rem;
 }
+
+/* ============================================================================
+   ENHANCED RESPONSIVE DESIGN FOR ALL SCREEN SIZES
+   ============================================================================ */
+
+/* Ultra-wide displays (2560px+) */
+@media (min-width: 2560px) {
+  section {
+    padding: 140px 0;
+  }
+
+  .section-header {
+    margin-bottom: 80px;
+  }
+
+  .services-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px;
+  }
+
+  .service-card {
+    padding: 56px 45px;
+  }
+
+  .service-card h3 {
+    font-size: 1.875rem;
+    margin-bottom: 20px;
+  }
+
+  .service-card p {
+    font-size: 1.1875rem;
+  }
+
+  .service-icon {
+    width: 90px;
+    height: 90px;
+    margin-bottom: 32px;
+  }
+
+  .service-icon i {
+    font-size: 2.5rem;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px;
+  }
+
+  .feature-item {
+    padding: 56px 45px;
+  }
+
+  .feature-icon {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 32px;
+  }
+
+  .feature-icon i {
+    font-size: 2.5rem;
+  }
+
+  .feature-item h3 {
+    font-size: 1.625rem;
+    margin-bottom: 20px;
+  }
+
+  .feature-item p {
+    font-size: 1.125rem;
+  }
+
+  .service-detail-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 36px;
+  }
+
+  .detail-card {
+    padding: 40px;
+  }
+
+  .detail-card h3 {
+    font-size: 1.5rem;
+  }
+
+  .about-content {
+    gap: 100px;
+  }
+
+  .about-text h2 {
+    font-size: 3.25rem;
+  }
+
+  .about-text p {
+    font-size: 1.375rem;
+  }
+
+  .about-stats {
+    gap: 60px;
+  }
+
+  .stat-number {
+    font-size: 4rem;
+  }
+
+  .contact-content {
+    gap: 80px;
+  }
+
+  .contact-info h2 {
+    font-size: 3rem;
+  }
+
+  .contact-form {
+    padding: 56px;
+  }
+
+  .reviews-summary {
+    padding: 56px;
+  }
+
+  .overall-rating .rating-number {
+    font-size: 4rem;
+  }
+}
+
+/* Full HD desktop (1920px - 2559px) */
+@media (min-width: 1920px) and (max-width: 2559px) {
+  section {
+    padding: 120px 0;
+  }
+
+  .section-header {
+    margin-bottom: 70px;
+  }
+
+  .services-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+  }
+
+  .service-card {
+    padding: 50px 40px;
+  }
+
+  .service-card h3 {
+    font-size: 1.75rem;
+    margin-bottom: 18px;
+  }
+
+  .service-card p {
+    font-size: 1.125rem;
+  }
+
+  .service-icon {
+    width: 85px;
+    height: 85px;
+    margin-bottom: 28px;
+  }
+
+  .service-icon i {
+    font-size: 2.25rem;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+  }
+
+  .feature-item {
+    padding: 50px 40px;
+  }
+
+  .feature-icon {
+    width: 95px;
+    height: 95px;
+    margin-bottom: 28px;
+  }
+
+  .feature-icon i {
+    font-size: 2.25rem;
+  }
+
+  .feature-item h3 {
+    font-size: 1.5rem;
+    margin-bottom: 18px;
+  }
+
+  .feature-item p {
+    font-size: 1.0625rem;
+  }
+
+  .service-detail-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+  }
+
+  .detail-card {
+    padding: 36px;
+  }
+
+  .detail-card h3 {
+    font-size: 1.375rem;
+  }
+
+  .about-content {
+    gap: 85px;
+  }
+
+  .about-text h2 {
+    font-size: 3rem;
+  }
+
+  .about-text p {
+    font-size: 1.25rem;
+  }
+
+  .about-stats {
+    gap: 52px;
+  }
+
+  .stat-number {
+    font-size: 3.5rem;
+  }
+
+  .contact-content {
+    gap: 70px;
+  }
+
+  .contact-info h2 {
+    font-size: 2.75rem;
+  }
+
+  .contact-form {
+    padding: 50px;
+  }
+
+  .reviews-summary {
+    padding: 50px;
+  }
+
+  .overall-rating .rating-number {
+    font-size: 3.5rem;
+  }
+}
+
+/* Large laptop (1680px - 1919px) */
+@media (min-width: 1680px) and (max-width: 1919px) {
+  section {
+    padding: 110px 0;
+  }
+
+  .section-header {
+    margin-bottom: 60px;
+  }
+
+  .services-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 36px;
+  }
+
+  .service-card {
+    padding: 44px 36px;
+  }
+
+  .service-card h3 {
+    font-size: 1.625rem;
+    margin-bottom: 16px;
+  }
+
+  .service-card p {
+    font-size: 1.0625rem;
+  }
+
+  .service-icon {
+    width: 78px;
+    height: 78px;
+    margin-bottom: 26px;
+  }
+
+  .service-icon i {
+    font-size: 2.125rem;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 36px;
+  }
+
+  .feature-item {
+    padding: 44px 36px;
+  }
+
+  .feature-icon {
+    width: 88px;
+    height: 88px;
+    margin-bottom: 26px;
+  }
+
+  .feature-icon i {
+    font-size: 2.125rem;
+  }
+
+  .feature-item h3 {
+    font-size: 1.375rem;
+    margin-bottom: 16px;
+  }
+
+  .feature-item p {
+    font-size: 1rem;
+  }
+
+  .service-detail-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px;
+  }
+
+  .detail-card {
+    padding: 32px;
+  }
+
+  .detail-card h3 {
+    font-size: 1.3125rem;
+  }
+
+  .about-content {
+    gap: 75px;
+  }
+
+  .about-text h2 {
+    font-size: 2.75rem;
+  }
+
+  .about-text p {
+    font-size: 1.1875rem;
+  }
+
+  .about-stats {
+    gap: 48px;
+  }
+
+  .stat-number {
+    font-size: 3.25rem;
+  }
+
+  .contact-content {
+    gap: 65px;
+  }
+
+  .contact-info h2 {
+    font-size: 2.625rem;
+  }
+
+  .contact-form {
+    padding: 45px;
+  }
+
+  .reviews-summary {
+    padding: 45px;
+  }
+
+  .review-card {
+    padding: 32px;
+    min-height: 380px;
+  }
+
+  .overall-rating .rating-number {
+    font-size: 3.25rem;
+  }
+}
+
+/* MacBook Pro 14" and similar (1536px - 1679px) */
+@media (min-width: 1536px) and (max-width: 1679px) {
+  section {
+    padding: 100px 0;
+  }
+
+  .section-header {
+    margin-bottom: 56px;
+  }
+
+  .services-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .service-card {
+    padding: 40px 32px;
+  }
+
+  .service-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+  }
+
+  .service-card p {
+    font-size: 1rem;
+  }
+
+  .service-icon {
+    width: 74px;
+    height: 74px;
+    margin-bottom: 24px;
+  }
+
+  .service-icon i {
+    font-size: 2rem;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .feature-item {
+    padding: 40px 32px;
+  }
+
+  .feature-icon {
+    width: 84px;
+    height: 84px;
+    margin-bottom: 24px;
+  }
+
+  .feature-icon i {
+    font-size: 2rem;
+  }
+
+  .feature-item h3 {
+    font-size: 1.3125rem;
+    margin-bottom: 15px;
+  }
+
+  .feature-item p {
+    font-size: 0.9375rem;
+  }
+
+  .service-detail-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 26px;
+  }
+
+  .detail-card {
+    padding: 30px;
+  }
+
+  .detail-card h3 {
+    font-size: 1.25rem;
+  }
+
+  .about-content {
+    gap: 65px;
+  }
+
+  .about-text h2 {
+    font-size: 2.625rem;
+  }
+
+  .about-text p {
+    font-size: 1.125rem;
+  }
+
+  .about-stats {
+    gap: 44px;
+  }
+
+  .stat-number {
+    font-size: 3rem;
+  }
+
+  .contact-content {
+    gap: 60px;
+  }
+
+  .contact-info h2 {
+    font-size: 2.5rem;
+  }
+
+  .contact-form {
+    padding: 42px;
+  }
+
+  .reviews-summary {
+    padding: 42px;
+  }
+
+  .review-card {
+    padding: 30px;
+    min-height: 370px;
+  }
+
+  .overall-rating .rating-number {
+    font-size: 3rem;
+  }
+}
+
+/* WXGA+ laptop screens (1440px - 1535px) */
+@media (min-width: 1440px) and (max-width: 1535px) {
+  section {
+    padding: 95px 0;
+  }
+
+  .section-header {
+    margin-bottom: 52px;
+  }
+
+  .services-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+  }
+
+  .service-card {
+    padding: 38px 30px;
+  }
+
+  .service-card h3 {
+    font-size: 1.4375rem;
+    margin-bottom: 14px;
+  }
+
+  .service-card p {
+    font-size: 0.9375rem;
+  }
+
+  .service-icon {
+    width: 72px;
+    height: 72px;
+    margin-bottom: 22px;
+  }
+
+  .service-icon i {
+    font-size: 1.875rem;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+  }
+
+  .feature-item {
+    padding: 38px 30px;
+  }
+
+  .feature-icon {
+    width: 82px;
+    height: 82px;
+    margin-bottom: 22px;
+  }
+
+  .feature-icon i {
+    font-size: 1.875rem;
+  }
+
+  .feature-item h3 {
+    font-size: 1.25rem;
+    margin-bottom: 14px;
+  }
+
+  .feature-item p {
+    font-size: 0.9375rem;
+  }
+
+  .service-detail-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  .detail-card {
+    padding: 28px;
+  }
+
+  .detail-card h3 {
+    font-size: 1.1875rem;
+  }
+
+  .about-content {
+    gap: 60px;
+  }
+
+  .about-text h2 {
+    font-size: 2.5rem;
+  }
+
+  .about-text p {
+    font-size: 1.0625rem;
+  }
+
+  .about-stats {
+    gap: 40px;
+  }
+
+  .stat-number {
+    font-size: 2.875rem;
+  }
+
+  .contact-content {
+    gap: 55px;
+  }
+
+  .contact-info h2 {
+    font-size: 2.375rem;
+  }
+
+  .contact-form {
+    padding: 40px;
+  }
+
+  .reviews-summary {
+    padding: 40px;
+  }
+
+  .review-card {
+    padding: 28px;
+    min-height: 360px;
+  }
+
+  .overall-rating .rating-number {
+    font-size: 2.875rem;
+  }
+}
+
+/* HD laptop screens (1366px - 1439px) */
+@media (min-width: 1366px) and (max-width: 1439px) {
+  section {
+    padding: 90px 0;
+  }
+
+  .section-header {
+    margin-bottom: 48px;
+  }
+
+  .services-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+
+  .service-card {
+    padding: 36px 28px;
+  }
+
+  .service-card h3 {
+    font-size: 1.375rem;
+    margin-bottom: 13px;
+  }
+
+  .service-card p {
+    font-size: 0.9375rem;
+  }
+
+  .service-icon {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 20px;
+  }
+
+  .service-icon i {
+    font-size: 1.75rem;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+
+  .feature-item {
+    padding: 36px 28px;
+  }
+
+  .feature-icon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+  }
+
+  .feature-icon i {
+    font-size: 1.75rem;
+  }
+
+  .feature-item h3 {
+    font-size: 1.1875rem;
+    margin-bottom: 13px;
+  }
+
+  .feature-item p {
+    font-size: 0.9375rem;
+  }
+
+  .service-detail-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+  }
+
+  .detail-card {
+    padding: 26px;
+  }
+
+  .detail-card h3 {
+    font-size: 1.125rem;
+  }
+
+  .about-content {
+    gap: 55px;
+  }
+
+  .about-text h2 {
+    font-size: 2.375rem;
+  }
+
+  .about-text p {
+    font-size: 1rem;
+  }
+
+  .about-stats {
+    gap: 36px;
+  }
+
+  .stat-number {
+    font-size: 2.75rem;
+  }
+
+  .contact-content {
+    gap: 50px;
+  }
+
+  .contact-info h2 {
+    font-size: 2.25rem;
+  }
+
+  .contact-form {
+    padding: 38px;
+  }
+
+  .reviews-summary {
+    padding: 38px;
+  }
+
+  .review-card {
+    padding: 26px;
+    min-height: 350px;
+  }
+
+  .overall-rating .rating-number {
+    font-size: 2.75rem;
+  }
+}
+
+/* Standard desktop (1200px - 1365px) */
+@media (min-width: 1200px) and (max-width: 1365px) {
+  section {
+    padding: 85px 0;
+  }
+
+  .section-header {
+    margin-bottom: 45px;
+  }
+
+  .services-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 26px;
+  }
+
+  .service-card {
+    padding: 34px 26px;
+  }
+
+  .service-card h3 {
+    font-size: 1.3125rem;
+    margin-bottom: 12px;
+  }
+
+  .service-card p {
+    font-size: 0.9375rem;
+  }
+
+  .service-icon {
+    width: 68px;
+    height: 68px;
+    margin-bottom: 18px;
+  }
+
+  .service-icon i {
+    font-size: 1.625rem;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 26px;
+  }
+
+  .feature-item {
+    padding: 34px 26px;
+  }
+
+  .feature-icon {
+    width: 78px;
+    height: 78px;
+    margin-bottom: 18px;
+  }
+
+  .feature-icon i {
+    font-size: 1.625rem;
+  }
+
+  .feature-item h3 {
+    font-size: 1.125rem;
+    margin-bottom: 12px;
+  }
+
+  .feature-item p {
+    font-size: 0.9375rem;
+  }
+
+  .service-detail-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .detail-card {
+    padding: 24px;
+  }
+
+  .detail-card h3 {
+    font-size: 1.0625rem;
+  }
+
+  .about-content {
+    gap: 50px;
+  }
+
+  .about-text h2 {
+    font-size: 2.25rem;
+  }
+
+  .about-text p {
+    font-size: 1rem;
+  }
+
+  .about-stats {
+    gap: 32px;
+  }
+
+  .stat-number {
+    font-size: 2.625rem;
+  }
+
+  .contact-content {
+    gap: 48px;
+  }
+
+  .contact-info h2 {
+    font-size: 2.125rem;
+  }
+
+  .contact-form {
+    padding: 36px;
+  }
+
+  .reviews-summary {
+    padding: 36px;
+  }
+
+  .review-card {
+    padding: 24px;
+    min-height: 340px;
+  }
+
+  .overall-rating .rating-number {
+    font-size: 2.625rem;
+  }
+}

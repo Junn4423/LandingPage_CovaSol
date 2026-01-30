@@ -4,8 +4,482 @@
    ============================================================================ */
 
 /* ============================================================================
-   RESPONSIVE DESIGN
+   RESPONSIVE DESIGN - Enhanced for all screen sizes
    ============================================================================ */
+
+/* Ultra-wide displays (2560px+) */
+@media (min-width: 2560px) {
+  .container {
+    max-width: var(--content-wide);
+    padding: 0 60px;
+  }
+
+  .nav-container {
+    max-width: var(--content-wide);
+    padding: 0 60px;
+  }
+
+  .hero-container {
+    max-width: 1800px;
+  }
+
+  .hero-content {
+    max-width: 800px;
+  }
+
+  .title-main {
+    font-size: 5rem;
+  }
+
+  .title-sub {
+    font-size: 2.25rem;
+  }
+
+  .hero-description {
+    font-size: 1.5rem;
+  }
+
+  .section-header h2 {
+    font-size: 3.5rem;
+  }
+
+  .section-header p {
+    font-size: 1.375rem;
+  }
+
+  .services-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+  }
+
+  .products-grid,
+  .posts-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 36px;
+  }
+
+  .service-card,
+  .feature-item {
+    padding: 50px 40px;
+  }
+
+  .service-card h3,
+  .feature-item h3 {
+    font-size: 1.75rem;
+  }
+
+  .service-card p,
+  .feature-item p {
+    font-size: 1.125rem;
+  }
+}
+
+/* Full HD desktop (1920px - 2559px) */
+@media (min-width: 1920px) and (max-width: 2559px) {
+  .container {
+    max-width: var(--content-wide);
+    padding: 0 50px;
+  }
+
+  .nav-container {
+    max-width: var(--content-wide);
+    padding: 0 50px;
+  }
+
+  .hero-container {
+    max-width: 1600px;
+  }
+
+  .hero-content {
+    max-width: 720px;
+  }
+
+  .title-main {
+    font-size: 4.5rem;
+  }
+
+  .title-sub {
+    font-size: 2rem;
+  }
+
+  .hero-description {
+    font-size: 1.375rem;
+  }
+
+  .section-header h2 {
+    font-size: 3rem;
+  }
+
+  .section-header p {
+    font-size: 1.25rem;
+  }
+
+  .services-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 36px;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 36px;
+  }
+
+  .products-grid,
+  .posts-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+  }
+
+  .service-card,
+  .feature-item {
+    padding: 45px 35px;
+  }
+}
+
+/* Large laptop screens (1680px - 1919px) - Common for laptop 1920x1200 scaled */
+@media (min-width: 1680px) and (max-width: 1919px) {
+  .container {
+    max-width: 1560px;
+    padding: 0 45px;
+  }
+
+  .nav-container {
+    max-width: 1560px;
+    padding: 0 45px;
+  }
+
+  .hero-container {
+    max-width: 1500px;
+    padding: clamp(130px, 14vh, 200px) 40px 130px;
+  }
+
+  .hero-content {
+    max-width: 680px;
+  }
+
+  .title-main {
+    font-size: 4rem;
+  }
+
+  .title-sub {
+    font-size: 1.875rem;
+  }
+
+  .hero-description {
+    font-size: 1.25rem;
+    max-width: 560px;
+  }
+
+  .hero-stats {
+    gap: 20px;
+  }
+
+  .hero-stat {
+    padding: 20px 24px;
+  }
+
+  .hero-stat strong {
+    font-size: 2.25rem;
+  }
+
+  .section-header h2 {
+    font-size: 2.75rem;
+  }
+
+  .section-header p {
+    font-size: 1.1875rem;
+  }
+
+  .services-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .products-grid,
+  .posts-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+  }
+
+  .service-detail-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px;
+  }
+
+  .service-card,
+  .feature-item {
+    padding: 40px 32px;
+  }
+
+  .about-content {
+    gap: 70px;
+  }
+}
+
+/* MacBook Pro 14" and similar (1536px - 1679px) */
+@media (min-width: 1536px) and (max-width: 1679px) {
+  .container {
+    max-width: 1440px;
+    padding: 0 40px;
+  }
+
+  .nav-container {
+    max-width: 1440px;
+    padding: 0 40px;
+  }
+
+  .hero-container {
+    max-width: 1380px;
+    padding: clamp(125px, 13vh, 180px) 35px 120px;
+  }
+
+  .hero-content {
+    max-width: 640px;
+  }
+
+  .title-main {
+    font-size: 3.75rem;
+  }
+
+  .title-sub {
+    font-size: 1.75rem;
+  }
+
+  .hero-description {
+    font-size: 1.1875rem;
+    max-width: 540px;
+  }
+
+  .hero-stats {
+    gap: 18px;
+  }
+
+  .hero-stat {
+    padding: 18px 22px;
+  }
+
+  .hero-stat strong {
+    font-size: 2.125rem;
+  }
+
+  .section-header h2 {
+    font-size: 2.625rem;
+  }
+
+  .section-header p {
+    font-size: 1.125rem;
+  }
+
+  .services-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+
+  .products-grid,
+  .posts-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+
+  .service-detail-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  .service-card,
+  .feature-item {
+    padding: 36px 30px;
+  }
+
+  .about-content {
+    gap: 60px;
+  }
+}
+
+/* WXGA+ laptop screens (1440px - 1535px) */
+@media (min-width: 1440px) and (max-width: 1535px) {
+  .container {
+    max-width: 1360px;
+    padding: 0 36px;
+  }
+
+  .nav-container {
+    max-width: 1360px;
+    padding: 0 36px;
+  }
+
+  .hero-container {
+    max-width: 1300px;
+    padding: clamp(120px, 12vh, 170px) 32px 110px;
+  }
+
+  .hero-content {
+    max-width: 620px;
+  }
+
+  .title-main {
+    font-size: 3.5rem;
+  }
+
+  .title-sub {
+    font-size: 1.625rem;
+  }
+
+  .hero-description {
+    font-size: 1.125rem;
+    max-width: 520px;
+  }
+
+  .hero-stats {
+    gap: 16px;
+  }
+
+  .hero-stat {
+    padding: 16px 20px;
+  }
+
+  .hero-stat strong {
+    font-size: 2rem;
+  }
+
+  .section-header h2 {
+    font-size: 2.5rem;
+  }
+
+  .section-header p {
+    font-size: 1.0625rem;
+  }
+
+  .services-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 26px;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 26px;
+  }
+
+  .products-grid,
+  .posts-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 26px;
+  }
+
+  .service-detail-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+  }
+
+  .service-card,
+  .feature-item {
+    padding: 34px 28px;
+  }
+
+  .about-content {
+    gap: 55px;
+  }
+}
+
+/* HD laptop screens (1366px - 1439px) */
+@media (min-width: 1366px) and (max-width: 1439px) {
+  .container {
+    max-width: 1280px;
+    padding: 0 32px;
+  }
+
+  .nav-container {
+    max-width: 1280px;
+    padding: 0 32px;
+  }
+
+  .hero-container {
+    max-width: 1220px;
+    padding: clamp(115px, 11vh, 160px) 28px 100px;
+  }
+
+  .hero-content {
+    max-width: 600px;
+  }
+
+  .title-main {
+    font-size: 3.25rem;
+  }
+
+  .title-sub {
+    font-size: 1.5rem;
+  }
+
+  .hero-description {
+    font-size: 1.0625rem;
+    max-width: 500px;
+  }
+
+  .hero-stats {
+    gap: 14px;
+  }
+
+  .hero-stat {
+    padding: 15px 18px;
+  }
+
+  .hero-stat strong {
+    font-size: 1.875rem;
+  }
+
+  .section-header h2 {
+    font-size: 2.375rem;
+  }
+
+  .section-header p {
+    font-size: 1rem;
+  }
+
+  .services-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .products-grid,
+  .posts-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .service-detail-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .service-card,
+  .feature-item {
+    padding: 32px 26px;
+  }
+
+  .about-content {
+    gap: 50px;
+  }
+}
 
 /* Large tablets and small desktops */
 @media (max-width: 1200px) {

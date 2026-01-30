@@ -1,7 +1,7 @@
 {
-  "name": "Covasol.com.vn",
-  "short_name": "CovaSol",
-  "description": "Đối tác công nghệ đáng tin cậy cho doanh nghiệp hiện đại",
+  "name": "COVASOL - Đối tác công nghệ cho doanh nghiệp",
+  "short_name": "COVASOL",
+  "description": "Đối tác công nghệ đáng tin cậy cho doanh nghiệp hiện đại. Phát triển phần mềm, thiết kế UX/UI và chuyển đổi số.",
   "icons": [
     {
       "src": "/favicon.ico",
@@ -27,10 +27,54 @@
       "purpose": "any maskable"
     }
   ],
-  "theme_color": "#0d500c",
+  "theme_color": "#124e66",
   "background_color": "#ffffff",
   "display": "standalone",
-  "start_url": "/",
+  "start_url": "/?source=pwa",
   "scope": "/",
-  "orientation": "portrait-primary"
+  "orientation": "portrait-primary",
+  "lang": "vi",
+  "dir": "ltr",
+  "categories": ["business", "technology", "software"],
+  "shortcuts": [
+    {
+      "name": "Blog",
+      "short_name": "Blog",
+      "description": "Đọc bài viết mới nhất",
+      "url": "/blog?source=pwa",
+      "icons": [{ "src": "/assets/favicon/favicon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Sản phẩm",
+      "short_name": "Products",
+      "description": "Xem các sản phẩm của COVASOL",
+      "url": "/products?source=pwa",
+      "icons": [{ "src": "/assets/favicon/favicon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Liên hệ",
+      "short_name": "Contact",
+      "description": "Liên hệ với chúng tôi",
+      "url": "/#contact",
+      "icons": [{ "src": "/assets/favicon/favicon-96x96.png", "sizes": "96x96" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/assets/img/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "COVASOL Homepage"
+    },
+    {
+      "src": "/assets/img/screenshot-narrow.png",
+      "sizes": "720x1280",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "COVASOL Mobile"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
 }
