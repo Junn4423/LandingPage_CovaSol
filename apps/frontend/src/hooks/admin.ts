@@ -28,6 +28,8 @@ import {
   updateAdminBlogPost,
   updateAdminProduct,
   updateAdminReview,
+  approveAdminReview,
+  rejectAdminReview,
   updateAdminUser,
   fetchMyPostsEditRequests,
   fetchMyEditRequests,
@@ -305,6 +307,28 @@ export function useDeleteReviewMutation() {
   });
 }
 
+export function useApproveReviewMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: approveAdminReview,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.reviewList });
+      queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.reviewStats });
+    }
+  });
+}
+
+export function useRejectReviewMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: rejectAdminReview,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.reviewList });
+      queryClient.invalidateQueries({ queryKey: ADMIN_QUERY_KEYS.reviewStats });
+    }
+  });
+}
+
 // Album / Cloudinary Image Management
 export function useAlbumImages(options?: { folder?: string; maxResults?: number }) {
   return useQuery({
@@ -548,14 +572,23 @@ export function useCreateProductCategoryMutation() {
 // =====================================================
 import {
   fetchPendingComments,
+  fetchAllComments,
+  fetchCommentStats,
+  fetchCommentById,
+  updateAdminComment,
   approveComment as approveCommentApi,
   rejectComment as rejectCommentApi,
   deleteComment as deleteCommentApi,
-  type AdminComment
+  type AdminComment,
+  type CommentStats,
+  type CommentsResponse
 } from '@/lib/admin-api';
 
 const COMMENT_QUERY_KEYS = {
-  pending: ['admin', 'comments', 'pending'] as const
+  pending: ['admin', 'comments', 'pending'] as const,
+  all: (filters?: any) => ['admin', 'comments', 'all', filters] as const,
+  stats: ['admin', 'comments', 'stats'] as const,
+  detail: (id: string) => ['admin', 'comments', id] as const
 };
 
 export function usePendingComments() {
@@ -566,12 +599,53 @@ export function usePendingComments() {
   });
 }
 
+export function useAllComments(params?: {
+  page?: number;
+  pageSize?: number;
+  status?: string;
+  blogPostId?: number;
+  search?: string;
+}) {
+  return useQuery<CommentsResponse>({
+    queryKey: COMMENT_QUERY_KEYS.all(params),
+    queryFn: () => fetchAllComments(params),
+    staleTime: 30_000
+  });
+}
+
+export function useCommentStats() {
+  return useQuery<CommentStats>({
+    queryKey: COMMENT_QUERY_KEYS.stats,
+    queryFn: fetchCommentStats,
+    staleTime: 30_000
+  });
+}
+
+export function useCommentById(id: string) {
+  return useQuery<AdminComment>({
+    queryKey: COMMENT_QUERY_KEYS.detail(id),
+    queryFn: () => fetchCommentById(id),
+    enabled: !!id
+  });
+}
+
+export function useUpdateCommentMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: { name?: string; email?: string | null; content?: string; status?: string } }) => 
+      updateAdminComment(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'comments'] });
+    }
+  });
+}
+
 export function useApproveCommentMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: approveCommentApi,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: COMMENT_QUERY_KEYS.pending });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'comments'] });
     }
   });
 }
@@ -581,7 +655,7 @@ export function useRejectCommentMutation() {
   return useMutation({
     mutationFn: rejectCommentApi,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: COMMENT_QUERY_KEYS.pending });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'comments'] });
     }
   });
 }
@@ -591,7 +665,54 @@ export function useDeleteCommentMutation() {
   return useMutation({
     mutationFn: deleteCommentApi,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: COMMENT_QUERY_KEYS.pending });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'comments'] });
+    }
+  });
+}
+
+// =====================================================
+// Newsletter Subscription Hooks
+// =====================================================
+import {
+  fetchNewsletterStats,
+  fetchNewsletterSubscriptions,
+  deleteNewsletterSubscription as deleteNewsletterApi,
+  type NewsletterSubscription,
+  type NewsletterStats,
+  type NewsletterResponse
+} from '@/lib/admin-api';
+
+const NEWSLETTER_QUERY_KEYS = {
+  stats: ['admin', 'newsletter', 'stats'] as const,
+  list: (filters?: any) => ['admin', 'newsletter', 'list', filters] as const
+};
+
+export function useNewsletterStats() {
+  return useQuery<NewsletterStats>({
+    queryKey: NEWSLETTER_QUERY_KEYS.stats,
+    queryFn: fetchNewsletterStats,
+    staleTime: 30_000
+  });
+}
+
+export function useNewsletterSubscriptions(params?: {
+  page?: number;
+  pageSize?: number;
+  status?: string;
+}) {
+  return useQuery<NewsletterResponse>({
+    queryKey: NEWSLETTER_QUERY_KEYS.list(params),
+    queryFn: () => fetchNewsletterSubscriptions(params),
+    staleTime: 30_000
+  });
+}
+
+export function useDeleteNewsletterMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteNewsletterApi,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'newsletter'] });
     }
   });
 }

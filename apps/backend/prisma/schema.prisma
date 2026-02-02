@@ -61,6 +61,9 @@ model BlogPost {
   // Pending edit requests for this blog post
   editRequests BlogEditRequest[] @relation("BlogEditRequests")
 
+  // Blog comments
+  comments     BlogComment[]
+
   @@index([publishedAt(sort: Desc)], map: "idx_published_at")
   @@index([status], map: "idx_status")
   @@index([category], map: "idx_category")
@@ -392,6 +395,7 @@ model BlogView {
 model BlogComment {
   id          Int       @id @default(autoincrement())
   blogPostId  Int       @map("blog_post_id")
+  blogPost    BlogPost  @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
   name        String    @db.VarChar(100)
   email       String?   @db.VarChar(255)
   content     String    @db.Text

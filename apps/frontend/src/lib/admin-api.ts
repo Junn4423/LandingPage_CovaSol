@@ -297,6 +297,22 @@ export async function updateAdminReview(id: string, input: Partial<ReviewMutatio
   return res.data;
 }
 
+export async function approveAdminReview(id: string) {
+  const res = await apiRequest<ApiSuccessResponse<CustomerReviewDetail>>({
+    path: `/v1/admin/reviews/${id}/approve`,
+    method: 'PUT'
+  });
+  return res.data;
+}
+
+export async function rejectAdminReview(id: string) {
+  const res = await apiRequest<ApiSuccessResponse<CustomerReviewDetail>>({
+    path: `/v1/admin/reviews/${id}/reject`,
+    method: 'PUT'
+  });
+  return res.data;
+}
+
 export async function deleteAdminReview(id: string) {
   await apiRequest<void>({
     path: `/v1/admin/reviews/${id}`,
@@ -795,12 +811,82 @@ export interface AdminComment {
   email?: string;
   content: string;
   status: string;
+  ipAddress?: string;
   createdAt: string;
+  updatedAt: string;
+  blogTitle?: string;
+  blogSlug?: string;
+}
+
+export interface CommentStats {
+  totalComments: number;
+  pendingCount: number;
+  approvedCount: number;
+  rejectedCount: number;
+}
+
+export interface CommentsResponse {
+  comments: AdminComment[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export async function fetchCommentStats(): Promise<CommentStats> {
+  const res = await apiRequest<ApiSuccessResponse<CommentStats>>({
+    path: '/v1/admin/comments/stats'
+  });
+  return res.data;
 }
 
 export async function fetchPendingComments(): Promise<AdminComment[]> {
   const res = await apiRequest<ApiSuccessResponse<AdminComment[]>>({
     path: '/v1/admin/comments/pending'
+  });
+  return res.data;
+}
+
+export async function fetchAllComments(params?: {
+  page?: number;
+  pageSize?: number;
+  status?: string;
+  blogPostId?: number;
+  search?: string;
+}): Promise<CommentsResponse> {
+  const query = new URLSearchParams();
+  if (params?.page) query.set('page', String(params.page));
+  if (params?.pageSize) query.set('pageSize', String(params.pageSize));
+  if (params?.status) query.set('status', params.status);
+  if (params?.blogPostId) query.set('blogPostId', String(params.blogPostId));
+  if (params?.search) query.set('search', params.search);
+  const suffix = query.toString() ? `?${query.toString()}` : '';
+
+  const res = await apiRequest<{ data: AdminComment[]; pagination: any }>({
+    path: `/v1/admin/comments${suffix}`
+  });
+  return { comments: res.data, pagination: res.pagination };
+}
+
+export async function fetchCommentById(id: string): Promise<AdminComment> {
+  const res = await apiRequest<ApiSuccessResponse<AdminComment>>({
+    path: `/v1/admin/comments/${id}`
+  });
+  return res.data;
+}
+
+export async function updateAdminComment(id: string, data: {
+  name?: string;
+  email?: string | null;
+  content?: string;
+  status?: string;
+}): Promise<AdminComment> {
+  const res = await apiRequest<ApiSuccessResponse<AdminComment>>({
+    path: `/v1/admin/comments/${id}`,
+    method: 'PUT',
+    body: data
   });
   return res.data;
 }
@@ -824,6 +910,67 @@ export async function rejectComment(id: string): Promise<AdminComment> {
 export async function deleteComment(id: string): Promise<void> {
   await apiRequest<void>({
     path: `/v1/admin/comments/${id}`,
+    method: 'DELETE'
+  });
+}
+
+// =====================================================
+// Newsletter Subscriptions API
+// =====================================================
+export interface NewsletterSubscription {
+  id: number;
+  email: string;
+  status: string;
+  source?: string;
+  ipAddress?: string;
+  createdAt: string;
+  confirmedAt?: string | null;
+  unsubscribedAt?: string | null;
+}
+
+export interface NewsletterStats {
+  totalActive: number;
+  totalUnsubscribed: number;
+  totalThisMonth: number;
+}
+
+export interface NewsletterResponse {
+  subscriptions: NewsletterSubscription[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export async function fetchNewsletterStats(): Promise<NewsletterStats> {
+  const res = await apiRequest<ApiSuccessResponse<NewsletterStats>>({
+    path: '/v1/admin/newsletter/stats'
+  });
+  return res.data;
+}
+
+export async function fetchNewsletterSubscriptions(params?: {
+  page?: number;
+  pageSize?: number;
+  status?: string;
+}): Promise<NewsletterResponse> {
+  const query = new URLSearchParams();
+  if (params?.page) query.set('page', String(params.page));
+  if (params?.pageSize) query.set('pageSize', String(params.pageSize));
+  if (params?.status) query.set('status', params.status);
+  const suffix = query.toString() ? `?${query.toString()}` : '';
+
+  const res = await apiRequest<{ data: NewsletterSubscription[]; pagination: any }>({
+    path: `/v1/admin/newsletter${suffix}`
+  });
+  return { subscriptions: res.data, pagination: res.pagination };
+}
+
+export async function deleteNewsletterSubscription(id: number): Promise<void> {
+  await apiRequest<void>({
+    path: `/v1/admin/newsletter/${id}`,
     method: 'DELETE'
   });
 }

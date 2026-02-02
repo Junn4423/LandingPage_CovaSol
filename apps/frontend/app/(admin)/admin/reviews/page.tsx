@@ -6,7 +6,9 @@ import {
   useAdminReviews,
   useAdminReviewStats,
   useDeleteReviewMutation,
-  useSaveReviewMutation
+  useSaveReviewMutation,
+  useApproveReviewMutation,
+  useRejectReviewMutation
 } from '@/hooks/admin';
 import { useClientPagination } from '@/hooks/use-pagination';
 import type { CustomerReviewDetail } from '@/types/content';
@@ -18,7 +20,7 @@ interface ReviewFormState {
   rating: number;
   quote: string;
   bgColor: string;
-  status: 'draft' | 'published';
+  status: 'pending' | 'draft' | 'published';
   isFeatured: boolean;
 }
 
@@ -29,7 +31,7 @@ const emptyForm: ReviewFormState = {
   rating: 5,
   quote: '',
   bgColor: '#124e66',
-  status: 'published',
+  status: 'pending',
   isFeatured: false
 };
 
@@ -40,11 +42,24 @@ export default function AdminReviewsPage() {
   const { data: stats } = useAdminReviewStats();
   const saveMutation = useSaveReviewMutation();
   const deleteMutation = useDeleteReviewMutation();
+  const approveMutation = useApproveReviewMutation();
+  const rejectMutation = useRejectReviewMutation();
 
   const [selectedReview, setSelectedReview] = useState<CustomerReviewDetail | null>(null);
   const [formState, setFormState] = useState<ReviewFormState>(emptyForm);
-  const pagination = useClientPagination(reviews ?? [], { pageSize: REVIEW_PAGE_SIZE });
+  const [activeTab, setActiveTab] = useState<'all' | 'pending' | 'published'>('all');
+
+  const filteredReviews = useMemo(() => {
+    if (!reviews) return [];
+    if (activeTab === 'all') return reviews;
+    return reviews.filter(r => r.status === activeTab);
+  }, [reviews, activeTab]);
+
+  const pagination = useClientPagination(filteredReviews, { pageSize: REVIEW_PAGE_SIZE });
   const visibleReviews = pagination.items;
+
+  const pendingCount = useMemo(() => reviews?.filter(r => r.status === 'pending').length ?? 0, [reviews]);
+  const featuredCount = useMemo(() => reviews?.filter(review => review.isFeatured).length ?? 0, [reviews]);
 
   useEffect(() => {
     if (!selectedReview) {
@@ -62,11 +77,6 @@ export default function AdminReviewsPage() {
       isFeatured: selectedReview.isFeatured ?? false
     });
   }, [selectedReview]);
-
-  const featuredCount = useMemo(
-    () => reviews?.filter(review => review.isFeatured).length ?? 0,
-    [reviews]
-  );
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -100,6 +110,16 @@ export default function AdminReviewsPage() {
     }
   }
 
+  async function handleApprove(review: CustomerReviewDetail) {
+    if (!review.id) return;
+    await approveMutation.mutateAsync(review.id);
+  }
+
+  async function handleReject(review: CustomerReviewDetail) {
+    if (!review.id) return;
+    await rejectMutation.mutateAsync(review.id);
+  }
+
   function handleEdit(review: CustomerReviewDetail) {
     setSelectedReview(review);
   }
@@ -110,11 +130,11 @@ export default function AdminReviewsPage() {
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-6">
+    <div className="flex h-full min-h-0 flex-col gap-6 overflow-y-auto p-1">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-[#0d1b2a]">Quản lý đánh giá</h2>
-          <p className="mt-1 text-slate-500">Theo dõi phản hồi của khách hàng và spotlight review nổi bật.</p>
+          <p className="mt-1 text-slate-500">Theo dõi, duyệt phản hồi và spotlight review nổi bật.</p>
         </div>
         <button
           onClick={() => setSelectedReview(null)}
@@ -127,10 +147,14 @@ export default function AdminReviewsPage() {
       </div>
 
       {stats ? (
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-4">
           <div className="rounded-2xl bg-white p-5 shadow" style={{ boxShadow: '0 16px 32px rgba(15, 23, 42, 0.08)' }}>
             <p className="text-sm font-medium text-slate-500">Tổng số đánh giá</p>
             <p className="mt-2 text-3xl font-bold text-[#0d1b2a]">{stats.totalReviews}</p>
+          </div>
+          <div className="rounded-2xl bg-white p-5 shadow" style={{ boxShadow: '0 16px 32px rgba(15, 23, 42, 0.08)' }}>
+            <p className="text-sm font-medium text-slate-500">Chờ duyệt</p>
+            <p className="mt-2 text-3xl font-bold text-amber-500">{pendingCount}</p>
           </div>
           <div className="rounded-2xl bg-white p-5 shadow" style={{ boxShadow: '0 16px 32px rgba(15, 23, 42, 0.08)' }}>
             <p className="text-sm font-medium text-slate-500">Điểm trung bình</p>
@@ -148,6 +172,32 @@ export default function AdminReviewsPage() {
           <p className="text-sm text-red-600">Không thể tải danh sách đánh giá.</p>
         </div>
       ) : null}
+
+      {/* Tab Filter */}
+      <div className="flex gap-2">
+        {[
+          { key: 'all', label: 'Tất cả', count: reviews?.length },
+          { key: 'pending', label: 'Chờ duyệt', count: pendingCount },
+          { key: 'published', label: 'Đã duyệt', count: reviews?.filter(r => r.status === 'published').length }
+        ].map(tab => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key as typeof activeTab)}
+            className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors flex items-center gap-2 ${
+              activeTab === tab.key 
+                ? 'bg-[#124e66] text-white' 
+                : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+            }`}
+          >
+            {tab.label}
+            {tab.count !== undefined && (
+              <span className={`px-1.5 py-0.5 text-xs rounded-full ${
+                activeTab === tab.key ? 'bg-white/20' : 'bg-slate-100'
+              }`}>{tab.count}</span>
+            )}
+          </button>
+        ))}
+      </div>
 
       <div className="grid flex-1 min-h-0 gap-6 lg:grid-cols-[1.3fr_0.9fr]">
         <section className="flex min-h-0 flex-col rounded-2xl bg-white p-6 shadow-lg" style={{ boxShadow: '0 16px 32px rgba(15, 23, 42, 0.08)' }}>
@@ -186,29 +236,66 @@ export default function AdminReviewsPage() {
                         {review.rating?.toFixed(1) ?? '5.0'}
                       </span>
                     </div>
-                    <p className="mt-3 line-clamp-2 text-sm text-slate-600">“{review.quote}”</p>
-                    <div className="mt-4 flex flex-wrap items-center gap-3">
+                    <p className="mt-3 line-clamp-2 text-sm text-slate-600">&quot;{review.quote}&quot;</p>
+                    <div className="mt-4 flex flex-wrap items-center gap-2">
                       <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                        review.status === 'published' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600'
+                        review.status === 'published' ? 'bg-green-100 text-green-700' : 
+                        review.status === 'pending' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'
                       }`}>
-                        {review.status === 'published' ? 'Đang hiển thị' : 'Bản nháp'}
+                        {review.status === 'published' ? 'Đang hiển thị' : review.status === 'pending' ? 'Chờ duyệt' : 'Bản nháp'}
                       </span>
                       {review.isFeatured ? (
                         <span className="rounded-full bg-[#fef3c7] px-3 py-1 text-xs font-semibold text-[#b45309]">
                           Featured
                         </span>
                       ) : null}
-                      <div className="ml-auto flex gap-2">
+                      <div className="ml-auto flex flex-wrap gap-1">
+                        {review.status === 'pending' && (
+                          <>
+                            <button
+                              onClick={() => handleApprove(review)}
+                              disabled={approveMutation.isPending}
+                              className="rounded-lg bg-green-100 px-2 py-1 text-xs font-semibold text-green-700 transition-all hover:bg-green-200 disabled:opacity-50"
+                            >
+                              <i className="fas fa-check mr-1"></i>Duyệt
+                            </button>
+                            <button
+                              onClick={() => handleReject(review)}
+                              disabled={rejectMutation.isPending}
+                              className="rounded-lg bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-700 transition-all hover:bg-amber-200 disabled:opacity-50"
+                            >
+                              <i className="fas fa-times mr-1"></i>Từ chối
+                            </button>
+                          </>
+                        )}
+                        {review.status === 'published' && (
+                          <button
+                            onClick={() => handleReject(review)}
+                            disabled={rejectMutation.isPending}
+                            className="rounded-lg bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-700 transition-all hover:bg-amber-200 disabled:opacity-50"
+                          >
+                            <i className="fas fa-eye-slash mr-1"></i>Ẩn
+                          </button>
+                        )}
+                        {review.status === 'draft' && (
+                          <button
+                            onClick={() => handleApprove(review)}
+                            disabled={approveMutation.isPending}
+                            className="rounded-lg bg-green-100 px-2 py-1 text-xs font-semibold text-green-700 transition-all hover:bg-green-200 disabled:opacity-50"
+                          >
+                            <i className="fas fa-check mr-1"></i>Duyệt
+                          </button>
+                        )}
                         <button
                           onClick={() => handleEdit(review)}
-                          className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-all hover:-translate-y-0.5 hover:bg-slate-50"
+                          className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-semibold text-slate-700 transition-all hover:bg-slate-50"
                         >
-                          Chỉnh sửa
+                          Sửa
                         </button>
                         <button
                           onClick={() => handleDelete(review)}
                           disabled={deleteMutation.isPending}
-                          className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 transition-all hover:-translate-y-0.5 hover:bg-red-50 disabled:opacity-50"
+                          className="rounded-lg border border-red-200 px-2 py-1 text-xs font-semibold text-red-600 transition-all hover:bg-red-50 disabled:opacity-50"
                         >
                           Xoá
                         </button>
@@ -319,8 +406,9 @@ export default function AdminReviewsPage() {
                   value={formState.status}
                   onChange={e => setFormState(prev => ({ ...prev, status: e.target.value as ReviewFormState['status'] }))}
                 >
-                  <option value="published">Published</option>
-                  <option value="draft">Draft</option>
+                  <option value="pending">Chờ duyệt</option>
+                  <option value="published">Đã duyệt (Published)</option>
+                  <option value="draft">Bản nháp (Draft)</option>
                 </select>
               </div>
               <div className="flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3">

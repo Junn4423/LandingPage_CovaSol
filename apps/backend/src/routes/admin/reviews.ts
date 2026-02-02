@@ -70,6 +70,28 @@ adminReviewRouter.put('/:id', async (req, res) => {
   res.json({ data: review });
 });
 
+// PUT /admin/reviews/:id/approve - Duyệt review
+adminReviewRouter.put('/:id/approve', async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (isNaN(id)) {
+    return res.status(StatusCodes.BAD_REQUEST).json({ message: 'ID không hợp lệ' });
+  }
+
+  const review = await upsertReview({ id, status: 'published' } as any);
+  res.json({ data: review });
+});
+
+// PUT /admin/reviews/:id/reject - Từ chối review
+adminReviewRouter.put('/:id/reject', async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (isNaN(id)) {
+    return res.status(StatusCodes.BAD_REQUEST).json({ message: 'ID không hợp lệ' });
+  }
+
+  const review = await upsertReview({ id, status: 'draft' } as any);
+  res.json({ data: review });
+});
+
 // DELETE /admin/reviews/:id - Xóa review
 adminReviewRouter.delete('/:id', async (req, res) => {
   const deleted = await deleteReview(req.params.id);
